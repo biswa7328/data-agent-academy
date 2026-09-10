@@ -17,12 +17,12 @@
   */
 
   /* Backgrounds */
-  --bg-primary:      #000000;
-  --bg-surface:      #0d0d0d;
-  --bg-surface-hover:#1a1a1a;
-  --bg-elevated:     #222222;
-  --grid-line:       #2a2a2a;
-  --grid-line-minor: #141414;
+  --bg-primary:      #04000a;
+  --bg-surface:      #0d0010;
+  --bg-surface-hover:#1a0025;
+  --bg-elevated:     #220035;
+  --grid-line:       #2a0040;
+  --grid-line-minor: #14001e;
 
   /* Strokes / Accents */
   --stroke-primary:  #A100FF;
@@ -110,7 +110,17 @@ body {
   overflow-x: hidden;
 }
 
-/* --- Accenture Grid Background — subtle diagonal line pattern --- */
+/* --- Neural Network AI Background --- */
+body {
+  background-color: var(--bg-primary);
+  background-image: url('./bg-neural.svg');
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+/* Dark vignette overlay to keep text readable and background subtle */
 body::before {
   content: '';
   position: fixed;
@@ -121,35 +131,21 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background:
+    radial-gradient(ellipse at 50% 50%, rgba(4, 0, 10, 0.55) 0%, rgba(4, 0, 10, 0.82) 100%),
     repeating-linear-gradient(
       0deg,
       transparent,
-      transparent 39px,
-      var(--grid-line-minor) 39px,
-      var(--grid-line-minor) 40px
+      transparent 79px,
+      rgba(161, 0, 255, 0.025) 79px,
+      rgba(161, 0, 255, 0.025) 80px
     ),
     repeating-linear-gradient(
       90deg,
       transparent,
-      transparent 39px,
-      var(--grid-line-minor) 39px,
-      var(--grid-line-minor) 40px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 199px,
-      var(--grid-line) 199px,
-      var(--grid-line) 200px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 199px,
-      var(--grid-line) 199px,
-      var(--grid-line) 200px
+      transparent 79px,
+      rgba(161, 0, 255, 0.025) 79px,
+      rgba(161, 0, 255, 0.025) 80px
     );
-  opacity: 0.4;
 }
 
 /* --- Layout --- */
@@ -246,7 +242,7 @@ strong {
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.95);
+  background: rgba(4, 0, 10, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--grid-line);
   padding: var(--space-3) var(--space-6);

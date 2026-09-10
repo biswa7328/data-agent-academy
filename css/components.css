@@ -4,7 +4,9 @@
 
 /* --- Blueprint Card --- */
 .bp-card {
-  background: var(--bg-surface);
+  background: rgba(13, 0, 16, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px dashed var(--stroke-dim);
   border-radius: var(--border-radius);
   padding: var(--space-6);
@@ -682,7 +684,9 @@
 
 /* --- Module Card (Landing Page) --- */
 .module-card {
-  background: var(--bg-surface);
+  background: rgba(13, 0, 16, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px dashed var(--stroke-dim);
   border-radius: var(--border-radius-lg);
   padding: var(--space-8);
