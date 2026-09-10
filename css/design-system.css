@@ -1,48 +1,38 @@
 /* ============================================
    DATA AGENT ACADEMY — Accenture Design System
+   Light Theme with Subtle AI Background
    ============================================ */
 
-/* --- Google Fonts (local fallback) --- */
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* --- Design Tokens — Accenture Brand Colors --- */
 :root {
-  /* Accenture Core Palette
-     Primary:   #A100FF (Accenture Purple)
-     Dark bg:   #000000 / #0d0d0d / #1a1a1a
-     Mid gray:  #2d2d2d / #3d3d3d
-     Light:     #f5f5f5 / #ffffff
-     Accent 2:  #7500C0 (deep purple)
-     Accent 3:  #CC00FF (bright violet)
-  */
+  /* Backgrounds — white/light */
+  --bg-primary:      #ffffff;
+  --bg-surface:      #f7f3ff;
+  --bg-surface-hover:#efe8ff;
+  --bg-elevated:     #e8dbff;
+  --grid-line:       #e0d4f7;
+  --grid-line-minor: #f0eafa;
 
-  /* Backgrounds */
-  --bg-primary:      #04000a;
-  --bg-surface:      #0d0010;
-  --bg-surface-hover:#1a0025;
-  --bg-elevated:     #220035;
-  --grid-line:       #2a0040;
-  --grid-line-minor: #14001e;
-
-  /* Strokes / Accents */
+  /* Accenture Purple strokes */
   --stroke-primary:  #A100FF;
-  --stroke-secondary:#CC00FF;
-  --stroke-dim:      #5a0090;
+  --stroke-secondary:#7500C0;
+  --stroke-dim:      #d4a8ff;
 
-  /* Semantic colors */
+  /* Semantic */
   --accent-warning:  #f59e0b;
   --accent-error:    #ef4444;
   --accent-success:  #10b981;
 
-  /* Text */
-  --text-primary:    #f5f5f5;
-  --text-secondary:  #a0a0a0;
+  /* Text — dark on light */
+  --text-primary:    #0d0010;
+  --text-secondary:  #4a3860;
   --text-accent:     #A100FF;
-  --text-teal:       #CC00FF;
+  --text-teal:       #7500C0;
 
   /* Glows */
-  --glow-blue:       rgba(161, 0, 255, 0.3);
-  --glow-teal:       rgba(204, 0, 255, 0.3);
+  --glow-blue:       rgba(161, 0, 255, 0.2);
+  --glow-teal:       rgba(117, 0, 192, 0.2);
   --glow-warning:    rgba(245, 158, 11, 0.3);
   --glow-error:      rgba(239, 68, 68, 0.3);
   --glow-success:    rgba(16, 185, 129, 0.3);
@@ -61,18 +51,10 @@
   --font-5xl:   3rem;
 
   /* Spacing */
-  --space-1:  0.25rem;
-  --space-2:  0.5rem;
-  --space-3:  0.75rem;
-  --space-4:  1rem;
-  --space-5:  1.25rem;
-  --space-6:  1.5rem;
-  --space-8:  2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
-  --space-20: 5rem;
-  --space-24: 6rem;
+  --space-1:  0.25rem;  --space-2:  0.5rem;   --space-3:  0.75rem;
+  --space-4:  1rem;     --space-5:  1.25rem;  --space-6:  1.5rem;
+  --space-8:  2rem;     --space-10: 2.5rem;   --space-12: 3rem;
+  --space-16: 4rem;     --space-20: 5rem;     --space-24: 6rem;
 
   /* Layout */
   --content-max:    900px;
@@ -87,12 +69,7 @@
   --transition-reveal:  800ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* --- Reset & Base --- */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
   scroll-behavior: smooth;
@@ -108,51 +85,35 @@ body {
   line-height: 1.7;
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
 }
 
-/* --- Neural Network AI Background --- */
-body {
-  background-color: var(--bg-primary);
-  background-image: url('./bg-neural.svg');
+/* ===== AGENTIC AI SVG BACKGROUND — inline so it works at any depth ===== */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 900' preserveAspectRatio='xMidYMid slice'%3E%3Cdefs%3E%3CradialGradient id='ng' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%23A100FF' stop-opacity='0.18'/%3E%3Cstop offset='100%25' stop-color='%23A100FF' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='nd' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0%25' stop-color='%237500C0' stop-opacity='0.10'/%3E%3Cstop offset='100%25' stop-color='%237500C0' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3C!-- skip connections --%3E%3Cline x1='120' y1='100' x2='640' y2='280' stroke='%23A100FF' stroke-opacity='0.04' stroke-width='1' stroke-dasharray='4 8'/%3E%3Cline x1='380' y1='200' x2='900' y2='90' stroke='%23A100FF' stroke-opacity='0.04' stroke-width='1' stroke-dasharray='4 8'/%3E%3Cline x1='640' y1='420' x2='1160' y2='260' stroke='%23A100FF' stroke-opacity='0.04' stroke-width='1' stroke-dasharray='4 8'/%3E%3Cline x1='900' y1='390' x2='1380' y2='200' stroke='%23A100FF' stroke-opacity='0.04' stroke-width='1' stroke-dasharray='4 8'/%3E%3C!-- layer edges --%3E%3Cline x1='120' y1='100' x2='380' y2='200' stroke='%23A100FF' stroke-opacity='0.07' stroke-width='1'/%3E%3Cline x1='120' y1='100' x2='380' y2='70' stroke='%23A100FF' stroke-opacity='0.05' stroke-width='1'/%3E%3Cline x1='120' y1='230' x2='380' y2='340' stroke='%23A100FF' stroke-opacity='0.06' stroke-width='1'/%3E%3Cline x1='120' y1='230' x2='380' y2='200' stroke='%237500C0' stroke-opacity='0.09' stroke-width='1'/%3E%3Cline x1='120' y1='360' x2='380' y2='460' stroke='%23A100FF' stroke-opacity='0.06' stroke-width='1'/%3E%3Cline x1='380' y1='70' x2='640' y2='140' stroke='%23A100FF' stroke-opacity='0.07' stroke-width='1'/%3E%3Cline x1='380' y1='200' x2='640' y2='280' stroke='%237500C0' stroke-opacity='0.10' stroke-width='1'/%3E%3Cline x1='380' y1='340' x2='640' y2='280' stroke='%23A100FF' stroke-opacity='0.07' stroke-width='1'/%3E%3Cline x1='380' y1='460' x2='640' y2='420' stroke='%23A100FF' stroke-opacity='0.06' stroke-width='1'/%3E%3Cline x1='640' y1='140' x2='900' y2='90' stroke='%237500C0' stroke-opacity='0.09' stroke-width='1'/%3E%3Cline x1='640' y1='280' x2='900' y2='240' stroke='%23A100FF' stroke-opacity='0.08' stroke-width='1'/%3E%3Cline x1='640' y1='280' x2='900' y2='390' stroke='%23A100FF' stroke-opacity='0.07' stroke-width='1'/%3E%3Cline x1='640' y1='420' x2='900' y2='390' stroke='%23A100FF' stroke-opacity='0.06' stroke-width='1'/%3E%3Cline x1='900' y1='90' x2='1160' y2='130' stroke='%23A100FF' stroke-opacity='0.07' stroke-width='1'/%3E%3Cline x1='900' y1='240' x2='1160' y2='260' stroke='%237500C0' stroke-opacity='0.09' stroke-width='1'/%3E%3Cline x1='900' y1='390' x2='1160' y2='400' stroke='%23A100FF' stroke-opacity='0.07' stroke-width='1'/%3E%3Cline x1='1160' y1='130' x2='1380' y2='200' stroke='%237500C0' stroke-opacity='0.09' stroke-width='1'/%3E%3Cline x1='1160' y1='260' x2='1380' y2='380' stroke='%23A100FF' stroke-opacity='0.07' stroke-width='1'/%3E%3Cline x1='1160' y1='400' x2='1380' y2='380' stroke='%23A100FF' stroke-opacity='0.06' stroke-width='1'/%3E%3C!-- ambient rings --%3E%3Ccircle cx='400' cy='280' r='180' fill='none' stroke='%23A100FF' stroke-opacity='0.04' stroke-width='1'/%3E%3Ccircle cx='400' cy='280' r='110' fill='none' stroke='%23A100FF' stroke-opacity='0.03' stroke-width='1'/%3E%3Ccircle cx='900' cy='200' r='220' fill='none' stroke='%237500C0' stroke-opacity='0.035' stroke-width='1'/%3E%3Ccircle cx='1150' cy='400' r='160' fill='none' stroke='%23A100FF' stroke-opacity='0.03' stroke-width='1'/%3E%3C!-- hex grid top-right --%3E%3Cpolygon points='1250,20 1270,37 1270,68 1250,85 1230,68 1230,37' fill='none' stroke='%23A100FF' stroke-opacity='0.07' stroke-width='1'/%3E%3Cpolygon points='1302,20 1322,37 1322,68 1302,85 1282,68 1282,37' fill='none' stroke='%23A100FF' stroke-opacity='0.07' stroke-width='1'/%3E%3Cpolygon points='1354,20 1374,37 1374,68 1354,85 1334,68 1334,37' fill='none' stroke='%23A100FF' stroke-opacity='0.07' stroke-width='1'/%3E%3Cpolygon points='1406,20 1426,37 1426,68 1406,85 1386,68 1386,37' fill='none' stroke='%23A100FF' stroke-opacity='0.05' stroke-width='1'/%3E%3Cpolygon points='1276,68 1296,85 1296,116 1276,133 1256,116 1256,85' fill='none' stroke='%23A100FF' stroke-opacity='0.05' stroke-width='1'/%3E%3Cpolygon points='1328,68 1348,85 1348,116 1328,133 1308,116 1308,85' fill='none' stroke='%23A100FF' stroke-opacity='0.05' stroke-width='1'/%3E%3Cpolygon points='1380,68 1400,85 1400,116 1380,133 1360,116 1360,85' fill='none' stroke='%23A100FF' stroke-opacity='0.04' stroke-width='1'/%3E%3C!-- nodes layer 0 --%3E%3Ccircle cx='120' cy='100' r='24' fill='url(%23ng)'/%3E%3Ccircle cx='120' cy='100' r='5' fill='%23A100FF' fill-opacity='0.35'/%3E%3Ccircle cx='120' cy='100' r='8' fill='none' stroke='%23A100FF' stroke-opacity='0.25' stroke-width='1'/%3E%3Ccircle cx='120' cy='230' r='18' fill='url(%23nd)'/%3E%3Ccircle cx='120' cy='230' r='3' fill='%237500C0' fill-opacity='0.3'/%3E%3Ccircle cx='120' cy='360' r='20' fill='url(%23ng)'/%3E%3Ccircle cx='120' cy='360' r='4' fill='%23A100FF' fill-opacity='0.3'/%3E%3C!-- nodes layer 1 --%3E%3Ccircle cx='380' cy='70' r='16' fill='url(%23nd)'/%3E%3Ccircle cx='380' cy='70' r='3' fill='%237500C0' fill-opacity='0.3'/%3E%3Ccircle cx='380' cy='200' r='26' fill='url(%23ng)'/%3E%3Ccircle cx='380' cy='200' r='6' fill='%23A100FF' fill-opacity='0.4'/%3E%3Ccircle cx='380' cy='200' r='9' fill='none' stroke='%23A100FF' stroke-opacity='0.2' stroke-width='1'/%3E%3Ccircle cx='380' cy='340' r='18' fill='url(%23nd)'/%3E%3Ccircle cx='380' cy='340' r='3' fill='%237500C0' fill-opacity='0.25'/%3E%3Ccircle cx='380' cy='460' r='20' fill='url(%23ng)'/%3E%3Ccircle cx='380' cy='460' r='4' fill='%23A100FF' fill-opacity='0.3'/%3E%3C!-- nodes layer 2 --%3E%3Ccircle cx='640' cy='140' r='22' fill='url(%23ng)'/%3E%3Ccircle cx='640' cy='140' r='5' fill='%23A100FF' fill-opacity='0.35'/%3E%3Ccircle cx='640' cy='140' r='8' fill='none' stroke='%23A100FF' stroke-opacity='0.2' stroke-width='1'/%3E%3Ccircle cx='640' cy='280' r='30' fill='url(%23ng)'/%3E%3Ccircle cx='640' cy='280' r='7' fill='%237500C0' fill-opacity='0.45'/%3E%3Ccircle cx='640' cy='280' r='11' fill='none' stroke='%237500C0' stroke-opacity='0.22' stroke-width='1'/%3E%3Ccircle cx='640' cy='420' r='16' fill='url(%23nd)'/%3E%3Ccircle cx='640' cy='420' r='3' fill='%23A100FF' fill-opacity='0.25'/%3E%3C!-- nodes layer 3 --%3E%3Ccircle cx='900' cy='90' r='22' fill='url(%23ng)'/%3E%3Ccircle cx='900' cy='90' r='5' fill='%23A100FF' fill-opacity='0.35'/%3E%3Ccircle cx='900' cy='90' r='8' fill='none' stroke='%23A100FF' stroke-opacity='0.2' stroke-width='1'/%3E%3Ccircle cx='900' cy='240' r='18' fill='url(%23nd)'/%3E%3Ccircle cx='900' cy='240' r='3' fill='%237500C0' fill-opacity='0.28'/%3E%3Ccircle cx='900' cy='390' r='26' fill='url(%23ng)'/%3E%3Ccircle cx='900' cy='390' r='6' fill='%23A100FF' fill-opacity='0.38'/%3E%3Ccircle cx='900' cy='390' r='9' fill='none' stroke='%23A100FF' stroke-opacity='0.2' stroke-width='1'/%3E%3C!-- nodes layer 4 --%3E%3Ccircle cx='1160' cy='130' r='18' fill='url(%23nd)'/%3E%3Ccircle cx='1160' cy='130' r='3' fill='%237500C0' fill-opacity='0.28'/%3E%3Ccircle cx='1160' cy='260' r='24' fill='url(%23ng)'/%3E%3Ccircle cx='1160' cy='260' r='5' fill='%23A100FF' fill-opacity='0.35'/%3E%3Ccircle cx='1160' cy='260' r='8' fill='none' stroke='%23A100FF' stroke-opacity='0.2' stroke-width='1'/%3E%3Ccircle cx='1160' cy='400' r='20' fill='url(%23ng)'/%3E%3Ccircle cx='1160' cy='400' r='4' fill='%23A100FF' fill-opacity='0.3'/%3E%3C!-- nodes layer 5 --%3E%3Ccircle cx='1380' cy='200' r='24' fill='url(%23ng)'/%3E%3Ccircle cx='1380' cy='200' r='6' fill='%237500C0' fill-opacity='0.4'/%3E%3Ccircle cx='1380' cy='200' r='9' fill='none' stroke='%237500C0' stroke-opacity='0.22' stroke-width='1'/%3E%3Ccircle cx='1380' cy='380' r='18' fill='url(%23nd)'/%3E%3Ccircle cx='1380' cy='380' r='3' fill='%23A100FF' fill-opacity='0.28'/%3E%3C!-- particles --%3E%3Ccircle cx='250' cy='155' r='2.5' fill='%23A100FF' fill-opacity='0.4'/%3E%3Ccircle cx='510' cy='215' r='2.5' fill='%237500C0' fill-opacity='0.4'/%3E%3Ccircle cx='770' cy='185' r='2.5' fill='%23A100FF' fill-opacity='0.4'/%3E%3Ccircle cx='1030' cy='320' r='2.5' fill='%237500C0' fill-opacity='0.4'/%3E%3Ccircle cx='1270' cy='295' r='2.5' fill='%23A100FF' fill-opacity='0.4'/%3E%3C/svg%3E");
   background-size: cover;
   background-position: center center;
-  background-attachment: fixed;
   background-repeat: no-repeat;
 }
 
-/* Dark vignette overlay to keep text readable and background subtle */
+/* Light subtle gradient overlay to keep white feel */
 body::before {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+  inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(ellipse at 50% 50%, rgba(4, 0, 10, 0.55) 0%, rgba(4, 0, 10, 0.82) 100%),
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 79px,
-      rgba(161, 0, 255, 0.025) 79px,
-      rgba(161, 0, 255, 0.025) 80px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 79px,
-      rgba(161, 0, 255, 0.025) 79px,
-      rgba(161, 0, 255, 0.025) 80px
-    );
+  pointer-events: none;
+  background: radial-gradient(ellipse at 30% 20%, rgba(161,0,255,0.04) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 70%, rgba(117,0,192,0.04) 0%, transparent 55%);
 }
 
 /* --- Layout --- */
-.page-wrapper {
-  position: relative;
-  z-index: 1;
-}
+.page-wrapper { position: relative; z-index: 1; }
 
 .content-container {
   max-width: var(--content-max);
@@ -192,27 +153,16 @@ a {
   transition: color var(--transition-fast);
 }
 
-a:hover {
-  color: var(--stroke-secondary);
-}
+a:hover { color: var(--stroke-secondary); }
 
-code, .mono {
-  font-family: var(--font-mono);
-}
+code, .mono { font-family: var(--font-mono); }
 
-strong {
-  color: var(--text-primary);
-  font-weight: 600;
-}
+strong { color: var(--text-primary); font-weight: 600; }
 
 /* --- Section Spacing --- */
-.section {
-  padding: var(--space-16) 0;
-}
+.section { padding: var(--space-16) 0; }
 
-.section + .section {
-  border-top: 1px dashed var(--grid-line);
-}
+.section + .section { border-top: 1px dashed var(--grid-line); }
 
 .section-label {
   font-family: var(--font-mono);
@@ -238,12 +188,11 @@ strong {
 /* --- Top Navigation Bar --- */
 .top-nav {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  top: 0; left: 0; right: 0;
   z-index: 1000;
-  background: rgba(4, 0, 10, 0.95);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--grid-line);
   padding: var(--space-3) var(--space-6);
   display: flex;
@@ -261,10 +210,7 @@ strong {
   gap: var(--space-2);
 }
 
-.top-nav__brand svg {
-  width: 18px;
-  height: 18px;
-}
+.top-nav__brand svg { width: 18px; height: 18px; }
 
 .top-nav__breadcrumb {
   font-family: var(--font-mono);
@@ -275,20 +221,13 @@ strong {
   gap: var(--space-2);
 }
 
-.top-nav__breadcrumb .separator {
-  color: var(--stroke-dim);
-}
-
-.top-nav__breadcrumb .current {
-  color: var(--text-primary);
-}
+.top-nav__breadcrumb .separator { color: var(--stroke-dim); }
+.top-nav__breadcrumb .current { color: var(--text-primary); }
 
 /* --- Progress Bar --- */
 .progress-bar {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: 0; right: 0; bottom: 0;
   height: 4px;
   background: var(--bg-surface);
   z-index: 1001;
@@ -299,13 +238,9 @@ strong {
 .progress-bar__fill {
   height: 100%;
   background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary));
-  box-shadow: 0 0 10px var(--glow-blue), 0 0 20px var(--glow-teal);
+  box-shadow: 0 0 10px var(--glow-blue);
   transition: width var(--transition-slow);
   width: 0%;
 }
 
-/* Page top padding to account for fixed nav */
-.page-content {
-  padding-top: 56px;
-  padding-bottom: 8px;
-}
+.page-content { padding-top: 56px; padding-bottom: 8px; }

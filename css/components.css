@@ -4,7 +4,8 @@
 
 /* --- Blueprint Card --- */
 .bp-card {
-  background: rgba(13, 0, 16, 0.82);
+  box-shadow: 0 2px 12px rgba(161,0,255,0.07);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px dashed var(--stroke-dim);
@@ -16,7 +17,7 @@
 
 .bp-card:hover {
   border-color: var(--stroke-primary);
-  box-shadow: 0 0 20px var(--glow-blue);
+  box-shadow: 0 4px 20px rgba(161,0,255,0.15);
 }
 
 /* Corner tick marks */
@@ -281,7 +282,7 @@
 .quiz-option:hover {
   border-color: var(--stroke-primary);
   color: var(--text-primary);
-  background: rgba(161, 0, 255, 0.05);
+  background: rgba(161,0,255,0.06);
 }
 
 .quiz-option.selected {
@@ -371,7 +372,7 @@
 }
 
 .btn--primary:hover {
-  background: #6ab4ff;
+  background: #7500C0;
   color: var(--bg-primary);
 }
 
@@ -609,7 +610,7 @@
   font-family: var(--font-sans);
   width: 260px;
   line-height: 1.5;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.7), 0 0 15px var(--glow-blue);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.15), 0 0 15px var(--glow-blue);
   z-index: 100;
 }
 .tag-popover::after {
@@ -631,13 +632,13 @@
 }
 
 /* Popover color variants based on badge color */
-.badge--teal .tag-popover   { border-color: var(--stroke-secondary); box-shadow: 0 4px 24px rgba(0,0,0,0.7), 0 0 15px var(--glow-teal); }
+.badge--teal .tag-popover   { border-color: var(--stroke-secondary); box-shadow: 0 4px 24px rgba(0,0,0,0.15), 0 0 15px var(--glow-teal); }
 .badge--teal .tag-popover::after { border-top-color: var(--stroke-secondary); }
 .badge--teal .tag-popover__title { color: var(--stroke-secondary); }
-.badge--amber .tag-popover  { border-color: var(--accent-warning); box-shadow: 0 4px 24px rgba(0,0,0,0.7), 0 0 15px var(--glow-warning); }
+.badge--amber .tag-popover  { border-color: var(--accent-warning); box-shadow: 0 4px 24px rgba(0,0,0,0.15), 0 0 15px var(--glow-warning); }
 .badge--amber .tag-popover::after { border-top-color: var(--accent-warning); }
 .badge--amber .tag-popover__title { color: var(--accent-warning); }
-.badge--green .tag-popover  { border-color: var(--accent-success); box-shadow: 0 4px 24px rgba(0,0,0,0.7), 0 0 15px var(--glow-success); }
+.badge--green .tag-popover  { border-color: var(--accent-success); box-shadow: 0 4px 24px rgba(0,0,0,0.15), 0 0 15px var(--glow-success); }
 .badge--green .tag-popover::after { border-top-color: var(--accent-success); }
 .badge--green .tag-popover__title { color: var(--accent-success); }
 
@@ -679,12 +680,13 @@
 
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 5px var(--glow-blue); }
-  50% { box-shadow: 0 0 20px var(--glow-blue); }
+  50% { box-shadow: 0 4px 20px rgba(161,0,255,0.15); }
 }
 
 /* --- Module Card (Landing Page) --- */
 .module-card {
-  background: rgba(13, 0, 16, 0.78);
+  box-shadow: 0 2px 16px rgba(161,0,255,0.07);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px dashed var(--stroke-dim);
@@ -871,7 +873,7 @@
 
 .drop-zone--hover {
   border-color: var(--stroke-primary);
-  background: rgba(161, 0, 255, 0.05);
+  background: rgba(161,0,255,0.06);
 }
 
 .drop-zone--filled {
