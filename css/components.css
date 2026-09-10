@@ -131,7 +131,7 @@
 
 /* --- Terminal Panel --- */
 .terminal {
-  background: #0d0d0d;
+  background: #ffffff;
   border: 1px solid #2a2a2a;
   border-radius: var(--border-radius-lg);
   overflow: hidden;
@@ -601,7 +601,7 @@
   bottom: calc(100% + 10px);
   left: 50%;
   transform: translateX(-50%);
-  background: #0d0d0d;
+  background: #ffffff;
   border: 1px solid var(--stroke-primary);
   border-radius: var(--border-radius);
   padding: var(--space-3) var(--space-4);
@@ -881,3 +881,90 @@
   border-color: var(--stroke-secondary);
   color: var(--text-primary);
 }
+
+/* ============================================
+   LIGHT THEME OVERRIDES — White background
+   ============================================ */
+
+/* Popover — white card with strong contrast */
+.tag-popover {
+  background: #ffffff !important;
+  color: #1a0030 !important;
+  border: 1.5px solid var(--stroke-primary) !important;
+  box-shadow: 0 8px 32px rgba(161,0,255,0.15), 0 2px 8px rgba(0,0,0,0.10) !important;
+}
+.tag-popover__title { color: var(--stroke-primary) !important; }
+
+/* Layer cards — crisp on white */
+.layer-card, .bp-card, .module-card {
+  background: rgba(255,255,255,0.92) !important;
+  border-color: #d4a8ff !important;
+  box-shadow: 0 2px 16px rgba(161,0,255,0.08), 0 1px 4px rgba(0,0,0,0.05) !important;
+}
+.layer-card:hover, .bp-card:hover, .module-card:hover {
+  border-color: var(--stroke-primary) !important;
+  box-shadow: 0 4px 24px rgba(161,0,255,0.18), 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+
+/* Callout — stronger left border contrast */
+.callout {
+  background: rgba(161,0,255,0.04) !important;
+  border-left: 3px solid var(--stroke-primary) !important;
+}
+
+/* Code blocks — light purple tint */
+pre, code {
+  background: rgba(161,0,255,0.05) !important;
+  color: #5a0090 !important;
+  border: 1px solid #e8d4ff !important;
+}
+
+/* Nav — crisp white */
+.top-nav {
+  background: rgba(255,255,255,0.96) !important;
+  border-bottom: 1px solid #e0d4f7 !important;
+  box-shadow: 0 2px 12px rgba(161,0,255,0.08) !important;
+}
+
+/* Page nav buttons */
+.page-nav {
+  background: rgba(255,255,255,0.9) !important;
+  border-top: 1px solid #e0d4f7 !important;
+}
+
+/* Section dividers */
+.section + .section { border-top: 1px dashed #e0d4f7 !important; }
+
+/* Strong text contrast on white */
+h1, h2, h3, h4, h5, h6 { color: #0d0010 !important; }
+p { color: #3a2a55 !important; }
+.bp-card__body, .layer-card p { color: #3a2a55 !important; }
+
+/* Badge text — ensure readable on white */
+.badge {
+  background: rgba(255,255,255,0.7) !important;
+}
+.badge--blue { 
+  border-color: #A100FF !important; 
+  color: #7500C0 !important;
+  background: rgba(161,0,255,0.06) !important;
+}
+.badge--teal { 
+  border-color: #7500C0 !important; 
+  color: #5a0090 !important;
+  background: rgba(117,0,192,0.06) !important;
+}
+.badge--amber { 
+  border-color: var(--accent-warning) !important; 
+  color: #b45309 !important;
+}
+
+/* Progress bar bg */
+.progress-bar { background: #f0eafa !important; }
+
+/* Collapsible sections */
+.collapsible { 
+  background: rgba(255,255,255,0.85) !important;
+  border-color: #d4a8ff !important;
+}
+.collapsible__header { color: #0d0010 !important; }
