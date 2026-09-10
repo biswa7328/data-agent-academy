@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 07 Assessment &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Celebration Section --- */
+    .celebration {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      margin-top: var(--space-8);
+      background: var(--bg-surface);
+      border: 2px solid var(--stroke-secondary);
+      border-radius: var(--border-radius-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .celebration::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary), var(--accent-success));
+    }
+    .celebration__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--stroke-secondary);
+      margin-bottom: var(--space-6);
+      font-size: var(--font-4xl);
+      box-shadow: 0 0 30px var(--glow-teal);
+    }
+    .celebration__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+    }
+    .celebration__subtitle {
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .celebration__next {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-8);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      background: var(--bg-primary);
+      margin-top: var(--space-4);
+    }
+    .celebration__next-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .celebration__next-title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--stroke-dim);
+    }
+
+    /* --- Stats Row --- */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+    }
+    .stat-box__value {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-2);
+    }
+    .stat-box__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 640px) {
+      .stats-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M9 21V9"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 07</span>
+        <span class="separator">/</span>
+        <span class="current">Assessment</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Module 07 &mdash; Final Assessment</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Knowledge Checkpoint</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            AcmeCorp went from five bespoke connectors to standardized MCP servers, from isolated
+            agents to A2A collaboration between DataPulse, InsightBot, and ComplianceGuard, and from
+            ungoverned integrations to AAIF-compliant architecture. Test your understanding of the
+            protocols that made Maya Chen&rsquo;s transformation possible. 8 questions covering
+            the full module.
+          </p>
+
+          <!-- Stats -->
+          <div class="stats-row reveal">
+            <div class="stat-box">
+              <div class="stat-box__value">3</div>
+              <div class="stat-box__label">Lessons Covered</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">3</div>
+              <div class="stat-box__label">Protocols Studied</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">8</div>
+              <div class="stat-box__label">Questions Ahead</div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">How It Works</div>
+            <div class="callout__text">
+              Select one answer per question. Once all 8 are answered, click &ldquo;Check Answers&rdquo; to see
+              your score with detailed explanations. You need 75% (6/8) for an excellent rating.
+              Each question ties back to a real challenge AcmeCorp faced &mdash; from Maya&rsquo;s
+              connector headaches to Marcus Webb&rsquo;s audit requirements.
+            </div>
+          </div>
+        </section>
+
+        <!-- Quiz Container -->
+        <section class="section">
+          <div id="quiz-container"></div>
+        </section>
+
+        <!-- Celebration (shown via JS after quiz submission) -->
+        <div id="celebration-section" class="reveal" style="display: none;">
+          <div class="celebration">
+            <div class="celebration__badge">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="celebration__title">Module 07 Complete</div>
+            <p class="celebration__subtitle">
+              You&rsquo;ve mastered interoperability protocols &mdash; MCP for agent-tool communication,
+              A2A for agent-agent collaboration, and AAIF governance for open standards. AcmeCorp&rsquo;s
+              agents are connected, collaborative, and future-proof.
+            </p>
+            <a href="../module-08/01-agent-security.html" class="btn btn--primary btn--large">
+              Continue to Module 08 &rarr;
+            </a>
+            <div class="celebration__next">
+              <div>
+                <div class="celebration__next-label">Up Next</div>
+                <div class="celebration__next-title">Module 08 &mdash; Security, Privacy &amp; Compliance</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="03-aaif-governance.html" class="page-nav__title">AAIF Governance</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../module-08/01-agent-security.html" class="page-nav__title">Agent Security</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Quiz Questions: Module 07 Assessment ---
+    const questions = [
+      {
+        question: 'Maya Chen built five bespoke connectors for DataPulse before adopting MCP. Which MCP primitive allows a server to request LLM completions from the client, enabling agentic behaviors inside the tool server itself?',
+        options: [
+          'Resources',
+          'Tools',
+          'Prompts',
+          'Sampling'
+        ],
+        correct: 3,
+        explanation: 'Sampling inverts the normal flow \u2014 the MCP server requests LLM completions from the client. At AcmeCorp, the Salesforce MCP server uses sampling to classify incoming queries before routing them to the right Salesforce object.'
+      },
+      {
+        question: 'When DataPulse needed to discover InsightBot\u2019s capabilities for cross-agent collaboration, where did it find InsightBot\u2019s Agent Card?',
+        options: [
+          '/api/agent/config',
+          '/.well-known/agent.json',
+          '/mcp/capabilities',
+          '/agent/discovery.xml'
+        ],
+        correct: 1,
+        explanation: 'A2A agents publish an Agent Card \u2014 a JSON descriptor at the standard path /.well-known/agent.json. Maya published cards for all three AcmeCorp agents so each could discover the others automatically.'
+      },
+      {
+        question: 'Raj Patel suggested DataPulse should just call InsightBot\u2019s API directly. Maya objected because that would recreate the N\u00d7M problem. What is the key difference between MCP and A2A communication direction?',
+        options: [
+          'MCP is synchronous, A2A is asynchronous',
+          'MCP is horizontal (peer-to-peer), A2A is vertical (hierarchical)',
+          'MCP is vertical (agent-to-tool), A2A is horizontal (agent-to-agent)',
+          'MCP uses REST, A2A uses GraphQL'
+        ],
+        correct: 2,
+        explanation: 'MCP handles vertical communication \u2014 DataPulse reaching down to PostgreSQL, Shopify, and other tools. A2A handles horizontal communication \u2014 DataPulse collaborating with peer agents like InsightBot and ComplianceGuard.'
+      },
+      {
+        question: 'Derek Kim, AcmeCorp\u2019s CFO, worried about vendor lock-in. Which organization governs both MCP and A2A to ensure no single company can unilaterally change the specs?',
+        options: [
+          'OpenAI Foundation',
+          'W3C (World Wide Web Consortium)',
+          'AAIF (Agentic AI Foundation) under Linux Foundation',
+          'IETF (Internet Engineering Task Force)'
+        ],
+        correct: 2,
+        explanation: 'The Agentic AI Foundation (AAIF), hosted under the Linux Foundation, governs both MCP and A2A. Co-founded by OpenAI, Anthropic, Google, Microsoft, AWS, and Block, it ensures the protocols remain open and vendor-neutral \u2014 exactly the guarantee Derek needed.'
+      },
+      {
+        question: 'Lena Park calculated that 3 agents \u00d7 5 data sources would require 15 custom integrations. What problem does MCP solve by reducing N\u00d7M integrations to N+M?',
+        options: [
+          'Reduces token costs for LLM calls',
+          'Eliminates the need for custom connectors between each agent and each tool',
+          'Speeds up database query execution',
+          'Reduces the number of agents needed'
+        ],
+        correct: 1,
+        explanation: 'Without MCP, N agents and M tools require N\u00d7M custom integrations. MCP introduces a standard interface \u2014 each agent implements one MCP client (N) and each tool implements one MCP server (M), giving N+M total. AcmeCorp went from 15 planned integrations to 8.'
+      },
+      {
+        question: 'When DataPulse asked InsightBot for marketing attribution data, InsightBot paused to ask whether Sofia wanted paid media only or all channels. Which A2A task state represents this pause?',
+        options: [
+          'working',
+          'pending',
+          'input-required',
+          'blocked'
+        ],
+        correct: 2,
+        explanation: 'The input-required state means the remote agent has paused processing and needs additional information from the requesting agent. This enabled the multi-turn conversation between DataPulse and InsightBot about Sofia\u2019s query scope.'
+      },
+      {
+        question: 'Lena Park monitors emerging protocols for AcmeCorp. Which emerging protocol takes a REST-native approach to agent communication?',
+        options: [
+          'ANP (Agent Network Protocol)',
+          'ACP (Agent Communication Protocol)',
+          'AMQP (Advanced Message Queuing Protocol)',
+          'gRPC Agent Protocol'
+        ],
+        correct: 1,
+        explanation: 'ACP (Agent Communication Protocol) maps agent communication directly onto standard REST patterns (POST, GET, etc.), making it immediately familiar to web developers. Maya noted it would be simpler for AcmeCorp\u2019s web team if they needed agent integrations in the customer portal.'
+      },
+      {
+        question: 'When AcmeCorp switched LLM providers after Raj\u2019s benchmarks showed better SQL generation, the migration took four days. Why could they switch without rewriting tool integrations?',
+        options: [
+          'Because they use a proprietary abstraction layer',
+          'Because MCP decouples the protocol layer from the model layer',
+          'Because all LLMs have the same API',
+          'Because tools do not depend on LLM responses'
+        ],
+        correct: 1,
+        explanation: 'MCP creates a standard interface between agents and tools. AcmeCorp\u2019s five MCP servers (PostgreSQL, Shopify, Salesforce, Google Sheets, S3) speak the MCP protocol regardless of which LLM powers the agent. Derek Kim called it the fastest vendor swap in AcmeCorp history.'
+      }
+    ];
+
+    // Initialize quiz
+    QuizEngine.init('quiz-container', questions);
+  </script>
+  <script>Nav.init('m07-quiz-final');</script>
+</body>
+</html>

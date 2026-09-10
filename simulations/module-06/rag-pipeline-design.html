@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulation: RAG Pipeline Design &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 06</span>
+        <span class="separator">/</span>
+        <span class="current">Simulation: RAG Pipeline Design</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Interactive Simulation</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">RAG Pipeline Design</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            AcmeCorp wants its Data Agent to answer questions using internal business documents — policy manuals, product guides, and regional reports. You must design the RAG pipeline from ingestion through generation.
+          </p>
+
+          <div class="callout reveal">
+            <div class="callout__label">Mission Brief</div>
+            <div class="callout__text">
+              The agent must answer questions like "What is our return policy for electronics?" and "Which region had the highest margin last quarter?" across 500+ internal documents. Make 5 design decisions about chunking, retrieval, context budgeting, and query planning &mdash; aim for 5/5.
+            </div>
+          </div>
+        </section>
+
+        <!-- Simulation Container -->
+        <section class="section">
+          <div id="sim-container"></div>
+        </section>
+
+        <!-- Reset Button -->
+        <div class="reveal" style="text-align: center; margin-bottom: var(--space-8);">
+          <button class="btn btn--teal" onclick="SimulationEngine.reset()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+            </svg>
+            Restart Simulation
+          </button>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../../modules/module-06/04-agentic-rag.html" class="page-nav__title">Agentic RAG</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../../modules/module-06/quiz-checkpoint.html" class="page-nav__title">Quiz Checkpoint</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; RAG Pipeline Design Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Simulation Config: RAG Pipeline Design ---
+    SimulationEngine.init('sim-container', {
+      title: 'RAG Pipeline Design',
+      intro: 'You are the data architect for AcmeCorp\'s RAG-powered Data Agent. Five design decisions will determine whether the agent retrieves the right documents, stays within token budgets, and answers questions accurately.',
+      nodes: {
+
+        // ===== DECISION 1: Chunking Strategy =====
+        'start': {
+          type: 'decision',
+          title: 'Decision 1: Chunking Strategy',
+          description: 'AcmeCorp\'s product manuals are structured documents with clear sections (Overview, Specifications, Warranty, Return Policy). How do you chunk them for the vector store?',
+          choices: [
+            {
+              label: 'Semantic chunking — split at section boundaries, preserving document structure',
+              hint: 'Chunks align with logical units like sections and sub-sections',
+              next: 'c1-semantic',
+              isGood: true
+            },
+            {
+              label: 'Fixed-size chunking — split every 512 tokens regardless of content',
+              hint: 'Simple, consistent chunk sizes across all documents',
+              next: 'c1-fixed',
+              isGood: false
+            },
+            {
+              label: 'Whole-document chunking — store each document as one chunk',
+              hint: 'Keep documents intact to preserve full context',
+              next: 'c1-whole',
+              isGood: false
+            }
+          ]
+        },
+        'c1-semantic': {
+          type: 'consequence',
+          title: 'Correct: Semantic Chunks Match Query Intent',
+          description: 'You chunk at section boundaries. "Return Policy" becomes its own chunk, "Specifications" its own. When a user asks "What is the return window for electronics?", retrieval surfaces the exact Return Policy section — not a fragment that splits the answer across two chunks.',
+          consequence: 'Semantic chunking respects document structure and preserves the logical unit of information. Queries map to sections, not arbitrary token windows. This maximizes retrieval precision. For structured documents, always prefer semantic or hierarchical chunking over fixed-size approaches.',
+          isGood: true,
+          next: 'decision-2'
+        },
+        'c1-fixed': {
+          type: 'consequence',
+          title: 'Fragmented: Fixed Chunking Splits Logical Units',
+          description: 'The 512-token window slices through section boundaries. The return policy for electronics starts in chunk 7 and continues in chunk 8. Retrieval returns chunk 7 — which contains the end of Specifications and only the first half of the return policy. The answer is incomplete.',
+          consequence: 'Fixed-size chunking is simple to implement but ignores document semantics. It frequently splits logical units (a policy, a specification, a procedure) across chunk boundaries. Use fixed-size only for unstructured text where no semantic boundaries exist.',
+          isGood: false,
+          next: 'decision-2'
+        },
+        'c1-whole': {
+          type: 'consequence',
+          title: 'Too Large: Full Documents Waste Context Budget',
+          description: 'You store each 15-page manual as a single chunk. When the user asks about return policy, you retrieve the entire 15-page manual. The LLM gets 12,000 tokens of mostly irrelevant product specifications, burning context budget and reducing answer quality.',
+          consequence: 'Whole-document chunks defeat the purpose of RAG. The retrieval step is supposed to find the specific passage relevant to the query, not the whole document. Large chunks exhaust context windows and dilute the signal. Chunk granularity should match query granularity.',
+          isGood: false,
+          next: 'decision-2'
+        },
+
+        // ===== DECISION 2: Retrieval Strategy =====
+        'decision-2': {
+          type: 'decision',
+          title: 'Decision 2: Retrieval Strategy',
+          description: 'Users ask both exact queries ("SKU-4821 warranty period") and conceptual queries ("which products have the longest coverage?"). Which retrieval strategy do you use?',
+          choices: [
+            {
+              label: 'Hybrid retrieval — combine dense (semantic) and sparse (keyword) with score fusion',
+              hint: 'Semantic search for concepts, keyword search for exact terms, results merged',
+              next: 'c2-hybrid',
+              isGood: true
+            },
+            {
+              label: 'Dense retrieval only — pure vector similarity search',
+              hint: 'Embeddings capture meaning and handle conceptual queries well',
+              next: 'c2-dense',
+              isGood: false
+            },
+            {
+              label: 'Sparse retrieval only — BM25 keyword matching',
+              hint: 'Exact term matching is fast and reliable for known keywords',
+              next: 'c2-sparse',
+              isGood: false
+            }
+          ]
+        },
+        'c2-hybrid': {
+          type: 'consequence',
+          title: 'Correct: Hybrid Covers Both Query Types',
+          description: 'The hybrid retriever finds "SKU-4821 warranty" via keyword matching (exact SKU hit) and "longest warranty coverage" via semantic search (understands the concept even without the word "longest" in the document). Reciprocal Rank Fusion combines both result sets.',
+          consequence: 'Hybrid retrieval is the production standard because real user queries span a spectrum: some are keyword-precise, others are conceptual. Dense retrieval excels at semantics but misses exact identifiers. Sparse retrieval nails keywords but misses paraphrase. Together, they cover both ends of the query spectrum.',
+          isGood: true,
+          next: 'decision-3'
+        },
+        'c2-dense': {
+          type: 'consequence',
+          title: 'Incomplete: Dense Misses Exact Identifiers',
+          description: 'The semantic search handles conceptual queries well but struggles with "SKU-4821." The embedding model treats it as a short string with no semantic context, producing low similarity scores. Users searching for specific product codes frequently get wrong results.',
+          consequence: 'Dense retrieval is powerful for conceptual and paraphrase queries but weak for exact identifiers, product codes, and technical terms. SKUs, part numbers, and specific terminology are better handled by keyword search. Pure dense retrieval is insufficient for enterprise document corpora.',
+          isGood: false,
+          next: 'decision-3'
+        },
+        'c2-sparse': {
+          type: 'consequence',
+          title: 'Incomplete: Sparse Misses Conceptual Queries',
+          description: 'BM25 matches keywords exactly. "Longest warranty coverage" returns nothing because the document says "36-month protection plan" — not "longest." Users asking broad questions get empty results and start to distrust the system.',
+          consequence: 'Sparse retrieval is reliable for exact term matching but blind to semantic equivalence. "Warranty" and "protection plan" are the same concept but different keywords. In real-world corpora, documents use varied terminology. Pure sparse retrieval fails on paraphrase and conceptual queries.',
+          isGood: false,
+          next: 'decision-3'
+        },
+
+        // ===== DECISION 3: Context Budget Management =====
+        'decision-3': {
+          type: 'decision',
+          title: 'Decision 3: Context Budget Management',
+          description: 'Your LLM has a 32K token context window. A user asks a multi-document question that requires pulling from 8 relevant chunks (each ~800 tokens). System prompt is 2K tokens. How do you manage the context budget?',
+          choices: [
+            {
+              label: 'Rerank chunks by relevance score, include top 5, summarize the remaining 3 into a condensed passage',
+              hint: 'Priority-based inclusion with summarization for overflow',
+              next: 'c3-rerank',
+              isGood: true
+            },
+            {
+              label: 'Include all 8 chunks — the context window is large enough',
+              hint: '8 chunks * 800 tokens = 6,400 tokens, well under 32K limit',
+              next: 'c3-all',
+              isGood: false
+            },
+            {
+              label: 'Include only the single highest-ranked chunk to minimize tokens',
+              hint: 'Always use the best chunk for maximum quality per token',
+              next: 'c3-one',
+              isGood: false
+            }
+          ]
+        },
+        'c3-rerank': {
+          type: 'consequence',
+          title: 'Correct: Prioritized Inclusion with Summarization',
+          description: 'You rerank the 8 chunks, include the top 5 (4,000 tokens), and summarize chunks 6-8 into a 400-token condensed passage. Total context: 2K system + 4K chunks + 0.4K summary = 6.4K — well-organized, budget-conscious, and comprehensive.',
+          consequence: 'Reranking before inclusion ensures the most relevant content gets the full token budget. Summarizing overflow chunks preserves signal without exhausting the window. This is the Context Engineering principle of "freshness over recency" — not all tokens are equally valuable.',
+          isGood: true,
+          next: 'decision-4'
+        },
+        'c3-all': {
+          type: 'consequence',
+          title: 'Wasteful: More Context Is Not Always Better',
+          description: 'You include all 8 chunks. This particular query is fine, but you\'ve established a pattern. When queries require 20 chunks or when users chain multi-turn conversations, context fills rapidly. By turn 5 in a conversation, you hit the context cliff and the agent starts losing early context.',
+          consequence: 'Including everything that fits is not a strategy — it\'s the absence of one. Context windows have a "lost in the middle" problem: LLMs attend less to content in the middle of long contexts. Selective inclusion based on relevance score consistently outperforms "include everything."',
+          isGood: false,
+          next: 'decision-4'
+        },
+        'c3-one': {
+          type: 'consequence',
+          title: 'Under-Retrieval: Single Chunks Miss Cross-Document Answers',
+          description: 'You include only the top chunk. The user asked about return policies across multiple product categories — the answer spans 3 documents. With only one chunk, the agent confidently answers with partial information, creating a misleading response.',
+          consequence: 'Multi-document questions require multi-chunk context. Extreme token minimization trades accuracy for efficiency. The right approach balances relevance (rerank), coverage (include top N), and budget (summarize overflow). Single-chunk retrieval is only appropriate for simple, single-source queries.',
+          isGood: false,
+          next: 'decision-4'
+        },
+
+        // ===== DECISION 4: Query Planning =====
+        'decision-4': {
+          type: 'decision',
+          title: 'Decision 4: Complex Query Planning',
+          description: 'A user asks: "Compare Q1 2025 return rates for the Southeast region versus our return policy thresholds, and flag any product categories that are over-threshold." This requires structured data AND document retrieval. How does the agent handle it?',
+          choices: [
+            {
+              label: 'Decompose into two sub-queries: SQL for return rate data, RAG for policy thresholds — then synthesize',
+              hint: 'Agentic query planning routes each sub-task to the right tool',
+              next: 'c4-decompose',
+              isGood: true
+            },
+            {
+              label: 'Run the entire query through RAG — retrieve documents that mention return rates',
+              hint: 'Use the document store for everything',
+              next: 'c4-rag-only',
+              isGood: false
+            },
+            {
+              label: 'Run SQL only — query the database for return rates and policy data together',
+              hint: 'All company data should be in the data warehouse',
+              next: 'c4-sql-only',
+              isGood: false
+            }
+          ]
+        },
+        'c4-decompose': {
+          type: 'consequence',
+          title: 'Correct: Agentic Query Planning Routes to the Right Tool',
+          description: 'The planner decomposes: (1) SQL Agent queries the returns table for Q1 2025 Southeast data by category. (2) RAG Agent retrieves the return policy thresholds document. (3) Synthesis Agent compares actual vs. allowed rates and identifies over-threshold categories.',
+          consequence: 'Agentic RAG uses query planning to route sub-tasks to appropriate data sources. Structured data (numbers, metrics, transactions) lives in databases — SQL is the right tool. Unstructured data (policies, procedures, guides) lives in documents — RAG is the right tool. The synthesis step combines both.',
+          isGood: true,
+          next: 'decision-5'
+        },
+        'c4-rag-only': {
+          type: 'consequence',
+          title: 'Wrong Tool: Documents Don\'t Contain Live Metrics',
+          description: 'RAG retrieves the return policy document and a quarterly report from last year. There is no document containing Q1 2025 return rates by category — that data is in the database. The agent hallucinates specific numbers because it can\'t find them.',
+          consequence: 'RAG is for unstructured knowledge stored in documents. Real-time metrics, transactional data, and aggregated statistics live in structured databases. Routing a quantitative analytical query to RAG is a fundamental tool-selection error. Use SQL for structured data, RAG for unstructured knowledge.',
+          isGood: false,
+          next: 'decision-5'
+        },
+        'c4-sql-only': {
+          type: 'consequence',
+          title: 'Incomplete: Policy Thresholds Are Not in the Database',
+          description: 'SQL returns the Q1 return rates. But the return policy thresholds are in a policy PDF — not in the database schema. The agent can tell you what the return rates were, but it can\'t compare them to thresholds. Half the question goes unanswered.',
+          consequence: 'Return rates are structured data (SQL), but policy thresholds are documented knowledge (RAG). Assuming all business information lives in the database is a common mistake. Hybrid queries spanning structured and unstructured sources require tool routing, not a single-source assumption.',
+          isGood: false,
+          next: 'decision-5'
+        },
+
+        // ===== DECISION 5: Retrieval Quality Degradation =====
+        'decision-5': {
+          type: 'decision',
+          title: 'Decision 5: Retrieval Quality Degradation',
+          description: 'Three months after launch, users report the agent gives outdated answers about product availability. You discover the vector store was last updated 90 days ago — before a major product line refresh. What is the correct remediation?',
+          choices: [
+            {
+              label: 'Implement incremental re-ingestion: detect document changes via checksums and re-embed only changed files',
+              hint: 'Continuous sync keeps embeddings current without full re-indexing',
+              next: 'c5-incremental',
+              isGood: true
+            },
+            {
+              label: 'Schedule a full re-ingestion every Sunday night — rebuild the entire index weekly',
+              hint: 'Regular complete rebuilds ensure everything stays current',
+              next: 'c5-full-rebuild',
+              isGood: false
+            },
+            {
+              label: 'Add a disclaimer to all responses: "Information may be up to 90 days old"',
+              hint: 'Transparency about limitations is better than false confidence',
+              next: 'c5-disclaimer',
+              isGood: false
+            }
+          ]
+        },
+        'c5-incremental': {
+          type: 'consequence',
+          title: 'Correct: Incremental Sync Is Efficient and Current',
+          description: 'You implement a change-detection pipeline. A document watcher computes checksums on the source documents. When a product guide changes, only that document is re-chunked and re-embedded. The index updates within minutes of source changes — at a fraction of the cost of full rebuilds.',
+          consequence: 'Incremental re-ingestion keeps embeddings current without the overhead of rebuilding everything. Checksums detect changes; only modified documents are reprocessed. This is the production standard for RAG systems with frequently-updated documents. Staleness is a data quality problem — fix the pipeline, not the UX.',
+          isGood: true,
+          next: 'result'
+        },
+        'c5-full-rebuild': {
+          type: 'consequence',
+          title: 'Expensive: Full Rebuilds Are Wasteful at Scale',
+          description: 'The weekly rebuild works but re-embeds all 500+ documents every Sunday, costing ~$200/week in embedding API calls. When the document library grows to 5,000 files, this becomes prohibitive. And if a critical document updates on Monday, users get stale answers for 6 days.',
+          consequence: 'Full rebuilds guarantee freshness at rebuild time but waste compute on unchanged documents. At scale, re-embedding everything is expensive. Incremental pipelines that detect and process only changes are both cheaper and faster to respond to updates.',
+          isGood: false,
+          next: 'result'
+        },
+        'c5-disclaimer': {
+          type: 'consequence',
+          title: 'Wrong: Disclaimers Don\'t Fix Stale Data',
+          description: 'You add the disclaimer. Users read "Information may be up to 90 days old" and immediately stop trusting the agent for product availability questions. The disclaimer accurately describes the problem but makes the system less useful, not more reliable.',
+          consequence: 'Disclaimers are appropriate when freshness constraints are inherent and unavoidable (e.g., "data as of market close"). But 90-day staleness from a broken ingestion pipeline is a fixable engineering problem, not an inherent limitation. Fix the root cause instead of working around it.',
+          isGood: false,
+          next: 'result'
+        },
+
+        // ===== FINAL RESULT =====
+        'result': {
+          type: 'result',
+          title: 'RAG Pipeline Complete',
+          description: 'You\'ve made all 5 design decisions for AcmeCorp\'s RAG pipeline. Your choices determined retrieval accuracy, context efficiency, and data freshness across 500+ internal documents.',
+          score: '5/5',
+          scoreLabel: 'Decisions Made',
+          summary: 'Key lessons: Semantic chunking preserves document structure for higher retrieval precision. Hybrid retrieval handles both keyword and conceptual queries. Reranking with summarization manages context budgets without losing coverage. Agentic query planning routes sub-tasks to the right tool (SQL vs RAG). Incremental re-ingestion keeps embeddings current efficiently. These decisions determine whether a RAG system delivers accurate, current answers or confidently wrong ones.'
+        }
+      }
+    });
+
+    Nav.init('m06-sim-rag-pipeline');
+  </script>
+</body>
+</html>

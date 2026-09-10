@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Systems &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Memory Layer Cards --- */
+    .memory-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: var(--space-3);
+    }
+    .memory-icon circle,
+    .memory-icon rect,
+    .memory-icon path {
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    /* --- Side-by-Side Comparison --- */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin: var(--space-6) 0;
+    }
+    .comparison__panel {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+    }
+    .comparison__panel--without {
+      border-color: var(--accent-error);
+    }
+    .comparison__panel--with {
+      border-color: var(--accent-success);
+    }
+    .comparison__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-3);
+    }
+    .comparison__panel--without .comparison__label {
+      color: var(--accent-error);
+    }
+    .comparison__panel--with .comparison__label {
+      color: var(--accent-success);
+    }
+    .comparison__dialogue {
+      font-size: var(--font-sm);
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+    .comparison__dialogue strong {
+      color: var(--text-primary);
+    }
+
+    /* --- Memory Consolidation Diagram --- */
+    .consolidation-svg {
+      width: 100%;
+      max-width: 740px;
+      margin: 0 auto var(--space-8);
+      display: block;
+    }
+    .consolidation-svg .phase-box {
+      fill: none;
+      stroke: var(--stroke-dim);
+      stroke-width: 1.5;
+      stroke-dasharray: 6 4;
+      rx: 8;
+    }
+    .consolidation-svg .phase-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      fill: var(--stroke-primary);
+      text-anchor: middle;
+    }
+    .consolidation-svg .phase-desc {
+      font-family: var(--font-body);
+      font-size: 9px;
+      fill: var(--text-secondary);
+      text-anchor: middle;
+    }
+    .consolidation-svg .flow-arrow {
+      stroke: var(--stroke-primary);
+      stroke-width: 1.5;
+      stroke-dasharray: 6 4;
+      fill: none;
+      marker-end: url(#arrowMarker);
+    }
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -20; }
+    }
+    .consolidation-svg .flow-arrow {
+      animation: dashFlow 1.5s linear infinite;
+    }
+
+    /* --- Memory Classifier --- */
+    .classifier { margin: var(--space-8) 0; }
+    .classifier-item {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      transition: all var(--transition-base);
+    }
+    .classifier-item__question {
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+      line-height: 1.6;
+    }
+    .classifier-item__options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .classify-btn {
+      padding: var(--space-2) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .classify-btn:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.05);
+    }
+    .classify-btn.correct {
+      border-color: var(--accent-success);
+      border-style: solid;
+      color: var(--accent-success);
+      background: rgba(16, 185, 129, 0.1);
+      pointer-events: none;
+    }
+    .classify-btn.wrong {
+      border-color: var(--accent-error);
+      border-style: solid;
+      color: var(--accent-error);
+      background: rgba(239, 68, 68, 0.1);
+      animation: shake 0.5s ease-in-out;
+    }
+    .classifier-item.solved {
+      border-color: var(--accent-success);
+      border-style: solid;
+    }
+    .classifier-item.solved .classify-btn:not(.correct) {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .classifier-score {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      padding: var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin-top: var(--space-4);
+      display: none;
+    }
+    .classifier-score.show {
+      display: block;
+    }
+    .classifier-score.perfect {
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      box-shadow: 0 0 15px var(--glow-success);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    /* --- Sub-type list --- */
+    .memory-subtypes {
+      list-style: none;
+      padding: 0;
+      margin: var(--space-3) 0;
+    }
+    .memory-subtypes li {
+      position: relative;
+      padding-left: var(--space-5);
+      margin-bottom: var(--space-2);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .memory-subtypes li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 8px;
+      height: 1px;
+      background: var(--stroke-primary);
+    }
+
+    .analogy-line {
+      font-style: italic;
+      color: var(--stroke-secondary);
+      border-left: 2px solid var(--stroke-secondary);
+      padding-left: var(--space-4);
+      margin: var(--space-4) 0;
+      font-size: var(--font-sm);
+    }
+
+    @media (max-width: 640px) {
+      .comparison { grid-template-columns: 1fr; }
+      .classifier-item__options { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 04</span>
+        <span class="separator">/</span>
+        <span class="current">Memory Systems</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Page Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 04 &mdash; Lesson 03</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Memory Systems</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Memory is what separates a stateful agent from a stateless chatbot. Without it, every question exists in a vacuum.
+          </p>
+        </header>
+
+        <!-- Blueprint SVG Diagram -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">AGENT MEMORY ARCHITECTURE</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+            <defs>
+              <filter id="mem-glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <marker id="mem-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
+              <marker id="mem-arrow-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="mem-arrow-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker>
+            </defs>
+            <pattern id="mem-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(74,158,255,0.05)" stroke-width="0.5"/></pattern>
+            <rect width="700" height="380" fill="rgba(15,23,42,0.6)" rx="8"/>
+            <rect width="700" height="380" fill="url(#mem-grid)" rx="8"/>
+            <!-- SHORT-TERM MEMORY band -->
+            <rect x="30" y="20" width="480" height="90" rx="6" fill="rgba(74,158,255,0.06)" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="6 4"/>
+            <text x="50" y="42" font-family="JetBrains Mono,monospace" font-size="11" fill="#A100FF">SHORT-TERM MEMORY</text>
+            <text x="50" y="60" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Current conversation (last 8 turns)</text>
+            <text x="50" y="75" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Active query context</text>
+            <text x="50" y="90" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Working scratchpad</text>
+            <!-- Retention label -->
+            <rect x="420" y="28" width="70" height="20" rx="3" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="0.8" stroke-dasharray="3 2"/>
+            <text x="455" y="42" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">Session</text>
+            <!-- EPISODIC MEMORY band -->
+            <rect x="30" y="125" width="480" height="90" rx="6" fill="rgba(45,212,191,0.06)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="6 4"/>
+            <text x="50" y="147" font-family="JetBrains Mono,monospace" font-size="11" fill="#CC00FF">EPISODIC MEMORY</text>
+            <text x="50" y="165" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Past successful queries</text>
+            <text x="50" y="180" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">User preferences</text>
+            <text x="50" y="195" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Error patterns learned</text>
+            <!-- Retention label -->
+            <rect x="405" y="133" width="85" height="20" rx="3" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-width="0.8" stroke-dasharray="3 2"/>
+            <text x="447" y="147" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#CC00FF">Days–Weeks</text>
+            <!-- LONG-TERM MEMORY band -->
+            <rect x="30" y="230" width="480" height="90" rx="6" fill="rgba(245,158,11,0.06)" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="6 4"/>
+            <text x="50" y="252" font-family="JetBrains Mono,monospace" font-size="11" fill="#f59e0b">LONG-TERM MEMORY</text>
+            <text x="50" y="270" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Schema knowledge</text>
+            <text x="50" y="285" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Business glossary</text>
+            <text x="50" y="300" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Metric definitions</text>
+            <!-- Retention label -->
+            <rect x="405" y="238" width="85" height="20" rx="3" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="3 2"/>
+            <text x="447" y="252" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#f59e0b">Permanent</text>
+            <!-- DATAPULSE box on right -->
+            <rect x="560" y="120" width="120" height="100" rx="8" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="2" stroke-dasharray="8 4" filter="url(#mem-glow)"/>
+            <text x="620" y="160" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#f5f5f5">DATAPULSE</text>
+            <text x="620" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Agent Core</text>
+            <!-- Arrows DATAPULSE to/from bands -->
+            <line x1="560" y1="140" x2="510" y2="65" stroke="#A100FF" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#mem-arrow)"/>
+            <line x1="510" y1="55" x2="560" y2="132" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3"/>
+            <line x1="560" y1="165" x2="510" y2="165" stroke="#CC00FF" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#mem-arrow-teal)"/>
+            <line x1="510" y1="175" x2="560" y2="175" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3"/>
+            <line x1="560" y1="195" x2="510" y2="275" stroke="#f59e0b" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#mem-arrow-amber)"/>
+            <line x1="510" y1="265" x2="560" y2="200" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3"/>
+            <!-- Read/Write labels -->
+            <text x="540" y="95" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#A100FF">read/write</text>
+            <text x="540" y="158" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#CC00FF">read/write</text>
+            <text x="540" y="240" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#f59e0b">read/write</text>
+            <!-- Bottom scenario label -->
+            <text x="350" y="352" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#334155">Sofia Torres: DataPulse remembers she always asks about Store #47</text>
+          </svg>
+        </div>
+
+        <!-- ===== SECTION 1: THE SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Scene</div>
+          <h2 style="margin-bottom: var(--space-4);">The Blank Stare</h2>
+          <p>
+            AcmeCorp&rsquo;s VP of Sales asks the agent &ldquo;What about tomorrow?&rdquo; after asking about weather-related sales impact. Without memory, the agent has no idea what &ldquo;tomorrow&rdquo; refers to. It can&rsquo;t connect the dots. Memory is what separates a stateful agent from a stateless chatbot.
+          </p>
+          <div class="callout" style="margin-top: var(--space-6);">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              The VP just asked about rain&rsquo;s impact on foot traffic. Seconds later, they follow up: &ldquo;What about tomorrow?&rdquo; A stateless chatbot responds: &ldquo;I&rsquo;m sorry, can you clarify what you mean?&rdquo; A memory-enabled agent instantly knows the VP is asking about tomorrow&rsquo;s weather forecast and its expected sales impact.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: THREE MEMORY LAYERS ===== -->
+        <section class="section">
+          <div class="section-label reveal">Three Memory Layers</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-6);">How Agents Remember</h2>
+
+          <!-- Working Memory -->
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="bp-card__number">1</span>
+              Working Memory
+            </div>
+            <div class="bp-card__body">
+              <svg class="memory-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <rect x="6" y="6" width="36" height="36" rx="4" stroke="#A100FF" stroke-dasharray="4 3"/>
+                <circle cx="24" cy="24" r="8" stroke="#A100FF"/>
+                <line x1="24" y1="16" x2="24" y2="12" stroke="#A100FF" stroke-dasharray="2 2"/>
+                <line x1="24" y1="36" x2="24" y2="32" stroke="#A100FF" stroke-dasharray="2 2"/>
+                <line x1="16" y1="24" x2="12" y2="24" stroke="#A100FF" stroke-dasharray="2 2"/>
+                <line x1="36" y1="24" x2="32" y2="24" stroke="#A100FF" stroke-dasharray="2 2"/>
+              </svg>
+              <p><strong>The current context window.</strong> What the agent is actively processing right now &mdash; the live registers of its thought process.</p>
+              <div class="badge badge--blue" style="margin: var(--space-3) 0;" data-tip="Working memory — the live context window holding the current query, tools, and reasoning state">Current Context</div>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp in Action</div>
+                <div class="callout__text">
+                  The agent holds the current SQL query, the user&rsquo;s question, and the last 3 tool results in working memory.
+                </div>
+              </div>
+              <div class="analogy-line">Your desk &mdash; what you&rsquo;re actively working on.</div>
+            </div>
+          </div>
+
+          <!-- Session Memory -->
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="bp-card__number">2</span>
+              Session Memory
+            </div>
+            <div class="bp-card__body">
+              <svg class="memory-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <rect x="8" y="4" width="32" height="40" rx="3" stroke="#CC00FF" stroke-dasharray="4 3"/>
+                <line x1="14" y1="14" x2="34" y2="14" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="14" y1="20" x2="30" y2="20" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="14" y1="26" x2="32" y2="26" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="14" y1="32" x2="26" y2="32" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3 2"/>
+              </svg>
+              <p><strong>The current conversation.</strong> Conversation history within the current chat session &mdash; recent messages, actions, and preferences the user expressed during this interaction.</p>
+              <div class="badge badge--teal" style="margin: var(--space-3) 0;" data-tip="Session memory — conversation history, recent tool calls, and user preferences within this chat">Session Scope</div>
+              <ul class="memory-subtypes">
+                <li>Last N messages from the conversation</li>
+                <li>Recent tool calls and their results</li>
+                <li>User preferences expressed during the session</li>
+              </ul>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp in Action</div>
+                <div class="callout__text">
+                  When the VP says &ldquo;break that down by region,&rdquo; the agent remembers &ldquo;that&rdquo; refers to Q3 revenue they just discussed.
+                </div>
+              </div>
+              <div class="analogy-line">Your notebook &mdash; notes from this meeting.</div>
+            </div>
+          </div>
+
+          <!-- Long-Term Memory -->
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="bp-card__number">3</span>
+              Long-Term Memory
+            </div>
+            <div class="bp-card__body">
+              <svg class="memory-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="24" cy="14" rx="16" ry="6" stroke="#f59e0b" stroke-dasharray="4 3" fill="none"/>
+                <path d="M8 14v10c0 3.3 7.2 6 16 6s16-2.7 16-6V14" stroke="#f59e0b" stroke-dasharray="4 3" fill="none"/>
+                <path d="M8 24v10c0 3.3 7.2 6 16 6s16-2.7 16-6V24" stroke="#f59e0b" stroke-dasharray="4 3" fill="none"/>
+              </svg>
+              <p><strong>Persistent across sessions.</strong> Knowledge that survives beyond any single conversation &mdash; the agent&rsquo;s accumulated wisdom about your organization, data, and preferences.</p>
+              <div class="badge badge--amber" style="margin: var(--space-3) 0;" data-tip="Long-term memory — facts, episodes, procedures, and preferences that persist across sessions">Persistent</div>
+              <ul class="memory-subtypes">
+                <li><strong>Factual:</strong> &ldquo;Table X has columns A, B, C&rdquo;</li>
+                <li><strong>Episodic:</strong> &ldquo;User asked about sales last Tuesday&rdquo;</li>
+                <li><strong>Procedural:</strong> &ldquo;To compute revenue, use SUM(total_amount)&rdquo;</li>
+                <li><strong>Preferences:</strong> &ldquo;User prefers monthly views, bar charts over tables&rdquo;</li>
+              </ul>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp in Action</div>
+                <div class="callout__text">
+                  When the VP returns next week, the agent remembers they prefer regional breakdowns and that &ldquo;revenue&rdquo; means total_amount excluding returns.
+                </div>
+              </div>
+              <div class="analogy-line">Your filing cabinet &mdash; reference material built over years.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: MEMORY CONSOLIDATION ===== -->
+        <section class="section reveal">
+          <div class="section-label">Memory Lifecycle</div>
+          <h2 style="margin-bottom: var(--space-6);">The Consolidation Cycle</h2>
+          <p style="margin-bottom: var(--space-6);">Memory doesn&rsquo;t just happen &mdash; it flows through a deliberate consolidation cycle at every session boundary.</p>
+
+          <svg class="consolidation-svg" viewBox="0 0 740 260" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowMarker" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1.2"/>
+              </marker>
+            </defs>
+
+            <!-- Phase 1: Session Start -->
+            <rect class="phase-box" x="20" y="40" width="200" height="140" style="stroke: #A100FF;"/>
+            <text class="phase-label" x="120" y="75" style="fill: #A100FF;">Session Start</text>
+            <text class="phase-desc" x="120" y="100">Retrieve relevant</text>
+            <text class="phase-desc" x="120" y="115">past sessions</text>
+            <text class="phase-desc" x="120" y="138" style="fill: #A100FF; font-family: var(--font-mono);">&#8594; Add to context</text>
+
+            <!-- Arrow 1 to 2 -->
+            <path class="flow-arrow" d="M225,110 C270,110 250,110 275,110"/>
+
+            <!-- Phase 2: During Session -->
+            <rect class="phase-box" x="280" y="40" width="200" height="140" style="stroke: #CC00FF;"/>
+            <text class="phase-label" x="380" y="75" style="fill: #CC00FF;">During Session</text>
+            <text class="phase-desc" x="380" y="100">Store important</text>
+            <text class="phase-desc" x="380" y="115">interactions</text>
+            <text class="phase-desc" x="380" y="138" style="fill: #CC00FF; font-family: var(--font-mono);">&#8594; Tag &amp; index</text>
+
+            <!-- Arrow 2 to 3 -->
+            <path class="flow-arrow" d="M485,110 C530,110 510,110 535,110"/>
+
+            <!-- Phase 3: Session End -->
+            <rect class="phase-box" x="540" y="40" width="180" height="140" style="stroke: #f59e0b;"/>
+            <text class="phase-label" x="630" y="75" style="fill: #f59e0b;">Session End</text>
+            <text class="phase-desc" x="630" y="100">Summarize key</text>
+            <text class="phase-desc" x="630" y="115">learnings</text>
+            <text class="phase-desc" x="630" y="138" style="fill: #f59e0b; font-family: var(--font-mono);">&#8594; Write to LTM</text>
+
+            <!-- Return arrow (bottom) -->
+            <path class="flow-arrow" d="M630,185 C630,230 120,230 120,185" style="stroke-dasharray: 8 5;"/>
+            <text class="phase-desc" x="370" y="248" style="fill: var(--text-secondary);">Cycle repeats &mdash; each session enriches long-term memory</text>
+          </svg>
+        </section>
+
+        <!-- ===== SECTION 4: GOOD ACCOUNTANT ANALOGY ===== -->
+        <section class="section reveal">
+          <div class="collapsible" id="accountant-collapsible">
+            <button class="collapsible__header">
+              <span>Analogy: The Good Accountant</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>
+                  A good accountant remembers that Mrs. Johnson prefers email, has a home office, and her fiscal year ends in March. They don&rsquo;t ask every year. They built that knowledge over dozens of interactions and filed it away. When Mrs. Johnson calls in February, the accountant already knows it&rsquo;s tax prep time without being told.
+                </p>
+                <p style="margin-top: var(--space-3);">
+                  Your data agent should do the same. It should learn user preferences, remember domain-specific definitions, and recall past interactions &mdash; not start from scratch every time.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: SIDE-BY-SIDE COMPARISON ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Difference</div>
+          <h2 style="margin-bottom: var(--space-6);">Without Memory vs. With Memory</h2>
+
+          <div class="comparison">
+            <div class="comparison__panel comparison__panel--without">
+              <div class="comparison__label">Without Memory</div>
+              <div class="comparison__dialogue">
+                <strong>User:</strong> &ldquo;What about tomorrow?&rdquo;<br><br>
+                <strong>Agent:</strong> &ldquo;I&rsquo;m sorry, can you clarify what you mean?&rdquo;
+              </div>
+            </div>
+            <div class="comparison__panel comparison__panel--with">
+              <div class="comparison__label">With Memory</div>
+              <div class="comparison__dialogue">
+                <strong>User:</strong> &ldquo;What about tomorrow?&rdquo;<br><br>
+                <strong>Agent:</strong> &ldquo;Tomorrow&rsquo;s forecast shows light rain, which historically correlates with a 12% dip in foot traffic at your Northeast stores.&rdquo;
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 6: MINI INTERACTION ===== -->
+        <section class="section reveal">
+          <div class="section-label">Knowledge Check</div>
+          <h2 style="margin-bottom: var(--space-4);">Classify the Memory Type</h2>
+          <p style="margin-bottom: var(--space-6);">For each scenario, identify which memory layer is being used.</p>
+
+          <div class="classifier" id="memoryClassifier">
+
+            <div class="classifier-item" data-answer="working" id="mem-1">
+              <div class="classifier-item__question">
+                The agent is currently processing a SQL JOIN query.
+              </div>
+              <div class="classifier-item__options">
+                <button class="classify-btn" data-choice="working">Working Memory</button>
+                <button class="classify-btn" data-choice="session">Session Memory</button>
+                <button class="classify-btn" data-choice="longterm">Long-Term Memory</button>
+              </div>
+            </div>
+
+            <div class="classifier-item" data-answer="session" id="mem-2">
+              <div class="classifier-item__question">
+                The user mentioned 5 minutes ago they want data in CSV format.
+              </div>
+              <div class="classifier-item__options">
+                <button class="classify-btn" data-choice="working">Working Memory</button>
+                <button class="classify-btn" data-choice="session">Session Memory</button>
+                <button class="classify-btn" data-choice="longterm">Long-Term Memory</button>
+              </div>
+            </div>
+
+            <div class="classifier-item" data-answer="longterm" id="mem-3">
+              <div class="classifier-item__question">
+                The agent knows that &ldquo;revenue&rdquo; in AcmeCorp always means net_sales &minus; returns.
+              </div>
+              <div class="classifier-item__options">
+                <button class="classify-btn" data-choice="working">Working Memory</button>
+                <button class="classify-btn" data-choice="session">Session Memory</button>
+                <button class="classify-btn" data-choice="longterm">Long-Term Memory</button>
+              </div>
+            </div>
+
+            <div class="classifier-item" data-answer="working" id="mem-4">
+              <div class="classifier-item__question">
+                The agent is holding the latest API response in its context.
+              </div>
+              <div class="classifier-item__options">
+                <button class="classify-btn" data-choice="working">Working Memory</button>
+                <button class="classify-btn" data-choice="session">Session Memory</button>
+                <button class="classify-btn" data-choice="longterm">Long-Term Memory</button>
+              </div>
+            </div>
+
+            <div class="classifier-item" data-answer="longterm" id="mem-5">
+              <div class="classifier-item__question">
+                The user always prefers bar charts over pie charts.
+              </div>
+              <div class="classifier-item__options">
+                <button class="classify-btn" data-choice="working">Working Memory</button>
+                <button class="classify-btn" data-choice="session">Session Memory</button>
+                <button class="classify-btn" data-choice="longterm">Long-Term Memory</button>
+              </div>
+            </div>
+
+            <div class="classifier-score" id="classifierScore"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAVIGATION ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="02-multi-agent.html" class="page-nav__title">Multi-Agent Systems</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="04-state-failure.html" class="page-nav__title">State Transitions &amp; Failure Handling</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    Nav.init('m04-memory-systems');
+
+    // ===== MEMORY CLASSIFIER ENGINE =====
+    (function() {
+      var solved = 0;
+      var total = 5;
+      var container = document.getElementById('memoryClassifier');
+      var scoreEl = document.getElementById('classifierScore');
+
+      container.addEventListener('click', function(e) {
+        var btn = e.target.closest('.classify-btn');
+        if (!btn) return;
+
+        var item = btn.closest('.classifier-item');
+        if (item.classList.contains('solved')) return;
+
+        var answer = item.getAttribute('data-answer');
+        var choice = btn.getAttribute('data-choice');
+
+        if (choice === answer) {
+          btn.classList.add('correct');
+          item.classList.add('solved');
+          solved++;
+
+          if (solved === total) {
+            scoreEl.textContent = 'Perfect! All ' + total + ' memory types correctly classified!';
+            scoreEl.classList.add('show', 'perfect');
+          }
+        } else {
+          btn.classList.add('wrong');
+          setTimeout(function() { btn.classList.remove('wrong'); }, 600);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

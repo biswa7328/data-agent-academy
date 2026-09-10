@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulation: Build the Layers — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M9 21V9"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <a href="../../modules/module-01/01-five-layer-arch.html">Module 01</a>
+        <span class="separator">/</span>
+        <span class="current">Simulation: Build the Layers</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Interactive Simulation</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Build the Layers</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <div class="callout reveal">
+            <div class="callout__label">Mission Brief</div>
+            <div class="callout__text">
+              Time to build AcmeCorp's Data Agent from scratch. You'll make 5 decisions &mdash; one for each layer. Choose wisely &mdash; your choices have consequences.
+            </div>
+          </div>
+        </section>
+
+        <!-- Simulation Container -->
+        <section class="section">
+          <div id="sim-container"></div>
+        </section>
+
+        <!-- Reset Button -->
+        <div class="reveal" style="text-align: center; margin-bottom: var(--space-8);">
+          <button class="btn btn--teal" onclick="SimulationEngine.reset()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+            </svg>
+            Restart Simulation
+          </button>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../../modules/module-01/04-tool-calling.html" class="page-nav__title">Tool Calling</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../../modules/module-01/05-agent-anatomy.html" class="page-nav__title">Agent Anatomy</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Architecture & Design Foundations Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Simulation Config: Build the Layers ---
+    const simConfig = {
+      title: 'Build the Layers',
+      nodes: {
+
+        // ===== LAYER 1: AGENT RUNTIME =====
+        'start': {
+          type: 'decision',
+          title: 'Layer 1: Agent Runtime',
+          description: 'The runtime is the foundation of your Data Agent &mdash; it controls execution flow, state management, and error recovery. What approach should AcmeCorp use?',
+          choices: [
+            {
+              label: 'Lightweight LangChain wrapper',
+              hint: 'Quick to set up, popular framework',
+              next: 'runtime-light',
+              isGood: true
+            },
+            {
+              label: 'LangGraph with full state management',
+              hint: 'Production-grade with retries and state',
+              next: 'runtime-full',
+              isGood: true
+            },
+            {
+              label: 'Custom Python scripts',
+              hint: 'Full control, no dependencies',
+              next: 'runtime-custom',
+              isGood: false
+            }
+          ]
+        },
+
+        'runtime-light': {
+          type: 'consequence',
+          title: 'Lightweight LangChain Wrapper',
+          consequence: 'Good for prototyping &mdash; you can get a demo working in days. But LangChain wrappers lack built-in state management, retry logic, and conditional branching. AcmeCorp will outgrow this quickly once they need production reliability across 200 stores.',
+          isGood: true,
+          next: 'tools-decision'
+        },
+
+        'runtime-full': {
+          type: 'consequence',
+          title: 'LangGraph with Full State Management',
+          consequence: 'Excellent choice. LangGraph gives AcmeCorp production-ready execution with built-in state persistence, conditional branching, retry policies, and human-in-the-loop checkpoints. This scales from prototype to production without a rewrite.',
+          isGood: true,
+          next: 'tools-decision'
+        },
+
+        'runtime-custom': {
+          type: 'consequence',
+          title: 'Custom Python Scripts',
+          consequence: 'Dangerous path. No framework means building state management, error handling, retry logic, and tool orchestration from scratch. AcmeCorp\'s two-person team will spend months rebuilding what frameworks provide out of the box. Technical debt starts on day one.',
+          isGood: false,
+          next: 'tools-decision'
+        },
+
+        // ===== LAYER 2: TOOL LAYER =====
+        'tools-decision': {
+          type: 'decision',
+          title: 'Layer 2: Tool Layer',
+          description: 'Tools are how your agent interacts with the real world &mdash; databases, APIs, file systems. Which tools does AcmeCorp need for their Data Agent?',
+          choices: [
+            {
+              label: 'Only SQL query execution',
+              hint: 'Keep it simple &mdash; just run queries',
+              next: 'tools-limited',
+              isGood: false
+            },
+            {
+              label: 'SQL + Schema Discovery + API connectors',
+              hint: 'Balanced toolkit for data exploration',
+              next: 'tools-balanced',
+              isGood: true
+            },
+            {
+              label: 'Every possible tool available',
+              hint: 'Maximum capability &mdash; why limit yourself?',
+              next: 'tools-overloaded',
+              isGood: false
+            }
+          ]
+        },
+
+        'tools-limited': {
+          type: 'consequence',
+          title: 'Only SQL Query Execution',
+          consequence: 'Too limited. Without schema discovery, the agent can\'t understand table structures or column meanings. It will hallucinate column names and write broken queries. Users will lose trust after the first few failures.',
+          isGood: false,
+          next: 'context-decision'
+        },
+
+        'tools-balanced': {
+          type: 'consequence',
+          title: 'SQL + Schema Discovery + API Connectors',
+          consequence: 'Well balanced. Schema discovery lets the agent understand what data exists. SQL execution runs the queries. API connectors enable enrichment from external systems. Each tool has a clear purpose &mdash; the LLM can reason about when to use each one.',
+          isGood: true,
+          next: 'context-decision'
+        },
+
+        'tools-overloaded': {
+          type: 'consequence',
+          title: 'Every Possible Tool Available',
+          consequence: 'Tool overload is a real problem. When the LLM has 50+ tools to choose from, it struggles to select the right one. Irrelevant tools increase hallucination rates and response latency. Less is more &mdash; curate your toolkit carefully.',
+          isGood: false,
+          next: 'context-decision'
+        },
+
+        // ===== LAYER 3: DATA & CONTEXT =====
+        'context-decision': {
+          type: 'decision',
+          title: 'Layer 3: Data & Context',
+          description: 'Context is what the agent knows before it starts reasoning. How should AcmeCorp provide data context to the agent?',
+          choices: [
+            {
+              label: 'Dump the entire schema into every prompt',
+              hint: 'The agent sees everything at all times',
+              next: 'context-dump',
+              isGood: false
+            },
+            {
+              label: 'Dynamic context retrieval based on the query',
+              hint: 'Fetch only relevant schema and examples',
+              next: 'context-dynamic',
+              isGood: true
+            },
+            {
+              label: 'No context &mdash; let the LLM figure it out',
+              hint: 'Trust the model\'s knowledge',
+              next: 'context-none',
+              isGood: false
+            }
+          ]
+        },
+
+        'context-dump': {
+          type: 'consequence',
+          title: 'Dump the Entire Schema',
+          consequence: 'AcmeCorp has 400+ tables across their warehouse. Dumping all of that into every prompt burns through context windows, increases cost, and actually hurts accuracy &mdash; the LLM gets lost in irrelevant schema details. Targeted context wins every time.',
+          isGood: false,
+          next: 'guardrails-decision'
+        },
+
+        'context-dynamic': {
+          type: 'consequence',
+          title: 'Dynamic Context Retrieval',
+          consequence: 'Smart approach. When a user asks about "Q3 revenue by store," the agent retrieves only the sales and stores schemas, relevant column descriptions, and similar past queries. This keeps the context window focused and dramatically improves query accuracy.',
+          isGood: true,
+          next: 'guardrails-decision'
+        },
+
+        'context-none': {
+          type: 'consequence',
+          title: 'No Context Provided',
+          consequence: 'Catastrophic. Without schema context, the LLM will hallucinate table names, invent columns, and generate SQL that looks plausible but fails every time. The model doesn\'t know AcmeCorp\'s data &mdash; you must tell it.',
+          isGood: false,
+          next: 'guardrails-decision'
+        },
+
+        // ===== LAYER 4: GUARDRAILS =====
+        'guardrails-decision': {
+          type: 'decision',
+          title: 'Layer 4: Guardrails',
+          description: 'Guardrails protect the system, the data, and the users. What level of safety should AcmeCorp implement?',
+          choices: [
+            {
+              label: 'No guardrails &mdash; ship fast',
+              hint: 'We\'ll add safety later, just ship it',
+              next: 'guardrails-none',
+              isGood: false
+            },
+            {
+              label: 'Basic input validation only',
+              hint: 'Check for SQL injection, validate syntax',
+              next: 'guardrails-basic',
+              isGood: true
+            },
+            {
+              label: 'Full RBAC + PII masking + rate limiting',
+              hint: 'Enterprise-grade safety from day one',
+              next: 'guardrails-full',
+              isGood: true
+            }
+          ]
+        },
+
+        'guardrails-none': {
+          type: 'consequence',
+          title: 'No Guardrails &mdash; Ship Fast',
+          consequence: '3 weeks later, a store clerk queries the salary table through the agent. Employee names, salaries, and SSNs appear in a chat response. The clerk screenshots it and shares it on Slack. HR is furious. Legal is called. The entire Data Agent project is suspended pending a security review. "We\'ll add safety later" became "we\'ll explain this to the board later."',
+          isGood: false,
+          next: 'evaluation-decision'
+        },
+
+        'guardrails-basic': {
+          type: 'consequence',
+          title: 'Basic Input Validation Only',
+          consequence: 'A reasonable start. Input validation catches SQL injection and malformed queries. But without output filtering, PII can still leak. Without RBAC, any user can access any data. It\'s better than nothing, but AcmeCorp will need to add layers before going to production.',
+          isGood: true,
+          next: 'evaluation-decision'
+        },
+
+        'guardrails-full': {
+          type: 'consequence',
+          title: 'Full RBAC + PII Masking + Rate Limiting',
+          consequence: 'Enterprise-ready. Role-Based Access Control ensures store clerks only see their store\'s data. PII masking filters sensitive information from agent responses. Rate limiting prevents abuse and controls LLM costs. This is the gold standard for production deployment.',
+          isGood: true,
+          next: 'evaluation-decision'
+        },
+
+        // ===== LAYER 5: EVALUATION =====
+        'evaluation-decision': {
+          type: 'decision',
+          title: 'Layer 5: Evaluation & Observability',
+          description: 'The agent is live. How will AcmeCorp know if it\'s working well, and how will they improve it over time?',
+          choices: [
+            {
+              label: 'Check manually when users complain',
+              hint: 'If nobody complains, it must be working',
+              next: 'eval-manual',
+              isGood: false
+            },
+            {
+              label: 'Log everything and review weekly',
+              hint: 'Batch review of all interactions',
+              next: 'eval-logs',
+              isGood: true
+            },
+            {
+              label: 'Real-time quality metrics + automated alerts + cost tracking',
+              hint: 'Full observability pipeline',
+              next: 'eval-full',
+              isGood: true
+            }
+          ]
+        },
+
+        'eval-manual': {
+          type: 'consequence',
+          title: 'Check Manually When Users Complain',
+          consequence: 'By the time users complain, trust is already lost. AcmeCorp discovers that 40% of queries were returning wrong answers for two weeks &mdash; but nobody reported it because they assumed the agent was right. Silent failures are the most dangerous kind.',
+          isGood: false,
+          next: 'result'
+        },
+
+        'eval-logs': {
+          type: 'consequence',
+          title: 'Log Everything and Review Weekly',
+          consequence: 'Logging is essential, and weekly reviews catch trends. But a week is a long time &mdash; if the agent starts hallucinating on Monday, 200 stores get bad data for five days before anyone notices. Consider adding real-time alerts for critical metrics.',
+          isGood: true,
+          next: 'result'
+        },
+
+        'eval-full': {
+          type: 'consequence',
+          title: 'Real-time Metrics + Alerts + Cost Tracking',
+          consequence: 'Full observability. Query accuracy, latency percentiles, cost per query, error rates &mdash; all tracked in real time. Automated alerts fire when accuracy drops below threshold. AcmeCorp can iterate confidently because they can measure the impact of every change.',
+          isGood: true,
+          next: 'result'
+        },
+
+        // ===== RESULT =====
+        'result': {
+          type: 'result',
+          title: 'Architecture Complete',
+          get score() {
+            if (!SimulationEngine.active) return '?/5';
+            const h = SimulationEngine.active.history;
+            const good = h.filter(x => x.wasGood).length;
+            return good + '/5';
+          },
+          scoreLabel: 'Layers Built Successfully',
+          get summary() {
+            if (!SimulationEngine.active) return '';
+            const h = SimulationEngine.active.history;
+            const good = h.filter(x => x.wasGood).length;
+            if (good === 5) return 'Perfect architecture! You made production-ready choices at every layer. AcmeCorp\'s Data Agent is built on a solid foundation &mdash; scalable, safe, and observable.';
+            if (good >= 3) return 'Solid foundation with room for improvement. You made good choices on most layers, but some areas will need hardening before AcmeCorp goes to production. Review the consequence feedback above.';
+            return 'This architecture has significant risks. Multiple layers have gaps that will cause production failures. Review each consequence carefully &mdash; AcmeCorp\'s agent needs a stronger foundation before launch.';
+          }
+        }
+      }
+    };
+
+    // Initialize
+    Nav.init('m1-sim-build-layers');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      SimulationEngine.init('sim-container', simConfig);
+    });
+  </script>
+</body>
+</html>

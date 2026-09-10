@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 06 Quiz &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+    }
+    .stat-box__value {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-2);
+    }
+    .stat-box__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    @media (max-width: 640px) {
+      .stats-row { grid-template-columns: 1fr; }
+    }
+
+    /* Celebration section */
+    .module-complete {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      margin-top: var(--space-10);
+      background: var(--bg-surface);
+      border: 2px solid transparent;
+      border-radius: var(--border-radius-lg);
+      position: relative;
+      overflow: hidden;
+      animation: celebFadeIn 0.8s ease-out forwards;
+    }
+    @keyframes celebFadeIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .module-complete::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      border-radius: var(--border-radius-lg);
+      background: linear-gradient(90deg, #A100FF, #CC00FF, #A100FF);
+      background-size: 300% 100%;
+      animation: borderGlow 3s linear infinite;
+      z-index: -1;
+    }
+    .module-complete::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px; right: 2px; bottom: 2px;
+      border-radius: calc(var(--border-radius-lg) - 2px);
+      background: var(--bg-surface);
+      z-index: -1;
+    }
+    @keyframes borderGlow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+    .module-complete__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--stroke-secondary);
+      margin-bottom: var(--space-6);
+      font-size: 36px;
+      box-shadow: 0 0 30px rgba(204, 0, 255, 0.2);
+    }
+    .module-complete__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-2xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .module-complete__subtitle {
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+      max-width: 550px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--space-3);
+      margin: var(--space-6) 0;
+      text-align: left;
+    }
+    .concept-tag {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
+      background: var(--bg-primary);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .concept-tag:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+    }
+    .concept-tag svg { flex-shrink: 0; color: var(--stroke-secondary); }
+    .cc-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary));
+      margin: var(--space-8) auto;
+      border-radius: 1px;
+    }
+    .cc-section-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--stroke-secondary);
+      margin-bottom: var(--space-4);
+    }
+    .cc-heading {
+      font-family: var(--font-mono);
+      font-size: var(--font-xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+    }
+    @media (max-width: 768px) {
+      .concept-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 06</span>
+        <span class="separator">/</span>
+        <span class="current">Quiz Checkpoint</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 06 &mdash; Quiz Checkpoint</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Context Engineering &amp; RAG Assessment</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            Over the past three weeks, Maya Chen's team took DataPulse from burning 80K tokens with 42% accuracy to a lean, RAG-powered system hitting 91% accuracy across AcmeCorp's 200 stores. Sofia Torres retired her spreadsheets. Derek Kim approved the budget. Priya Sharma's audits came back clean. Before you move on, let's test your understanding of how they got there.
+          </p>
+
+          <div class="stats-row reveal reveal--delay-2">
+            <div class="stat-box">
+              <div class="stat-box__value">4</div>
+              <div class="stat-box__label">Lessons Complete</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">10</div>
+              <div class="stat-box__label">Questions</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">80%</div>
+              <div class="stat-box__label">Pass Threshold</div>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">How It Works</div>
+            <div class="callout__text">
+              Select one answer per question. Once all 10 are answered, click "Check Answers" to see your score with detailed explanations. You need 80% (8/10) to pass. Questions cover context engineering, chunking, retrieval strategies, vector databases, and agentic RAG &mdash; all through the lens of AcmeCorp's DataPulse journey.
+            </div>
+          </div>
+        </header>
+
+        <!-- Quiz Container -->
+        <section class="section">
+          <div id="quiz-container"></div>
+        </section>
+
+        <!-- Celebration Section (shown after quiz) -->
+        <div id="celebration-section" class="reveal" style="display: none;">
+          <div class="module-complete">
+            <div class="module-complete__badge" style="position: relative; z-index: 2;">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="1.5">
+                <path d="M12 15l-3.5 2 .67-3.89L6 10.11l3.92-.57L12 6l2.08 3.54 3.92.57-3.17 3L15.5 17z"/>
+              </svg>
+            </div>
+
+            <div class="module-complete__title" style="position: relative; z-index: 2;">Module 06 Complete</div>
+            <p class="module-complete__subtitle" style="position: relative; z-index: 2;">
+              You have mastered Context Engineering and RAG &mdash; the same journey Maya Chen's team took at AcmeCorp, from a bloated 80K-token context window with 42% accuracy to a budgeted, RAG-powered pipeline hitting 91%. From context window budgeting and chunking strategies to hybrid retrieval and agentic RAG patterns, DataPulse now has a production-grade knowledge retrieval system serving all 200 stores.
+            </p>
+
+            <div class="cc-divider"></div>
+
+            <div style="position: relative; z-index: 2; text-align: center;">
+              <div class="cc-section-label">Concepts Mastered</div>
+              <div class="cc-heading">Module 06 Knowledge Map</div>
+              <div class="concept-grid">
+                <div class="concept-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Context Engineering
+                </div>
+                <div class="concept-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  JIT Context Loading
+                </div>
+                <div class="concept-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Token Budgeting
+                </div>
+                <div class="concept-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  The Context Cliff
+                </div>
+                <div class="concept-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  RAG Pipeline Stages
+                </div>
+                <div class="concept-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Chunking Strategies
+                </div>
+                <div class="concept-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Hybrid Retrieval
+                </div>
+                <div class="concept-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Vector Databases
+                </div>
+                <div class="concept-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Contextual Retrieval
+                </div>
+                <div class="concept-tag">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  Agentic RAG Patterns
+                </div>
+              </div>
+            </div>
+
+            <div class="cc-divider"></div>
+
+            <div style="position: relative; z-index: 2;">
+              <div class="callout" style="text-align: left; margin: 0 auto; max-width: 600px;">
+                <div class="callout__label">AcmeCorp Status</div>
+                <div class="callout__text">
+                  DataPulse has come a long way. Maya Chen's context engineering keeps the 128K window lean. Priya Sharma's chunking pipeline feeds fresh schema knowledge via hybrid search with reranking. Sofia Torres runs her weekly Store #47 reviews entirely through the agent. Derek Kim signed off on the ROI. The next challenge: getting DataPulse to talk to AcmeCorp's other systems. <strong>Next up: Interoperability Protocols (MCP, A2A) in Module 07.</strong>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: var(--space-8); position: relative; z-index: 2;">
+              <a href="../module-07/01-mcp-protocol.html" class="btn btn--primary">Continue to Module 07 &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Page Navigation -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="04-agentic-rag.html" class="page-nav__title">Agentic RAG</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="../module-07/01-mcp-protocol.html" class="page-nav__title">MCP Protocol</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    const questions = [
+      {
+        question: "Maya Chen discovered DataPulse was loading all 500 table schemas into every prompt. Which context engineering principle fixes this by loading only the 3\u20135 relevant schemas per query?",
+        options: [
+          "Context Window Budgeting",
+          "Summarization Checkpoints",
+          "JIT Context Loading",
+          "Token-Efficient Tool Design"
+        ],
+        correct: 2,
+        explanation: "JIT (Just-In-Time) Context Loading retrieves only the schemas relevant to the current query rather than loading everything upfront. At AcmeCorp, this meant loading fact_sales, dim_stores, and dim_dates for Sofia Torres's store-level queries instead of all 500+ tables \u2014 cutting schema tokens from 80K to under 5K."
+      },
+      {
+        question: "Priya Sharma noticed DataPulse's accuracy cratered after conversation turn 5. The 'context cliff' refers to the threshold where performance degrades sharply. At approximately how many tokens of retrieved context does this occur?",
+        options: [
+          "500 tokens",
+          "2,500 tokens",
+          "10,000 tokens",
+          "50,000 tokens"
+        ],
+        correct: 1,
+        explanation: "Research shows the context cliff occurs at approximately 2,500 tokens of retrieved context. Maya initially retrieved 15 schema chunks per query, pushing past this threshold. When she trimmed to the top 5 chunks (staying under 2,500 tokens), DataPulse's accuracy climbed back up."
+      },
+      {
+        question: "When Maya built AcmeCorp's first RAG pipeline, she used fixed-size 1,024-token chunks and a single chunk mixed columns from fact_sales and dim_products. What percentage of RAG failures trace back to such chunking decisions?",
+        options: [
+          "20%",
+          "50%",
+          "65%",
+          "80%"
+        ],
+        correct: 3,
+        explanation: "80% of RAG failures trace to chunking decisions. At AcmeCorp, Priya Sharma proved this: switching from fixed-size to recursive chunking alone lifted DataPulse's schema-retrieval accuracy from 69% to 75%, with zero changes to any other component."
+      },
+      {
+        question: "After testing all five chunking strategies on AcmeCorp's warehouse documentation, which approach did Maya and Priya select as the best starting point for production?",
+        options: [
+          "Fixed-size at 1,024 tokens",
+          "Semantic chunking with topic detection",
+          "Recursive at 256\u2013512 tokens with 10\u201320% overlap",
+          "Hierarchical with parent-child relationships"
+        ],
+        correct: 2,
+        explanation: "Recursive chunking at 256\u2013512 tokens with 10\u201320% overlap preserves semantic boundaries (splitting by paragraphs, then sentences, then tokens), offers ~75% accuracy, and provides the best balance of quality, simplicity, and cost. Priya used 400-token chunks for schema docs, keeping each table self-contained."
+      },
+      {
+        question: "Sofia Torres's store-level query returned region-wide results, while a marketing intern's SKU search returned nothing. Maya fixed both by combining which two search approaches?",
+        options: [
+          "Semantic chunking and keyword chunking",
+          "Dense (vector) search and Sparse (BM25/keyword) search",
+          "Cross-encoder reranking and bi-encoder embedding",
+          "Contextual retrieval and adaptive retrieval"
+        ],
+        correct: 1,
+        explanation: "Hybrid retrieval combines Dense (vector) search for semantic understanding with Sparse (BM25/keyword) search for exact term matching. Dense search handled Sofia's natural language query about 'revenue,' while BM25 caught the intern's exact SKU 'AC-WIDGET-001' that embedding models could not encode meaningfully."
+      },
+      {
+        question: "Priya found DataPulse retrieved a chunk about sell-through rates but could not determine the quarter or product category. Which technique did Maya add to solve this orphaned-chunk problem?",
+        options: [
+          "Using a larger embedding model for better semantic matching",
+          "Prepending document-level context to each chunk before embedding",
+          "Running multiple retrieval passes with different query reformulations",
+          "Applying cross-encoder reranking to all retrieved chunks"
+        ],
+        correct: 1,
+        explanation: "Contextual Retrieval prepends a short document-level context (source, section title, document type) to each chunk before embedding. At AcmeCorp, this turned orphaned chunks into traceable references \u2014 DataPulse could now tell Sofia the sell-through data came from the Q3 (July\u2013September) Southwest Apparel Metrics report."
+      },
+      {
+        question: "AcmeCorp already runs PostgreSQL for their 500+ table data warehouse. Marcus Webb from Security preferred minimizing new vendor risk. Which vector database did Maya choose?",
+        options: [
+          "Milvus",
+          "Pinecone",
+          "ChromaDB",
+          "pgvector"
+        ],
+        correct: 3,
+        explanation: "pgvector adds vector search as a PostgreSQL extension, requiring no new infrastructure. Since AcmeCorp already ran PostgreSQL, this kept everything in one place with fewer than 10M vectors to manage. Marcus Webb appreciated not having to vet a new vendor for security compliance."
+      },
+      {
+        question: "In agentic RAG, what are the three intelligent decisions the agent makes about retrieval?",
+        options: [
+          "Which model, which prompt, which temperature",
+          "When to retrieve, What to search for, How to evaluate results",
+          "How many chunks, which database, what embedding model",
+          "Whether to cache, when to re-embed, how to compress"
+        ],
+        correct: 1,
+        explanation: "Agentic RAG agents make three decisions: WHEN to retrieve (is retrieval even needed?), WHAT to search for (reformulating queries, decomposing into sub-queries), and HOW to evaluate results (assessing relevance before using retrieved context). This contrasts with basic RAG which always retrieves using the raw query."
+      },
+      {
+        question: "Derek Kim asked Maya why DataPulse's original build left only 8% of the context window for reasoning. In the optimized budget for a 128K agent, what percentage should be reserved for reasoning space?",
+        options: [
+          "5% \u2014 reasoning takes minimal tokens",
+          "10% \u2014 most space should go to retrieved context",
+          "25% \u2014 models need room for chain-of-thought and planning",
+          "50% \u2014 reasoning should always dominate the context"
+        ],
+        correct: 2,
+        explanation: "25% (~32K tokens) should be reserved for reasoning space. When Maya protected this allocation, DataPulse's accuracy on Sofia Torres's store-level queries jumped from 42% to 78% overnight \u2014 before any RAG improvements. Models need room for chain-of-thought reasoning, planning, and self-correction."
+      },
+      {
+        question: "Raj Patel asks DataPulse: 'Compare Q3 and Q4 sales by region across all 200 stores.' Which agentic RAG pattern handles this by generating two separate sub-queries?",
+        options: [
+          "Adaptive Retrieval",
+          "Self-Reflective RAG",
+          "Query Planning",
+          "Multi-Source Retrieval"
+        ],
+        correct: 2,
+        explanation: "Query Planning decomposes complex questions into sub-queries that can be answered independently. Raj's comparison query becomes two searches \u2014 one for Q3 (July\u2013September) data and one for Q4 data \u2014 each optimized for retrieval from AcmeCorp's star schema. The results are then combined for the final cross-regional comparison."
+      }
+    ];
+
+    document.addEventListener('DOMContentLoaded', function() {
+      QuizEngine.init('quiz-container', questions);
+
+      // Show celebration section after quiz completion
+      const observer = new MutationObserver(function(mutations) {
+        const quizContainer = document.getElementById('quiz-container');
+        if (quizContainer && quizContainer.querySelector('.quiz-results')) {
+          const celebration = document.getElementById('celebration-section');
+          if (celebration) {
+            celebration.style.display = 'block';
+          }
+        }
+      });
+      observer.observe(document.getElementById('quiz-container'), { childList: true, subtree: true });
+    });
+  </script>
+  <script>Nav.init('m06-quiz-final');</script>
+</body>
+</html>

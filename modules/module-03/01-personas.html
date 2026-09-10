@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Supply Chain Personas &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Persona Hub SVG --- */
+    .persona-diagram {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto var(--space-8);
+      display: block;
+    }
+    .persona-diagram .hub-circle {
+      fill: none;
+      stroke: var(--stroke-primary);
+      stroke-width: 2;
+      stroke-dasharray: 6 4;
+      transition: all 0.6s ease;
+    }
+    .persona-diagram .hub-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      fill: var(--stroke-primary);
+      text-anchor: middle;
+    }
+    .persona-diagram .persona-node {
+      fill: none;
+      stroke: var(--stroke-dim);
+      stroke-width: 1.5;
+      stroke-dasharray: 4 3;
+      transition: all 0.8s ease;
+    }
+    .persona-diagram .persona-node.lit {
+      stroke: var(--stroke-secondary);
+      stroke-width: 2;
+      stroke-dasharray: none;
+      filter: drop-shadow(0 0 8px rgba(204, 0, 255, 0.4));
+    }
+    .persona-diagram .persona-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      fill: var(--text-secondary);
+      text-anchor: middle;
+      transition: fill 0.6s ease;
+    }
+    .persona-diagram .persona-label.lit {
+      fill: var(--stroke-secondary);
+    }
+    .persona-diagram .connector {
+      stroke: var(--stroke-dim);
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+      opacity: 0.3;
+      transition: all 0.8s ease;
+    }
+    .persona-diagram .connector.lit {
+      stroke: var(--stroke-secondary);
+      opacity: 0.7;
+      stroke-dasharray: none;
+    }
+    .persona-diagram .persona-icon {
+      font-size: 18px;
+      text-anchor: middle;
+      dominant-baseline: central;
+      opacity: 0.4;
+      transition: opacity 0.6s ease;
+    }
+    .persona-diagram .persona-icon.lit {
+      opacity: 1;
+    }
+
+    /* --- Persona Cards --- */
+    .persona-card {
+      position: relative;
+      margin-bottom: var(--space-8);
+    }
+    .persona-card .analogy {
+      font-style: italic;
+      color: var(--stroke-secondary);
+      border-left: 2px solid var(--stroke-secondary);
+      padding-left: var(--space-4);
+      margin: var(--space-4) 0;
+      font-size: var(--font-sm);
+    }
+    .tool-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin: var(--space-3) 0;
+    }
+
+    /* --- Scenario Matcher --- */
+    .scenario-matcher { margin: var(--space-8) 0; }
+    .scenario-item {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      transition: all var(--transition-base);
+    }
+    .scenario-item__question {
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+      line-height: 1.6;
+    }
+    .scenario-item__options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .scenario-btn {
+      padding: var(--space-2) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .scenario-btn:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.05);
+    }
+    .scenario-btn.correct {
+      border-color: var(--accent-success);
+      border-style: solid;
+      color: var(--accent-success);
+      background: rgba(16, 185, 129, 0.1);
+      pointer-events: none;
+    }
+    .scenario-btn.wrong {
+      border-color: var(--accent-error);
+      border-style: solid;
+      color: var(--accent-error);
+      background: rgba(239, 68, 68, 0.1);
+      animation: shake 0.5s ease-in-out;
+    }
+    .scenario-item.solved {
+      border-color: var(--accent-success);
+      border-style: solid;
+    }
+    .scenario-item.solved .scenario-btn:not(.correct) {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .scenario-score {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      padding: var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin-top: var(--space-4);
+      display: none;
+    }
+    .scenario-score.show {
+      display: block;
+    }
+    .scenario-score.perfect {
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      box-shadow: 0 0 15px var(--glow-success);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    @media (max-width: 640px) {
+      .scenario-item__options { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 03</span>
+        <span class="separator">/</span>
+        <span class="current">Data Supply Chain Personas</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Page Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 03 &mdash; Lesson 01</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Data Supply Chain<br>Personas</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            One agent can&rsquo;t serve everyone. Map the five data team roles to specialized personas &mdash; each with its own tools, scope, and voice.
+          </p>
+        </header>
+
+        <!-- ===== BLUEPRINT DIAGRAM: DATA SUPPLY CHAIN PERSONA MAP ===== -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">DATA SUPPLY CHAIN &mdash; PERSONA MAP</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:720px;display:block;margin:0 auto;">
+            <defs>
+              <filter id="glowHub" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="glowNode" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="700" height="380" rx="6" fill="rgba(15,23,42,0.6)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+
+            <!-- Corner brackets -->
+            <path d="M4,20 L4,4 L20,4" fill="none" stroke="#A100FF" stroke-width="1.5" opacity="0.5"/>
+            <path d="M680,4 L696,4 L696,20" fill="none" stroke="#A100FF" stroke-width="1.5" opacity="0.5"/>
+            <path d="M696,360 L696,376 L680,376" fill="none" stroke="#A100FF" stroke-width="1.5" opacity="0.5"/>
+            <path d="M20,376 L4,376 L4,360" fill="none" stroke="#A100FF" stroke-width="1.5" opacity="0.5"/>
+
+            <!-- Corner label -->
+            <text x="24" y="22" font-family="JetBrains Mono, monospace" font-size="8" fill="#a0a0a0" opacity="0.7">AcmeCorp Data Supply Chain</text>
+
+            <!-- Dashed connector lines from personas to center hub -->
+            <line x1="350" y1="170" x2="350" y2="68" stroke="#A100FF" stroke-width="1" stroke-dasharray="6,3" opacity="0.4"/>
+            <line x1="350" y1="170" x2="530" y2="100" stroke="#CC00FF" stroke-width="1" stroke-dasharray="6,3" opacity="0.4"/>
+            <line x1="350" y1="170" x2="570" y2="210" stroke="#f59e0b" stroke-width="1" stroke-dasharray="6,3" opacity="0.4"/>
+            <line x1="350" y1="170" x2="530" y2="280" stroke="#10b981" stroke-width="1" stroke-dasharray="6,3" opacity="0.4"/>
+            <line x1="350" y1="170" x2="170" y2="280" stroke="#CC00FF" stroke-width="1" stroke-dasharray="6,3" opacity="0.4"/>
+            <line x1="350" y1="170" x2="130" y2="210" stroke="#f59e0b" stroke-width="1" stroke-dasharray="6,3" opacity="0.4"/>
+
+            <!-- Center hub: DATAPULSE -->
+            <circle cx="350" cy="170" r="48" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="2.5" filter="url(#glowHub)"/>
+            <circle cx="350" cy="170" r="38" fill="none" stroke="#A100FF" stroke-width="0.8" opacity="0.4"/>
+            <text x="350" y="165" font-family="JetBrains Mono, monospace" font-size="12" font-weight="700" fill="#A100FF" text-anchor="middle">DATAPULSE</text>
+            <text x="350" y="180" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">Central Agent Hub</text>
+
+            <!-- Persona 1: DATA ENGINEER (top center) -->
+            <rect x="290" y="28" width="120" height="42" rx="6" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6,3" filter="url(#glowNode)"/>
+            <text x="350" y="47" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#A100FF" text-anchor="middle">DATA ENGINEER</text>
+            <text x="350" y="62" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">Builds &amp; maintains</text>
+
+            <!-- Persona 2: DATA ARCHITECT (top-right) -->
+            <rect x="468" y="70" width="124" height="42" rx="6" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6,3" filter="url(#glowNode)"/>
+            <text x="530" y="89" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#CC00FF" text-anchor="middle">DATA ARCHITECT</text>
+            <text x="530" y="104" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">Designs schema</text>
+
+            <!-- Persona 3: DATA STEWARD (right) -->
+            <rect x="508" y="190" width="124" height="42" rx="6" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3" filter="url(#glowNode)"/>
+            <text x="570" y="209" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#f59e0b" text-anchor="middle">DATA STEWARD</text>
+            <text x="570" y="224" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">Governs quality</text>
+
+            <!-- Persona 4: QA ANALYST (bottom-right) -->
+            <rect x="468" y="260" width="124" height="42" rx="6" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,3" filter="url(#glowNode)"/>
+            <text x="530" y="279" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#10b981" text-anchor="middle">QA ANALYST</text>
+            <text x="530" y="294" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">Validates accuracy</text>
+
+            <!-- Persona 5: STORE MANAGER (bottom-left) -->
+            <rect x="108" y="260" width="124" height="42" rx="6" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6,3" filter="url(#glowNode)"/>
+            <text x="170" y="279" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#CC00FF" text-anchor="middle">STORE MANAGER</text>
+            <text x="170" y="294" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">Asks questions</text>
+
+            <!-- Persona 6: VP / EXECUTIVE (left) -->
+            <rect x="68" y="190" width="124" height="42" rx="6" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3" filter="url(#glowNode)"/>
+            <text x="130" y="209" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#f59e0b" text-anchor="middle">VP / EXECUTIVE</text>
+            <text x="130" y="224" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">Strategic decisions</text>
+
+            <!-- Bottom summary label -->
+            <rect x="190" y="335" width="320" height="28" rx="4" fill="rgba(74,158,255,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+            <text x="350" y="353" font-family="JetBrains Mono, monospace" font-size="9" font-weight="600" fill="#f5f5f5" text-anchor="middle">6 PERSONAS &#215; 200 STORES = 1,200+ USERS</text>
+          </svg>
+        </div>
+
+        <!-- ===== EVOLVING DIAGRAM ===== -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <svg class="persona-diagram" id="personaDiagram" viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg">
+            <!-- Connectors (hub to each persona) -->
+            <line class="connector" id="conn-engineer" x1="360" y1="210" x2="180" y2="80"/>
+            <line class="connector" id="conn-steward" x1="360" y1="210" x2="560" y2="80"/>
+            <line class="connector" id="conn-architect" x1="360" y1="210" x2="120" y2="310"/>
+            <line class="connector" id="conn-qa" x1="360" y1="210" x2="600" y2="310"/>
+            <line class="connector" id="conn-po" x1="360" y1="210" x2="360" y2="390"/>
+
+            <!-- Central hub -->
+            <circle class="hub-circle" cx="360" cy="210" r="55"/>
+            <text class="hub-label" x="360" y="203" style="font-size:10px;">AcmeCorp</text>
+            <text class="hub-label" x="360" y="218" style="font-size:10px;">Data Agent</text>
+
+            <!-- Persona nodes -->
+            <circle class="persona-node" id="node-engineer" cx="180" cy="80" r="42"/>
+            <text class="persona-icon" id="icon-engineer" x="180" y="72">&#9881;</text>
+            <text class="persona-label" id="label-engineer" x="180" y="95" style="font-size:9px;">Data Engineer</text>
+
+            <circle class="persona-node" id="node-steward" cx="560" cy="80" r="42"/>
+            <text class="persona-icon" id="icon-steward" x="560" y="72">&#9878;</text>
+            <text class="persona-label" id="label-steward" x="560" y="95" style="font-size:9px;">Data Steward</text>
+
+            <circle class="persona-node" id="node-architect" cx="120" cy="310" r="42"/>
+            <text class="persona-icon" id="icon-architect" x="120" y="302">&#9635;</text>
+            <text class="persona-label" id="label-architect" x="120" y="325" style="font-size:9px;">Data Architect</text>
+
+            <circle class="persona-node" id="node-qa" cx="600" cy="310" r="42"/>
+            <text class="persona-icon" id="icon-qa" x="600" y="302">&#9879;</text>
+            <text class="persona-label" id="label-qa" x="600" y="325" style="font-size:9px;">Quality Analyst</text>
+
+            <circle class="persona-node" id="node-po" cx="360" cy="390" r="42"/>
+            <text class="persona-icon" id="icon-po" x="360" y="382">&#9733;</text>
+            <text class="persona-label" id="label-po" x="360" y="405" style="font-size:9px;">Product Owner</text>
+          </svg>
+        </div>
+
+        <!-- ===== SECTION 1: THE SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Scene</div>
+          <h2 style="margin-bottom: var(--space-4);">One Agent, Five Frustrated Users</h2>
+          <p>
+            AcmeCorp&rsquo;s generic agent is overwhelmed. The data engineer needs SQL generation, the product owner just wants charts, and the steward is furious about unauthorized schema changes. Time to specialize.
+          </p>
+          <div class="callout" style="margin-top: var(--space-6);">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              Three tickets hit the backlog in one morning: &ldquo;Agent generated a DROP TABLE statement,&rdquo; &ldquo;Agent showed raw customer emails to the VP of Sales,&rdquo; and &ldquo;Agent can&rsquo;t find the new Shopify tables.&rdquo; A single persona cannot satisfy all five roles. You need to split it up.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: THE FIVE PERSONAS ===== -->
+        <section class="section">
+          <div class="section-label reveal">The Five Personas</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-6);">Meet the Data Team</h2>
+
+          <!-- Persona 1: Data Engineer -->
+          <div class="persona-card reveal" data-persona="engineer">
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">1</span>
+                Data Engineer
+              </div>
+              <div class="bp-card__body">
+                <p><strong>Builds pipelines and transforms.</strong> The construction foreman &mdash; builds the structure that everything else stands on.</p>
+                <div class="analogy">&ldquo;The construction foreman &mdash; builds the structure.&rdquo;</div>
+                <div class="tool-tags">
+                  <span class="badge badge--blue" data-tip="Introspects database metadata to learn table structures, columns, and relationships">Schema Discovery</span>
+                  <span class="badge badge--blue" data-tip="Translates natural language requests into executable SQL queries">SQL Generation</span>
+                  <span class="badge badge--blue" data-tip="Orchestrates and runs ETL/ELT data pipelines end-to-end">Pipeline Execution</span>
+                </div>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <div class="callout__label">AcmeCorp in Action</div>
+                  <div class="callout__text">
+                    AcmeCorp&rsquo;s engineer agent automates their nightly ETL from Shopify into the data warehouse, writes dbt transformations, and monitors pipeline health.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Persona 2: Data Steward -->
+          <div class="persona-card reveal" data-persona="steward">
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">2</span>
+                Data Steward
+              </div>
+              <div class="bp-card__body">
+                <p><strong>Ensures quality and compliance.</strong> The gatekeeper who makes sure data stays clean, classified, and compliant.</p>
+                <div class="analogy">&ldquo;The quality inspector &mdash; checks that everything meets standards.&rdquo;</div>
+                <div class="tool-tags">
+                  <span class="badge badge--teal" data-tip="Diffs schema versions to detect drift, missing columns, or unauthorized changes">Schema Comparison</span>
+                  <span class="badge badge--teal" data-tip="Validates data against rules like NULL rates, value ranges, and freshness thresholds">Quality Checks</span>
+                  <span class="badge badge--teal" data-tip="Manages who can read, write, or modify data assets and PII fields">Access Control</span>
+                </div>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <div class="callout__label">AcmeCorp in Action</div>
+                  <div class="callout__text">
+                    When AcmeCorp adds a new &lsquo;loyalty_points&rsquo; column, the steward agent validates naming conventions, checks for PII, and logs the change.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Persona 3: Data Architect -->
+          <div class="persona-card reveal" data-persona="architect">
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">3</span>
+                Data Architect
+              </div>
+              <div class="bp-card__body">
+                <p><strong>Designs schema and governance.</strong> The strategic thinker who plans the data landscape for scale and clarity.</p>
+                <div class="analogy">&ldquo;The city planner &mdash; designs layouts for future growth.&rdquo;</div>
+                <div class="tool-tags">
+                  <span class="badge badge--amber" data-tip="Creates and evolves table structures, star schemas, and normalization strategies">Schema Design</span>
+                  <span class="badge badge--amber" data-tip="Defines foreign keys, joins, and entity relationships across the data model">Relationship Mapping</span>
+                  <span class="badge badge--amber" data-tip="Generates standard policies for data classification, retention, and compliance">Governance Templates</span>
+                </div>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <div class="callout__label">AcmeCorp in Action</div>
+                  <div class="callout__text">
+                    AcmeCorp&rsquo;s architect agent designed the star schema for their new product analytics warehouse &mdash; fact_sales, dim_products, dim_stores, dim_dates.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Persona 4: Quality Analyst -->
+          <div class="persona-card reveal" data-persona="qa">
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">4</span>
+                Quality Analyst
+              </div>
+              <div class="bp-card__body">
+                <p><strong>Validates and tests data accuracy.</strong> The investigator who hunts anomalies, runs checks, and sounds the alarm.</p>
+                <div class="analogy">&ldquo;The laboratory tester &mdash; runs experiments, flags anomalies.&rdquo;</div>
+                <div class="tool-tags">
+                  <span class="badge badge--green" data-tip="Runs automated checks on data integrity, completeness, and consistency">Validation Queries</span>
+                  <span class="badge badge--green" data-tip="Identifies outliers, unexpected patterns, and data quality issues using statistical methods">Anomaly Detection</span>
+                  <span class="badge badge--green" data-tip="Produces formatted summaries and dashboards from validation and analysis results">Report Generation</span>
+                </div>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <div class="callout__label">AcmeCorp in Action</div>
+                  <div class="callout__text">
+                    Every morning, AcmeCorp&rsquo;s QA agent runs 47 validation checks: NULL rates, value ranges, freshness, row counts. If anomalies spike, it alerts the team.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Persona 5: Product Owner -->
+          <div class="persona-card reveal" data-persona="po">
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">5</span>
+                Product Owner
+              </div>
+              <div class="bp-card__body">
+                <p><strong>Defines metrics and business rules.</strong> The translator between business questions and data answers.</p>
+                <div class="analogy">&ldquo;The product manager &mdash; translates business needs to data.&rdquo;</div>
+                <div class="tool-tags">
+                  <span class="badge badge--blue" data-tip="Accepts plain-English business questions and converts them to data queries">NL Queries</span>
+                  <span class="badge badge--teal" data-tip="Renders charts, graphs, and dashboards from query results">Visualization</span>
+                  <span class="badge badge--amber" data-tip="Analyzes time-series data to surface patterns, growth rates, and forecasts">Trend Analysis</span>
+                </div>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <div class="callout__label">AcmeCorp in Action</div>
+                  <div class="callout__text">
+                    AcmeCorp&rsquo;s VP of Sales uses the PO agent: &ldquo;Show me same-store sales growth vs. last year, exclude newly opened stores.&rdquo; The agent knows exactly which metric definitions to apply.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: WHY PERSONAS MATTER ===== -->
+        <section class="section">
+          <div class="section-label reveal">Why It Matters</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-6);">Four Benefits of Persona-Based Design</h2>
+
+          <div class="card-grid card-grid--2">
+            <div class="bp-card reveal reveal--delay-1">
+              <div class="bp-card__title">
+                <span class="bp-card__number">1</span>
+                Role-Based Access
+              </div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: 0;">Each persona only has access to the tools and data it needs. The Product Owner never sees raw SQL; the Engineer never touches business metric definitions. <strong>Security by design.</strong></p>
+              </div>
+            </div>
+
+            <div class="bp-card reveal reveal--delay-2">
+              <div class="bp-card__title">
+                <span class="bp-card__number">2</span>
+                Easier Testing
+              </div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: 0;">Testing a focused agent is simpler than testing one that does everything. You can write targeted test suites per persona: <em>&ldquo;Does the QA agent correctly detect NULL spikes?&rdquo;</em> instead of testing thousands of edge cases at once.</p>
+              </div>
+            </div>
+
+            <div class="bp-card reveal reveal--delay-3">
+              <div class="bp-card__title">
+                <span class="bp-card__number">3</span>
+                Natural Team Fit
+              </div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: 0;">Each team member gets an agent that speaks their language. Engineers get technical output with schema details. Product owners get charts and summaries. <strong>No one wades through irrelevant information.</strong></p>
+              </div>
+            </div>
+
+            <div class="bp-card reveal reveal--delay-4">
+              <div class="bp-card__title">
+                <span class="bp-card__number">4</span>
+                Clearer Validation
+              </div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: 0;">When something goes wrong, you know which persona was responsible. Debugging <em>&ldquo;the QA agent flagged a false positive&rdquo;</em> is far easier than debugging <em>&ldquo;the agent did something weird.&rdquo;</em></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal" style="margin-top: var(--space-8);">
+            <button class="collapsible__header">
+              <span>But why not just build one super-agent that handles everything?</span>
+              <svg class="collapsible__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>A single &ldquo;do everything&rdquo; agent sounds appealing but creates <strong>three critical problems</strong> in production:</p>
+                <p><strong>1. Blast radius.</strong> One misconfigured tool or permission gap affects every user. With personas, a bug in the Engineer agent doesn&rsquo;t impact the Product Owner.</p>
+                <p><strong>2. Prompt bloat.</strong> Stuffing 5 roles worth of instructions into a single system prompt degrades reasoning quality. Each persona gets a focused, optimized prompt.</p>
+                <p style="margin-bottom: 0;"><strong>3. Audit nightmares.</strong> When compliance asks &ldquo;who accessed customer PII last Tuesday?&rdquo;, you need clear role boundaries &mdash; not a monolithic log of everything the agent ever did.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: MINI INTERACTION ===== -->
+        <section class="section reveal">
+          <div class="section-label">Knowledge Check</div>
+          <h2 style="margin-bottom: var(--space-4);">Assign the Right Persona</h2>
+          <p style="margin-bottom: var(--space-6);">Read each scenario and click the persona who should handle it.</p>
+
+          <div class="scenario-matcher" id="scenarioMatcher">
+
+            <div class="scenario-item" data-answer="engineer" id="scenario-1">
+              <div class="scenario-item__question">
+                A new Shopify webhook starts sending data in a different format. Who handles the pipeline update?
+              </div>
+              <div class="scenario-item__options">
+                <button class="scenario-btn" data-choice="engineer">Data Engineer</button>
+                <button class="scenario-btn" data-choice="steward">Data Steward</button>
+                <button class="scenario-btn" data-choice="architect">Data Architect</button>
+                <button class="scenario-btn" data-choice="qa">Quality Analyst</button>
+                <button class="scenario-btn" data-choice="po">Product Owner</button>
+              </div>
+            </div>
+
+            <div class="scenario-item" data-answer="po" id="scenario-2">
+              <div class="scenario-item__question">
+                Marketing wants to know &ldquo;customer lifetime value.&rdquo; Who defines this metric?
+              </div>
+              <div class="scenario-item__options">
+                <button class="scenario-btn" data-choice="engineer">Data Engineer</button>
+                <button class="scenario-btn" data-choice="steward">Data Steward</button>
+                <button class="scenario-btn" data-choice="architect">Data Architect</button>
+                <button class="scenario-btn" data-choice="qa">Quality Analyst</button>
+                <button class="scenario-btn" data-choice="po">Product Owner</button>
+              </div>
+            </div>
+
+            <div class="scenario-item" data-answer="qa" id="scenario-3">
+              <div class="scenario-item__question">
+                Someone notices revenue numbers don&rsquo;t match between two reports. Who investigates?
+              </div>
+              <div class="scenario-item__options">
+                <button class="scenario-btn" data-choice="engineer">Data Engineer</button>
+                <button class="scenario-btn" data-choice="steward">Data Steward</button>
+                <button class="scenario-btn" data-choice="architect">Data Architect</button>
+                <button class="scenario-btn" data-choice="qa">Quality Analyst</button>
+                <button class="scenario-btn" data-choice="po">Product Owner</button>
+              </div>
+            </div>
+
+            <div class="scenario-item" data-answer="architect" id="scenario-4">
+              <div class="scenario-item__question">
+                The company is migrating from MySQL to Snowflake. Who designs the new schema?
+              </div>
+              <div class="scenario-item__options">
+                <button class="scenario-btn" data-choice="engineer">Data Engineer</button>
+                <button class="scenario-btn" data-choice="steward">Data Steward</button>
+                <button class="scenario-btn" data-choice="architect">Data Architect</button>
+                <button class="scenario-btn" data-choice="qa">Quality Analyst</button>
+                <button class="scenario-btn" data-choice="po">Product Owner</button>
+              </div>
+            </div>
+
+            <div class="scenario-item" data-answer="steward" id="scenario-5">
+              <div class="scenario-item__question">
+                A GDPR request requires identifying all tables containing email addresses. Who handles it?
+              </div>
+              <div class="scenario-item__options">
+                <button class="scenario-btn" data-choice="engineer">Data Engineer</button>
+                <button class="scenario-btn" data-choice="steward">Data Steward</button>
+                <button class="scenario-btn" data-choice="architect">Data Architect</button>
+                <button class="scenario-btn" data-choice="qa">Quality Analyst</button>
+                <button class="scenario-btn" data-choice="po">Product Owner</button>
+              </div>
+            </div>
+
+            <div class="scenario-score" id="scenarioScore"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAVIGATION ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="../module-01/quiz-checkpoint.html" class="page-nav__title">Module 02 Quiz</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="02-guardrails-personas.html" class="page-nav__title">Guardrails for Personas</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    Nav.init('m03-personas');
+
+    // ===== EVOLVING DIAGRAM: Light up persona nodes on scroll =====
+    (function() {
+      var personas = ['engineer', 'steward', 'architect', 'qa', 'po'];
+      var cards = document.querySelectorAll('.persona-card');
+      var litSet = new Set();
+
+      function lightNode(id) {
+        if (litSet.has(id)) return;
+        litSet.add(id);
+        var node = document.getElementById('node-' + id);
+        var label = document.getElementById('label-' + id);
+        var icon = document.getElementById('icon-' + id);
+        var conn = document.getElementById('conn-' + id);
+        if (node) node.classList.add('lit');
+        if (label) label.classList.add('lit');
+        if (icon) icon.classList.add('lit');
+        if (conn) conn.classList.add('lit');
+      }
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var persona = entry.target.getAttribute('data-persona');
+            if (persona) lightNode(persona);
+          }
+        });
+      }, { threshold: 0.3 });
+
+      cards.forEach(function(card) { observer.observe(card); });
+    })();
+
+    // ===== SCENARIO MATCHER ENGINE =====
+    (function() {
+      var solved = 0;
+      var total = 5;
+      var container = document.getElementById('scenarioMatcher');
+      var scoreEl = document.getElementById('scenarioScore');
+
+      container.addEventListener('click', function(e) {
+        var btn = e.target.closest('.scenario-btn');
+        if (!btn) return;
+
+        var item = btn.closest('.scenario-item');
+        if (item.classList.contains('solved')) return;
+
+        var answer = item.getAttribute('data-answer');
+        var choice = btn.getAttribute('data-choice');
+
+        if (choice === answer) {
+          btn.classList.add('correct');
+          item.classList.add('solved');
+          solved++;
+
+          // Light up diagram node
+          var node = document.getElementById('node-' + answer);
+          var label = document.getElementById('label-' + answer);
+          var icon = document.getElementById('icon-' + answer);
+          var conn = document.getElementById('conn-' + answer);
+          if (node) node.classList.add('lit');
+          if (label) label.classList.add('lit');
+          if (icon) icon.classList.add('lit');
+          if (conn) conn.classList.add('lit');
+
+          if (solved === total) {
+            scoreEl.textContent = 'All ' + total + ' personas correctly assigned!';
+            scoreEl.classList.add('show', 'perfect');
+          }
+        } else {
+          btn.classList.add('wrong');
+          setTimeout(function() { btn.classList.remove('wrong'); }, 600);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

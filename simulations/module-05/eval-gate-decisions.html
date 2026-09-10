@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulation: Eval Gate Decisions &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 05</span>
+        <span class="separator">/</span>
+        <span class="current">Simulation: Eval Gate Decisions</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Interactive Simulation</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Eval Gate Decisions</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            AcmeCorp's engineering team is deploying a new version of the Data Agent to production. Navigate 5 critical AgentOps decision points — from evaluation failures to deployment strategies.
+          </p>
+
+          <div class="callout reveal">
+            <div class="callout__label">Mission Brief</div>
+            <div class="callout__text">
+              The Data Agent v2.1 introduces smarter SQL generation. You must decide what to do when eval gates fail, how to handle LLM-as-Judge disagreements, which deployment strategy to use, and how to respond when production metrics degrade. Make the right calls &mdash; aim for 5/5.
+            </div>
+          </div>
+        </section>
+
+        <!-- Simulation Container -->
+        <section class="section">
+          <div id="sim-container"></div>
+        </section>
+
+        <!-- Reset Button -->
+        <div class="reveal" style="text-align: center; margin-bottom: var(--space-8);">
+          <button class="btn btn--teal" onclick="SimulationEngine.reset()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+            </svg>
+            Restart Simulation
+          </button>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../../modules/module-05/04-deployment-versioning.html" class="page-nav__title">Deployment &amp; Versioning</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../../modules/module-05/quiz-checkpoint.html" class="page-nav__title">Quiz Checkpoint</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Eval Gate Decisions Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Simulation Config: Eval Gate Decisions ---
+    SimulationEngine.init('sim-container', {
+      title: 'Eval Gate Decisions',
+      intro: 'You are the AgentOps lead at AcmeCorp. Data Agent v2.1 is moving through the CI/CD pipeline. Five decisions stand between development and production. Each wrong call could ship a broken agent to 200 stores.',
+      nodes: {
+
+        // ===== DECISION 1: Eval Gate Failure =====
+        'start': {
+          type: 'decision',
+          title: 'Decision 1: Eval Gate Failure',
+          description: 'The CI pipeline runs the golden dataset evaluation. v2.1 scores 78% accuracy on SQL correctness — the gate threshold is 85%. The release is scheduled for tomorrow morning. What do you do?',
+          choices: [
+            {
+              label: 'Block the release — investigate the 22% failures before proceeding',
+              hint: 'Treat the eval gate as a hard stop and root-cause the failures',
+              next: 'c1-block',
+              isGood: true
+            },
+            {
+              label: 'Lower the threshold to 75% for this release cycle',
+              hint: 'Adjust the gate to let the current build pass',
+              next: 'c1-lower',
+              isGood: false
+            },
+            {
+              label: 'Ship anyway — 78% is close enough and the deadline is firm',
+              hint: 'Override the gate and deploy to production',
+              next: 'c1-ship',
+              isGood: false
+            }
+          ]
+        },
+        'c1-block': {
+          type: 'consequence',
+          title: 'Correct: Gates Exist to Be Enforced',
+          description: 'You block the release and triage the failures. You discover 18 of 22 failures are in multi-table JOIN queries — a regression from a prompt change. The fix takes 4 hours. v2.1 re-runs at 91% and passes.',
+          consequence: 'Eval gates are only valuable if they are treated as hard stops. Blocking releases protects production quality and forces root-cause analysis. A 4-hour delay is far better than shipping a broken agent to 200 stores. The threshold exists because 85% is the minimum acceptable quality bar.',
+          isGood: true,
+          next: 'decision-2'
+        },
+        'c1-lower': {
+          type: 'consequence',
+          title: 'Dangerous: Threshold Drift Erodes Quality',
+          description: 'You lower the gate to 75%. Next sprint, someone argues 70% is fine for a "small" update. Within 3 releases, the threshold is 60% and production accuracy has quietly degraded by 25%. Store managers stop trusting the agent.',
+          consequence: 'Changing thresholds to pass a specific build is "threshold drift" — one of the most insidious patterns in ML operations. Gates must be calibrated against business requirements, not adjusted to fit current builds. Lower the threshold only after a deliberate, team-wide review.',
+          isGood: false,
+          next: 'decision-2'
+        },
+        'c1-ship': {
+          type: 'consequence',
+          title: 'Reckless: Production Gets the Broken Agent',
+          description: 'You ship v2.1. Within hours, 40 stores report incorrect inventory queries. The rollback takes 3 hours, and two store managers lose confidence in the entire Data Agent program.',
+          consequence: 'Overriding eval gates for deadlines ships known defects to production. The gate detected a real problem — 22% of SQL queries were wrong. A firm deadline never justifies deploying a failing build. Eval gates are the last line of defense before users are impacted.',
+          isGood: false,
+          next: 'decision-2'
+        },
+
+        // ===== DECISION 2: LLM-as-Judge Disagreement =====
+        'decision-2': {
+          type: 'decision',
+          title: 'Decision 2: LLM-as-Judge Disagreement',
+          description: 'Your evaluation pipeline uses two LLM judges to score response quality. For 15% of test cases, Judge A says "Pass" and Judge B says "Fail." How do you resolve this?',
+          choices: [
+            {
+              label: 'Use a tiebreaker judge for disagreements and flag for human review',
+              hint: 'A third judge decides contested cases; humans review the flagged set',
+              next: 'c2-tiebreak',
+              isGood: true
+            },
+            {
+              label: 'Always default to the more lenient judge to avoid false failures',
+              hint: 'When judges disagree, take the Pass verdict',
+              next: 'c2-lenient',
+              isGood: false
+            },
+            {
+              label: 'Discard all disagreement cases from the evaluation set',
+              hint: 'Exclude contested examples so they don\'t skew scores',
+              next: 'c2-discard',
+              isGood: false
+            }
+          ]
+        },
+        'c2-tiebreak': {
+          type: 'consequence',
+          title: 'Correct: Structured Disagreement Resolution',
+          description: 'The tiebreaker judge resolves 11 of 15 contested cases. The remaining 4 are flagged for human review. Your team discovers these 4 are genuinely ambiguous — they update the rubric to handle them explicitly going forward.',
+          consequence: 'Judge disagreement is a signal, not noise. A tiebreaker resolves objective disagreements; human review handles genuinely ambiguous cases. Each reviewed case is an opportunity to improve your evaluation rubric. This is how eval systems become more accurate over time.',
+          isGood: true,
+          next: 'decision-3'
+        },
+        'c2-lenient': {
+          type: 'consequence',
+          title: 'Biased: Lenient Defaults Inflate Scores',
+          description: 'By always taking the Pass verdict, your eval scores look great — but 15% of borderline responses that should have been fixed slip through. Production quality is lower than your evals suggest.',
+          consequence: 'Defaulting to the lenient judge creates systematic optimism bias in your evaluations. Your evals will show high scores while real-world quality degrades. LLM-as-Judge disagreements should surface uncertainty, not be papered over with lenient defaults.',
+          isGood: false,
+          next: 'decision-3'
+        },
+        'c2-discard': {
+          type: 'consequence',
+          title: 'Wrong: Discarding Hard Cases Shrinks Coverage',
+          description: 'You remove 15% of the test set. Your scores look more consistent, but you\'ve eliminated exactly the ambiguous, edge-case queries where your agent is most likely to fail in production.',
+          consequence: 'Discarding hard-to-judge cases removes the most valuable evaluation data. Edge cases and ambiguous queries are where real-world failures happen. A smaller, "clean" eval set that avoids hard cases gives false confidence. Never filter out difficulty — fix your rubric instead.',
+          isGood: false,
+          next: 'decision-3'
+        },
+
+        // ===== DECISION 3: Observability Alert =====
+        'decision-3': {
+          type: 'decision',
+          title: 'Decision 3: Production Observability Alert',
+          description: 'Two days after deploying v2.1, an alert fires: p95 query latency jumped from 1.2s to 4.8s for the Northeast region. No code changed since deployment. How do you investigate?',
+          choices: [
+            {
+              label: 'Check distributed traces for the affected region — isolate the slow span',
+              hint: 'Use OpenTelemetry traces to find exactly where time is being spent',
+              next: 'c3-traces',
+              isGood: true
+            },
+            {
+              label: 'Roll back v2.1 immediately — the deployment must have caused it',
+              hint: 'Revert to v2.0 since latency was fine before the upgrade',
+              next: 'c3-rollback',
+              isGood: false
+            },
+            {
+              label: 'Restart the agent services in the Northeast region',
+              hint: 'A service restart usually fixes performance issues',
+              next: 'c3-restart',
+              isGood: false
+            }
+          ]
+        },
+        'c3-traces': {
+          type: 'consequence',
+          title: 'Correct: Traces Reveal the Root Cause',
+          description: 'You examine distributed traces and find the slow span is in the database tool call — specifically a table scan on the inventory table. The DBA confirms a missing index was dropped during a separate maintenance window. Restoring the index fixes latency within minutes.',
+          consequence: 'Structured observability with distributed tracing pinpoints root causes without guesswork. The latency increase coincided with deployment but was caused by an independent infrastructure change. Traces told you exactly which span was slow — leading to a targeted fix in minutes instead of an unnecessary rollback.',
+          isGood: true,
+          next: 'decision-4'
+        },
+        'c3-rollback': {
+          type: 'consequence',
+          title: 'Premature: Rollback Without Evidence',
+          description: 'You roll back to v2.0. Latency remains at 4.8s — the rollback did nothing. You\'ve now lost the v2.1 improvements AND the problem persists. The real cause (a missing database index) takes hours longer to find.',
+          consequence: 'Rolling back without evidence is cargo-cult incident response. "Something changed, revert it" ignores the possibility that the cause is orthogonal to your deployment. Observability exists to give you evidence before you act. Always investigate before reverting.',
+          isGood: false,
+          next: 'decision-4'
+        },
+        'c3-restart': {
+          type: 'consequence',
+          title: 'Ineffective: Restarts Don\'t Fix Root Causes',
+          description: 'The service restart brings latency down briefly as connections reset, but within 10 minutes it climbs back to 4.8s. You\'ve burned time and user trust without solving anything.',
+          consequence: 'Service restarts mask symptoms without addressing root causes. They\'re appropriate for memory leaks or deadlocked threads, but not for database performance issues. Without tracing, you\'re guessing. Observability tells you where the problem is — use it.',
+          isGood: false,
+          next: 'decision-4'
+        },
+
+        // ===== DECISION 4: Deployment Strategy =====
+        'decision-4': {
+          type: 'decision',
+          title: 'Decision 4: Deployment Strategy for v2.2',
+          description: 'v2.2 introduces a completely redesigned context window management system. This is the biggest change in 6 months. How do you deploy it to AcmeCorp\'s 200 stores?',
+          choices: [
+            {
+              label: 'Canary deployment — route 5% of stores to v2.2, monitor for 48 hours before full rollout',
+              hint: 'A small subset gets the new version first while most stay on v2.1',
+              next: 'c4-canary',
+              isGood: true
+            },
+            {
+              label: 'Blue-Green deployment — spin up a complete v2.2 environment and switch all traffic at once',
+              hint: 'Instant full switch with instant rollback capability',
+              next: 'c4-bluegreen',
+              isGood: false
+            },
+            {
+              label: 'Direct full deployment — push v2.2 to all 200 stores simultaneously',
+              hint: 'Ship it everywhere at once to get the improvements out faster',
+              next: 'c4-full',
+              isGood: false
+            }
+          ]
+        },
+        'c4-canary': {
+          type: 'consequence',
+          title: 'Correct: Canary Limits Blast Radius',
+          description: 'You route 10 stores (5%) to v2.2. Over 48 hours, you detect that the new context management causes higher token usage in stores with large product catalogs. You fix the issue before the remaining 190 stores ever see it.',
+          consequence: 'Canary deployments are ideal for high-risk changes because they limit blast radius. If something goes wrong, only 5% of users are affected. The monitoring window provides real production data that staging environments can\'t replicate. For major changes, always canary first.',
+          isGood: true,
+          next: 'decision-5'
+        },
+        'c4-bluegreen': {
+          type: 'consequence',
+          title: 'Risky for Big Changes: Blue-Green Is All-or-Nothing',
+          description: 'You switch all 200 stores to v2.2 at once. The token usage problem affects all stores simultaneously. You roll back within 20 minutes, but every store experienced degraded performance during that window.',
+          consequence: 'Blue-Green provides fast rollback but zero blast radius protection — when you flip the switch, everyone gets the new version. It\'s excellent for low-risk, well-tested changes where you need instant switchover. For high-risk changes like a redesigned core system, canary is safer.',
+          isGood: false,
+          next: 'decision-5'
+        },
+        'c4-full': {
+          type: 'consequence',
+          title: 'Dangerous: No Safety Net on High-Risk Deployments',
+          description: 'All 200 stores receive v2.2. The context management bug causes token costs to spike 3x. AcmeCorp\'s monthly AI budget is exhausted in 6 days. The rollback and investigation take the rest of the sprint.',
+          consequence: 'Deploying a major change directly to all users at once is the highest-risk deployment strategy. There is no blast radius limit — every user sees the bug immediately. For any change that touches core agent behavior, graduated deployment (canary or shadow) is mandatory.',
+          isGood: false,
+          next: 'decision-5'
+        },
+
+        // ===== DECISION 5: Versioning Conflict =====
+        'decision-5': {
+          type: 'decision',
+          title: 'Decision 5: Agent Versioning Conflict',
+          description: 'Two teams submitted updates this sprint: Team Alpha\'s SQL optimizer and Team Beta\'s retrieval reranker. Both pass eval gates individually. When combined, accuracy drops from 91% to 73%. How do you proceed?',
+          choices: [
+            {
+              label: 'Bisect: test each change in isolation, then test combined — find the interaction bug',
+              hint: 'Systematic isolation to identify which combination causes the regression',
+              next: 'c5-bisect',
+              isGood: true
+            },
+            {
+              label: 'Ship whichever change scores higher in isolation and defer the other',
+              hint: 'Pick the better individual change and ship it alone',
+              next: 'c5-defer',
+              isGood: false
+            },
+            {
+              label: 'Ship the combined version anyway — 73% might improve with more real-world data',
+              hint: 'Production usage will help the model calibrate',
+              next: 'c5-ship',
+              isGood: false
+            }
+          ]
+        },
+        'c5-bisect': {
+          type: 'consequence',
+          title: 'Correct: Bisection Finds the Integration Bug',
+          description: 'You test: Alpha alone = 93%, Beta alone = 91%, Combined = 73%. The integration test reveals Alpha\'s SQL optimizer conflicts with Beta\'s reranker when the query involves subqueries. Both teams fix the interface contract, and the combined version scores 94%.',
+          consequence: 'Bisection is the standard technique for diagnosing integration regressions. Testing components in isolation then together identifies interaction bugs that individual tests miss. Both changes had value — the goal is to make them work together, not sacrifice one.',
+          isGood: true,
+          next: 'result'
+        },
+        'c5-defer': {
+          type: 'consequence',
+          title: 'Suboptimal: Deferring Compounds Technical Debt',
+          description: 'You ship Alpha\'s optimizer and defer Beta\'s reranker. Next sprint, Beta\'s team can\'t get prioritized and the reranker languishes for two months. When it finally ships, a similar interaction bug reappears because the root cause was never addressed.',
+          consequence: 'Deferring one change avoids the immediate problem but doesn\'t fix the underlying integration issue. The conflict will resurface. When two good changes interact badly, the correct response is to diagnose and fix the interaction — not to indefinitely postpone half of the value.',
+          isGood: false,
+          next: 'result'
+        },
+        'c5-ship': {
+          type: 'consequence',
+          title: 'Irresponsible: Shipping a Known Regression',
+          description: 'You ship at 73% — well below the 85% gate. You rationalize that "production data will help." Instead, query accuracy drops across all stores, and store managers start bypassing the Data Agent and returning to manual SQL.',
+          consequence: 'Shipping a known quality regression on the hope that production data will fix it is wishful thinking. Production is not a training environment. If combined changes fail evals, they fail for a reason — and that reason must be found before users are impacted.',
+          isGood: false,
+          next: 'result'
+        },
+
+        // ===== FINAL RESULT =====
+        'result': {
+          type: 'result',
+          title: 'Pipeline Complete',
+          description: 'You\'ve navigated all 5 AgentOps decision points for AcmeCorp\'s Data Agent deployment. Your choices determined whether v2.1 and v2.2 reached production safely and reliably.',
+          score: '5/5',
+          scoreLabel: 'Decisions Made',
+          summary: 'Key lessons: Eval gates are hard stops — never adjust thresholds to pass a specific build. LLM-as-Judge disagreements signal ambiguity, not noise — use tiebreakers and human review. Distributed traces pinpoint root causes before you act. Canary deployments limit blast radius for high-risk changes. Integration regressions require bisection to identify interaction bugs. These are the foundations of production-grade AgentOps.'
+        }
+      }
+    });
+
+    Nav.init('m05-sim-eval-gates');
+  </script>
+</body>
+</html>

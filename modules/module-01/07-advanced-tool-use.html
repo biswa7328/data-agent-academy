@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Tool Use Patterns &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Before/After Comparison --- */
+    .before-after {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+    .before-after__panel {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+    }
+    .before-after__panel--before {
+      border-color: var(--accent-error);
+    }
+    .before-after__panel--after {
+      border-color: var(--accent-success);
+    }
+    .before-after__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-3);
+      font-weight: 600;
+    }
+    .before-after__label--before { color: var(--accent-error); }
+    .before-after__label--after { color: var(--accent-success); }
+
+    /* --- Metric Badge --- */
+    .metric-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin: var(--space-4) 0;
+    }
+    .metric-badge {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-4);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+    }
+    .metric-badge__value {
+      font-weight: 700;
+      color: var(--stroke-primary);
+    }
+    .metric-badge__label {
+      color: var(--text-secondary);
+      font-size: var(--font-xs);
+    }
+
+    /* --- Code Block Styling --- */
+    .code-example {
+      background: var(--bg-primary);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-4) var(--space-5);
+      margin: var(--space-4) 0;
+      overflow-x: auto;
+    }
+    .code-example pre {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+      white-space: pre;
+    }
+    .code-example .code-comment { color: var(--text-secondary); opacity: 0.6; }
+    .code-example .code-keyword { color: var(--stroke-primary); }
+    .code-example .code-string { color: var(--stroke-secondary); }
+
+    @media (max-width: 768px) {
+      .before-after { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a><span class="separator">/</span>
+        <span>Module 01</span><span class="separator">/</span>
+        <span class="current">Advanced Tool Use</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 02 &mdash; Lesson 07</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Advanced Tool Use Patterns</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            The 2025 frontier of agent tool use goes far beyond basic function calling. These six patterns solve the scaling challenges that break naive implementations.
+          </p>
+        </header>
+
+        <!-- Blueprint Diagram: Advanced Tool Use Patterns -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">ADVANCED TOOL USE PATTERNS</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+            <defs>
+              <filter id="glow11">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <marker id="arrowDim11" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+              </marker>
+              <marker id="arrowBlue11" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#A100FF"/>
+              </marker>
+              <marker id="arrowTeal11" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#CC00FF"/>
+              </marker>
+              <marker id="arrowAmber11" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+              </marker>
+              <marker id="arrowGreen11" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+              </marker>
+            </defs>
+
+            <!-- Background -->
+            <rect width="700" height="380" rx="8" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-dasharray="4,4"/>
+
+            <!-- Left side: SOPHISTICATION arrow -->
+            <line x1="38" y1="340" x2="38" y2="40" stroke="#a0a0a0" stroke-width="1.5" marker-end="url(#arrowDim11)"/>
+            <text x="18" y="200" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="9" font-weight="600" transform="rotate(-90,18,200)">SOPHISTICATION</text>
+
+            <!-- Row dividers -->
+            <line x1="55" y1="80" x2="540" y2="80" stroke="#1e293b" stroke-dasharray="2,6"/>
+            <line x1="55" y1="140" x2="540" y2="140" stroke="#1e293b" stroke-dasharray="2,6"/>
+            <line x1="55" y1="200" x2="540" y2="200" stroke="#1e293b" stroke-dasharray="2,6"/>
+            <line x1="55" y1="260" x2="540" y2="260" stroke="#1e293b" stroke-dasharray="2,6"/>
+
+            <!-- ===== Row 5 (top, most sophisticated): MCP LOADED ===== -->
+            <text x="68" y="52" fill="#10b981" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700">MCP LOADED</text>
+
+            <rect x="68" y="56" width="50" height="20" rx="3" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-dasharray="3,2"/>
+            <text x="93" y="70" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Agent</text>
+
+            <line x1="118" y1="66" x2="145" y2="66" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowGreen11)"/>
+
+            <!-- MCP Hub (hexagon-like shape) -->
+            <rect x="150" y="54" width="65" height="24" rx="12" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5" filter="url(#glow11)"/>
+            <text x="182" y="70" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono,monospace" font-size="7" font-weight="600">MCP Hub</text>
+
+            <line x1="215" y1="66" x2="250" y2="55" stroke="#10b981" stroke-width="1" marker-end="url(#arrowGreen11)"/>
+            <line x1="215" y1="66" x2="250" y2="66" stroke="#10b981" stroke-width="1" marker-end="url(#arrowGreen11)"/>
+            <line x1="215" y1="66" x2="250" y2="77" stroke="#10b981" stroke-width="1" marker-end="url(#arrowGreen11)"/>
+
+            <!-- N tools -->
+            <rect x="255" y="46" width="100" height="10" rx="2" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-dasharray="2,2"/>
+            <rect x="255" y="58" width="100" height="10" rx="2" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-dasharray="2,2"/>
+            <rect x="255" y="70" width="100" height="10" rx="2" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-dasharray="2,2"/>
+            <text x="305" y="54" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="6">N tools discovered</text>
+            <text x="305" y="66" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="6">at runtime</text>
+
+            <line x1="355" y1="66" x2="400" y2="66" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowGreen11)"/>
+
+            <rect x="405" y="56" width="55" height="20" rx="3" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-dasharray="3,2"/>
+            <text x="432" y="70" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Result</text>
+
+            <!-- Right label -->
+            <text x="560" y="70" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="middle">Plugin ecosystem</text>
+
+            <!-- ===== Row 4: FEW-SHOT ===== -->
+            <text x="68" y="108" fill="#f59e0b" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700">FEW-SHOT</text>
+
+            <rect x="68" y="114" width="50" height="20" rx="3" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-dasharray="3,2"/>
+            <text x="93" y="128" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Agent</text>
+
+            <line x1="118" y1="124" x2="145" y2="124" stroke="#f59e0b" stroke-width="1.2" marker-end="url(#arrowAmber11)"/>
+
+            <!-- Example box with 3 dots -->
+            <rect x="150" y="112" width="75" height="24" rx="4" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-dasharray="3,2"/>
+            <circle cx="170" cy="124" r="3" fill="#f59e0b"/>
+            <circle cx="185" cy="124" r="3" fill="#f59e0b"/>
+            <circle cx="200" cy="124" r="3" fill="#f59e0b"/>
+            <text x="187" y="131" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="5">examples</text>
+
+            <line x1="225" y1="124" x2="260" y2="124" stroke="#f59e0b" stroke-width="1.2" marker-end="url(#arrowAmber11)"/>
+
+            <rect x="265" y="112" width="90" height="24" rx="4" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-dasharray="3,2"/>
+            <text x="310" y="128" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Tool + context</text>
+
+            <line x1="355" y1="124" x2="400" y2="124" stroke="#f59e0b" stroke-width="1.2" marker-end="url(#arrowAmber11)"/>
+
+            <rect x="405" y="114" width="55" height="20" rx="3" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-dasharray="3,2"/>
+            <text x="432" y="128" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Result</text>
+
+            <text x="560" y="128" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="middle">Complex params</text>
+
+            <!-- ===== Row 3: PROGRAMMATIC ===== -->
+            <text x="68" y="168" fill="#CC00FF" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700">PROGRAMMATIC</text>
+
+            <rect x="68" y="174" width="50" height="20" rx="3" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-dasharray="3,2"/>
+            <text x="93" y="188" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Agent</text>
+
+            <line x1="118" y1="184" x2="145" y2="184" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#arrowTeal11)"/>
+
+            <!-- Code block -->
+            <rect x="150" y="172" width="70" height="24" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-dasharray="3,2"/>
+            <text x="185" y="183" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono,monospace" font-size="7">{code}</text>
+            <text x="185" y="192" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="5">generate</text>
+
+            <line x1="220" y1="184" x2="260" y2="184" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#arrowTeal11)"/>
+
+            <rect x="265" y="172" width="90" height="24" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-dasharray="3,2"/>
+            <text x="310" y="188" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Dynamic tool</text>
+
+            <line x1="355" y1="184" x2="400" y2="184" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#arrowTeal11)"/>
+
+            <rect x="405" y="174" width="55" height="20" rx="3" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-dasharray="3,2"/>
+            <text x="432" y="188" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Result</text>
+
+            <text x="560" y="188" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="middle">Dynamic APIs</text>
+
+            <!-- ===== Row 2: SEARCH ===== -->
+            <text x="68" y="228" fill="#A100FF" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700">SEARCH</text>
+
+            <rect x="68" y="234" width="50" height="20" rx="3" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-dasharray="3,2"/>
+            <text x="93" y="248" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Agent</text>
+
+            <line x1="118" y1="244" x2="145" y2="244" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue11)"/>
+
+            <!-- Magnifying glass icon approximation -->
+            <circle cx="162" cy="244" r="10" fill="none" stroke="#A100FF" stroke-width="1.5"/>
+            <line x1="169" y1="251" x2="178" y2="258" stroke="#A100FF" stroke-width="1.5"/>
+
+            <line x1="180" y1="244" x2="200" y2="234" stroke="#A100FF" stroke-width="1" marker-end="url(#arrowBlue11)"/>
+            <line x1="180" y1="244" x2="200" y2="244" stroke="#A100FF" stroke-width="1" marker-end="url(#arrowBlue11)"/>
+            <line x1="180" y1="244" x2="200" y2="254" stroke="#A100FF" stroke-width="1" marker-end="url(#arrowBlue11)"/>
+
+            <!-- Multiple tools -->
+            <rect x="205" y="228" width="40" height="12" rx="2" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-dasharray="2,2"/>
+            <rect x="205" y="238" width="40" height="12" rx="2" fill="rgba(74,158,255,0.15)" stroke="#A100FF"/>
+            <rect x="205" y="248" width="40" height="12" rx="2" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-dasharray="2,2"/>
+
+            <text x="225" y="245" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="6">best</text>
+
+            <line x1="245" y1="244" x2="280" y2="244" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue11)"/>
+
+            <rect x="285" y="234" width="70" height="20" rx="3" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-dasharray="3,2"/>
+            <text x="320" y="248" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Best match</text>
+
+            <line x1="355" y1="244" x2="400" y2="244" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue11)"/>
+
+            <rect x="405" y="234" width="55" height="20" rx="3" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-dasharray="3,2"/>
+            <text x="432" y="248" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">Result</text>
+
+            <text x="560" y="248" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="middle">Unknown tools</text>
+
+            <!-- ===== Row 1 (bottom, least sophisticated): BASIC ===== -->
+            <text x="68" y="288" fill="#334155" font-family="JetBrains Mono,monospace" font-size="9" font-weight="700">BASIC</text>
+
+            <rect x="68" y="294" width="45" height="18" rx="3" fill="rgba(51,65,81,0.15)" stroke="#334155" stroke-dasharray="3,2"/>
+            <text x="90" y="307" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="7">Agent</text>
+
+            <line x1="113" y1="303" x2="185" y2="303" stroke="#334155" stroke-width="1" marker-end="url(#arrowDim11)"/>
+
+            <rect x="190" y="294" width="45" height="18" rx="3" fill="rgba(51,65,81,0.15)" stroke="#334155" stroke-dasharray="3,2"/>
+            <text x="212" y="307" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="7">Tool</text>
+
+            <line x1="235" y1="303" x2="310" y2="303" stroke="#334155" stroke-width="1" marker-end="url(#arrowDim11)"/>
+
+            <rect x="315" y="294" width="50" height="18" rx="3" fill="rgba(51,65,81,0.15)" stroke="#334155" stroke-dasharray="3,2"/>
+            <text x="340" y="307" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="7">Result</text>
+
+            <text x="560" y="307" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="middle">Simple queries</text>
+
+            <!-- Right side column header -->
+            <text x="560" y="35" fill="#334155" font-family="JetBrains Mono,monospace" font-size="8" text-anchor="middle" font-weight="600">WHEN TO USE</text>
+            <line x1="510" y1="40" x2="610" y2="40" stroke="#1e293b" stroke-dasharray="2,4"/>
+
+            <!-- Bottom border label -->
+            <text x="300" y="355" text-anchor="middle" fill="#334155" font-family="JetBrains Mono,monospace" font-size="8">TOOL USE SOPHISTICATION SPECTRUM</text>
+          </svg>
+        </div>
+
+        <!-- ===== SECTION: Tool Search ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 01</div>
+          <h2 class="reveal">Tool Search (Dynamic Discovery)</h2>
+
+          <p class="reveal reveal--delay-1">
+            When an agent has access to 100+ tools, loading all tool schemas into the context window becomes prohibitively expensive &mdash; consuming thousands of tokens before the agent even starts reasoning. Tool Search solves this with a meta-tool: a lightweight search interface that discovers relevant tools dynamically.
+          </p>
+
+          <div class="before-after reveal reveal--delay-2">
+            <div class="before-after__panel before-after__panel--before">
+              <div class="before-after__label before-after__label--before">Without Tool Search</div>
+              <p>Load all 150 tool schemas upfront. Consumes ~12,000 tokens of context. LLM sees irrelevant tools, leading to confusion and wrong tool selection. Context window fills up before reasoning begins.</p>
+            </div>
+            <div class="before-after__panel before-after__panel--after">
+              <div class="before-after__label before-after__label--after">With Tool Search</div>
+              <p>Load only 1 meta-tool (search_tools). Agent searches for relevant tools on demand. Only 3-5 relevant schemas loaded per query. Context stays clean. Tool selection accuracy improves dramatically.</p>
+            </div>
+          </div>
+
+          <div class="metric-row reveal">
+            <div class="metric-badge">
+              <span class="metric-badge__value">85%</span>
+              <span class="metric-badge__label">Context reduction</span>
+            </div>
+            <div class="metric-badge">
+              <span class="metric-badge__value">3-5</span>
+              <span class="metric-badge__label">Tools loaded per query</span>
+            </div>
+            <div class="metric-badge">
+              <span class="metric-badge__value">+40%</span>
+              <span class="metric-badge__label">Selection accuracy</span>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">Implementation</div>
+            <div class="callout__text">
+              The meta-tool uses semantic search over tool descriptions. When the agent calls <code>search_tools("revenue by region")</code>, it returns the top 3-5 matching tool schemas based on embedding similarity. The agent then selects and invokes the appropriate tool with full schema awareness.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION: Programmatic Tool Calling ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 02</div>
+          <h2 class="reveal">Programmatic Tool Calling</h2>
+
+          <p class="reveal reveal--delay-1">
+            Standard tool calling is one-at-a-time: the agent calls a tool, waits for the result, reasons, calls the next tool. For batch operations, this creates enormous round-trip overhead. Programmatic tool calling lets agents invoke tools within code execution &mdash; with loops, conditionals, and error handling.
+          </p>
+
+          <div class="bp-card reveal reveal--delay-2">
+            <div class="bp-card__title">How It Works</div>
+            <div class="bp-card__body">
+              <p>Instead of the LLM deciding each tool call individually, it writes a code block that orchestrates multiple tool calls programmatically. The code execution environment provides the tool functions as callable APIs. The agent can use loops to iterate over datasets, conditionals to branch on results, and try/catch blocks for error handling.</p>
+
+              <div class="code-example">
+<pre><span class="code-comment"># Agent writes this code block instead of individual tool calls</span>
+<span class="code-keyword">results</span> = []
+<span class="code-keyword">for</span> store_id <span class="code-keyword">in</span> range(1, 201):
+    data = <span class="code-keyword">query_store</span>(store_id, <span class="code-string">"revenue_q4"</span>)
+    <span class="code-keyword">if</span> data.revenue &lt; threshold:
+        results.append(data)
+<span class="code-comment"># 200 queries in 1 code execution, not 200 LLM round-trips</span></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="before-after reveal">
+            <div class="before-after__panel before-after__panel--before">
+              <div class="before-after__label before-after__label--before">Sequential: 200 Round-Trips</div>
+              <p>Each store query requires an LLM reasoning step. 200 stores = 200 think-act-observe cycles. Total time: ~10 minutes. Token cost: ~400K tokens.</p>
+            </div>
+            <div class="before-after__panel before-after__panel--after">
+              <div class="before-after__label before-after__label--after">Programmatic: 1 Code Block</div>
+              <p>Agent writes one loop that calls the tool 200 times within code execution. Total time: ~15 seconds. Token cost: ~2K tokens for the code + tool results.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION: Few-Shot Tool Use ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 03</div>
+          <h2 class="reveal">Tool Use Examples (Few-Shot)</h2>
+
+          <p class="reveal reveal--delay-1">
+            Tool descriptions tell the agent what a tool does. Tool examples show the agent how to use it. Providing 2-3 usage examples with each tool definition dramatically improves tool selection accuracy and parameter formatting &mdash; especially for tools with complex parameter schemas.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Description Only</div>
+              <div class="bp-card__body">
+                <p>Tool description says: "Query sales data with filters." Agent guesses parameter format. Wrong 30% of the time for complex filters. Parameters are often malformed or missing required fields.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">+ 1 Example</div>
+              <div class="bp-card__body">
+                <p>One example shows the basic parameter format. Error rate drops to 15%. Agent correctly formats simple queries but still struggles with edge cases like date ranges and nested filters.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">+ 3 Examples</div>
+              <div class="bp-card__body">
+                <p>Three examples cover simple, moderate, and complex use cases. Error rate drops to 5%. Agent generalizes the pattern to novel queries. The examples act as implicit documentation that the LLM actually understands.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">Best Practice</div>
+            <div class="callout__text">
+              Choose examples that cover different complexity levels: one simple case, one with optional parameters, and one with edge cases (null handling, date ranges, aggregations). Keep examples concise &mdash; the goal is to show the pattern, not exhaustive documentation. 2-3 examples add roughly 200-400 tokens per tool but save thousands of tokens in retries.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION: Agent Skills ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 04</div>
+          <h2 class="reveal">Agent Skills (Open Standard)</h2>
+
+          <p class="reveal reveal--delay-1">
+            Agent Skills are reusable capability packages that bundle tools, prompts, and configuration into a single deployable unit. Think of them as plugins for AI agents. A skill like "data-quality-audit" packages the SQL tools, validation logic, quality metrics, and reporting templates into one installable component.
+          </p>
+
+          <div class="bp-card reveal reveal--delay-2">
+            <div class="bp-card__title">The Skill Ecosystem</div>
+            <div class="bp-card__body">
+              <p><strong>First-party skills:</strong> Built by framework providers (Anthropic, OpenAI, Google) as reference implementations. Cover common capabilities like web search, code execution, file management, and data analysis.</p>
+              <p><strong>Partner-built skills:</strong> Third-party skill directories are emerging, similar to package registries (npm, PyPI). Organizations publish and share domain-specific skills. A "retail-analytics" skill from a partner could give any agent instant access to retail KPI calculations, seasonal adjustment algorithms, and standard report templates.</p>
+              <p><strong>Custom skills:</strong> Organizations build internal skills that encode proprietary knowledge. AcmeCorp's "inventory-optimization" skill bundles their specific reorder algorithms, supplier preferences, and safety stock calculations.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION: On-Demand MCP Loading ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 05</div>
+          <h2 class="reveal">On-Demand MCP Tool Loading</h2>
+
+          <p class="reveal reveal--delay-1">
+            MCP (Model Context Protocol) provides a standard interface for tool integration. On-demand loading takes this further: instead of connecting to all MCP servers at startup, the agent defers tool definitions until they're actually needed. This lazy-loading approach reduces initial context consumption to near zero.
+          </p>
+
+          <div class="bp-card reveal reveal--delay-2">
+            <div class="bp-card__title">How Deferred Loading Works</div>
+            <div class="bp-card__body">
+              <p><strong>Step 1 &mdash; Registry:</strong> At startup, the agent loads only a lightweight tool registry &mdash; a catalog of available MCP servers with one-line descriptions. This consumes ~500 tokens regardless of how many tools exist.</p>
+              <p><strong>Step 2 &mdash; Discovery:</strong> When the agent needs a capability (e.g., "query the inventory database"), it searches the registry and identifies the relevant MCP server.</p>
+              <p><strong>Step 3 &mdash; Connection:</strong> The agent connects to the MCP server on demand, loading only that server's tool schemas into context. Connection is maintained for the session duration to avoid reconnection overhead.</p>
+              <p><strong>Step 4 &mdash; Release:</strong> After the task is complete, unused MCP connections can be released to free context space for subsequent tasks.</p>
+            </div>
+          </div>
+
+          <div class="metric-row reveal">
+            <div class="metric-badge">
+              <span class="metric-badge__value">~500</span>
+              <span class="metric-badge__label">Initial token cost</span>
+            </div>
+            <div class="metric-badge">
+              <span class="metric-badge__value">On-demand</span>
+              <span class="metric-badge__label">Schema loading</span>
+            </div>
+            <div class="metric-badge">
+              <span class="metric-badge__value">50+</span>
+              <span class="metric-badge__label">Scalable tool count</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION: Token-Efficient Design ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 06</div>
+          <h2 class="reveal">Token-Efficient Tool Design</h2>
+
+          <p class="reveal reveal--delay-1">
+            Every token in a tool schema or tool result costs money and consumes context. Token-efficient design minimizes waste without sacrificing the agent's ability to use tools correctly. Three strategies make the biggest impact.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Minimize Descriptions</div>
+              <div class="bp-card__body">
+                <p>Write tool descriptions like API docs, not essays. Remove filler words, redundant explanations, and marketing language. A 200-token description can usually be trimmed to 50 tokens without losing information the LLM needs for tool selection.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Return Essential Fields</div>
+              <div class="bp-card__body">
+                <p>Tool results should return only the fields the agent needs. If a database query returns 20 columns but the agent only needs 3, filter at the tool layer. Returning a full ORM object when you need a count wastes hundreds of tokens per call.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Use Pagination</div>
+              <div class="bp-card__body">
+                <p>Never return 10,000 rows in a single tool result. Implement pagination with a default page size of 10-25 results. The agent can request more if needed. This prevents context window overflow and keeps reasoning focused on manageable data volumes.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal">
+            <div class="collapsible__header">
+              <span>Token Budget Calculation</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>For a 128K context window agent, budget your tokens carefully:</p>
+                <p><strong>System prompt &amp; instructions:</strong> ~2,000 tokens (fixed overhead)</p>
+                <p><strong>Tool schemas:</strong> ~50-100 tokens per tool. With 5 active tools: ~500 tokens.</p>
+                <p><strong>Conversation history:</strong> Reserve 30-50% for multi-turn conversations: ~40-64K tokens.</p>
+                <p><strong>Tool results:</strong> Budget 1-2K tokens per tool call result. Plan for 5-10 calls per interaction: ~10-20K tokens.</p>
+                <p><strong>Reasoning space:</strong> The remaining tokens are for the LLM's chain-of-thought. Never consume so much context that the agent has no room to think.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION: AcmeCorp Case Study ===== -->
+        <section class="section">
+          <div class="section-label reveal">Case Study</div>
+          <h2 class="reveal">AcmeCorp: Scaling to 50+ Data Sources</h2>
+
+          <p class="reveal reveal--delay-1">
+            AcmeCorp's data agent connects to 50+ data sources: inventory databases, sales APIs, CRM systems, supplier portals, and regional data warehouses. The naive approach of loading all 50+ tool schemas at startup consumed 40% of their context window before the agent processed a single query.
+          </p>
+
+          <div class="bp-card reveal reveal--delay-2">
+            <div class="bp-card__title">AcmeCorp's Advanced Tool Architecture</div>
+            <div class="bp-card__body">
+              <p><strong>Tool Search for Discovery:</strong> A meta-tool indexes all 50+ data sources by semantic description. When the agent receives a query about "supplier lead times," Tool Search returns schemas for the Supplier Portal API and the Logistics DB &mdash; not the 48 other irrelevant tools.</p>
+              <p><strong>MCP for On-Demand Loading:</strong> Each data source is wrapped in an MCP server. The agent connects only to the 2-3 servers needed for the current query. Startup context cost dropped from ~15,000 tokens to ~500 tokens.</p>
+              <p><strong>Programmatic Batch Operations:</strong> Checking data quality across all 200 stores used to require 200 sequential LLM reasoning cycles (one per store). With programmatic tool calling, the agent writes a single loop that queries all 200 stores in one code execution block. Processing time dropped from 10 minutes to 15 seconds. Token cost dropped from 400K to 2K.</p>
+              <p><strong>Few-Shot Examples:</strong> Each tool includes 2-3 usage examples. SQL query formatting errors dropped from 25% to under 3%. The examples were worth 600 tokens of context but saved thousands of tokens in retry loops.</p>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">Result</div>
+            <div class="callout__text">
+              By combining these patterns, AcmeCorp reduced their average query cost by 70%, cut response time by 60%, and eliminated the context overflow errors that plagued their initial deployment. The key insight: advanced tool use isn't about more tools &mdash; it's about smarter tool management.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== INTERACTIVE EXERCISE: Tool Pattern Picker ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Interactive Exercise</span></div>
+          <h2 style="margin-bottom: var(--space-2);">Match the Problem to the Advanced Tool Pattern</h2>
+          <p>For each AcmeCorp challenge, pick the advanced tool use pattern that solves it best.</p>
+
+          <div class="match-exercise" id="tuExercise">
+            <div class="match-scenario" id="tu-match-0" style="background: var(--bg-surface); border: 1px dashed var(--stroke-dim); border-radius: var(--border-radius); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-4);">
+              <div class="match-scenario__label" style="font-family: var(--font-mono); font-size: var(--font-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: var(--space-2);">Challenge 1</div>
+              <div class="match-scenario__text" style="font-size: var(--font-base); color: var(--text-primary); margin-bottom: var(--space-3); line-height: 1.6;">
+                AcmeCorp has 50+ data source tools. Loading all schemas at startup consumes 40% of the context window before the agent processes a single query. The agent needs to dynamically find the right 2-3 tools for each query.
+              </div>
+              <div class="match-options" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                <button class="match-btn" onclick="TUGame.select(0, 'tool-search')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Tool Search</button>
+                <button class="match-btn" onclick="TUGame.select(0, 'programmatic')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Programmatic Calling</button>
+                <button class="match-btn" onclick="TUGame.select(0, 'few-shot')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Few-Shot Examples</button>
+                <button class="match-btn" onclick="TUGame.select(0, 'mcp')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">MCP</button>
+              </div>
+              <div class="match-feedback" id="tu-fb-0" style="margin-top: var(--space-3); font-size: var(--font-sm); line-height: 1.6; display: none;"></div>
+            </div>
+
+            <div class="match-scenario" id="tu-match-1" style="background: var(--bg-surface); border: 1px dashed var(--stroke-dim); border-radius: var(--border-radius); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-4);">
+              <div class="match-scenario__label" style="font-family: var(--font-mono); font-size: var(--font-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: var(--space-2);">Challenge 2</div>
+              <div class="match-scenario__text" style="font-size: var(--font-base); color: var(--text-primary); margin-bottom: var(--space-3); line-height: 1.6;">
+                Checking data quality across all 200 stores requires 200 sequential LLM reasoning cycles (one per store). This takes 10 minutes and costs 400K tokens. The operation is identical for each store.
+              </div>
+              <div class="match-options" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                <button class="match-btn" onclick="TUGame.select(1, 'tool-search')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Tool Search</button>
+                <button class="match-btn" onclick="TUGame.select(1, 'programmatic')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Programmatic Calling</button>
+                <button class="match-btn" onclick="TUGame.select(1, 'few-shot')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Few-Shot Examples</button>
+                <button class="match-btn" onclick="TUGame.select(1, 'mcp')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">MCP</button>
+              </div>
+              <div class="match-feedback" id="tu-fb-1" style="margin-top: var(--space-3); font-size: var(--font-sm); line-height: 1.6; display: none;"></div>
+            </div>
+
+            <div class="match-scenario" id="tu-match-2" style="background: var(--bg-surface); border: 1px dashed var(--stroke-dim); border-radius: var(--border-radius); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-4);">
+              <div class="match-scenario__label" style="font-family: var(--font-mono); font-size: var(--font-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: var(--space-2);">Challenge 3</div>
+              <div class="match-scenario__text" style="font-size: var(--font-base); color: var(--text-primary); margin-bottom: var(--space-3); line-height: 1.6;">
+                The agent generates SQL queries with a 25% formatting error rate &mdash; wrong column names, incorrect JOIN syntax, and missing WHERE clauses. The tool schema alone doesn't convey the expected query patterns.
+              </div>
+              <div class="match-options" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                <button class="match-btn" onclick="TUGame.select(2, 'tool-search')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Tool Search</button>
+                <button class="match-btn" onclick="TUGame.select(2, 'programmatic')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Programmatic Calling</button>
+                <button class="match-btn" onclick="TUGame.select(2, 'few-shot')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Few-Shot Examples</button>
+                <button class="match-btn" onclick="TUGame.select(2, 'mcp')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">MCP</button>
+              </div>
+              <div class="match-feedback" id="tu-fb-2" style="margin-top: var(--space-3); font-size: var(--font-sm); line-height: 1.6; display: none;"></div>
+            </div>
+
+            <div class="match-scenario" id="tu-match-3" style="background: var(--bg-surface); border: 1px dashed var(--stroke-dim); border-radius: var(--border-radius); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-4);">
+              <div class="match-scenario__label" style="font-family: var(--font-mono); font-size: var(--font-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: var(--space-2);">Challenge 4</div>
+              <div class="match-scenario__text" style="font-size: var(--font-base); color: var(--text-primary); margin-bottom: var(--space-3); line-height: 1.6;">
+                AcmeCorp wants any agent framework in their stack to be able to discover and use any data source through a common, standardized interface &mdash; avoiding vendor lock-in at the tool layer.
+              </div>
+              <div class="match-options" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                <button class="match-btn" onclick="TUGame.select(3, 'tool-search')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Tool Search</button>
+                <button class="match-btn" onclick="TUGame.select(3, 'programmatic')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Programmatic Calling</button>
+                <button class="match-btn" onclick="TUGame.select(3, 'few-shot')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Few-Shot Examples</button>
+                <button class="match-btn" onclick="TUGame.select(3, 'mcp')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">MCP</button>
+              </div>
+              <div class="match-feedback" id="tu-fb-3" style="margin-top: var(--space-3); font-size: var(--font-sm); line-height: 1.6; display: none;"></div>
+            </div>
+          </div>
+
+          <div class="match-score" id="tuScore" style="text-align: center; margin-top: var(--space-6); display: none;">
+            <div class="score-card" style="display: inline-block; background: var(--bg-surface); border: 1px solid var(--stroke-primary); border-radius: var(--border-radius-lg); padding: var(--space-4) var(--space-8); box-shadow: 0 0 20px var(--glow-blue);">
+              <div class="score-card__value" id="tuScoreVal" style="font-family: var(--font-mono); font-size: var(--font-3xl); font-weight: 700; color: var(--stroke-primary);">0/4</div>
+              <div class="score-card__label" style="font-size: var(--font-sm); color: var(--text-secondary);">Patterns Matched Correctly</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="06-alternative-reasoning.html" class="page-nav__title">Alternative Reasoning</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="quiz-checkpoint.html" class="page-nav__title">Quiz Checkpoint</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Architecture &amp; Design Foundations Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m1-advanced-tool-use');</script>
+  <script>
+    const TUGame = {
+      answers: { 0: 'tool-search', 1: 'programmatic', 2: 'few-shot', 3: 'mcp' },
+      explanations: {
+        0: 'Tool Search is a meta-tool that indexes all data sources by semantic description and returns only the relevant schemas for each query \u2014 solving the context window bloat problem.',
+        1: 'Programmatic Calling lets the agent write a single loop that queries all 200 stores in one code execution block, replacing 200 sequential LLM calls with one batch operation.',
+        2: 'Few-Shot Examples embedded in tool schemas show the agent correct query patterns. This dropped SQL formatting errors from 25% to under 3% at AcmeCorp.',
+        3: 'MCP (Model Context Protocol) standardizes tool interfaces so any framework can discover and use any tool through a common protocol, eliminating vendor lock-in.'
+      },
+      selections: {},
+      locked: {},
+
+      select(idx, choice) {
+        if (this.locked[idx]) return;
+        const correct = this.answers[idx];
+        const isCorrect = (choice === correct);
+        const fb = document.getElementById('tu-fb-' + idx);
+        const scenario = document.getElementById('tu-match-' + idx);
+        const btns = scenario.querySelectorAll('.match-btn');
+
+        btns.forEach(b => {
+          b.style.borderColor = 'var(--stroke-dim)';
+          b.style.background = 'var(--bg-primary)';
+        });
+        btns.forEach(b => {
+          const val = b.onclick.toString().match(/'([^']+)'\)$/);
+          if (val && val[1] === choice) {
+            b.style.borderColor = isCorrect ? 'var(--accent-success)' : 'var(--accent-error)';
+            b.style.background = isCorrect ? 'rgba(204, 0, 255, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+          }
+        });
+
+        fb.style.display = 'block';
+        fb.style.color = isCorrect ? 'var(--accent-success)' : 'var(--accent-error)';
+        fb.textContent = (isCorrect ? '\u2713 Correct! ' : '\u2717 Not quite. ') + this.explanations[idx];
+
+        this.locked[idx] = true;
+        this.selections[idx] = choice;
+        scenario.style.borderColor = isCorrect ? 'var(--accent-success)' : 'var(--accent-error)';
+        scenario.style.boxShadow = isCorrect ? '0 0 12px var(--glow-success)' : '0 0 12px var(--glow-error)';
+        btns.forEach(b => b.disabled = true);
+
+        if (Object.keys(this.locked).length === 4) {
+          const score = Object.keys(this.answers).filter(k => this.selections[k] === this.answers[k]).length;
+          document.getElementById('tuScoreVal').textContent = score + '/4';
+          document.getElementById('tuScore').style.display = 'block';
+          Progress.saveQuizScore('m1-tool-use-match', score, 4);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

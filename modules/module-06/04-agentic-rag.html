@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic RAG &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .vs-table {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      margin: var(--space-6) 0;
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+    .vs-table__header {
+      padding: var(--space-4) var(--space-5);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px dashed var(--stroke-dim);
+      background: var(--bg-surface);
+    }
+    .vs-table__header:first-child {
+      border-right: 1px dashed var(--stroke-dim);
+      color: var(--text-secondary);
+    }
+    .vs-table__header:nth-child(2) {
+      color: var(--stroke-primary);
+    }
+    .vs-table__cell {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px dashed var(--stroke-dim);
+      font-size: var(--font-sm);
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+    .vs-table__cell:nth-child(odd) {
+      border-right: 1px dashed var(--stroke-dim);
+    }
+    .vs-table__cell:nth-last-child(-n+2) {
+      border-bottom: none;
+    }
+    .decision-flow {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+      padding: var(--space-6);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+    }
+    .decision-flow__step {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+    }
+    .decision-flow__icon {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      font-weight: 700;
+    }
+    .decision-flow__icon--when { background: rgba(161, 0, 255, 0.15); color: var(--text-accent); border: 1px solid rgba(161, 0, 255, 0.3); }
+    .decision-flow__icon--what { background: rgba(204, 0, 255, 0.15); color: var(--text-teal); border: 1px solid rgba(204, 0, 255, 0.3); }
+    .decision-flow__icon--how { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .decision-flow__text {
+      flex: 1;
+    }
+    .decision-flow__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-1);
+    }
+    .decision-flow__desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .scenario-timeline {
+      position: relative;
+      margin: var(--space-8) 0;
+      padding-left: var(--space-8);
+    }
+    .scenario-timeline::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--stroke-primary), var(--stroke-secondary));
+    }
+    .timeline-step {
+      position: relative;
+      margin-bottom: var(--space-6);
+      padding: var(--space-5);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+    }
+    .timeline-step::before {
+      content: '';
+      position: absolute;
+      left: calc(-1 * var(--space-8) + 8px);
+      top: var(--space-5);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--bg-primary);
+      border: 2px solid var(--stroke-primary);
+    }
+    .timeline-step__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-2);
+    }
+    .timeline-step__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    .timeline-step__desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    @media (max-width: 640px) {
+      .vs-table { grid-template-columns: 1fr; }
+      .vs-table__header:first-child,
+      .vs-table__cell:nth-child(odd) { border-right: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 06</span>
+        <span class="separator">/</span>
+        <span class="current">Agentic RAG</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 06 &mdash; Lesson 04</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Agentic RAG</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Basic RAG retrieves passively. Agentic RAG retrieves intelligently &mdash; the agent decides when to retrieve, what to search for, and how to evaluate the results before using them.
+          </p>
+        </header>
+
+        <!-- Blueprint SVG Diagram: Agentic RAG Loop -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">AGENTIC RAG &mdash; ADAPTIVE RETRIEVAL LOOP</div>
+          <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+            <defs>
+              <filter id="glowA" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3.5" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <marker id="aB4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
+              <marker id="aT4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="aA4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker>
+              <marker id="aG4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#10b981"/></marker>
+              <marker id="aR4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#ef4444"/></marker>
+              <marker id="aD4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a0a0a0"/></marker>
+              <style>
+                .al { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 9px; }
+                .as { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; font-size: 7.5px; }
+                .at { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 10.5px; font-weight: 600; }
+              </style>
+            </defs>
+
+            <!-- QUERY box at top -->
+            <rect x="295" y="15" width="110" height="36" rx="4" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5"/>
+            <text x="350" y="38" text-anchor="middle" class="at" style="fill:#A100FF;">QUERY</text>
+
+            <!-- Arrow down to Agent -->
+            <line x1="350" y1="53" x2="350" y2="85" stroke="#A100FF" stroke-width="1.5" marker-end="url(#aB4)"/>
+
+            <!-- AGENT REASONING central box (glowing) -->
+            <rect x="260" y="90" width="180" height="56" rx="5" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="2" filter="url(#glowA)"/>
+            <text x="350" y="115" text-anchor="middle" class="at" style="fill:#A100FF;">AGENT REASONING</text>
+            <text x="350" y="131" text-anchor="middle" class="as" style="fill:#a0a0a0;">plan / decide / evaluate</text>
+
+            <!-- Three arrows OUT from Agent to action boxes -->
+
+            <!-- Left arrow to RETRIEVE -->
+            <line x1="280" y1="148" x2="140" y2="200" stroke="#CC00FF" stroke-width="1.5" marker-end="url(#aT4)"/>
+            <!-- RETRIEVE box -->
+            <rect x="60" y="200" width="120" height="48" rx="4" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.5"/>
+            <text x="120" y="221" text-anchor="middle" class="al" style="fill:#CC00FF;">RETRIEVE</text>
+            <text x="120" y="236" text-anchor="middle" class="as">vector + keyword</text>
+            <!-- Return arrow back to Agent -->
+            <path d="M60,224 Q30,180 258,118" fill="none" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#aT4)"/>
+
+            <!-- Center arrow to TRANSFORM -->
+            <line x1="350" y1="148" x2="350" y2="196" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#aA4)"/>
+            <!-- TRANSFORM box -->
+            <rect x="290" y="200" width="120" height="48" rx="4" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="350" y="221" text-anchor="middle" class="al" style="fill:#f59e0b;">TRANSFORM</text>
+            <text x="350" y="236" text-anchor="middle" class="as">rewrite / decompose</text>
+            <!-- Return arrow back to Agent (curved left) -->
+            <path d="M290,218 Q265,185 262,140" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#aA4)"/>
+
+            <!-- Right arrow to VALIDATE -->
+            <line x1="420" y1="148" x2="560" y2="200" stroke="#10b981" stroke-width="1.5" marker-end="url(#aG4)"/>
+            <!-- VALIDATE box -->
+            <rect x="520" y="200" width="120" height="48" rx="4" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5"/>
+            <text x="580" y="221" text-anchor="middle" class="al" style="fill:#10b981;">VALIDATE</text>
+            <text x="580" y="236" text-anchor="middle" class="as">check completeness</text>
+            <!-- Return arrow back to Agent -->
+            <path d="M640,224 Q670,180 442,118" fill="none" stroke="#10b981" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#aG4)"/>
+
+            <!-- Decision diamond below -->
+            <line x1="350" y1="250" x2="350" y2="280" stroke="#a0a0a0" stroke-width="1.2" marker-end="url(#aD4)"/>
+            <polygon points="350,286 385,310 350,334 315,310" fill="rgba(167,139,250,0.1)" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="350" y="313" text-anchor="middle" class="as" style="fill:#a78bfa;font-size:8px;">Sufficient?</text>
+
+            <!-- No: loop back arrow -->
+            <path d="M315,310 Q240,310 200,280 Q160,250 200,150 Q220,118 258,118" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5,3" marker-end="url(#aR4)"/>
+            <text x="165" y="270" text-anchor="middle" class="as" style="fill:#ef4444;font-size:8px;">No</text>
+
+            <!-- Yes: arrow to RESPONSE -->
+            <line x1="387" y1="310" x2="480" y2="310" stroke="#10b981" stroke-width="1.5" marker-end="url(#aG4)"/>
+            <text x="430" y="303" text-anchor="middle" class="as" style="fill:#10b981;">Yes</text>
+
+            <!-- RESPONSE box -->
+            <rect x="486" y="292" width="110" height="36" rx="4" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="1.5" filter="url(#glowA)"/>
+            <text x="541" y="315" text-anchor="middle" class="at" style="fill:#10b981;">RESPONSE</text>
+
+            <!-- Iteration counter -->
+            <rect x="50" y="295" width="140" height="26" rx="13" fill="rgba(239,68,68,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="120" y="312" text-anchor="middle" class="as" style="fill:#ef4444;font-size:8px;">Iteration 1...N (max 3)</text>
+
+            <!-- Bottom label -->
+            <rect x="90" y="356" width="520" height="28" rx="4" fill="rgba(74,158,255,0.04)" stroke="#334155" stroke-width="1" stroke-dasharray="6,4"/>
+            <text x="350" y="374" text-anchor="middle" class="as" style="fill:#A100FF;font-size:8px;">The agent decides WHAT to retrieve, WHEN to stop, and WHETHER to retry</text>
+          </svg>
+        </div>
+
+        <div class="hero-line"></div>
+
+        <!-- Section 1: Basic vs Agentic RAG -->
+        <section class="section">
+          <div class="section-label reveal">The Shift</div>
+          <h2 class="reveal">From Passive to Active Retrieval</h2>
+          <p class="reveal reveal--delay-1">
+            In basic RAG, every user query triggers a retrieval step automatically. In agentic RAG, the agent makes three intelligent decisions about retrieval:
+          </p>
+
+          <div class="decision-flow reveal reveal--delay-2">
+            <div class="decision-flow__step">
+              <div class="decision-flow__icon decision-flow__icon--when">W</div>
+              <div class="decision-flow__text">
+                <div class="decision-flow__label">WHEN to Retrieve</div>
+                <div class="decision-flow__desc">The agent evaluates whether retrieval is needed at all. Simple questions ("What is ROI?") may not need retrieval. Complex analytical queries definitely do. Follow-up questions might reuse previously retrieved context.</div>
+              </div>
+            </div>
+            <div class="decision-flow__step">
+              <div class="decision-flow__icon decision-flow__icon--what">Q</div>
+              <div class="decision-flow__text">
+                <div class="decision-flow__label">WHAT to Search For</div>
+                <div class="decision-flow__desc">Instead of searching with the raw user query, the agent reformulates it into one or more optimized search queries. "Compare Q3 and Q4 sales by region" becomes two separate searches &mdash; one for Q3 and one for Q4.</div>
+              </div>
+            </div>
+            <div class="decision-flow__step">
+              <div class="decision-flow__icon decision-flow__icon--how">E</div>
+              <div class="decision-flow__text">
+                <div class="decision-flow__label">HOW to Evaluate Results</div>
+                <div class="decision-flow__desc">After retrieval, the agent assesses whether the results are sufficient and relevant. If not, it reformulates the query and retrieves again. This self-reflective loop prevents the agent from using low-quality context.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="vs-table reveal reveal--delay-3">
+            <div class="vs-table__header">Basic RAG</div>
+            <div class="vs-table__header">Agentic RAG</div>
+            <div class="vs-table__cell">Always retrieves on every query</div>
+            <div class="vs-table__cell">Decides whether retrieval is needed</div>
+            <div class="vs-table__cell">Uses raw user query as search query</div>
+            <div class="vs-table__cell">Decomposes and reformulates queries</div>
+            <div class="vs-table__cell">Single retrieval pass</div>
+            <div class="vs-table__cell">Multiple passes with self-evaluation</div>
+            <div class="vs-table__cell">One data source at a time</div>
+            <div class="vs-table__cell">Routes queries across multiple sources</div>
+            <div class="vs-table__cell">Uses whatever is retrieved</div>
+            <div class="vs-table__cell">Filters and validates relevance first</div>
+          </div>
+        </section>
+
+        <!-- Section 2: Four Patterns -->
+        <section class="section">
+          <div class="section-label reveal">Design Patterns</div>
+          <h2 class="reveal">4 Agentic RAG Patterns</h2>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-1">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Query Planning</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--blue" data-tip="Agent breaks complex queries into sub-queries with an optimized retrieval plan">Decomposition</span></div>
+                The agent analyzes the user query and generates a retrieval plan: which sources to query, in what order, and with what search terms. Complex questions are broken into sub-queries that can be answered independently and then combined. This prevents the "monolithic query" problem where one vague search returns poor results.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Adaptive Retrieval</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--teal" data-tip="Agent decides at runtime whether retrieval is needed based on query complexity and existing context">Dynamic Decisions</span></div>
+                The agent dynamically decides whether to retrieve based on query complexity and existing context. For follow-up questions in a conversation, it may already have the needed context. For novel questions, it triggers full retrieval. This reduces unnecessary latency and token usage.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Multi-Source Retrieval</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--amber" data-tip="Routes different parts of a query to specialized knowledge bases — schema store, glossary, or query logs — then assembles results.">Source Routing</span></div>
+                The agent routes different parts of a query to different knowledge bases. Schema questions go to the schema store. Business term questions go to the glossary. Historical query patterns go to the query log. Results from multiple sources are assembled into a unified context.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">04</div>
+              <div class="bp-card__title">Self-Reflective RAG</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--green" data-tip="Retrieve-evaluate-retry cycle: the agent checks if results are relevant and reformulates the search if not, up to 2–3 iterations.">Quality Loop</span></div>
+                After retrieval, the agent evaluates: Are these results relevant? Do they contain the information needed to answer the query? If not, it reformulates the search and retrieves again. This "retrieve-evaluate-retry" loop runs up to 2&ndash;3 iterations before falling back to a graceful degradation response.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Token Budget -->
+        <section class="section">
+          <div class="section-label reveal">Production Constraint</div>
+          <h2 class="reveal">The 8K Token Rule for RAG Context</h2>
+          <p class="reveal reveal--delay-1">
+            Even with agentic RAG's sophisticated retrieval, keep the total assembled RAG context under <strong>8K tokens</strong>. This constraint comes from the context cliff (Lesson 01) and the need to preserve reasoning space in the context window.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Why 8K?</div>
+              <div class="bp-card__body">
+                Models attend best to the first ~2.5K tokens of retrieved context. With multi-source retrieval, you may have 3&ndash;4 sources contributing. Budget 2K tokens per source, keeping total RAG context lean and high-signal.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">How to Enforce</div>
+              <div class="bp-card__body">
+                Set hard token limits per retrieval source. Use reranking to select only the most relevant chunks. Implement a token counter that truncates or summarizes when the RAG budget is exceeded.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">When to Exceed</div>
+              <div class="bp-card__body">
+                Only exceed 8K when the task explicitly requires it (e.g., comparing two long documents). In those cases, use a sub-agent with its own context window dedicated to the comparison task.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: AcmeCorp Scenario -->
+        <section class="section">
+          <div class="section-label reveal">Case Study</div>
+          <h2 class="reveal">AcmeCorp: Agentic RAG in Action</h2>
+
+          <div class="callout reveal reveal--delay-1">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              A regional manager asks: <em>"Compare Q3 and Q4 sales by region."</em> Watch how the agentic RAG pipeline handles this complex, multi-part query &mdash; decomposing it, routing to multiple sources, and evaluating results before generating the final answer.
+            </div>
+          </div>
+
+          <div class="scenario-timeline reveal reveal--delay-2">
+            <div class="timeline-step">
+              <div class="timeline-step__label">Step 1 &mdash; Query Planning</div>
+              <div class="timeline-step__title">Decompose into Sub-Queries</div>
+              <div class="timeline-step__desc">
+                The agent recognizes this is a comparison query requiring two time periods. It generates two sub-queries: (1) "Q3 sales data by region schema and metrics" and (2) "Q4 sales data by region schema and metrics." It also identifies a need to resolve "Q3" and "Q4" against AcmeCorp's fiscal calendar.
+              </div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-step__label">Step 2 &mdash; Multi-Source Retrieval</div>
+              <div class="timeline-step__title">Route to Schema Docs + Business Glossary</div>
+              <div class="timeline-step__desc">
+                Sub-query 1 retrieves from the schema documentation: <code>sales_summary</code> table with <code>revenue_net</code>, <code>region_id</code>, and <code>fiscal_quarter</code> columns. Sub-query 2 retrieves from the business glossary: AcmeCorp's fiscal Q3 is Jul&ndash;Sep, Q4 is Oct&ndash;Dec. Both results are assembled into a unified context of ~3,200 tokens.
+              </div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-step__label">Step 3 &mdash; Self-Reflection</div>
+              <div class="timeline-step__title">Evaluate Retrieved Context</div>
+              <div class="timeline-step__desc">
+                The agent checks: Do I have the table structure? Yes. Do I know the fiscal calendar mapping? Yes. Do I know how to join regions? Yes &mdash; <code>store_locations.region</code> joins to <code>sales_summary.region_id</code>. Assessment: context is sufficient. No re-retrieval needed.
+              </div>
+            </div>
+            <div class="timeline-step">
+              <div class="timeline-step__label">Step 4 &mdash; Generation</div>
+              <div class="timeline-step__title">Generate Grounded SQL + Response</div>
+              <div class="timeline-step__desc">
+                With high-quality, validated context, the agent generates a SQL query that correctly uses fiscal quarter dates, joins the right tables, groups by region, and compares Q3 vs Q4. The response includes both the data and a natural-language summary of the comparison.
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal">
+            <button class="collapsible__header" onclick="this.parentElement.classList.toggle('is-open')">
+              <span>What Would Have Happened with Basic RAG?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>With basic RAG, the raw query "Compare Q3 and Q4 sales by region" would be sent as a single search to the vector store. The results would likely include:</p>
+                <p><strong>Problem 1:</strong> Generic chunks about "sales" that mention multiple quarters, diluting the Q3/Q4 focus.</p>
+                <p><strong>Problem 2:</strong> No fiscal calendar resolution &mdash; the agent would likely default to calendar quarters (Jul&ndash;Sep for Q3) but might not verify this against AcmeCorp's fiscal year.</p>
+                <p><strong>Problem 3:</strong> Schema and glossary information mixed together in one retrieval, potentially exceeding the context cliff and causing the model to miss critical column names.</p>
+                <p><strong>Result:</strong> The agent would generate SQL with incorrect date ranges, miss the fiscal calendar adjustment, or use the wrong column names &mdash; producing a confidently wrong answer.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Page Navigation -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="03-retrieval-strategies.html" class="page-nav__title">Retrieval Strategies</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="quiz-checkpoint.html" class="page-nav__title">Module 06 Quiz</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m06-agentic-rag');</script>
+</body>
+</html>

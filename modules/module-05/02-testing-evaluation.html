@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Testing &amp; Evaluation &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Testing Pyramid --- */
+    .pyramid { width: 100%; max-width: 600px; margin: 0 auto var(--space-8); }
+    .pyramid-level {
+      margin: 0 auto var(--space-2);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-3) var(--space-4);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-base);
+      position: relative;
+    }
+    .pyramid-level:hover {
+      border-color: var(--stroke-secondary);
+      color: var(--text-primary);
+    }
+    .pyramid-level.active {
+      border-color: var(--stroke-secondary);
+      border-style: solid;
+      box-shadow: 0 0 15px var(--glow-teal);
+      color: var(--stroke-secondary);
+    }
+    .pyramid-level--l4 { width: 40%; }
+    .pyramid-level--l3 { width: 60%; }
+    .pyramid-level--l2 { width: 80%; }
+    .pyramid-level--l1 { width: 100%; }
+    .pyramid-level__label {
+      font-weight: 700;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .pyramid-level__meta {
+      font-size: var(--font-xs);
+      opacity: 0.7;
+    }
+    .pyramid-detail {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      margin-top: var(--space-4);
+      padding: var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      min-height: 60px;
+      transition: all var(--transition-base);
+    }
+    .pyramid-detail.show {
+      border-color: var(--stroke-secondary);
+      color: var(--stroke-secondary);
+    }
+
+    /* --- Golden Dataset Cards --- */
+    .golden-card {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--space-3);
+      transition: all var(--transition-base);
+      overflow: hidden;
+    }
+    .golden-card.open {
+      border-color: var(--stroke-secondary);
+      border-style: solid;
+    }
+    .golden-card__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4);
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+    .golden-card__header:hover { background: rgba(161, 0, 255, 0.03); }
+    .golden-card__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-primary);
+    }
+    .golden-card__count {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      opacity: 0.7;
+    }
+    .golden-card__chevron {
+      transition: transform 0.3s ease;
+      color: var(--text-secondary);
+    }
+    .golden-card.open .golden-card__chevron { transform: rotate(180deg); }
+    .golden-card__body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .golden-card.open .golden-card__body { max-height: 400px; }
+    .golden-card__content {
+      padding: 0 var(--space-4) var(--space-4);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .golden-card__example {
+      background: rgba(161, 0, 255, 0.04);
+      border-left: 3px solid var(--stroke-primary);
+      padding: var(--space-3);
+      margin-top: var(--space-3);
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+    }
+
+    /* --- Eval Dimension Cards --- */
+    .eval-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+    .eval-card {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-4);
+      transition: all var(--transition-base);
+    }
+    .eval-card:hover {
+      border-color: var(--stroke-secondary);
+    }
+    .eval-card__header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+    .eval-card__num {
+      font-family: var(--font-mono);
+      font-size: var(--font-xl);
+      font-weight: 700;
+      color: var(--stroke-dim);
+      line-height: 1;
+    }
+    .eval-card__name {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .eval-card__target {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--accent-success);
+      border: 1px solid var(--accent-success);
+      border-radius: var(--border-radius);
+      padding: 2px var(--space-2);
+      margin-bottom: var(--space-3);
+    }
+    .eval-card__desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* --- Quiz Checker --- */
+    .quiz-checker { margin: var(--space-8) 0; }
+    .quiz-item {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      transition: all var(--transition-base);
+    }
+    .quiz-item__question {
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+      line-height: 1.6;
+    }
+    .quiz-item__options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+    .quiz-btn {
+      padding: var(--space-3) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .quiz-btn:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+    }
+    .quiz-btn.correct {
+      border-color: var(--accent-success);
+      border-style: solid;
+      color: var(--accent-success);
+      background: rgba(16, 185, 129, 0.15);
+      pointer-events: none;
+    }
+    .quiz-btn.wrong {
+      border-color: var(--accent-error);
+      border-style: solid;
+      animation: shake 0.5s ease-in-out;
+    }
+    .quiz-item.solved .quiz-btn:not(.correct) {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .quiz-item.solved {
+      border-style: solid;
+      border-color: var(--accent-success);
+    }
+    .quiz-score {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      padding: var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin-top: var(--space-4);
+      display: none;
+    }
+    .quiz-score.show { display: block; }
+    .quiz-score.perfect {
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      box-shadow: 0 0 15px var(--glow-success);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    @media (max-width: 640px) {
+      .pyramid-level--l4, .pyramid-level--l3, .pyramid-level--l2, .pyramid-level--l1 { width: 100%; }
+      .eval-grid { grid-template-columns: 1fr; }
+      .quiz-item__options { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 05</span>
+        <span class="separator">/</span>
+        <span class="current">Testing &amp; Evaluation</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Page Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 05 &mdash; Lesson 02</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Agent Testing &amp;<br>Evaluation</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Systematic testing strategies that catch the bugs your 20 hand-picked queries won&rsquo;t. Build golden datasets, measure what matters, and automate evaluation at scale.
+          </p>
+        </header>
+
+        <!-- ===== BLUEPRINT SVG DIAGRAM ===== -->
+        <div class="evolving-diagram reveal reveal--scale"><div class="evolving-diagram__label">EVALUATION PYRAMID</div>
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+          <defs>
+            <filter id="eval-glow-green"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#10b981" flood-opacity="0.7"/></filter>
+            <filter id="eval-glow-amber"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#f59e0b" flood-opacity="0.5"/></filter>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="380" rx="12" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <!-- Title -->
+          <text x="350" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#A100FF" font-weight="700" letter-spacing="2">PRIYA'S TESTING PYRAMID FOR DATAPULSE</text>
+          <!-- Left arrow: COVERAGE -->
+          <line x1="88" y1="70" x2="88" y2="310" stroke="#334155" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <polygon points="84,70 92,70 88,58" fill="#334155"/>
+          <text x="78" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0" transform="rotate(-90 78 190)" letter-spacing="1">COVERAGE</text>
+          <text x="68" y="80" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">focused</text>
+          <text x="68" y="310" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">broad</text>
+          <!-- Right arrow: SPEED -->
+          <line x1="612" y1="70" x2="612" y2="310" stroke="#334155" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <polygon points="608,310 616,310 612,322" fill="#334155"/>
+          <text x="622" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0" transform="rotate(90 622 190)" letter-spacing="1">SPEED</text>
+          <text x="632" y="80" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">slow</text>
+          <text x="632" y="310" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">fast</text>
+          <!-- Layer 4 (top): LLM-AS-JUDGE -->
+          <polygon points="350,55 430,105 270,105" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="2" filter="url(#eval-glow-green)"/>
+          <text x="350" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#10b981" font-weight="700">LLM-AS-JUDGE</text>
+          <text x="350" y="99" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Quality, relevance, safety</text>
+          <!-- Layer 3: AGENT TESTS -->
+          <polygon points="270,112 430,112 470,165 230,165" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="350" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#f59e0b" font-weight="700">AGENT TESTS</text>
+          <text x="350" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">End-to-end conversations, golden queries</text>
+          <text x="350" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f59e0b">50 golden queries</text>
+          <!-- Layer 2: INTEGRATION TESTS -->
+          <polygon points="230,172 470,172 520,228 180,228" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="350" y="193" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#CC00FF" font-weight="700">INTEGRATION TESTS</text>
+          <text x="350" y="207" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Tool chains, RAG pipeline, guardrails</text>
+          <text x="350" y="220" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#CC00FF">150+ tests</text>
+          <!-- Layer 1 (bottom): UNIT TESTS -->
+          <polygon points="180,235 520,235 570,295 130,295" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="350" y="257" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#A100FF" font-weight="700">UNIT TESTS</text>
+          <text x="350" y="271" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Tool functions, parsers, formatters</text>
+          <text x="350" y="284" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#A100FF">500+ tests</text>
+          <!-- Bottom decorative dots -->
+          <circle cx="320" cy="330" r="2" fill="#334155"/>
+          <circle cx="340" cy="330" r="2" fill="#334155"/>
+          <circle cx="360" cy="330" r="2" fill="#334155"/>
+          <circle cx="380" cy="330" r="2" fill="#334155"/>
+          <!-- Bottom label -->
+          <text x="350" y="360" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#334155" letter-spacing="1">Fast + broad at the base, slow + focused at the top</text>
+        </svg>
+        </div>
+
+        <!-- ===== THE SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Scene</div>
+          <h2 style="margin-bottom: var(--space-4);">The 95% Trap</h2>
+          <p>
+            AcmeCorp&rsquo;s data team was celebrating &mdash; their Data Agent passed manual testing with flying colors. Twenty hand-picked queries all returned correct results. They shipped to production. Within 48 hours, the Quality Analyst agent flagged that 23% of &ldquo;revenue by region&rdquo; queries were returning numbers that didn&rsquo;t match the nightly batch reports.
+          </p>
+          <p style="margin-top: var(--space-3);">
+            The problem? Those 20 test queries were all simple single-table lookups. None tested multi-table joins, date range filters, or the tricky fiscal calendar (AcmeCorp&rsquo;s Q3 is July&ndash;September, not the calendar quarter). The team had tested 20 easy cases and assumed the other 500+ query patterns would work too.
+          </p>
+          <div class="callout callout--error" style="margin-top: var(--space-6);">
+            <div class="callout__label">Incident Report</div>
+            <div class="callout__text">
+              23% of &ldquo;revenue by region&rdquo; queries returned incorrect totals in production. Root cause: multi-table joins used the wrong foreign key, and fiscal calendar mapping was absent. The 20-query test suite had 0% coverage of these patterns. AcmeCorp needed a systematic testing strategy.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 1: TESTING PYRAMID ===== -->
+        <section class="section">
+          <div class="section-label reveal">The Testing Pyramid</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">Four Levels of Agent Testing</h2>
+          <p class="reveal" style="margin-bottom: var(--space-8);">Click each level of the pyramid to see what it tests, how AcmeCorp uses it, and the cost/speed trade-off.</p>
+
+          <div class="pyramid reveal reveal--scale" id="testPyramid">
+            <div class="pyramid-level pyramid-level--l4" data-level="4">
+              <span class="pyramid-level__label">Level 4: End-to-End Evaluation</span>
+              <span class="pyramid-level__meta">125 golden queries &bull; human review &bull; most expensive</span>
+            </div>
+            <div class="pyramid-level pyramid-level--l3" data-level="3">
+              <span class="pyramid-level__label">Level 3: Integration Tests</span>
+              <span class="pyramid-level__meta">~80 test cases &bull; 15 minutes &bull; full ReAct loop</span>
+            </div>
+            <div class="pyramid-level pyramid-level--l2" data-level="2">
+              <span class="pyramid-level__label">Level 2: Component Tests</span>
+              <span class="pyramid-level__meta">~50 tests &bull; 2 minutes &bull; prompts &amp; guardrails</span>
+            </div>
+            <div class="pyramid-level pyramid-level--l1" data-level="1">
+              <span class="pyramid-level__label">Level 1: Unit Tests</span>
+              <span class="pyramid-level__meta">~200 tests &bull; 30 seconds &bull; fast &amp; deterministic</span>
+            </div>
+            <div class="pyramid-detail" id="pyramidDetail">Click a pyramid level above to see AcmeCorp&rsquo;s testing details.</div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: GOLDEN DATASETS ===== -->
+        <section class="section reveal">
+          <div class="section-label">Golden Datasets</div>
+          <h2 style="margin-bottom: var(--space-4);">AcmeCorp&rsquo;s 125 Test Cases</h2>
+          <p style="margin-bottom: var(--space-6);">Click each category to expand and see example test cases from AcmeCorp&rsquo;s golden dataset.</p>
+
+          <div id="goldenDataset">
+
+            <div class="golden-card" data-category="1">
+              <div class="golden-card__header" onclick="this.parentElement.classList.toggle('open')">
+                <div>
+                  <span class="golden-card__title">Simple Lookups</span>
+                  <span class="golden-card__count">&nbsp;&mdash; 30 cases</span>
+                </div>
+                <svg class="golden-card__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="golden-card__body">
+                <div class="golden-card__content">
+                  <p>Single table, no joins. These are the baseline &mdash; the queries your agent should never get wrong.</p>
+                  <div class="golden-card__example">
+                    <strong>Input:</strong> &ldquo;How many stores do we have?&rdquo;<br>
+                    <strong>Expected flow:</strong> schema_discovery &rarr; query_execute(<code>SELECT COUNT(*) FROM dim_stores</code>)<br>
+                    <strong>Expected answer:</strong> 200
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="golden-card" data-category="2">
+              <div class="golden-card__header" onclick="this.parentElement.classList.toggle('open')">
+                <div>
+                  <span class="golden-card__title">Multi-Table Joins</span>
+                  <span class="golden-card__count">&nbsp;&mdash; 25 cases</span>
+                </div>
+                <svg class="golden-card__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="golden-card__body">
+                <div class="golden-card__content">
+                  <p>Cross-table queries that require correct join keys and aggregation logic. This is where AcmeCorp&rsquo;s original 20-query suite failed.</p>
+                  <div class="golden-card__example">
+                    <strong>Input:</strong> &ldquo;Q3 revenue by region&rdquo;<br>
+                    <strong>Expected flow:</strong> schema_discovery &rarr; query_execute(<code>JOIN fact_sales, dim_stores, dim_regions WHERE date BETWEEN July-Sep</code>)<br>
+                    <strong>Expected answer:</strong> $4.2M Southwest, $3.8M Northeast, etc.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="golden-card" data-category="3">
+              <div class="golden-card__header" onclick="this.parentElement.classList.toggle('open')">
+                <div>
+                  <span class="golden-card__title">Fiscal Calendar Edge Cases</span>
+                  <span class="golden-card__count">&nbsp;&mdash; 15 cases</span>
+                </div>
+                <svg class="golden-card__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="golden-card__body">
+                <div class="golden-card__content">
+                  <p>AcmeCorp-specific date handling. The fiscal calendar does not align with calendar quarters &mdash; Q3 is July through September.</p>
+                  <div class="golden-card__example">
+                    <strong>Input:</strong> &ldquo;Last quarter&rsquo;s sales&rdquo;<br>
+                    <strong>Expected behavior:</strong> Agent maps to AcmeCorp fiscal quarter (not calendar quarter). July&ndash;September = Q3.<br>
+                    <strong>Trap:</strong> An agent using calendar quarters would return the wrong 3 months of data.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="golden-card" data-category="4">
+              <div class="golden-card__header" onclick="this.parentElement.classList.toggle('open')">
+                <div>
+                  <span class="golden-card__title">Permission Boundaries</span>
+                  <span class="golden-card__count">&nbsp;&mdash; 20 cases</span>
+                </div>
+                <svg class="golden-card__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="golden-card__body">
+                <div class="golden-card__content">
+                  <p>Guardrail tests per persona. Verifies that each role&rsquo;s boundaries are enforced correctly.</p>
+                  <div class="golden-card__example">
+                    <strong>Test 1:</strong> Store manager asks &ldquo;all store salaries&rdquo; &rarr; Expected: <strong style="color: var(--accent-error);">BLOCKED</strong><br>
+                    <strong>Test 2:</strong> Product Owner asks &ldquo;individual customer emails&rdquo; &rarr; Expected: <strong style="color: var(--accent-error);">BLOCKED</strong>, aggregated data only
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="golden-card" data-category="5">
+              <div class="golden-card__header" onclick="this.parentElement.classList.toggle('open')">
+                <div>
+                  <span class="golden-card__title">Error Recovery</span>
+                  <span class="golden-card__count">&nbsp;&mdash; 15 cases</span>
+                </div>
+                <svg class="golden-card__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="golden-card__body">
+                <div class="golden-card__content">
+                  <p>How the agent handles failures gracefully &mdash; renamed tables, timeouts, malformed input.</p>
+                  <div class="golden-card__example">
+                    <strong>Test 1:</strong> Query against a renamed table &rarr; Expected: suggest the correct table name<br>
+                    <strong>Test 2:</strong> Timeout on a large join &rarr; Expected: return partial results with an explanation
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="golden-card" data-category="6">
+              <div class="golden-card__header" onclick="this.parentElement.classList.toggle('open')">
+                <div>
+                  <span class="golden-card__title">Memory &amp; Context</span>
+                  <span class="golden-card__count">&nbsp;&mdash; 10 cases</span>
+                </div>
+                <svg class="golden-card__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="golden-card__body">
+                <div class="golden-card__content">
+                  <p>Follow-up queries that depend on context from previous turns in the conversation.</p>
+                  <div class="golden-card__example">
+                    <strong>Turn 1:</strong> &ldquo;Show Q3 revenue&rdquo;<br>
+                    <strong>Turn 2:</strong> &ldquo;Break that down by region&rdquo;<br>
+                    <strong>Expected:</strong> Agent remembers the Q3 context without the user repeating it.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="golden-card" data-category="7">
+              <div class="golden-card__header" onclick="this.parentElement.classList.toggle('open')">
+                <div>
+                  <span class="golden-card__title">Safety &amp; PII</span>
+                  <span class="golden-card__count">&nbsp;&mdash; 10 cases</span>
+                </div>
+                <svg class="golden-card__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="golden-card__body">
+                <div class="golden-card__content">
+                  <p>Zero-tolerance tests. Every single one of these must pass &mdash; no exceptions.</p>
+                  <div class="golden-card__example">
+                    <strong>Test 1:</strong> Prompt injection attempt in user input &rarr; Expected: <strong style="color: var(--accent-error);">BLOCKED</strong><br>
+                    <strong>Test 2:</strong> Customer SSN appears in query output &rarr; Expected: <strong style="color: var(--accent-error);">MASKED</strong> to ***-**-****
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="callout" style="margin-top: var(--space-6);">
+            <div class="callout__label">AcmeCorp Insight</div>
+            <div class="callout__text">
+              AcmeCorp maintains these 125 test cases in a version-controlled JSON file. Every new edge case discovered in production gets added to the golden dataset. The set has grown from 20 to 125 in three months &mdash; each addition represents a bug that slipped through.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: SEVEN EVALUATION DIMENSIONS ===== -->
+        <section class="section reveal">
+          <div class="section-label">Evaluation Dimensions</div>
+          <h2 style="margin-bottom: var(--space-4);">Seven Things to Measure</h2>
+          <p style="margin-bottom: var(--space-6);">A correct answer that takes 60 seconds is still a failure. Measure across all seven dimensions.</p>
+
+          <div class="eval-grid">
+
+            <div class="eval-card">
+              <div class="eval-card__header">
+                <span class="eval-card__num">1</span>
+                <span class="eval-card__name">Correctness</span>
+              </div>
+              <div class="eval-card__target">&ge;95%</div>
+              <div class="eval-card__desc">Is the answer factually accurate? AcmeCorp compares every agent answer against known batch report numbers.</div>
+            </div>
+
+            <div class="eval-card">
+              <div class="eval-card__header">
+                <span class="eval-card__num">2</span>
+                <span class="eval-card__name">Completeness</span>
+              </div>
+              <div class="eval-card__target">&ge;90%</div>
+              <div class="eval-card__desc">Did it fully address the question? &ldquo;Revenue by region&rdquo; must include all regions, not just the top 3.</div>
+            </div>
+
+            <div class="eval-card">
+              <div class="eval-card__header">
+                <span class="eval-card__num">3</span>
+                <span class="eval-card__name">Tool Efficiency</span>
+              </div>
+              <div class="eval-card__target">&le;1.5x optimal</div>
+              <div class="eval-card__desc">Did it use the minimum number of tools? A simple COUNT(*) should not require 5 tool calls.</div>
+            </div>
+
+            <div class="eval-card">
+              <div class="eval-card__header">
+                <span class="eval-card__num">4</span>
+                <span class="eval-card__name">Latency</span>
+              </div>
+              <div class="eval-card__target">P50&lt;5s &bull; P99&lt;30s</div>
+              <div class="eval-card__desc">How fast is the response? AcmeCorp&rsquo;s VP of Sales will not wait more than 5 seconds for an answer.</div>
+            </div>
+
+            <div class="eval-card">
+              <div class="eval-card__header">
+                <span class="eval-card__num">5</span>
+                <span class="eval-card__name">Cost</span>
+              </div>
+              <div class="eval-card__target">$0.004/query avg</div>
+              <div class="eval-card__desc">Token spend per task. AcmeCorp targets $0.004 per query to stay within the monthly LLM budget.</div>
+            </div>
+
+            <div class="eval-card">
+              <div class="eval-card__header">
+                <span class="eval-card__num">6</span>
+                <span class="eval-card__name">Safety</span>
+              </div>
+              <div class="eval-card__target">0 violations</div>
+              <div class="eval-card__desc">PII leaks, unauthorized access, prompt injection bypasses. Zero tolerance after the email exposure incident.</div>
+            </div>
+
+            <div class="eval-card">
+              <div class="eval-card__header">
+                <span class="eval-card__num">7</span>
+                <span class="eval-card__name">User Satisfaction</span>
+              </div>
+              <div class="eval-card__target">&ge;4.0 / 5.0</div>
+              <div class="eval-card__desc">Thumbs up/down ratings from real users. AcmeCorp&rsquo;s VP of Sales rates agent responses weekly.</div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: LLM-AS-JUDGE ===== -->
+        <section class="section reveal">
+          <div class="section-label">LLM-as-Judge</div>
+          <h2 style="margin-bottom: var(--space-4);">Automated Evaluation at Scale</h2>
+          <p style="margin-bottom: var(--space-6);">Instead of paying humans to review every agent response, use a separate LLM to evaluate outputs automatically.</p>
+
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="bp-card__number">1</span>
+              How It Works
+            </div>
+            <div class="bp-card__body">
+              <p>A &ldquo;judge&rdquo; LLM receives the original question, the agent&rsquo;s response, and the expected answer. It scores the response on correctness, completeness, and safety using a structured rubric.</p>
+            </div>
+          </div>
+
+          <table class="bp-table reveal" style="margin-bottom: var(--space-6);">
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>LLM-as-Judge</th>
+                <th>Human Evaluation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Correlation with human judgment</td>
+                <td><span class="badge badge--teal" data-tip="LLM judges correlate with human judgment roughly 80% of the time — good but not perfect">~80%</span></td>
+                <td><span class="badge badge--green" data-tip="Human evaluation is the gold standard baseline for measuring judgment quality">100% (baseline)</span></td>
+              </tr>
+              <tr>
+                <td>Cost per evaluation</td>
+                <td><span class="badge badge--green" data-tip="LLM-as-Judge costs roughly $0.002 per evaluation — 100x cheaper than human review">~$0.002</span></td>
+                <td><span class="badge badge--amber" data-tip="Human evaluation costs roughly $0.20 per evaluation — expensive but highly accurate">~$0.20</span></td>
+              </tr>
+              <tr>
+                <td>Speed (100 evals)</td>
+                <td><span class="badge badge--green" data-tip="An LLM judge can evaluate 100 responses in about 2 minutes — enabling rapid CI/CD feedback loops">~2 minutes</span></td>
+                <td><span class="badge badge--amber" data-tip="Human reviewers need roughly 4 hours for 100 evaluations — too slow for CI/CD gates">~4 hours</span></td>
+              </tr>
+              <tr>
+                <td>Domain-specific correctness</td>
+                <td><span class="badge badge--amber" data-tip="LLM judges often lack deep domain expertise and may miss subtle correctness issues in specialized fields">Struggles</span></td>
+                <td><span class="badge badge--green" data-tip="Human domain experts excel at catching nuanced correctness errors in specialized data queries">Strong</span></td>
+              </tr>
+              <tr>
+                <td>Bias</td>
+                <td><span class="badge badge--amber" data-tip="LLM judges tend to rate longer, more verbose responses higher regardless of actual quality">Prefers longer outputs</span></td>
+                <td><span class="badge badge--teal" data-tip="Human reviewer bias varies by individual — can be mitigated with rubrics and calibration sessions">Varies by reviewer</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">AcmeCorp Implementation</div>
+            <div class="callout__text">
+              AcmeCorp uses Claude as the judge for their Gemini-powered agents. The judge scores each response on correctness, completeness, and safety. When the judge flags a low score, it auto-creates a Jira ticket for the data team to review. This approach caught the decimal precision bug 3 days before a human reviewer would have noticed it.
+            </div>
+          </div>
+
+          <div class="callout callout--error reveal" style="margin-top: var(--space-4);">
+            <div class="callout__label">Caution</div>
+            <div class="callout__text">
+              LLM judges are not a replacement for human evaluation &mdash; they are a cost-effective first pass. Always run human evaluation on a sample (AcmeCorp reviews 10% of flagged responses). LLM judges tend to prefer verbose responses and may miss subtle domain-specific errors.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: KNOWLEDGE CHECK ===== -->
+        <section class="section reveal">
+          <div class="section-label">Knowledge Check</div>
+          <h2 style="margin-bottom: var(--space-4);">Which Testing Level Catches This Bug?</h2>
+          <p style="margin-bottom: var(--space-6);">For each scenario, select the testing level that would catch the described bug.</p>
+
+          <div class="quiz-checker" id="quizChecker">
+
+            <div class="quiz-item" data-answer="unit" id="quiz-1">
+              <div class="quiz-item__question">
+                <span class="badge badge--blue" data-tip="PII masking bug — a single function fails on a specific phone format, best caught by unit testing" style="margin-right: var(--space-2);">Scenario 1</span>
+                The PII masking function fails to redact phone numbers in the format (555) 123-4567.
+              </div>
+              <div class="quiz-item__options">
+                <button class="quiz-btn" data-choice="unit">Unit Test</button>
+                <button class="quiz-btn" data-choice="component">Component Test</button>
+                <button class="quiz-btn" data-choice="integration">Integration Test</button>
+                <button class="quiz-btn" data-choice="e2e">E2E Evaluation</button>
+              </div>
+            </div>
+
+            <div class="quiz-item" data-answer="component" id="quiz-2">
+              <div class="quiz-item__question">
+                <span class="badge badge--teal" data-tip="Tool ordering bug — the agent calls tools in the wrong sequence, caught by component testing the reasoning chain" style="margin-right: var(--space-2);">Scenario 2</span>
+                The agent calls query_execute before schema_discovery when asked about an unfamiliar table.
+              </div>
+              <div class="quiz-item__options">
+                <button class="quiz-btn" data-choice="unit">Unit Test</button>
+                <button class="quiz-btn" data-choice="component">Component Test</button>
+                <button class="quiz-btn" data-choice="integration">Integration Test</button>
+                <button class="quiz-btn" data-choice="e2e">E2E Evaluation</button>
+              </div>
+            </div>
+
+            <div class="quiz-item" data-answer="integration" id="quiz-3">
+              <div class="quiz-item__question">
+                <span class="badge badge--amber" data-tip="Multi-table join bug — incorrect join keys produce wrong totals, caught by integration testing with real database" style="margin-right: var(--space-2);">Scenario 3</span>
+                A multi-table join returns incorrect totals because the agent joins on the wrong key.
+              </div>
+              <div class="quiz-item__options">
+                <button class="quiz-btn" data-choice="unit">Unit Test</button>
+                <button class="quiz-btn" data-choice="component">Component Test</button>
+                <button class="quiz-btn" data-choice="integration">Integration Test</button>
+                <button class="quiz-btn" data-choice="e2e">E2E Evaluation</button>
+              </div>
+            </div>
+
+            <div class="quiz-item" data-answer="e2e" id="quiz-4">
+              <div class="quiz-item__question">
+                <span class="badge badge--green" data-tip="Perceived latency issue — P50 is fine but user experience feels slow, only caught by end-to-end evaluation" style="margin-right: var(--space-2);">Scenario 4</span>
+                Users report the agent &ldquo;feels slow&rdquo; even though P50 latency is within target.
+              </div>
+              <div class="quiz-item__options">
+                <button class="quiz-btn" data-choice="unit">Unit Test</button>
+                <button class="quiz-btn" data-choice="component">Component Test</button>
+                <button class="quiz-btn" data-choice="integration">Integration Test</button>
+                <button class="quiz-btn" data-choice="e2e">E2E Evaluation</button>
+              </div>
+            </div>
+
+            <div class="quiz-score" id="quizScore"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAVIGATION ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="01-observability.html" class="page-nav__title">Observability &amp; Tracing</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="03-cicd-eval-gates.html" class="page-nav__title">CI/CD &amp; Evaluation Gates</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    Nav.init('m05-testing-evaluation');
+
+    // ===== TESTING PYRAMID INTERACTION =====
+    (function() {
+      var pyramid = document.getElementById('testPyramid');
+      var detail = document.getElementById('pyramidDetail');
+
+      var levelData = {
+        '1': {
+          title: 'Level 1: Unit Tests',
+          text: 'Test individual tool functions without the LLM. Fast, deterministic, cheap. AcmeCorp tests: schema_discovery returns the correct table list from their PostgreSQL warehouse. query_execute handles connection timeouts gracefully. PII masking correctly redacts emails and SSNs. ~200 tests, runs in 30 seconds.'
+        },
+        '2': {
+          title: 'Level 2: Component Tests',
+          text: 'Test prompts and guardrails independently. Given the system prompt "You are AcmeCorp\'s SQL expert" and the input "What tables do we have?", does the agent call schema_discovery (correct) or query_execute (wrong)? AcmeCorp tests all 5 persona prompts against 10 known inputs each. ~50 tests, 2 minutes.'
+        },
+        '3': {
+          title: 'Level 3: Integration Tests',
+          text: 'Test the full ReAct loop with real or mocked tools. Full flow: "Q3 revenue by region" \u2192 schema_discovery \u2192 SQL generation \u2192 query_execute \u2192 format. Verify the final number matches known-good answers ($4.2M Southwest, $3.8M Northeast). ~80 test cases, 15 minutes.'
+        },
+        '4': {
+          title: 'Level 4: End-to-End Evaluation',
+          text: 'Full production-like environment with real LLM and human evaluation. AcmeCorp runs all 125 golden dataset queries through the full agent stack. Human reviewers score a 10% sample. Most expensive but catches the subtle bugs that unit tests miss. Run before every production release.'
+        }
+      };
+
+      pyramid.addEventListener('click', function(e) {
+        var level = e.target.closest('.pyramid-level');
+        if (!level) return;
+
+        pyramid.querySelectorAll('.pyramid-level').forEach(function(l) {
+          l.classList.remove('active');
+        });
+        level.classList.add('active');
+
+        var num = level.getAttribute('data-level');
+        var info = levelData[num];
+        detail.innerHTML = '<strong>' + info.title + '</strong><br><br>' + info.text;
+        detail.classList.add('show');
+      });
+    })();
+
+    // ===== QUIZ CHECKER ENGINE =====
+    (function() {
+      var solved = 0;
+      var total = 4;
+      var container = document.getElementById('quizChecker');
+      var scoreEl = document.getElementById('quizScore');
+
+      container.addEventListener('click', function(e) {
+        var btn = e.target.closest('.quiz-btn');
+        if (!btn) return;
+
+        var item = btn.closest('.quiz-item');
+        if (item.classList.contains('solved')) return;
+
+        var answer = item.getAttribute('data-answer');
+        var choice = btn.getAttribute('data-choice');
+
+        if (choice === answer) {
+          btn.classList.add('correct');
+          item.classList.add('solved');
+          solved++;
+
+          if (solved === total) {
+            scoreEl.textContent = 'All ' + total + ' scenarios matched correctly!';
+            scoreEl.classList.add('show', 'perfect');
+          }
+        } else {
+          btn.classList.add('wrong');
+          setTimeout(function() { btn.classList.remove('wrong'); }, 600);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

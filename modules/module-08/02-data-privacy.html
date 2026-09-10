@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Privacy &amp; Regulatory Compliance &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .reg-card {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    .reg-card__header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+    .reg-card__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .reg-card__icon--eu { border: 2px solid var(--stroke-primary); color: var(--stroke-primary); }
+    .reg-card__icon--gdpr { border: 2px solid var(--stroke-secondary); color: var(--stroke-secondary); }
+    .reg-card__icon--hipaa { border: 2px solid #f59e0b; color: #f59e0b; }
+    .reg-card__icon--nist { border: 2px solid var(--accent-success); color: var(--accent-success); }
+    .reg-card__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      color: var(--text-primary);
+    }
+    .reg-card__subtitle {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+    }
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: var(--space-6) 0;
+      counter-reset: checklist-counter;
+    }
+    .checklist li {
+      counter-increment: checklist-counter;
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px dashed var(--stroke-dim);
+      font-size: var(--font-sm);
+      line-height: 1.6;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li::before {
+      content: counter(checklist-counter, decimal-leading-zero);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      flex-shrink: 0;
+      width: 24px;
+      padding-top: 2px;
+    }
+    .isolation-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+    .isolation-card {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      text-align: center;
+    }
+    .isolation-card__level {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-2);
+    }
+    .isolation-card__level--public { color: var(--accent-success); }
+    .isolation-card__level--internal { color: #f59e0b; }
+    .isolation-card__level--restricted { color: #ef4444; }
+    .isolation-card__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+    }
+    .isolation-card__body {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    @media (max-width: 768px) {
+      .isolation-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 08</span>
+        <span class="separator">/</span>
+        <span class="current">Data Privacy</span>
+      </div>
+    </nav>
+
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- ===== HEADER ===== -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 08 &mdash; Lesson 02</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Data Privacy &amp; Regulatory Compliance</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Two weeks after the security audit, AcmeCorp's legal team drops a bomb. With 23 stores in California, CCPA applies to every customer interaction DataPulse touches &mdash; and the first data deletion request has just arrived.
+          </p>
+        </header>
+
+        <!-- ===== INLINE SVG DIAGRAM: PII DATA FLOW ===== -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">PII DATA FLOW &amp; MASKING</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+            <defs>
+              <filter id="pii-glow-amber">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <filter id="pii-glow-green">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <marker id="pii-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6" fill="#A100FF"/>
+              </marker>
+            </defs>
+
+            <!-- Background -->
+            <rect width="700" height="380" rx="8" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+
+            <!-- STAGE 1: RAW DATA cylinder -->
+            <ellipse cx="75" cy="130" rx="45" ry="14" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5"/>
+            <rect x="30" y="130" width="90" height="55" fill="rgba(239,68,68,0.08)" stroke="none"/>
+            <line x1="30" y1="130" x2="30" y2="185" stroke="#ef4444" stroke-width="1.5"/>
+            <line x1="120" y1="130" x2="120" y2="185" stroke="#ef4444" stroke-width="1.5"/>
+            <ellipse cx="75" cy="185" rx="45" ry="14" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5"/>
+            <text x="75" y="115" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">RAW DATA</text>
+            <text x="75" y="150" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">customer_email</text>
+            <text x="75" y="163" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">phone</text>
+            <text x="75" y="176" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">address</text>
+
+            <!-- Arrow 1 -->
+            <line x1="125" y1="157" x2="170" y2="157" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
+
+            <!-- STAGE 2: PII SCANNER (shield shape, amber) -->
+            <path d="M220,120 L260,108 L300,120 L300,185 Q260,200 220,185 Z" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1.5" filter="url(#pii-glow-amber)"/>
+            <text x="260" y="142" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">PII</text>
+            <text x="260" y="155" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">SCANNER</text>
+            <text x="260" y="172" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">scan &amp;</text>
+            <text x="260" y="183" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">classify</text>
+
+            <!-- Arrow 2 -->
+            <line x1="305" y1="157" x2="345" y2="157" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
+
+            <!-- STAGE 3: MASKING ENGINE -->
+            <rect x="350" y="110" width="130" height="95" rx="6" fill="rgba(45,212,191,0.06)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="415" y="128" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">MASKING ENGINE</text>
+            <!-- Corner brackets -->
+            <path d="M346,110 L338,110 L338,118" fill="none" stroke="#CC00FF" stroke-width="1.2"/>
+            <path d="M484,110 L492,110 L492,118" fill="none" stroke="#CC00FF" stroke-width="1.2"/>
+            <path d="M346,205 L338,205 L338,197" fill="none" stroke="#CC00FF" stroke-width="1.2"/>
+            <path d="M484,205 L492,205 L492,197" fill="none" stroke="#CC00FF" stroke-width="1.2"/>
+            <text x="415" y="150" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">john@email.com</text>
+            <text x="415" y="163" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">j***@***.com</text>
+            <line x1="370" y1="170" x2="460" y2="170" stroke="#334155" stroke-width="0.5" stroke-dasharray="3,2"/>
+            <text x="415" y="183" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">555-1234</text>
+            <text x="415" y="196" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">***-****</text>
+
+            <!-- Arrow 3 -->
+            <line x1="485" y1="157" x2="520" y2="157" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
+
+            <!-- STAGE 4: DATAPULSE CONTEXT -->
+            <rect x="525" y="120" width="80" height="40" rx="5" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5"/>
+            <text x="565" y="137" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">DATAPULSE</text>
+            <text x="565" y="150" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">CONTEXT</text>
+
+            <!-- Arrow 4 -->
+            <line x1="565" y1="160" x2="565" y2="210" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
+
+            <!-- STAGE 5: USER RESPONSE -->
+            <rect x="525" y="215" width="80" height="40" rx="5" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5" filter="url(#pii-glow-green)"/>
+            <text x="565" y="232" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">USER</text>
+            <text x="565" y="245" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">RESPONSE</text>
+            <text x="565" y="268" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="6" text-anchor="middle">clean, safe output</text>
+
+            <!-- Bottom info bar -->
+            <rect x="50" y="300" width="200" height="30" rx="4" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="150" y="319" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">7 PII LOCATIONS FOUND</text>
+            <text x="150" y="340" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Priya's audit findings</text>
+
+            <!-- Compliance label -->
+            <rect x="430" y="300" width="220" height="30" rx="4" fill="rgba(74,158,255,0.06)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="540" y="319" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">CCPA / GDPR COMPLIANT</text>
+
+            <!-- Dimension line along bottom -->
+            <line x1="30" y1="360" x2="670" y2="360" stroke="#334155" stroke-width="0.8" stroke-dasharray="2,2"/>
+            <line x1="30" y1="355" x2="30" y2="365" stroke="#334155" stroke-width="0.8"/>
+            <line x1="670" y1="355" x2="670" y2="365" stroke="#334155" stroke-width="0.8"/>
+          </svg>
+        </div>
+
+        <!-- ===== SECTION 0: THE CCPA CRISIS ===== -->
+        <section class="section">
+          <div class="callout reveal">
+            <div class="callout__label">AcmeCorp &mdash; The Deletion Request</div>
+            <div class="callout__text">
+              <p style="margin-bottom: var(--space-3);">
+                A customer who shops at AcmeCorp's Store #47 in the Southwest submits a formal CCPA data deletion request. Marcus Webb walks it over to Maya Chen's desk. "If we delete this customer's records from the PostgreSQL warehouse," Marcus asks, "will DataPulse still reference their purchase patterns in cached embeddings?"
+              </p>
+              <p style="margin-bottom: var(--space-3);">
+                Maya goes pale. The RAG system that powers DataPulse embedded customer transaction summaries into its vector store &mdash; summaries that include names, email addresses, and purchase histories. Deleting the source data from fact_sales and the Salesforce CRM does not delete the embeddings. The customer's PII is baked into vector representations that DataPulse queries every time someone asks about Southwest region buying patterns.
+              </p>
+              <p>
+                "We have 45 days to comply," Marcus says, referencing the CCPA timeline. "And we need to figure out every place this customer's data lives &mdash; PostgreSQL, Salesforce, Shopify order history, the S3 data lake, conversation logs, and the vector index. If we miss even one, we are in violation." This is the crisis that forces AcmeCorp to build a comprehensive data privacy framework for DataPulse.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 1: FOUR PILLARS ===== -->
+        <section class="section">
+          <div class="section-label reveal">Regulation Deep Dive</div>
+          <h2 class="reveal">The Four Pillars of AI Agent Compliance</h2>
+
+          <div class="reg-card reveal reveal--delay-1">
+            <div class="reg-card__header">
+              <div class="reg-card__icon reg-card__icon--eu">EU</div>
+              <div>
+                <div class="reg-card__title">EU AI Act</div>
+                <div class="reg-card__subtitle">Risk-based classification framework for AI systems</div>
+              </div>
+              <span class="badge badge--amber" style="margin-left: auto;" data-tip="Enforcement is phased: prohibited practices banned Feb 2025, high-risk obligations by Aug 2026.">Phased 2024&ndash;2026</span>
+            </div>
+            <p style="font-size: var(--font-sm); line-height: 1.7; margin-bottom: var(--space-4);">
+              The EU AI Act classifies AI systems into four risk tiers: unacceptable, high, limited, and minimal. Data agents that make decisions affecting individuals or process sensitive data typically fall into the <strong>high-risk</strong> category, requiring conformity assessments, human oversight mechanisms, and detailed technical documentation. Marcus and Raj Patel classify DataPulse as high-risk because it processes customer purchase histories across AcmeCorp's 200 stores and influences business decisions that affect inventory allocation and staffing.
+            </p>
+            <div class="collapsible">
+              <div class="collapsible__header">
+                <span>Key Requirements for High-Risk AI Systems</span>
+              </div>
+              <div class="collapsible__content">
+                <div class="collapsible__body">
+                  <ul style="padding-left: var(--space-5); margin: 0;">
+                    <li style="margin-bottom: var(--space-2);">Risk management system maintained throughout the AI system lifecycle</li>
+                    <li style="margin-bottom: var(--space-2);">Data governance: training data must be relevant, representative, and free of errors</li>
+                    <li style="margin-bottom: var(--space-2);">Technical documentation sufficient to assess compliance</li>
+                    <li style="margin-bottom: var(--space-2);">Record-keeping with automatic logging of events (audit trails)</li>
+                    <li style="margin-bottom: var(--space-2);">Transparency: users must be informed they are interacting with AI</li>
+                    <li style="margin-bottom: var(--space-2);">Human oversight: ability for humans to intervene, override, or shut down the system</li>
+                    <li>Accuracy, robustness, and cybersecurity requirements throughout the lifecycle</li>
+                  </ul>
+                  <p style="margin-top: var(--space-4); font-size: var(--font-sm); color: var(--text-secondary);">
+                    <strong>Penalties:</strong> Up to 7% of global annual revenue or EUR 35 million, whichever is greater, for violations involving prohibited AI practices.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GDPR -->
+          <div class="reg-card reveal">
+            <div class="reg-card__header">
+              <div class="reg-card__icon reg-card__icon--gdpr">GP</div>
+              <div>
+                <div class="reg-card__title">GDPR for Agents</div>
+                <div class="reg-card__subtitle">Personal data protection in AI-driven systems</div>
+              </div>
+              <span class="badge badge--teal" style="margin-left: auto;" data-tip="Fully in force since May 2018. Applies to any agent processing personal data of EU residents.">Active</span>
+            </div>
+            <p style="font-size: var(--font-sm); line-height: 1.7; margin-bottom: var(--space-4);">
+              GDPR applies to any agent processing personal data of EU residents, regardless of where the agent is hosted. Agents introduce unique challenges: they may store personal data in conversation memory, reasoning traces, or vector embeddings &mdash; all of which count as "processing." Maya Chen discovers this firsthand when she audits DataPulse's vector store and finds that customer names and emails are embedded in thousands of transaction summary vectors that the RAG system uses daily.
+            </p>
+            <div class="card-grid card-grid--2" style="margin-top: var(--space-4);">
+              <div class="bp-card">
+                <div class="bp-card__title">Right to Explanation</div>
+                <div class="bp-card__body">Users affected by automated decisions can demand an explanation of the logic involved. Agents must be able to produce reasoning traces that justify their outputs in human-readable form. When Raj Patel asks DataPulse why it recommended closing a product line, the agent must surface the data and logic behind the recommendation.</div>
+              </div>
+              <div class="bp-card">
+                <div class="bp-card__title">Right to Erasure</div>
+                <div class="bp-card__body">When a user requests deletion, all personal data must be purged &mdash; from agent memory, conversation logs, vector stores, cached embeddings, and any derived datasets. AcmeCorp's CCPA deletion request reveals this is far harder than deleting a row from a database.</div>
+              </div>
+              <div class="bp-card">
+                <div class="bp-card__title">Data Minimization</div>
+                <div class="bp-card__body">Agents should collect and retain only the minimum personal data needed for the task. Conversation context should be pruned aggressively, and PII should be masked in long-term storage. Marcus mandates that DataPulse never stores raw customer emails in its conversation logs.</div>
+              </div>
+              <div class="bp-card">
+                <div class="bp-card__title">Cross-Border Transfers</div>
+                <div class="bp-card__body">If the agent or its LLM provider operates outside the EU, Standard Contractual Clauses or adequacy decisions must cover the transfer. This includes API calls to cloud-hosted models. AcmeCorp's LLM provider hosts in the US, requiring a Data Processing Agreement with SCCs.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- HIPAA -->
+          <div class="reg-card reveal">
+            <div class="reg-card__header">
+              <div class="reg-card__icon reg-card__icon--hipaa">HI</div>
+              <div>
+                <div class="reg-card__title">HIPAA</div>
+                <div class="reg-card__subtitle">Protected Health Information in AI workflows</div>
+              </div>
+              <span class="badge badge--green" style="margin-left: auto;" data-tip="Applies to agents processing Protected Health Information (PHI). Requires BAAs with every LLM provider in the chain.">US Healthcare</span>
+            </div>
+            <p style="font-size: var(--font-sm); line-height: 1.7;">
+              Any agent that processes Protected Health Information (PHI) must comply with HIPAA. This requires Business Associate Agreements (BAAs) with every LLM provider and tool service in the chain. Audit trails must track every access to PHI, and data must be encrypted at rest and in transit. De-identification following the Safe Harbor or Expert Determination methods is required before PHI can be used in non-clinical workflows.
+            </p>
+          </div>
+
+          <!-- NIST AI RMF -->
+          <div class="reg-card reveal">
+            <div class="reg-card__header">
+              <div class="reg-card__icon reg-card__icon--nist">NI</div>
+              <div>
+                <div class="reg-card__title">NIST AI RMF</div>
+                <div class="reg-card__subtitle">AI Risk Management Framework</div>
+              </div>
+              <span class="badge badge--blue" style="margin-left: auto;" data-tip="Voluntary US framework for AI risk management. Increasingly referenced in procurement requirements.">Voluntary</span>
+            </div>
+            <p style="font-size: var(--font-sm); line-height: 1.7;">
+              The NIST AI Risk Management Framework provides a structured approach to identifying, assessing, and mitigating AI risks. It organizes around four functions: <strong>Govern</strong> (establish policies and roles), <strong>Map</strong> (identify context and risks), <strong>Measure</strong> (analyze and track risks), and <strong>Manage</strong> (prioritize and act on risks). While voluntary in the US, it is increasingly referenced in procurement requirements and industry standards. Marcus uses the NIST framework as the backbone for AcmeCorp's internal DataPulse governance policy, mapping each function to specific team responsibilities.
+            </p>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: COMPLIANCE CHECKLIST ===== -->
+        <section class="section">
+          <div class="section-label reveal">Practical Guide</div>
+          <h2 class="reveal">Agent Compliance Checklist</h2>
+          <p class="reveal reveal--delay-1">
+            Before deploying an agent to production, verify each of these ten items. Marcus and Priya Sharma build this checklist by synthesizing requirements across CCPA, EU AI Act, GDPR, SOX (for AcmeCorp's financial reporting through Derek Kim's office), and general enterprise governance.
+          </p>
+
+          <ol class="checklist reveal reveal--delay-2">
+            <li>Classify the agent's risk level under EU AI Act (unacceptable / high / limited / minimal) and document the rationale</li>
+            <li>Implement right-to-erasure workflows that purge PII from memory, logs, vector stores, and cached embeddings on request</li>
+            <li>Enable right-to-explanation by capturing and storing reasoning traces in human-readable format for every consequential decision</li>
+            <li>Apply data minimization: collect only what the current task requires and enforce automatic context pruning</li>
+            <li>Verify cross-border transfer compliance for every external API call, including LLM providers and embedding services</li>
+            <li>Execute Business Associate Agreements if the agent processes any healthcare-related data (PHI)</li>
+            <li>Deploy PII detection and masking on both input (before LLM) and output (before user) paths</li>
+            <li>Implement human oversight: escalation paths, override mechanisms, and kill switches for high-stakes decisions</li>
+            <li>Establish immutable audit logging that captures who, what, when, and why for every agent action</li>
+            <li>Conduct regular adversarial testing (red-teaming) to validate that security and privacy controls hold under attack</li>
+          </ol>
+
+          <div class="callout reveal">
+            <div class="callout__label">AcmeCorp &mdash; The PII Mapping Exercise</div>
+            <div class="callout__text">
+              <p style="margin-bottom: var(--space-3);">
+                Priya Sharma spends two days mapping every location where customer PII lives in AcmeCorp's ecosystem. The results are sobering. Customer email addresses appear in <strong>seven distinct systems</strong>: the PostgreSQL warehouse (dim_customers table), Salesforce CRM contact records, Shopify order confirmations, the S3 data lake raw zone, DataPulse's conversation log store, the RAG vector index, and InsightBot's marketing campaign cache.
+              </p>
+              <p>
+                "A deletion request means we touch seven systems, not one," Priya reports to Marcus. "And the vector index is the hardest &mdash; you cannot simply delete a row. You have to re-embed every document that referenced the customer and rebuild the affected index segments." Marcus adds this to the Security Sprint backlog as a Day 2 priority item.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: DATA ISOLATION ===== -->
+        <section class="section">
+          <div class="section-label reveal">Architecture Pattern</div>
+          <h2 class="reveal">Data Isolation by Classification Level</h2>
+          <p class="reveal reveal--delay-1">
+            Different data classifications require different levels of protection. Marcus designs three separate agent tiers for AcmeCorp, each with its own compute, storage, and access controls. The strongest pattern is to run separate agent instances per classification level, preventing any cross-contamination.
+          </p>
+
+          <div class="isolation-grid reveal reveal--delay-2">
+            <div class="isolation-card">
+              <div class="isolation-card__level isolation-card__level--public">Public</div>
+              <div class="isolation-card__title">Open Agent</div>
+              <div class="isolation-card__body">
+                Handles AcmeCorp's product catalogs, public pricing, and marketing data. Shared compute, standard logging. No PII ever enters this tier. Sofia Torres's store team uses this tier to check product availability.
+              </div>
+            </div>
+            <div class="isolation-card">
+              <div class="isolation-card__level isolation-card__level--internal">Internal</div>
+              <div class="isolation-card__title">Business Agent (DataPulse)</div>
+              <div class="isolation-card__body">
+                Processes AcmeCorp's sales metrics from fact_sales, inventory data, and operational reports. VPN-only access, encrypted storage, authenticated sessions. PII is masked before entering the LLM context.
+              </div>
+            </div>
+            <div class="isolation-card">
+              <div class="isolation-card__level isolation-card__level--restricted">Restricted</div>
+              <div class="isolation-card__title">ComplianceGuard</div>
+              <div class="isolation-card__body">
+                Handles customer PII, financial records for SOX compliance, and HR data. Dedicated compute, end-to-end encryption, full audit trails, data residency enforcement. Only Marcus and Priya have admin access.
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">AcmeCorp &mdash; Solving the Deletion Problem</div>
+            <div class="callout__text">
+              <p style="margin-bottom: var(--space-3);">
+                Marcus and Maya design AcmeCorp's right-to-erasure workflow to handle the customer deletion request. The process touches five locations: (1) the transactional database &mdash; hard delete from dim_customers and anonymize related rows in fact_sales; (2) DataPulse's conversation memory store &mdash; purge all sessions referencing the customer ID; (3) the RAG vector embedding index &mdash; identify affected vectors, re-embed without PII, and rebuild index segments; (4) the audit log archive &mdash; pseudonymize rather than delete, preserving the compliance trail; and (5) any cached query results in the S3 data lake.
+              </p>
+              <p>
+                The entire workflow runs as an automated pipeline that Priya tests against a staging copy of AcmeCorp's data. It completes in 4 hours for a single customer &mdash; well within the CCPA's 45-day window. Marcus flags this to Derek Kim as a recurring operational cost: at current request volumes, AcmeCorp processes approximately 15 deletion requests per month across its 23 California stores.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="01-agent-security.html" class="page-nav__title">Agent Security Architecture</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="03-security-implementation.html" class="page-nav__title">Security Implementation</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Security, Privacy &amp; Compliance
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m08-data-privacy');</script>
+</body>
+</html>

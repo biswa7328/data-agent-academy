@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulation: Multi-Agent Orchestration — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 04</span>
+        <span class="separator">/</span>
+        <span class="current">Simulation: Multi-Agent Orchestration</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Interactive Simulation</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Multi-Agent Orchestration</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            AcmeCorp's CEO has requested a comprehensive end-of-year business review. You must orchestrate multiple Data Agents through 5 critical decision points to deliver a complete 2025 analysis with 2026 recommendations.
+          </p>
+
+          <div class="callout reveal">
+            <div class="callout__label">Mission Brief</div>
+            <div class="callout__text">
+              The CEO wants "A complete 2025 business review with recommendations for 2026." You have Sales, Inventory, Customer, and Financial agents at your disposal. Make the right orchestration decisions &mdash; each correct choice earns a point. Aim for 5/5.
+            </div>
+          </div>
+        </section>
+
+        <!-- Simulation Container -->
+        <section class="section">
+          <div id="sim-container"></div>
+        </section>
+
+        <!-- Reset Button -->
+        <div class="reveal" style="text-align: center; margin-bottom: var(--space-8);">
+          <button class="btn btn--teal" onclick="SimulationEngine.reset()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+            </svg>
+            Restart Simulation
+          </button>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../../modules/module-04/04-state-failure.html" class="page-nav__title">State &amp; Failure</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../../index.html" class="page-nav__title">Back to Academy</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Multi-Agent Orchestration Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Simulation Config: Multi-Agent Orchestration ---
+    SimulationEngine.init('sim-container', {
+      title: 'Multi-Agent Orchestration',
+      intro: 'The CEO needs a comprehensive 2025 business review. You control how the agents are organized, how they collaborate, and how they handle failures. Every orchestration decision matters.',
+      nodes: {
+
+        // ===== DECISION 1: Task Decomposition =====
+        'start': {
+          type: 'decision',
+          title: 'Decision 1: Task Decomposition',
+          description: 'The CEO asks for "A complete 2025 business review with recommendations for 2026." How do you decompose this massive request?',
+          choices: [
+            {
+              label: 'Break into 4 parallel sub-tasks: Sales, Inventory, Customer, Financial',
+              hint: 'Each domain agent handles its own area simultaneously',
+              next: 'c1-parallel',
+              isGood: true
+            },
+            {
+              label: 'Handle everything sequentially: Sales \u2192 Inventory \u2192 Customer \u2192 Financial',
+              hint: 'One agent completes before the next starts',
+              next: 'c1-sequential',
+              isGood: false
+            },
+            {
+              label: 'Just use one Super Agent for everything',
+              hint: 'A single agent handles all four domains',
+              next: 'c1-super',
+              isGood: false
+            }
+          ]
+        },
+        'c1-parallel': {
+          type: 'consequence',
+          title: 'Excellent: Parallel Decomposition',
+          description: 'You deploy 4 specialized agents in parallel \u2014 Sales Agent, Inventory Agent, Customer Agent, and Financial Agent. Each works on its domain simultaneously, cutting total processing time by 75%.',
+          consequence: 'Parallel decomposition is ideal when sub-tasks are independent. Each agent has domain expertise, and since Sales analysis doesn\'t depend on Inventory analysis, there\'s no reason to wait. This is the Parallel Execution pattern in action.',
+          isGood: true,
+          next: 'decision-2'
+        },
+        'c1-sequential': {
+          type: 'consequence',
+          title: 'Suboptimal: Sequential Is Too Slow',
+          description: 'Running agents one at a time means the CEO waits 4x longer than necessary. The Financial Agent sits idle while the Sales Agent works, wasting valuable time before the board meeting.',
+          consequence: 'Sequential handoff is appropriate when later tasks depend on earlier results. But these four analyses are independent \u2014 there\'s no reason Customer analysis needs to wait for Inventory to finish. Always identify task dependencies before choosing a pattern.',
+          isGood: false,
+          next: 'decision-2'
+        },
+        'c1-super': {
+          type: 'consequence',
+          title: 'Poor Choice: One Agent Can\'t Do Everything Well',
+          description: 'The Super Agent attempts all four analyses but produces shallow results. It lacks deep domain expertise in any single area, misses nuances in inventory seasonality, and the financial projections are overly simplistic.',
+          consequence: 'A single agent handling everything creates a bottleneck and sacrifices quality. Specialized agents have domain-specific tools, prompts, and knowledge. The "one agent to rule them all" approach defeats the purpose of multi-agent architecture.',
+          isGood: false,
+          next: 'decision-2'
+        },
+
+        // ===== DECISION 2: Collaboration Pattern =====
+        'decision-2': {
+          type: 'decision',
+          title: 'Decision 2: Collaboration Pattern',
+          description: 'You need Sales data, Inventory data, Customer data, and Financial data simultaneously. All four agents are ready. Which collaboration pattern do you use?',
+          choices: [
+            {
+              label: 'Parallel Execution \u2014 all 4 agents work simultaneously',
+              hint: 'Independent tasks run concurrently for maximum speed',
+              next: 'c2-parallel',
+              isGood: true
+            },
+            {
+              label: 'Sequential Handoff \u2014 one agent at a time, passing context forward',
+              hint: 'Each agent finishes before the next begins',
+              next: 'c2-sequential',
+              isGood: false
+            },
+            {
+              label: 'Debate Pattern \u2014 agents discuss and argue about the data',
+              hint: 'Multiple agents analyze the same data from different perspectives',
+              next: 'c2-debate',
+              isGood: false
+            }
+          ]
+        },
+        'c2-parallel': {
+          type: 'consequence',
+          title: 'Correct: Parallel Execution',
+          description: 'All four agents launch simultaneously. The Sales Agent queries revenue tables, Inventory Agent analyzes stock levels, Customer Agent segments the user base, and Financial Agent computes margins \u2014 all at once.',
+          consequence: 'Parallel Execution is the right pattern when tasks are independent and don\'t share state. Each agent has its own tools and data sources. The orchestrator collects all results when they\'re done. This is the fastest approach for independent workloads.',
+          isGood: true,
+          next: 'decision-3'
+        },
+        'c2-sequential': {
+          type: 'consequence',
+          title: 'Wrong Pattern: Sequential Wastes Time',
+          description: 'You force agents to take turns. The Customer Agent waits 45 minutes while Sales and Inventory agents finish their work. The CEO checks in and asks why it\'s taking so long.',
+          consequence: 'Sequential Handoff passes context from one agent to the next \u2014 it\'s useful when Agent B needs Agent A\'s output. But these four data-gathering tasks are independent. Using sequential for independent tasks is a classic orchestration mistake.',
+          isGood: false,
+          next: 'decision-3'
+        },
+        'c2-debate': {
+          type: 'consequence',
+          title: 'Wrong Pattern: Debate Isn\'t for Data Gathering',
+          description: 'You set up a debate where agents argue about data interpretation before any data is even collected. The agents have nothing to debate yet \u2014 they need to gather data first, not argue about it.',
+          consequence: 'The Debate Pattern is for resolving conflicting interpretations or making judgment calls, not for data collection. You need data before you can debate about it. Pattern selection must match the task type: gathering = parallel, resolving conflict = debate.',
+          isGood: false,
+          next: 'decision-3'
+        },
+
+        // ===== DECISION 3: Failure Handling =====
+        'decision-3': {
+          type: 'decision',
+          title: 'Decision 3: Handling Agent Failure',
+          description: 'The Sales Agent finishes successfully, but the Inventory Agent hits a database timeout. Customer and Financial agents are still running. What do you do?',
+          choices: [
+            {
+              label: 'Retry with exponential backoff while other agents continue',
+              hint: 'The Inventory Agent retries independently without blocking others',
+              next: 'c3-retry',
+              isGood: true
+            },
+            {
+              label: 'Stop all agents and retry everything from scratch',
+              hint: 'Restart the entire orchestration to ensure consistency',
+              next: 'c3-restart',
+              isGood: false
+            },
+            {
+              label: 'Skip inventory data entirely and proceed without it',
+              hint: 'Deliver the report with only 3 out of 4 sections',
+              next: 'c3-skip',
+              isGood: false
+            }
+          ]
+        },
+        'c3-retry': {
+          type: 'consequence',
+          title: 'Correct: Isolated Retry with Backoff',
+          description: 'The Inventory Agent retries with exponential backoff (2s, 4s, 8s) while Sales results are preserved and Customer/Financial agents continue uninterrupted. On the third retry, the database responds and inventory data flows in.',
+          consequence: 'Isolated failure handling is essential in multi-agent systems. One agent\'s failure shouldn\'t cascade to others. Exponential backoff prevents overwhelming the database while giving it time to recover. The orchestrator tracks each agent\'s state independently.',
+          isGood: true,
+          next: 'decision-4'
+        },
+        'c3-restart': {
+          type: 'consequence',
+          title: 'Wasteful: Don\'t Throw Away Completed Work',
+          description: 'You abort all agents, including the Sales Agent that already finished. The CEO\'s report is delayed significantly as everything restarts from zero. The database timeout was temporary \u2014 a simple retry would have sufficed.',
+          consequence: 'Restarting everything wastes completed work and multiplies delay. In multi-agent systems, failures should be isolated. The orchestrator should track each agent\'s state independently and only retry the failed component.',
+          isGood: false,
+          next: 'decision-4'
+        },
+        'c3-skip': {
+          type: 'consequence',
+          title: 'Incomplete: Missing Data Undermines the Report',
+          description: 'You skip inventory entirely. The CEO receives a report with no inventory analysis \u2014 a critical gap for a 200-store retail operation. She asks, "Where\'s the inventory section?" and sends it back.',
+          consequence: 'Skipping data should be a last resort (graceful degradation), not the first response to a temporary timeout. Always attempt recovery first. The CEO asked for a complete review \u2014 delivering 75% of it without explanation damages trust in the agent system.',
+          isGood: false,
+          next: 'decision-4'
+        },
+
+        // ===== DECISION 4: Conflict Resolution =====
+        'decision-4': {
+          type: 'decision',
+          title: 'Decision 4: Resolving Data Conflicts',
+          description: 'The Customer Agent returns conflicting data \u2014 two different customer counts from two different source tables. One says 847,000 active customers, the other says 912,000. How do you resolve this?',
+          choices: [
+            {
+              label: 'Deploy Debate Pattern \u2014 two analysis agents examine the discrepancy, a mediator decides',
+              hint: 'Multiple perspectives with a structured resolution process',
+              next: 'c4-debate',
+              isGood: true
+            },
+            {
+              label: 'Just pick the larger number \u2014 more customers looks better',
+              hint: 'Use the higher count for the CEO report',
+              next: 'c4-larger',
+              isGood: false
+            },
+            {
+              label: 'Ask the CEO which number to use',
+              hint: 'Escalate the decision to the human requestor',
+              next: 'c4-ceo',
+              isGood: false
+            }
+          ]
+        },
+        'c4-debate': {
+          type: 'consequence',
+          title: 'Correct: Debate Pattern Resolves Conflicts',
+          description: 'You deploy two analysis agents: one advocates for the 847K figure (active in last 90 days), the other for 912K (active in last 12 months). A mediator agent determines the discrepancy is a definition issue \u2014 different "active" thresholds. The report includes both with clear labels.',
+          consequence: 'The Debate Pattern is designed exactly for this: when agents produce conflicting outputs, structured argumentation with a mediator finds the root cause. The conflict wasn\'t a bug \u2014 it was a semantic difference. Debate surfaces these nuances.',
+          isGood: true,
+          next: 'decision-5'
+        },
+        'c4-larger': {
+          type: 'consequence',
+          title: 'Dangerous: Arbitrary Data Selection',
+          description: 'You pick 912K because it\'s bigger. The CFO later cross-references with the finance dashboard showing 847K and questions the entire report\'s accuracy. The CEO loses confidence in the agent system.',
+          consequence: 'Arbitrarily picking numbers without understanding why they differ is a data integrity failure. In autonomous systems, data conflicts must be resolved through investigation, not guessing. The agent should explain discrepancies, not hide them.',
+          isGood: false,
+          next: 'decision-5'
+        },
+        'c4-ceo': {
+          type: 'consequence',
+          title: 'Defeats the Purpose: Don\'t Escalate Technical Issues',
+          description: 'You ask the CEO "Should we use 847K or 912K customers?" She responds: "That\'s what the agents are supposed to figure out." Escalating a data discrepancy to a non-technical stakeholder wastes their time and undermines agent autonomy.',
+          consequence: 'Agents should resolve technical conflicts autonomously. Escalating every data question to humans defeats the purpose of autonomous agents. The Debate Pattern exists precisely so agents can self-resolve conflicts through structured analysis.',
+          isGood: false,
+          next: 'decision-5'
+        },
+
+        // ===== DECISION 5: Final Assembly =====
+        'decision-5': {
+          type: 'decision',
+          title: 'Decision 5: Report Assembly',
+          description: 'All data is ready \u2014 Sales, Inventory, Customer, and Financial analyses are complete. How should the final report be assembled for the CEO?',
+          choices: [
+            {
+              label: 'Supervisor Agent coordinates: assigns sections to Report Writer, Chart Generator, and Summary Agent',
+              hint: 'A coordinator delegates specialized sub-tasks to expert agents',
+              next: 'c5-supervisor',
+              isGood: true
+            },
+            {
+              label: 'One agent writes the entire report from scratch',
+              hint: 'A single Report Agent handles all sections, charts, and summary',
+              next: 'c5-single',
+              isGood: false
+            },
+            {
+              label: 'Send the raw data directly to the CEO',
+              hint: 'Forward all agent outputs without synthesis',
+              next: 'c5-raw',
+              isGood: false
+            }
+          ]
+        },
+        'c5-supervisor': {
+          type: 'consequence',
+          title: 'Correct: Supervisor Pattern for Assembly',
+          description: 'The Supervisor Agent creates a report outline, assigns narrative sections to the Report Writer, data visualizations to the Chart Generator, and the executive summary to the Summary Agent. Each produces their piece, and the Supervisor compiles the final deliverable.',
+          consequence: 'The Supervisor Pattern provides clear delegation and quality control. The Supervisor knows the overall structure while specialists handle their strengths. This produces a higher-quality report than any single agent could deliver, with proper charts, narrative, and executive summary.',
+          isGood: true,
+          next: 'result'
+        },
+        'c5-single': {
+          type: 'consequence',
+          title: 'Bottleneck: One Agent Can\'t Excel at Everything',
+          description: 'A single Report Agent writes all sections, creates basic text-only charts, and produces a generic summary. The report is functional but lacks the polish and depth the CEO expects for a board-level presentation.',
+          consequence: 'Using one agent for a complex deliverable creates a bottleneck and reduces quality. Report writing, data visualization, and executive summarization are different skills. The Supervisor Pattern delegates to specialists while maintaining coherent structure.',
+          isGood: false,
+          next: 'result'
+        },
+        'c5-raw': {
+          type: 'consequence',
+          title: 'Unacceptable: Raw Data Is Not a Report',
+          description: 'You send the CEO four separate data dumps \u2014 SQL result tables, JSON payloads, and raw metric calculations. She stares at a spreadsheet of 50,000 rows and asks, "Where\'s the analysis?"',
+          consequence: 'Agents exist to synthesize and present data, not just retrieve it. Sending raw data to stakeholders defeats the purpose of the entire agent system. The final step must transform data into actionable insights, narratives, and recommendations.',
+          isGood: false,
+          next: 'result'
+        },
+
+        // ===== FINAL RESULT =====
+        'result': {
+          type: 'result',
+          title: 'Orchestration Complete',
+          description: 'You\'ve navigated all 5 orchestration decisions for AcmeCorp\'s end-of-year business review. Your choices determined whether the CEO received a timely, accurate, and well-assembled report.',
+          score: '5/5',
+          scoreLabel: 'Decisions Made',
+          summary: 'Key patterns used: Parallel Decomposition breaks large tasks into independent sub-tasks. Parallel Execution runs independent agents concurrently. Exponential Backoff handles transient failures without blocking other agents. The Debate Pattern resolves data conflicts through structured argumentation. The Supervisor Pattern coordinates final assembly with specialized sub-agents. Mastering these patterns is the foundation of effective multi-agent orchestration.'
+        }
+      }
+    });
+
+    Nav.init('m04-sim-orchestration');
+  </script>
+</body>
+</html>

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent UX &amp; Conversation Design &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Chat Mockup --- */
+    .chat-mock {
+      max-width: 520px;
+      margin: var(--space-6) 0;
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      background: var(--bg-surface);
+      overflow: hidden;
+    }
+    .chat-mock__header {
+      padding: var(--space-3) var(--space-4);
+      background: var(--bg-elevated);
+      border-bottom: 1px dashed var(--stroke-dim);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .chat-mock__body {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .chat-msg {
+      max-width: 85%;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--border-radius);
+      font-size: var(--font-sm);
+      line-height: 1.6;
+    }
+    .chat-msg--user {
+      align-self: flex-end;
+      background: var(--stroke-primary);
+      color: var(--bg-primary);
+      border-bottom-right-radius: 4px;
+    }
+    .chat-msg--agent {
+      align-self: flex-start;
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border: 1px dashed var(--stroke-dim);
+      border-bottom-left-radius: 4px;
+    }
+    .chat-msg--agent strong { color: var(--stroke-secondary); }
+    /* --- Summary Card Mock --- */
+    .summary-mock {
+      background: var(--bg-primary);
+      border: 1px dashed var(--stroke-secondary);
+      border-radius: var(--border-radius);
+      padding: var(--space-4);
+      margin-top: var(--space-2);
+    }
+    .summary-mock__row {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-2) 0;
+      border-bottom: 1px dashed var(--stroke-dim);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+    }
+    .summary-mock__row:last-child { border-bottom: none; }
+    .summary-mock__label { color: var(--text-secondary); }
+    .summary-mock__value { color: var(--text-primary); font-weight: 600; }
+    .summary-mock__value--up { color: var(--accent-success); }
+    .summary-mock__value--down { color: var(--accent-error); }
+    /* --- Viz Decision Table --- */
+    .viz-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--space-6) 0;
+      font-size: var(--font-sm);
+    }
+    .viz-table th, .viz-table td {
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      border-bottom: 1px dashed var(--stroke-dim);
+    }
+    .viz-table th {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+      background: var(--bg-surface);
+    }
+    .viz-table td { color: var(--text-primary); }
+    .viz-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--stroke-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+    }
+    @media (max-width: 640px) {
+      .viz-table { font-size: var(--font-xs); }
+      .viz-table th, .viz-table td { padding: var(--space-2); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a><span class="separator">/</span>
+        <span>Module 10</span><span class="separator">/</span>
+        <span class="current">Agent UX</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- ===== HEADER ===== -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 10 &mdash; Lesson 02</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Agent UX &amp; Conversation Design</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            A data agent is only useful if non-technical users can interact with it naturally. Design for store managers, not data analysts.
+          </p>
+        </header>
+
+        <!-- ===== BLUEPRINT DIAGRAM ===== -->
+        <div class="evolving-diagram reveal reveal--scale"><div class="evolving-diagram__label">AGENT UX — PROGRESSIVE DISCLOSURE</div>
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;font-family:'JetBrains Mono',monospace;">
+          <defs>
+            <filter id="ux-glow"><feGaussianBlur stdDeviation="2.5" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="380" rx="8" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+
+          <!-- LEVEL 1: Clarify -->
+          <!-- Side label -->
+          <rect x="10" y="26" width="90" height="20" rx="4" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="55" y="40" text-anchor="middle" fill="#A100FF" font-size="8" font-weight="600">LEVEL 1: CLARIFY</text>
+          <!-- User bubble -->
+          <rect x="370" y="18" width="210" height="32" rx="12" fill="rgba(74,158,255,0.2)" stroke="#A100FF" stroke-width="1"/>
+          <text x="475" y="39" text-anchor="middle" fill="#f5f5f5" font-size="11">"How are we doing?"</text>
+          <!-- Agent bubble with options -->
+          <rect x="110" y="58" width="300" height="62" rx="12" fill="rgba(51,65,133,0.25)" stroke="#334155" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="125" y="78" fill="#a0a0a0" font-size="10">Which scope?</text>
+          <!-- Option buttons -->
+          <rect x="125" y="88" width="80" height="22" rx="6" fill="rgba(74,158,255,0.15)" stroke="#A100FF" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="165" y="103" text-anchor="middle" fill="#A100FF" font-size="9" font-weight="600">Store #47</text>
+          <rect x="215" y="88" width="80" height="22" rx="6" fill="rgba(74,158,255,0.08)" stroke="#334155" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="255" y="103" text-anchor="middle" fill="#a0a0a0" font-size="9">Southwest</text>
+          <rect x="305" y="88" width="80" height="22" rx="6" fill="rgba(74,158,255,0.08)" stroke="#334155" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="345" y="103" text-anchor="middle" fill="#a0a0a0" font-size="9">All Stores</text>
+
+          <!-- Connector line -->
+          <line x1="165" y1="110" x2="165" y2="128" stroke="#A100FF" stroke-width="1" stroke-dasharray="3,2"/>
+          <!-- User clicks Store #47 -->
+          <rect x="370" y="125" width="180" height="28" rx="12" fill="rgba(74,158,255,0.2)" stroke="#A100FF" stroke-width="1"/>
+          <text x="460" y="143" text-anchor="middle" fill="#f5f5f5" font-size="10">Selects "Store #47"</text>
+
+          <!-- LEVEL 2: Summary -->
+          <rect x="10" y="163" width="90" height="20" rx="4" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="55" y="177" text-anchor="middle" fill="#CC00FF" font-size="8" font-weight="600">LEVEL 2: SUMMARY</text>
+          <!-- Agent summary card -->
+          <rect x="110" y="160" width="340" height="120" rx="12" fill="rgba(45,212,191,0.05)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="5,3" filter="url(#ux-glow)"/>
+          <text x="125" y="182" fill="#CC00FF" font-size="10" font-weight="600">Store #47 — Performance Summary</text>
+          <!-- Metrics -->
+          <line x1="125" y1="190" x2="430" y2="190" stroke="#334155" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="130" y="208" fill="#a0a0a0" font-size="10">Revenue</text>
+          <text x="320" y="208" fill="#10b981" font-size="11" font-weight="700">$142K (+8%)</text>
+          <circle cx="310" cy="204" r="3" fill="#10b981"/>
+          <line x1="125" y1="218" x2="430" y2="218" stroke="#334155" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="130" y="236" fill="#a0a0a0" font-size="10">Traffic</text>
+          <text x="320" y="236" fill="#f59e0b" font-size="11" font-weight="700">2,340 (-3%)</text>
+          <circle cx="310" cy="232" r="3" fill="#f59e0b"/>
+          <line x1="125" y1="246" x2="430" y2="246" stroke="#334155" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="130" y="264" fill="#a0a0a0" font-size="10">Top Product</text>
+          <text x="320" y="264" fill="#f5f5f5" font-size="11" font-weight="600">Widget Pro</text>
+
+          <!-- LEVEL 3: Detail -->
+          <rect x="10" y="296" width="90" height="20" rx="4" fill="rgba(148,163,184,0.12)" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="55" y="310" text-anchor="middle" fill="#a0a0a0" font-size="8" font-weight="600">LEVEL 3: DETAIL</text>
+          <!-- Drill down link -->
+          <text x="125" y="296" fill="#A100FF" font-size="10" text-decoration="underline">Drill down &#x2192;</text>
+          <!-- Detail table outline (dim) -->
+          <rect x="110" y="302" width="340" height="50" rx="6" fill="rgba(51,65,133,0.08)" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+          <line x1="220" y1="302" x2="220" y2="352" stroke="#334155" stroke-width="1" stroke-dasharray="2,2"/>
+          <line x1="330" y1="302" x2="330" y2="352" stroke="#334155" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="165" y="320" text-anchor="middle" fill="#334155" font-size="8">Date</text>
+          <text x="275" y="320" text-anchor="middle" fill="#334155" font-size="8">Product</text>
+          <text x="395" y="320" text-anchor="middle" fill="#334155" font-size="8">Amount</text>
+          <line x1="110" y1="326" x2="450" y2="326" stroke="#334155" stroke-width="1" stroke-dasharray="2,2"/>
+          <text x="165" y="340" text-anchor="middle" fill="#334155" font-size="7">2024-10-01</text>
+          <text x="275" y="340" text-anchor="middle" fill="#334155" font-size="7">Widget Pro</text>
+          <text x="395" y="340" text-anchor="middle" fill="#334155" font-size="7">$1,240</text>
+
+          <!-- Adoption stat -->
+          <rect x="490" y="335" width="195" height="32" rx="6" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="588" y="350" text-anchor="middle" fill="#a0a0a0" font-size="9">Adoption:</text>
+          <text x="588" y="363" text-anchor="middle" fill="#10b981" font-size="11" font-weight="700">23 &#x2192; 124 managers</text>
+        </svg>
+        </div>
+
+        <!-- ===== SECTION 1: The Adoption Problem ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>The Problem</span></div>
+          <h2 class="reveal">DataPulse Is Accurate. Nobody Uses It.</h2>
+
+          <p class="reveal reveal--delay-1">
+            After Priya Sharma's semantic layer fixed the $3.4M revenue discrepancy, DataPulse was producing consistent, trusted numbers. Raj Patel celebrated. But three weeks later, Lena Park, AcmeCorp's Product Manager, pulled up the usage dashboards and saw a problem no one expected: only <strong>23 of 200 store managers</strong> were using DataPulse regularly. The accuracy fix hadn't moved adoption at all.
+          </p>
+
+          <p class="reveal reveal--delay-2">
+            Lena decided to find out why. She called Sofia Torres at Store #47 &mdash; one of the 23 active users &mdash; and three managers who had stopped using it. The feedback was brutal. One manager said he asked "how are we doing?" and DataPulse returned a SQL error. Another said it showed her a table with 47 columns when she just wanted a single number. A third said he asked about "last quarter" and DataPulse used calendar quarters (April&ndash;June) instead of AcmeCorp's fiscal quarters (July&ndash;September), giving him completely wrong numbers.
+          </p>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">Lena's Diagnosis</div>
+            <div class="callout__text">
+              The problem was not accuracy &mdash; Priya had solved that. The problem was <strong>user experience</strong>. DataPulse was designed by engineers for engineers. It didn't clarify ambiguity, it didn't format results for non-technical users, and it communicated errors in raw PostgreSQL error codes instead of plain English. Lena told Raj: "We built a brilliant engine and put it behind a terrible steering wheel. I need to redesign how DataPulse talks to people."
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: Designing for Non-Technical Users ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Principle</span></div>
+          <h2 class="reveal">Designing for Non-Technical Users</h2>
+
+          <p class="reveal reveal--delay-1">
+            Lena's first principle was simple: DataPulse's primary users are not writing SQL today and do not want to start. They are store managers like Sofia checking daily sales, regional directors comparing performance, and executives like the CEO looking for trends. The agent must feel like talking to a knowledgeable colleague, not like operating a database terminal. Lena wrote three design rules and pinned them to the DataPulse team's Slack channel.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Plain Language</div>
+              <div class="bp-card__body">
+                <p>Never expose SQL, table names, or error codes directly. Translate everything into business language the user already knows. Sofia should never see <code>fact_sales</code> or <code>SQLSTATE</code>.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Assumed Context</div>
+              <div class="bp-card__body">
+                <p>If Sofia at Store #47 asks a question, scope the answer to her store by default. Do not force her to specify what DataPulse already knows about her &mdash; her store, her region (Southwest), her role.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Graceful Limits</div>
+              <div class="bp-card__body">
+                <p>When DataPulse cannot answer, explain what it can do instead. Never return a blank response or a raw error traceback. The manager who got a SQL error should have gotten a helpful explanation.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: Clarification Dialogs ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Pattern</span></div>
+          <h2 class="reveal">Clarification Dialogs</h2>
+
+          <p class="reveal reveal--delay-1">
+            Ambiguous questions are inevitable &mdash; as the manager who typed "how are we doing?" demonstrated. Lena's redesign ensured DataPulse does not guess silently. Instead, it asks a targeted clarification question before proceeding. The goal is to ask the minimum needed to disambiguate, not to interrogate the user. Lena tested every clarification flow with Sofia Torres, who became her go-to beta tester.
+          </p>
+
+          <div class="chat-mock reveal reveal--delay-2">
+            <div class="chat-mock__header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              DataPulse &mdash; Clarification Example
+            </div>
+            <div class="chat-mock__body">
+              <div class="chat-msg chat-msg--user">What was revenue in Q3?</div>
+              <div class="chat-msg chat-msg--agent">
+                Just to confirm &mdash; by Q3, do you mean AcmeCorp's <strong>fiscal Q3 (Jul&ndash;Sep 2025)</strong> or <strong>fiscal Q3 (Jul&ndash;Sep 2024)</strong>?
+                <div style="margin-top: var(--space-2); display: flex; gap: var(--space-2);">
+                  <span class="badge badge--blue" style="cursor: pointer;" data-tip="Fiscal Q3 2025 (Jul–Sep 2025) — the most recent quarter.">FY25 Q3</span>
+                  <span class="badge badge--blue" style="cursor: pointer;" data-tip="Fiscal Q3 2024 (Jul–Sep 2024) — the prior-year comparison period.">FY24 Q3</span>
+                </div>
+              </div>
+              <div class="chat-msg chat-msg--user">FY25 Q3</div>
+              <div class="chat-msg chat-msg--agent">
+                Revenue for fiscal Q3 2025 (Jul&ndash;Sep) was <strong>$43.8M</strong>, up 8% from fiscal Q3 2024. Want me to break this down by region?
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">Design Rule</div>
+            <div class="callout__text">
+              Lena insisted on clickable options whenever possible (buttons, quick replies). Sofia pointed out that most store managers check DataPulse on their phones while walking the floor &mdash; typing is slower and more error-prone on mobile. Lena also enforced a strict rule: <strong>one clarification question at a time</strong>. Cascading questions feel like an interrogation. The manager who typed "last quarter" should have been offered two buttons, not a paragraph asking him to specify fiscal year, quarter number, and metric type.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: Progressive Disclosure ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Pattern</span></div>
+          <h2 class="reveal">Progressive Disclosure</h2>
+
+          <p class="reveal reveal--delay-1">
+            The manager who received a 47-column table illustrated another problem: DataPulse was dumping everything it knew into one response. Lena's fix was progressive disclosure &mdash; starting with a headline answer and offering drill-down options on demand. She designed four levels, inspired by how Sofia Torres naturally asked questions: first the headline, then the context, then the detail, then the raw data.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Level 1: Headline</div>
+              <div class="bp-card__body">
+                <p>"Revenue this month is <strong>$3.2M</strong>, up 5% vs. last month."</p>
+                <p style="margin-top: var(--space-2); font-size: var(--font-xs); color: var(--text-secondary);">Single number with context. Answers Sofia's question in one sentence while she's walking the store floor.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Level 2: Summary Card</div>
+              <div class="bp-card__body">
+                <p>Key metrics grouped into a compact card: revenue, order count, average order value, top category.</p>
+                <p style="margin-top: var(--space-2); font-size: var(--font-xs); color: var(--text-secondary);">Offered with "Want to see the full breakdown?" &mdash; only when Sofia taps for more.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Level 3: Drill-Down</div>
+              <div class="bp-card__body">
+                <p>Detailed table or chart: revenue by store, by category, by week. Includes comparisons and trends.</p>
+                <p style="margin-top: var(--space-2); font-size: var(--font-xs); color: var(--text-secondary);">Only shown when explicitly requested. This is what Raj and Derek need, not Sofia.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Level 4: Raw Data</div>
+              <div class="bp-card__body">
+                <p>Exportable CSV or the underlying SQL query for analysts who want to verify or extend the analysis.</p>
+                <p style="margin-top: var(--space-2); font-size: var(--font-xs); color: var(--text-secondary);">Available via "Export data" or "Show query" links. Maya Chen uses this level to audit DataPulse's SQL.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: Error Communication ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Pattern</span></div>
+          <h2 class="reveal">Error Communication</h2>
+
+          <p class="reveal reveal--delay-1">
+            The manager who received a SQL error instead of an answer became Lena's canonical example of what not to do. When something goes wrong, DataPulse must communicate the issue without jargon. A store manager should never see "NullPointerException" or "timeout on connection pool." Instead, errors should explain <strong>what happened</strong>, <strong>why</strong>, and <strong>what the user can do</strong>.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card" style="border-color: var(--accent-error);">
+              <div class="bp-card__title" style="color: var(--accent-error);">Before: What a Manager Actually Saw</div>
+              <div class="bp-card__body">
+                <p style="font-family: var(--font-mono); font-size: var(--font-xs);">ERROR: relation 'fact_sales' partition 'p_20260324' does not exist</p>
+                <p style="margin-top: var(--space-2); font-size: var(--font-xs); color: var(--text-secondary);">Exposes infrastructure details. The manager had no idea what to do and stopped using DataPulse entirely.</p>
+              </div>
+            </div>
+            <div class="bp-card" style="border-color: var(--accent-success);">
+              <div class="bp-card__title" style="color: var(--accent-success);">After: Lena's Redesigned Error</div>
+              <div class="bp-card__body">
+                <p>"I couldn't find sales data for yesterday &mdash; the data warehouse updates at 6 AM, and yesterday's data isn't available yet. Want me to show you the most recent numbers I have?"</p>
+                <p style="margin-top: var(--space-2); font-size: var(--font-xs); color: var(--text-secondary);">Explains the situation, sets expectations, offers an alternative. The manager stays engaged.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal reveal--delay-3">
+            <div class="collapsible__header">
+              <span>Lena's Error Communication Patterns for DataPulse</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <ul>
+                  <li><strong>Data freshness issue:</strong> "The sales data I have is from yesterday evening. Today's data hasn't loaded yet &mdash; AcmeCorp's warehouse updates at 6 AM. Want me to answer with yesterday's numbers?"</li>
+                  <li><strong>Permission denied:</strong> "I don't have access to individual employee records. I can show you department-level summaries. Would that help?" (Marcus Webb's access controls in action.)</li>
+                  <li><strong>Ambiguous query:</strong> "I found several metrics that could match your question. Could you clarify which one you mean?" (With clickable options, per Lena's rule.)</li>
+                  <li><strong>No data found:</strong> "There are no sales recorded for Store #203 in December. This could mean the store was closed or the data hasn't been imported yet. Want me to check the data team?"</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 6: Visualization Recommendations ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Output Design</span></div>
+          <h2 class="reveal">Visualization Recommendations</h2>
+
+          <p class="reveal reveal--delay-1">
+            Lena worked with Sofia to define how DataPulse should choose the right output format based on the data shape and the user's likely intent. A single number does not need a chart. A comparison across 50 stores does not belong in a paragraph. Sofia's feedback was direct: "When I ask how my store is doing, I want a number with an arrow. When I ask how I compare to other Southwest stores, I want a ranked list."
+          </p>
+
+          <table class="viz-table reveal reveal--delay-2">
+            <thead>
+              <tr>
+                <th>Data Shape</th>
+                <th>Best Format</th>
+                <th>AcmeCorp Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Single value</td>
+                <td><span class="viz-icon">Single number with context</span></td>
+                <td>"Store #47 Revenue: $142K (+8%)"</td>
+              </tr>
+              <tr>
+                <td>2&ndash;5 values</td>
+                <td><span class="viz-icon">Summary card / bullet list</span></td>
+                <td>Top 3 Southwest stores by revenue</td>
+              </tr>
+              <tr>
+                <td>Time series</td>
+                <td><span class="viz-icon">Line chart</span></td>
+                <td>Store #47 weekly revenue over fiscal Q3</td>
+              </tr>
+              <tr>
+                <td>Category comparison</td>
+                <td><span class="viz-icon">Bar chart</span></td>
+                <td>Revenue by product category at Store #47</td>
+              </tr>
+              <tr>
+                <td>Proportions</td>
+                <td><span class="viz-icon">Pie / donut chart</span></td>
+                <td>Revenue split by channel (in-store vs. online)</td>
+              </tr>
+              <tr>
+                <td>Detailed records</td>
+                <td><span class="viz-icon">Table with sorting</span></td>
+                <td>All 200 stores ranked by performance for Derek's report</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">Formatting Best Practices</div>
+            <div class="callout__text">
+              Lena codified these rules into DataPulse's output layer: use <strong>headers</strong> to organize multi-part answers. Use <strong>bold</strong> for key numbers. Use <strong>bullet points</strong> for lists of 3+ items. Always include comparison context (vs. last month, vs. goal, vs. average). Highlight numbers that are significantly above or below expectations &mdash; Sofia wants to know at a glance if something needs her attention.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 7: Lena's Redesign in Action ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Case Study</span></div>
+          <h2 class="reveal">AcmeCorp: Sofia Tests Lena's Redesign</h2>
+
+          <p class="reveal reveal--delay-1">
+            Lena shipped the UX redesign and asked Sofia Torres to be the first tester. Sofia opened DataPulse on her phone at Store #47 and typed the exact question that had originally returned a SQL error for another manager: the vaguest possible question.
+          </p>
+
+          <div class="chat-mock reveal reveal--delay-2">
+            <div class="chat-mock__header">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              DataPulse &mdash; Store #47 (Sofia Torres)
+            </div>
+            <div class="chat-mock__body">
+              <div class="chat-msg chat-msg--user">How are we doing?</div>
+              <div class="chat-msg chat-msg--agent">
+                For <strong>your store (Store #47)</strong> or <strong>your region (Southwest)</strong>?
+                <div style="margin-top: var(--space-2); display: flex; gap: var(--space-2);">
+                  <span class="badge badge--teal" style="cursor: pointer;" data-tip="Scope the query to just Store #47, the user's assigned location.">My Store</span>
+                  <span class="badge badge--teal" style="cursor: pointer;" data-tip="Scope the query to the entire Southwest region containing multiple stores.">Southwest Region</span>
+                </div>
+              </div>
+              <div class="chat-msg chat-msg--user">My store</div>
+              <div class="chat-msg chat-msg--agent">
+                Here's Store #47 this month:
+                <div class="summary-mock">
+                  <div class="summary-mock__row">
+                    <span class="summary-mock__label">Revenue</span>
+                    <span class="summary-mock__value summary-mock__value--up">$142K (+8%)</span>
+                  </div>
+                  <div class="summary-mock__row">
+                    <span class="summary-mock__label">Orders</span>
+                    <span class="summary-mock__value">3,241</span>
+                  </div>
+                  <div class="summary-mock__row">
+                    <span class="summary-mock__label">Avg Order</span>
+                    <span class="summary-mock__value summary-mock__value--down">$43.80 (-2%)</span>
+                  </div>
+                  <div class="summary-mock__row">
+                    <span class="summary-mock__label">Top Category</span>
+                    <span class="summary-mock__value">Electronics</span>
+                  </div>
+                </div>
+                <div style="margin-top: var(--space-2); font-size: var(--font-xs); color: var(--text-secondary);">
+                  Want me to drill into a specific category or compare with other Southwest stores?
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">The Results of Lena's Redesign</div>
+            <div class="callout__text">
+              DataPulse asked <strong>one</strong> clarification question (store vs. region), used Sofia's known context (Store #47, Southwest), returned a summary card with key metrics, highlighted direction (up/down), and offered drill-down options. The entire interaction took under 10 seconds and required no technical knowledge. Sofia texted Lena: "This is what it should have been from the start." Within six weeks of the UX redesign, adoption jumped from <strong>23 to 124 store managers</strong>. Raj showed the numbers to the CEO, who said: "Now it's not just accurate &mdash; it's actually useful." Lena's work proved that for DataPulse, UX was not a nice-to-have. It was the difference between a tool that 12% of AcmeCorp used and one that 62% used.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="01-semantic-layer.html" class="page-nav__title">Semantic Layer</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="03-data-quality.html" class="page-nav__title">Data Quality &amp; Governance</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Semantic Layer &amp; Agent UX Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m10-agent-ux');</script>
+</body>
+</html>

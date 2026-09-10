@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HITL Patterns &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Graduated Autonomy Table --- */
+    .autonomy-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      margin: var(--space-6) 0;
+    }
+    .autonomy-table th,
+    .autonomy-table td {
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      border-bottom: 1px dashed var(--stroke-dim);
+    }
+    .autonomy-table th {
+      color: var(--stroke-secondary);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--stroke-dim);
+    }
+    .autonomy-table td {
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .autonomy-table tr:last-child td {
+      border-bottom: none;
+    }
+    .autonomy-table .level-num {
+      font-weight: 700;
+      color: var(--stroke-primary);
+      font-size: var(--font-base);
+    }
+
+    /* --- Framework Table --- */
+    .framework-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      margin: var(--space-4) 0;
+    }
+    .framework-table th,
+    .framework-table td {
+      padding: var(--space-3) var(--space-4);
+      text-align: left;
+      border-bottom: 1px dashed var(--stroke-dim);
+    }
+    .framework-table th {
+      color: var(--stroke-secondary);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--stroke-dim);
+    }
+    .framework-table td {
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .framework-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* --- Checkpoint List --- */
+    .checkpoint-list {
+      list-style: none;
+      padding: 0;
+      margin: var(--space-4) 0;
+    }
+    .checkpoint-list li {
+      padding: var(--space-3) 0 var(--space-3) var(--space-6);
+      position: relative;
+      color: var(--text-secondary);
+      font-size: var(--font-sm);
+      line-height: 1.6;
+      border-bottom: 1px dashed rgba(161, 0, 255, 0.1);
+    }
+    .checkpoint-list li:last-child {
+      border-bottom: none;
+    }
+    .checkpoint-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 10px;
+      height: 10px;
+      border: 1.5px solid var(--accent-warning);
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 03</span>
+        <span class="separator">/</span>
+        <span class="current">HITL Patterns</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Page Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Trust &amp; Control</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Human-in-the-Loop<br>Patterns</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Human-in-the-loop (HITL) is not optional for enterprise agents &mdash; it&rsquo;s a regulatory and trust requirement. The question isn&rsquo;t &ldquo;should we have HITL?&rdquo; but &ldquo;where and how should we insert it?&rdquo; Getting HITL wrong means either bottlenecking every action (too much) or allowing catastrophic autonomous decisions (too little).
+          </p>
+        </header>
+
+        <!-- ===== SECTION 2: SIX HITL PATTERNS ===== -->
+        <section class="section">
+          <div class="section-label reveal">Six HITL Patterns</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-6);">Choosing the Right Human Checkpoint</h2>
+
+          <div class="card-grid card-grid--2">
+
+            <!-- Pattern 1: Approval Gate -->
+            <div class="bp-card reveal">
+              <span class="bp-card__number">01</span>
+              <h3 class="bp-card__title">Approval Gate</h3>
+              <div class="bp-card__body">
+                <p>Agent proposes, human approves before execution. Hard separation between &ldquo;suggest&rdquo; and &ldquo;do&rdquo;. Best for high-risk operations such as database writes and financial transactions.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <span class="callout__label">AcmeCorp</span>
+                  <span class="callout__text">Agent generates a DELETE query for old records &mdash; waits for DBA approval before executing.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pattern 2: Dual Approval -->
+            <div class="bp-card reveal">
+              <span class="bp-card__number">02</span>
+              <h3 class="bp-card__title">Dual Approval (Four-Eyes Principle)</h3>
+              <div class="bp-card__body">
+                <p>Two separate approvals required. Used in regulated industries (banking, healthcare). Best for irreversible, high-impact operations.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <span class="callout__label">AcmeCorp</span>
+                  <span class="callout__text">Schema migration affecting production tables needs both the Data Architect and DBA sign-off.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pattern 3: Sampled Review -->
+            <div class="bp-card reveal">
+              <span class="bp-card__number">03</span>
+              <h3 class="bp-card__title">Sampled Review</h3>
+              <div class="bp-card__body">
+                <p>100% approval for high-risk, 5&ndash;20% random sampling for low-risk. Balances safety with throughput. Best for high-volume operations with varying risk.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <span class="callout__label">AcmeCorp</span>
+                  <span class="callout__text">All DDL queries reviewed; SELECT queries spot-checked at 10% rate.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pattern 4: Exception-Based Review -->
+            <div class="bp-card reveal">
+              <span class="bp-card__number">04</span>
+              <h3 class="bp-card__title">Exception-Based Review</h3>
+              <div class="bp-card__body">
+                <p>Auto-proceed unless a policy trigger fires: low confidence, sensitive data detected, anomaly, cost threshold. Best for mature agents with well-defined policies.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <span class="callout__label">AcmeCorp</span>
+                  <span class="callout__text">Standard dashboard queries auto-execute; queries touching PII columns pause for review.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pattern 5: Confidence-Based Escalation -->
+            <div class="bp-card reveal">
+              <span class="bp-card__number">05</span>
+              <h3 class="bp-card__title">Confidence-Based Escalation</h3>
+              <div class="bp-card__body">
+                <p>Agent reports confidence level. Below threshold &rarr; pause and escalate. Above threshold &rarr; proceed autonomously. Best for agents that can self-assess uncertainty.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <span class="callout__label">AcmeCorp</span>
+                  <span class="callout__text">Agent is 95% confident about revenue query &rarr; executes. 60% confident about a complex join &rarr; asks analyst.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pattern 6: Return of Control -->
+            <div class="bp-card reveal">
+              <span class="bp-card__number">06</span>
+              <h3 class="bp-card__title">Return of Control (ROC)</h3>
+              <div class="bp-card__body">
+                <p>Goes beyond approve/reject. Human can modify parameters, redirect, or take over entirely. Best for collaborative workflows where humans and agents co-create.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <span class="callout__label">AcmeCorp</span>
+                  <span class="callout__text">Agent drafts SQL, analyst tweaks the WHERE clause, agent executes the modified query.</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: GRADUATED AUTONOMY MODEL ===== -->
+        <section class="section">
+          <div class="section-label reveal">Graduated Autonomy</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-6);">From Full Oversight to Full Autonomy</h2>
+
+          <div class="reveal">
+            <table class="autonomy-table">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Description</th>
+                  <th>Human Role</th>
+                  <th>AcmeCorp Use Case</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="level-num">1</span></td>
+                  <td>Agent suggests, human approves everything</td>
+                  <td>Approver</td>
+                  <td>New deployment, first week</td>
+                </tr>
+                <tr>
+                  <td><span class="level-num">2</span></td>
+                  <td>Agent acts on routine, pauses for high-stakes</td>
+                  <td>Reviewer</td>
+                  <td>Established agent, month 2+</td>
+                </tr>
+                <tr>
+                  <td><span class="level-num">3</span></td>
+                  <td>Agent operates independently, humans review after</td>
+                  <td>Auditor</td>
+                  <td>Mature agent, known patterns</td>
+                </tr>
+                <tr>
+                  <td><span class="level-num">4</span></td>
+                  <td>Fully autonomous with exception-based oversight</td>
+                  <td>Observer</td>
+                  <td>Low-risk dashboards, high-volume</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">Insight</div>
+            <div class="callout__text">
+              Most production agents start at Level 1 and graduate to Level 2&ndash;3 over weeks/months as trust builds. Level 4 is rare and reserved for well-understood, low-risk operations.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: WHEN TO INSERT HITL CHECKPOINTS (collapsible) ===== -->
+        <section class="section reveal">
+          <div class="collapsible" id="hitlCheckpoints">
+            <button class="collapsible__header">
+              <span>When to Insert HITL Checkpoints</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: var(--space-4);">
+                  Insert a human checkpoint whenever the agent encounters one of these situations:
+                </p>
+                <ul class="checkpoint-list">
+                  <li><strong>Irreversible decisions</strong> &mdash; Database deletes, financial transfers, permanent record changes</li>
+                  <li><strong>Regulatory implications</strong> &mdash; Compliance reports, audit submissions, data governance actions</li>
+                  <li><strong>Empathy-requiring tasks</strong> &mdash; Customer complaints, sensitive communications, HR-related data</li>
+                  <li><strong>First-time actions</strong> &mdash; Agent has never performed this specific operation before</li>
+                  <li><strong>Cost thresholds exceeded</strong> &mdash; LLM spend beyond budget, compute costs beyond limits</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: FRAMEWORK SUPPORT (collapsible) ===== -->
+        <section class="section reveal">
+          <div class="collapsible" id="frameworkSupport">
+            <button class="collapsible__header">
+              <span>Framework HITL Support</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <table class="framework-table">
+                  <thead>
+                    <tr>
+                      <th>Framework</th>
+                      <th>HITL Support</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>LangGraph</td>
+                      <td>Built-in interrupt/resume nodes</td>
+                    </tr>
+                    <tr>
+                      <td>CrewAI</td>
+                      <td>human_input parameter on tasks</td>
+                    </tr>
+                    <tr>
+                      <td>Amazon Bedrock</td>
+                      <td>User confirmation tool</td>
+                    </tr>
+                    <tr>
+                      <td>HumanLayer SDK</td>
+                      <td>Dedicated HITL middleware</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="02-guardrails-personas.html" class="page-nav__title">Guardrails for Personas</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="../../simulations/module-03/persona-assignment.html" class="page-nav__title">Simulation: Persona Assignment</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    Nav.init('m03-hitl-patterns');
+  </script>
+</body>
+</html>

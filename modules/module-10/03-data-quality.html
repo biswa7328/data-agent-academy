@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Quality &amp; Governance for Agents &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Lifecycle Flow --- */
+    .lifecycle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin: var(--space-8) 0;
+    }
+    .lifecycle__step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      min-width: 100px;
+      text-align: center;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .lifecycle__step:hover {
+      border-color: var(--stroke-secondary);
+      transform: translateY(-2px);
+    }
+    .lifecycle__step--active {
+      border-color: var(--stroke-primary);
+      box-shadow: 0 0 12px rgba(161, 0, 255, 0.15);
+    }
+    .lifecycle__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px dashed var(--stroke-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--stroke-secondary);
+    }
+    .lifecycle__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .lifecycle__arrow {
+      font-size: var(--font-lg);
+      color: var(--stroke-dim);
+      flex-shrink: 0;
+    }
+    /* --- Check Card --- */
+    .check-card {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin: var(--space-4) 0;
+      transition: border-color 0.3s;
+    }
+    .check-card:hover { border-color: var(--stroke-primary); }
+    .check-card__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px dashed var(--stroke-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--stroke-secondary);
+    }
+    .check-card__body h3 {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .check-card__body p {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    /* --- Confidence Bar --- */
+    .confidence-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin: var(--space-3) 0;
+    }
+    .confidence-bar__track {
+      flex: 1;
+      height: 8px;
+      background: var(--bg-elevated);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .confidence-bar__fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+    .confidence-bar__fill--high { background: var(--accent-success); }
+    .confidence-bar__fill--medium { background: var(--accent-warning); }
+    .confidence-bar__fill--low { background: var(--accent-error); }
+    .confidence-bar__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      min-width: 50px;
+      text-align: right;
+    }
+    @media (max-width: 640px) {
+      .lifecycle { flex-direction: column; }
+      .lifecycle__arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a><span class="separator">/</span>
+        <span>Module 10</span><span class="separator">/</span>
+        <span class="current">Data Quality</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- ===== HEADER ===== -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 10 &mdash; Lesson 03</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Data Quality &amp; Governance for Agents</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            An agent that returns stale, wrong, or unvalidated data is worse than no agent at all. Build quality checks into every answer.
+          </p>
+        </header>
+
+        <!-- ===== BLUEPRINT DIAGRAM ===== -->
+        <div class="evolving-diagram reveal reveal--scale"><div class="evolving-diagram__label">DATA QUALITY SAFEGUARDS</div>
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;font-family:'JetBrains Mono',monospace;">
+          <defs>
+            <filter id="dq-glow"><feGaussianBlur stdDeviation="3" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="380" rx="8" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+
+          <!-- Center: DataPulse -->
+          <circle cx="350" cy="160" r="50" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="2" stroke-dasharray="6,3" filter="url(#dq-glow)"/>
+          <text x="350" y="155" text-anchor="middle" fill="#A100FF" font-size="12" font-weight="700">DataPulse</text>
+          <text x="350" y="172" text-anchor="middle" fill="#a0a0a0" font-size="8">QUERY ENGINE</text>
+
+          <!-- SHIELD 1 (LEFT): Freshness Check — Teal -->
+          <path d="M100,100 L100,60 L170,40 L240,60 L240,100 L170,140 Z" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="170" y="75" text-anchor="middle" fill="#CC00FF" font-size="10" font-weight="700">FRESHNESS</text>
+          <text x="170" y="90" text-anchor="middle" fill="#CC00FF" font-size="10" font-weight="700">CHECK</text>
+          <!-- Clock icon -->
+          <circle cx="170" y="105" r="8" fill="none" stroke="#CC00FF" stroke-width="1" cy="108"/>
+          <line x1="170" y1="108" x2="170" y2="103" stroke="#CC00FF" stroke-width="1"/>
+          <line x1="170" y1="108" x2="174" y2="108" stroke="#CC00FF" stroke-width="1"/>
+          <text x="170" y="130" text-anchor="middle" fill="#a0a0a0" font-size="8">last_updated &lt; 24h?</text>
+          <!-- Sub-label -->
+          <rect x="90" y="148" width="160" height="18" rx="4" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="170" y="161" text-anchor="middle" fill="#CC00FF" font-size="8">Caught: $0 sales incident</text>
+          <!-- Connection line to center -->
+          <line x1="240" y1="90" x2="300" y2="145" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,2"/>
+
+          <!-- SHIELD 2 (TOP): Schema Drift — Amber -->
+          <path d="M290,15 L290,-25 L360,-45 L430,-25 L430,15 L360,55 Z" transform="translate(-10,50)" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="350" y="22" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="700">SCHEMA DRIFT</text>
+          <!-- Warning triangle icon -->
+          <polygon points="350,32 343,45 357,45" fill="none" stroke="#f59e0b" stroke-width="1.2"/>
+          <text x="350" y="42" text-anchor="middle" fill="#f59e0b" font-size="7" font-weight="700">!</text>
+          <text x="350" y="60" text-anchor="middle" fill="#a0a0a0" font-size="8">columns match index?</text>
+          <!-- Sub-label -->
+          <rect x="270" y="66" width="160" height="18" rx="4" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="350" y="79" text-anchor="middle" fill="#f59e0b" font-size="8">Caught: customer_email rename</text>
+          <!-- Connection line to center -->
+          <line x1="350" y1="84" x2="350" y2="110" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,2"/>
+
+          <!-- SHIELD 3 (RIGHT): Result Validation — Green -->
+          <path d="M460,100 L460,60 L530,40 L600,60 L600,100 L530,140 Z" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="530" y="75" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">RESULT</text>
+          <text x="530" y="90" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">VALIDATION</text>
+          <!-- Checkmark icon -->
+          <circle cx="530" cy="108" r="8" fill="none" stroke="#10b981" stroke-width="1"/>
+          <polyline points="524,108 528,113 536,103" fill="none" stroke="#10b981" stroke-width="1.5"/>
+          <text x="530" y="130" text-anchor="middle" fill="#a0a0a0" font-size="8">sanity check passed?</text>
+          <!-- Sub-label -->
+          <rect x="450" y="148" width="160" height="18" rx="4" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="530" y="161" text-anchor="middle" fill="#10b981" font-size="8">Caught: negative revenue</text>
+          <!-- Connection line to center -->
+          <line x1="460" y1="90" x2="400" y2="145" stroke="#10b981" stroke-width="1" stroke-dasharray="4,2"/>
+
+          <!-- Confidence Meter -->
+          <text x="350" y="240" text-anchor="middle" fill="#f5f5f5" font-size="11" font-weight="600">Confidence Meter</text>
+          <!-- Segmented bar background -->
+          <rect x="120" y="252" width="460" height="24" rx="6" fill="rgba(51,65,133,0.2)" stroke="#334155" stroke-width="1" stroke-dasharray="4,2"/>
+          <!-- Red segment 0-30% -->
+          <rect x="120" y="252" width="138" height="24" rx="6" fill="rgba(239,68,68,0.25)" stroke="none"/>
+          <!-- Amber segment 30-60% -->
+          <rect x="258" y="252" width="138" height="24" rx="0" fill="rgba(245,158,11,0.2)" stroke="none"/>
+          <!-- Green segment 60-100% -->
+          <rect x="396" y="252" width="184" height="24" rx="6" fill="rgba(16,185,129,0.2)" stroke="none"/>
+          <!-- Segment labels -->
+          <text x="189" y="268" text-anchor="middle" fill="#ef4444" font-size="8">0%</text>
+          <text x="350" y="268" text-anchor="middle" fill="#f59e0b" font-size="8">50%</text>
+          <text x="557" y="268" text-anchor="middle" fill="#10b981" font-size="8">100%</text>
+          <!-- Pointer at 91% -->
+          <polygon points="535,250 539,244 531,244" fill="#f5f5f5"/>
+          <line x1="535" y1="250" x2="535" y2="276" stroke="#f5f5f5" stroke-width="1.5"/>
+          <rect x="510" y="280" width="50" height="18" rx="4" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="535" y="293" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">91%</text>
+
+          <!-- Bottom label -->
+          <rect x="225" y="320" width="250" height="28" rx="6" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="350" y="339" text-anchor="middle" fill="#CC00FF" font-size="11" font-weight="600">Priya's Quality Framework</text>
+        </svg>
+        </div>
+
+        <!-- ===== SECTION 1: The $0 Sales Incident ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>The Incident</span></div>
+          <h2 class="reveal">Friday Afternoon: The $0 Sales Call</h2>
+
+          <p class="reveal reveal--delay-1">
+            It was a Friday afternoon when Sofia Torres called Lena Park from Store #47: "DataPulse says my store did $0 in sales yesterday. We definitely didn't do $0 &mdash; I was here. We had a great day." Lena escalated to Priya Sharma immediately. Priya checked AcmeCorp's ETL pipeline logs and found the root cause within minutes: the nightly pipeline had failed overnight. The <code>sales_transactions</code> table in AcmeCorp's PostgreSQL warehouse hadn't been updated in 36 hours. DataPulse didn't know this &mdash; it queried stale data and returned a technically correct but practically wrong answer. The query ran, found no records for yesterday, and reported $0.
+          </p>
+
+          <p class="reveal reveal--delay-2">
+            The following week, another incident. Maya Chen's team ran a schema migration over the weekend, renaming <code>customer_email</code> to <code>contact_email</code> in the customer dimension table. On Monday morning, DataPulse's queries involving customer email started failing silently &mdash; returning empty result sets instead of errors. Three store managers reported that their customer lookup feature "just stopped working." Nobody got an error message. The data simply vanished.
+          </p>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">Priya's Assessment</div>
+            <div class="callout__text">
+              Priya presented both incidents to Raj Patel and the team. Her conclusion: "We solved consistency with the semantic layer. Lena solved usability with the UX redesign. But we haven't solved <strong>trust</strong>. DataPulse will confidently present wrong data if we don't teach it to check its own sources before answering." She proposed three safeguards: freshness checks, schema drift detection, and result validation. Raj approved the work that same day.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: Freshness Checks ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Safeguard #1</span></div>
+          <h2 class="reveal">Agent-Driven Freshness Checks</h2>
+
+          <p class="reveal reveal--delay-1">
+            Priya's first safeguard addressed the $0 incident directly. Before answering any time-sensitive question, DataPulse now verifies that the underlying data is sufficiently recent. A query about "today's sales" is misleading if the last data load was 36 hours ago, as Sofia discovered. The agent checks the <code>last_updated_at</code> timestamp of the relevant table and compares it against a freshness threshold &mdash; configured per data source in AcmeCorp's warehouse.
+          </p>
+
+          <div class="check-card reveal reveal--delay-2">
+            <div class="check-card__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="check-card__body">
+              <h3>Freshness Validation Pattern</h3>
+              <p>Before executing a query, DataPulse runs a metadata check: <code>SELECT MAX(updated_at) FROM sales_transactions</code>. If the result is more than 24 hours old, the agent warns the user. Priya configured the response Sofia would now see: "The latest sales data I have is from Thursday at 11:45 PM. Yesterday's data hasn't loaded yet. Want me to show you Thursday's numbers, or wait for the data team to fix the pipeline?"</p>
+            </div>
+          </div>
+
+          <div class="check-card reveal reveal--delay-3">
+            <div class="check-card__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="check-card__body">
+              <h3>Configurable Thresholds</h3>
+              <p>Different tables have different freshness requirements. Priya defined these for AcmeCorp: real-time inventory data requires updates within the hour, daily sales data must be loaded by 6 AM, and monthly financial summaries are acceptable if loaded within the past day. DataPulse stores these thresholds per data source and checks them before every query. Maya's pipeline monitoring also sends alerts to Priya's team when loads fail.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: Schema Drift Detection ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Safeguard #2</span></div>
+          <h2 class="reveal">Schema Drift Detection</h2>
+
+          <p class="reveal reveal--delay-1">
+            The <code>customer_email</code> to <code>contact_email</code> rename was a textbook case of schema drift &mdash; when tables or columns change unexpectedly. Maya's migration was intentional, but nobody updated DataPulse's configuration. An agent that caches the schema it was trained on will break silently when drift happens, returning errors or, worse, empty results that look like real answers. Priya's second safeguard ensures DataPulse detects these changes before they affect users.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Column Rename (The contact_email Incident)</div>
+              <div class="bp-card__body">
+                <p>Maya's team renamed <code>customer_email</code> to <code>contact_email</code> during a weekend migration. DataPulse's semantic layer referenced the old name. Queries didn't crash &mdash; they returned empty results, which was even more dangerous.</p>
+                <div class="tag-row" style="margin-top: var(--space-3);">
+                  <span class="badge badge--amber" data-tip="Queries return empty results instead of errors — users may trust incorrect data.">Silent Failure</span>
+                </div>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Table Removal</div>
+              <div class="bp-card__body">
+                <p>A deprecated staging table is dropped, but the agent's join logic still references it. Queries that previously worked now return database errors instead of data.</p>
+                <div class="tag-row" style="margin-top: var(--space-3);">
+                  <span class="badge badge--amber" data-tip="Queries fail with database errors — immediately visible but disruptive to users.">Breaking</span>
+                </div>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Data Type Change</div>
+              <div class="bp-card__body">
+                <p>A <code>VARCHAR</code> column is changed to <code>INTEGER</code>. The agent's SQL works, but string comparisons now produce incorrect results or type errors against AcmeCorp's PostgreSQL warehouse.</p>
+                <div class="tag-row" style="margin-top: var(--space-3);">
+                  <span class="badge badge--amber" data-tip="Type mismatches produce wrong results without raising errors — hard to detect.">Silent Failure</span>
+                </div>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">New Columns Added</div>
+              <div class="bp-card__body">
+                <p>A new <code>discount_type</code> column is added to <code>fact_sales</code>. Not breaking, but DataPulse is unaware it exists and cannot use it for filtering until Priya updates the semantic layer.</p>
+                <div class="tag-row" style="margin-top: var(--space-3);">
+                  <span class="badge badge--green" data-tip="Existing queries continue to work — the agent just cannot use the new column yet.">Non-breaking</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">Priya's Detection Strategy</div>
+            <div class="callout__text">
+              DataPulse now maintains a snapshot of the expected schema (table names, column names, data types) for all 500+ tables in AcmeCorp's warehouse. On a configurable schedule (or before each query), it compares the current database schema against the snapshot. When Priya's system detects that <code>customer_email</code> no longer exists but <code>contact_email</code> appeared, it sends an alert to Maya's data team Slack channel and tells users: "I've detected a change in the database structure that affects customer lookups. The data team has been notified. I'll hold off on this query until the configuration is updated." No more silent failures. No more managers wondering why customer search "just stopped working."
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: Result Validation ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Safeguard #3</span></div>
+          <h2 class="reveal">Result Validation &amp; Sanity Checks</h2>
+
+          <p class="reveal reveal--delay-1">
+            Even with a correct query on fresh data with a valid schema, the results might indicate a data problem. Priya's third safeguard ensures DataPulse runs sanity checks on every result before presenting it to the user. The $0 sales incident was her motivating example: Sofia's store was open, had customers, and rang up transactions &mdash; $0 revenue was obviously wrong, and DataPulse should have flagged it.
+          </p>
+
+          <div class="check-card reveal reveal--delay-2">
+            <div class="check-card__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="check-card__body">
+              <h3>Zero &amp; Negative Checks</h3>
+              <p>Revenue of $0 for a store that is open is almost certainly a data loading issue, not a real result. Negative order counts are impossible. Priya configured DataPulse to flag these anomalies: "Store #47 is showing $0 in sales for Thursday. This seems unlikely for a store that was open. The data may not have loaded correctly &mdash; want me to check with the data team?" Sofia would have seen this instead of a confident "$0."</p>
+            </div>
+          </div>
+
+          <div class="check-card reveal reveal--delay-3">
+            <div class="check-card__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            </div>
+            <div class="check-card__body">
+              <h3>Outlier Detection</h3>
+              <p>If a single store suddenly reports 10x its usual revenue, DataPulse notes the anomaly: "Store #12 is showing $1.4M in revenue this week, which is 10x its usual weekly average. This may reflect a data anomaly or a genuine spike. Want me to check the underlying transactions?" Priya built this by comparing each result against the store's 90-day rolling average from <code>fact_sales</code>.</p>
+            </div>
+          </div>
+
+          <div class="check-card reveal reveal--delay-4">
+            <div class="check-card__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+            </div>
+            <div class="check-card__body">
+              <h3>Row Count Validation</h3>
+              <p>If a query returns zero rows when it should return data (e.g., all 200 stores for this month), DataPulse suspects a data issue rather than returning "no results found." It checks if <code>fact_sales</code> has any recent data at all and reports accordingly: "I expected to find data for 200 stores but found 0 records. This suggests a data loading issue rather than a genuine result."</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: Confidence Scoring ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Trust Signal</span></div>
+          <h2 class="reveal">Confidence Scoring on Query Results</h2>
+
+          <p class="reveal reveal--delay-1">
+            Priya introduced one more layer of transparency: a confidence score on every answer. Not all answers carry the same reliability. A well-sourced query on fresh data with an exact metric match from Priya's semantic layer warrants high confidence. A query built from inferred intent on day-old data with no exact metric match warrants a lower score. DataPulse now shows this to users so they know how much to trust each answer &mdash; something Raj had specifically requested after the $3.4M incident.
+          </p>
+
+          <div class="bp-card reveal reveal--delay-2">
+            <div class="bp-card__title">Confidence Factors</div>
+            <div class="bp-card__body">
+              <div style="margin-bottom: var(--space-4);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-1);"><span style="font-size: var(--font-sm);">Exact metric match in Priya's semantic layer</span><span class="badge badge--green" data-tip="Query maps directly to a defined metric — highest confidence signal.">+30</span></div>
+                <div class="confidence-bar"><div class="confidence-bar__track"><div class="confidence-bar__fill confidence-bar__fill--high" style="width: 100%;"></div></div><div class="confidence-bar__label">High</div></div>
+              </div>
+              <div style="margin-bottom: var(--space-4);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-1);"><span style="font-size: var(--font-sm);">Data freshness within threshold</span><span class="badge badge--green" data-tip="Source data was refreshed recently enough to meet the configured staleness limit.">+25</span></div>
+                <div class="confidence-bar"><div class="confidence-bar__track"><div class="confidence-bar__fill confidence-bar__fill--high" style="width: 83%;"></div></div><div class="confidence-bar__label">High</div></div>
+              </div>
+              <div style="margin-bottom: var(--space-4);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-1);"><span style="font-size: var(--font-sm);">Schema validated (no drift detected)</span><span class="badge badge--green" data-tip="Current database schema matches the expected snapshot — no unexpected changes.">+20</span></div>
+                <div class="confidence-bar"><div class="confidence-bar__track"><div class="confidence-bar__fill confidence-bar__fill--high" style="width: 67%;"></div></div><div class="confidence-bar__label">High</div></div>
+              </div>
+              <div style="margin-bottom: var(--space-4);">
+                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-1);"><span style="font-size: var(--font-sm);">Results pass Priya's sanity checks</span><span class="badge badge--teal" data-tip="Query results fall within expected ranges based on historical data patterns.">+15</span></div>
+                <div class="confidence-bar"><div class="confidence-bar__track"><div class="confidence-bar__fill confidence-bar__fill--medium" style="width: 50%;"></div></div><div class="confidence-bar__label">Med</div></div>
+              </div>
+              <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: var(--space-1);"><span style="font-size: var(--font-sm);">Inferred intent (no exact metric match)</span><span class="badge badge--amber" data-tip="Agent guessed the metric from context — no exact definition found in the semantic layer.">-20</span></div>
+                <div class="confidence-bar"><div class="confidence-bar__track"><div class="confidence-bar__fill confidence-bar__fill--low" style="width: 30%;"></div></div><div class="confidence-bar__label">Low</div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 6: Data Lineage ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Governance</span></div>
+          <h2 class="reveal">Data Lineage Awareness</h2>
+
+          <p class="reveal reveal--delay-1">
+            Derek Kim, as CFO, had one standing requirement: "For any number DataPulse gives me, I need to know where it came from." Priya built data lineage into every response. DataPulse can now answer: "This revenue number comes from the <code>fact_sales</code> table in AcmeCorp's PostgreSQL warehouse, which is fed by the POS system via Maya's nightly ETL pipeline, last run at 11:45 PM." This transparency builds trust and helps debug discrepancies &mdash; exactly what was missing during the $3.4M incident.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Source Tracking</div>
+              <div class="bp-card__body">
+                <p>Each metric knows its source table in AcmeCorp's star schema, the pipeline that populates it, and the schedule on which it refreshes. Priya maintains this in the semantic layer metadata.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Transform Chain</div>
+              <div class="bp-card__body">
+                <p>DataPulse can explain intermediate transformations: raw POS data from AcmeCorp's 200 stores is cleaned, deduplicated, and aggregated by Maya's dbt models before reaching <code>fact_sales</code>.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Citation in Answers</div>
+              <div class="bp-card__body">
+                <p>Answers include a collapsible "data source" section showing which tables and metrics were used. Derek uses this when presenting to the board. Marcus Webb uses it for compliance audits.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 7: Agent Lifecycle ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Lifecycle</span></div>
+          <h2 class="reveal">Agent Lifecycle Management</h2>
+
+          <p class="reveal reveal--delay-1">
+            DataPulse is not a one-time deployment. Priya mapped out the full lifecycle after realizing that both the $0 incident and the schema drift could have been caught earlier with proper monitoring. The agent follows a lifecycle from initial build through retirement, with continuous monitoring and improvement at every stage.
+          </p>
+
+          <div class="lifecycle reveal reveal--delay-2">
+            <div class="lifecycle__step">
+              <div class="lifecycle__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+              </div>
+              <div class="lifecycle__label">Build</div>
+            </div>
+            <div class="lifecycle__arrow">&rarr;</div>
+            <div class="lifecycle__step">
+              <div class="lifecycle__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+              </div>
+              <div class="lifecycle__label">Deploy</div>
+            </div>
+            <div class="lifecycle__arrow">&rarr;</div>
+            <div class="lifecycle__step lifecycle__step--active">
+              <div class="lifecycle__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </div>
+              <div class="lifecycle__label">Monitor</div>
+            </div>
+            <div class="lifecycle__arrow">&rarr;</div>
+            <div class="lifecycle__step">
+              <div class="lifecycle__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+              </div>
+              <div class="lifecycle__label">Improve</div>
+            </div>
+            <div class="lifecycle__arrow">&rarr;</div>
+            <div class="lifecycle__step">
+              <div class="lifecycle__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              </div>
+              <div class="lifecycle__label">Retire</div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal reveal--delay-3">
+            <div class="collapsible__header">
+              <span>DataPulse Lifecycle Stage Details</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <ul>
+                  <li><strong>Build:</strong> Priya defines metrics in the semantic layer, Maya configures data sources, Marcus sets up guardrails and access controls, and Lena designs the conversation UX. The team writes evaluation tests against AcmeCorp's star schema.</li>
+                  <li><strong>Deploy:</strong> Shadow mode first (DataPulse answers but Priya reviews before delivery), then canary rollout to Sofia and 10 other power-user store managers, then full production across all 200 stores.</li>
+                  <li><strong>Monitor:</strong> Track query success rates, response latency (targeting sub-3s), user satisfaction (thumbs up/down), data freshness alerts, and schema drift events. Priya reviews the dashboard weekly.</li>
+                  <li><strong>Improve:</strong> Analyze failed queries to add new metrics, refine Lena's clarification logic, update the semantic layer for new business terms, and retune prompts. The $0 incident led to freshness checks; the schema drift led to drift detection.</li>
+                  <li><strong>Retire:</strong> When a data source is decommissioned or a new agent replaces DataPulse, gracefully redirect users and archive query logs for Marcus's compliance requirements.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 8: Organizational Change Management ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Organization</span></div>
+          <h2 class="reveal">Organizational Change Management</h2>
+
+          <p class="reveal reveal--delay-1">
+            Technology is the easy part. Getting 200 store managers to actually use DataPulse &mdash; and trust its answers &mdash; requires deliberate change management. Lena learned this when adoption stalled at 23 users despite perfect accuracy. Raj and Priya built the organizational framework to support long-term adoption.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Ownership Model</div>
+              <div class="bp-card__body">
+                <p>Priya owns the semantic layer and reviews failed queries. Lena owns the UX and clarification logic. Maya owns the data pipelines. Marcus owns security and compliance. Without clear ownership, the agent drifts and degrades &mdash; as AcmeCorp almost learned the hard way.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">User Training</div>
+              <div class="bp-card__body">
+                <p>Lena created short video walkthroughs showing store managers what DataPulse can and cannot do. Sofia Torres recorded a 3-minute demo showing her daily workflow. These outperformed the written documentation that nobody read.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Measuring ROI</div>
+              <div class="bp-card__body">
+                <p>Raj tracks reduction in ad-hoc SQL requests to Maya's data team, time-to-answer for business questions, user adoption rate (from 23 to 124 managers after Lena's UX fix), and NPS scores. Derek ties the agent's value to measurable outcomes: $1,847/month operating cost vs. hours of analyst time saved.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Feedback Loops</div>
+              <div class="bp-card__body">
+                <p>Every DataPulse answer includes thumbs-up/thumbs-down. Negative feedback routes to Priya for triage. She publishes a monthly "DataPulse health" report showing 91% accuracy, top failure modes, and improvement trends. The CEO reviews it quarterly.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 9: AcmeCorp — Priya's Safeguards in Action ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Case Study</span></div>
+          <h2 class="reveal">AcmeCorp: Priya's Safeguards Prevent the Next Incident</h2>
+
+          <div class="bp-card reveal reveal--delay-1">
+            <div class="bp-card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              Freshness Check Saves Sofia
+            </div>
+            <div class="bp-card__body">
+              <p>Two weeks after deploying the safeguards, another ETL failure occurred on a Tuesday night. On Wednesday morning at 9:00 AM, Sofia asked DataPulse: "What are today's sales so far?" The agent checked <code>sales_transactions.last_updated_at</code> and found the most recent record was from Monday at 11:45 PM. Instead of returning $0 again, DataPulse responded: "Today's sales data hasn't loaded yet (last update: Monday 11:45 PM). Want me to show you Monday's full numbers instead?" Sofia said yes, got useful data, and wasn't misled. Meanwhile, DataPulse had already alerted Maya's team about the stale data.</p>
+            </div>
+          </div>
+
+          <div class="bp-card reveal reveal--delay-2" style="margin-top: var(--space-4);">
+            <div class="bp-card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-warning)" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              Schema Drift Caught Before Users Notice
+            </div>
+            <div class="bp-card__body">
+              <p>A month later, Maya's team renamed <code>total_amount</code> to <code>order_total</code> in the <code>fact_sales</code> table as part of a planned migration. This time, DataPulse's pre-query schema check detected the change immediately: column <code>total_amount</code> no longer exists, but a new column <code>order_total</code> appeared. Instead of returning empty results or crashing, DataPulse sent an alert to Maya's Slack channel and told users: "I've noticed a change in the database structure that affects revenue calculations. The data team has been notified and I'll resume answering revenue questions once the configuration is updated." Maya updated the semantic layer within the hour. Zero users were impacted.</p>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">Outcome</div>
+            <div class="callout__text">
+              Priya's three safeguards prevented over <strong>40 incorrect answers</strong> in the first month of deployment. Store managers like Sofia learned to trust DataPulse because it was honest about its limitations instead of confidently presenting wrong data. Maya's data team received actionable alerts instead of angry support tickets. The combination of Priya's semantic layer (Lesson 1), Lena's UX redesign (Lesson 2), and these quality safeguards transformed DataPulse from a tool that embarrassed AcmeCorp in front of the CEO to one running at <strong>$1,847/month, 91% accuracy, and sub-3-second response times</strong> across all 200 stores.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="02-agent-ux.html" class="page-nav__title">Agent UX &amp; Conversation Design</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="quiz-checkpoint.html" class="page-nav__title">Module 10 Quiz</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Semantic Layer &amp; Agent UX Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m10-data-quality');</script>
+</body>
+</html>

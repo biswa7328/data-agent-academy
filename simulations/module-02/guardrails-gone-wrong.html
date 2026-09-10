@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulation: Guardrails Gone Wrong — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Incident Counter --- */
+    .incident-counter { display: flex; gap: var(--space-3); justify-content: center; margin-bottom: var(--space-8); }
+    .incident-counter__dot { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--stroke-dim); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: var(--font-sm); color: var(--text-secondary); transition: all var(--transition-base); }
+    .incident-counter__dot.active { border-color: var(--accent-error); color: var(--accent-error); box-shadow: 0 0 15px var(--glow-error); }
+    .incident-counter__dot.resolved { border-color: var(--accent-success); color: var(--accent-success); box-shadow: 0 0 10px var(--glow-success); }
+
+    /* --- Postmortem Table --- */
+    .postmortem { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: var(--space-6); }
+    .postmortem__col { background: var(--bg-surface); border: 1px dashed var(--stroke-dim); border-radius: var(--border-radius-lg); padding: var(--space-6); }
+    .postmortem__col--bad { border-color: var(--accent-error); }
+    .postmortem__col--good { border-color: var(--accent-success); }
+    .postmortem__col-title { font-family: var(--font-mono); font-size: var(--font-sm); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-4); }
+    .postmortem__col--bad .postmortem__col-title { color: var(--accent-error); }
+    .postmortem__col--good .postmortem__col-title { color: var(--accent-success); }
+    .postmortem__item { display: flex; gap: var(--space-3); align-items: flex-start; margin-bottom: var(--space-3); font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.6; }
+    .postmortem__item-icon { flex-shrink: 0; margin-top: 2px; }
+
+    @media (max-width: 640px) { .postmortem { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M9 21V9"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 02</span>
+        <span class="separator">/</span>
+        <span class="current">Simulation: Guardrails Gone Wrong</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Incident Response Simulation</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Guardrails Gone Wrong</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <div class="callout callout--error reveal">
+            <div class="callout__label">Situation Report</div>
+            <div class="callout__text">
+              AcmeCorp skipped proper guardrails to ship faster. You're the incident responder. Four crises hit &mdash; handle them.
+            </div>
+          </div>
+        </section>
+
+        <!-- Simulation Container -->
+        <section class="section">
+          <div id="sim-container"></div>
+        </section>
+
+        <!-- Reset Button -->
+        <div class="reveal" style="text-align: center; margin-bottom: var(--space-8);">
+          <button class="btn btn--teal" onclick="SimulationEngine.reset()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+            </svg>
+            Restart Simulation
+          </button>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../../modules/module-02/02-role-taxonomy.html" class="page-nav__title">Role Taxonomy</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../../modules/module-02/03-langgraph-patterns.html" class="page-nav__title">LangGraph Patterns</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Architecture & Design Foundations Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Simulation Config: Guardrails Gone Wrong ---
+    const simConfig = {
+      title: 'Guardrails Gone Wrong',
+      nodes: {
+
+        // ===== INCIDENT 1: PII ACCESS =====
+        'start': {
+          type: 'decision',
+          title: 'Incident 1: Unauthorized Data Access',
+          description: '<span style="color: var(--accent-error); font-family: var(--font-mono); font-size: var(--font-xs);">ALERT 09:14 AM</span><br><br>A store clerk just accessed regional salary data through the agent. Employee names, titles, and compensation figures were returned in a plain-text response. The clerk\'s role should only permit access to their own store\'s sales data.',
+          choices: [
+            { label: 'Block the user and log the incident', hint: 'Immediate containment + audit trail', next: 'incident1-good', isGood: true },
+            { label: 'Ignore it &mdash; they probably need it', hint: 'Maybe they have a legitimate reason', next: 'incident1-bad', isGood: false },
+            { label: 'Shut down the entire agent', hint: 'Kill switch &mdash; stop all access immediately', next: 'incident1-overreact', isGood: false }
+          ]
+        },
+
+        'incident1-good': { type: 'consequence', title: 'Block & Log', consequence: 'Good call. You blocked further access, preserved the audit log for compliance review, and can now implement RBAC rules to prevent recurrence. The incident is contained with minimal disruption to other users.', isGood: true, next: 'incident2' },
+        'incident1-bad': { type: 'consequence', title: 'Ignored the Incident', consequence: 'The clerk screenshots the salary data and shares it in a group chat. Within an hour, 15 employees know each other\'s salaries. HR opens a formal investigation. The agent is now a liability, not an asset. Ignoring a PII incident is never the right call.', isGood: false, next: 'incident2' },
+        'incident1-overreact': { type: 'consequence', title: 'Full Shutdown', consequence: 'All 200 stores lose access to the Data Agent simultaneously. Regional managers can\'t pull their morning reports. The CTO demands an explanation for the outage. A targeted block would have contained the issue without collateral damage. Shutting down everything is a sledgehammer when you need a scalpel.', isGood: false, next: 'incident2' },
+
+        // ===== INCIDENT 2: DESTRUCTIVE QUERY =====
+        'incident2': {
+          type: 'decision',
+          title: 'Incident 2: Destructive Query Executed',
+          description: '<span style="color: var(--accent-error); font-family: var(--font-mono); font-size: var(--font-xs);">ALERT 11:42 AM</span><br><br>The agent just executed a <code style="color: var(--accent-error); background: rgba(239,68,68,0.1); padding: 2px 6px; border-radius: 3px;">DELETE FROM products WHERE category = \'seasonal\'</code> query. 2,847 product records have been removed from the production database. Store inventory systems are now showing empty shelves for seasonal items.',
+          choices: [
+            { label: 'Restore from backup, add write-protection guardrail', hint: 'Fix the damage, prevent recurrence', next: 'incident2-good', isGood: true },
+            { label: 'Hope nobody notices', hint: 'Maybe the data wasn\'t important', next: 'incident2-catastrophe', isGood: false },
+            { label: 'Blame the LLM provider', hint: 'It\'s their model that generated the query', next: 'incident2-blame', isGood: false }
+          ]
+        },
+
+        'incident2-good': { type: 'consequence', title: 'Restore & Protect', consequence: 'Data restored from the 6 AM backup with minimal loss. You immediately added a write-protection guardrail: the agent\'s database connection is now read-only. All mutating queries (INSERT, UPDATE, DELETE, DROP) are blocked at the tool layer. This should have been the default from day one.', isGood: true, next: 'incident3' },
+        'incident2-catastrophe': { type: 'consequence', title: 'Hoped Nobody Would Notice', consequence: 'They noticed. Within hours, store managers report that seasonal inventory shows as "out of stock" across all systems. Online orders for seasonal items start failing. The supply chain team triggers emergency reorders for products that are actually sitting in warehouses. The cascading cost: $180,000 in unnecessary reorders and two days of inventory chaos.', isGood: false, next: 'incident3' },
+        'incident2-blame': { type: 'consequence', title: 'Blamed the LLM Provider', consequence: 'The LLM generated the SQL, but your system executed it against a production database with write permissions and no confirmation step. The LLM provider\'s response: "Our model generates text. You chose to execute it." They\'re right. The responsibility for guardrails lies with the system architect &mdash; that\'s you.', isGood: false, next: 'incident3' },
+
+        // ===== INCIDENT 3: PII IN RESPONSE =====
+        'incident3': {
+          type: 'decision',
+          title: 'Incident 3: PII Leak in Agent Response',
+          description: '<span style="color: var(--accent-error); font-family: var(--font-mono); font-size: var(--font-xs);">ALERT 02:15 PM</span><br><br>Customer PII (names, emails, phone numbers) appeared in an agent response to a sales report query. A marketing manager asked "show me top customers by revenue" and received a table with full contact details. The report has already been exported to a shared spreadsheet.',
+          choices: [
+            { label: 'Add PII masking filter to output layer', hint: 'Intercept and redact before delivery', next: 'incident3-good', isGood: true },
+            { label: 'Ask users not to share the report', hint: 'Send a company-wide reminder about data handling', next: 'incident3-bad', isGood: false },
+            { label: 'Redact the logs and move on', hint: 'Clean up the evidence, fix it quietly', next: 'incident3-compliance', isGood: false }
+          ]
+        },
+
+        'incident3-good': { type: 'consequence', title: 'PII Masking Filter Added', consequence: 'You added an output-layer guardrail that scans all agent responses for PII patterns (emails, phone numbers, SSNs, names matched against customer tables) and masks them before delivery. The shared spreadsheet is revoked and the marketing manager is notified. Proper incident documentation is filed for compliance.', isGood: true, next: 'incident4' },
+        'incident3-bad': { type: 'consequence', title: 'Asked Users Not to Share', consequence: 'A company-wide email about "responsible data handling" does nothing when the system itself is leaking PII. The next day, a different user runs a similar query and shares the results externally with a vendor. You now have a data breach that affects customers, not just employees. GDPR and CCPA implications are now on the table.', isGood: false, next: 'incident4' },
+        'incident3-compliance': { type: 'consequence', title: 'Redacted Logs, Moved On', consequence: 'Destroying audit logs after a PII incident is a compliance violation in itself. When the annual security audit discovers the gap in logs &mdash; and they will &mdash; AcmeCorp faces regulatory penalties for both the original breach AND the cover-up. Two violations for the price of one.', isGood: false, next: 'incident4' },
+
+        // ===== INCIDENT 4: RATE LIMIT =====
+        'incident4': {
+          type: 'decision',
+          title: 'Incident 4: Rate Limit Cascade Failure',
+          description: '<span style="color: var(--accent-error); font-family: var(--font-mono); font-size: var(--font-xs);">ALERT 04:30 PM</span><br><br>The agent hit the LLM rate limit and started returning errors to all users. It\'s month-end reporting &mdash; the busiest time for data queries. 200 stores are trying to pull their monthly reports simultaneously. The error queue is growing at 50 requests per minute.',
+          choices: [
+            { label: 'Implement circuit breaker + queue system', hint: 'Graceful degradation with ordered recovery', next: 'incident4-good', isGood: true },
+            { label: 'Increase rate limit budget', hint: 'Throw money at the problem', next: 'incident4-partial', isGood: true },
+            { label: 'Tell users to try again later', hint: 'It\'ll resolve itself eventually', next: 'incident4-bad', isGood: false }
+          ]
+        },
+
+        'incident4-good': { type: 'consequence', title: 'Circuit Breaker + Queue System', consequence: 'Excellent engineering response. The circuit breaker stops sending requests to the overloaded LLM API, preventing error cascading. The queue system buffers incoming requests and processes them in order as capacity recovers. Users see "Your query is queued &mdash; estimated wait: 3 minutes" instead of cryptic error messages. Graceful degradation preserves trust.', isGood: true, next: 'result' },
+        'incident4-partial': { type: 'consequence', title: 'Increased Rate Limit Budget', consequence: 'Money solves the immediate problem, but it\'s a band-aid. Next month-end will hit the same wall unless you also implement queuing and circuit breakers. The LLM bill jumps 4x during peak periods. Your CFO will have questions. Budget increases should complement architectural solutions, not replace them.', isGood: true, next: 'result' },
+        'incident4-bad': { type: 'consequence', title: 'Told Users to Try Again Later', consequence: 'It\'s month-end close. Regional managers have board-level reporting deadlines. "Try again later" means they fall back to emailing the data team directly &mdash; exactly what the agent was supposed to eliminate. 200 stores hammering retry means the rate limit never recovers. The agent is effectively down for 6 hours during the most critical reporting window of the month.', isGood: false, next: 'result' },
+
+        // ===== RESULT =====
+        'result': {
+          type: 'result',
+          title: 'Incident Response Complete',
+          get score() {
+            if (!SimulationEngine.active) return '?/4';
+            const h = SimulationEngine.active.history;
+            const good = h.filter(x => x.wasGood).length;
+            return good + '/4';
+          },
+          scoreLabel: 'Incidents Handled Correctly',
+          get summary() {
+            if (!SimulationEngine.active) return '';
+            const h = SimulationEngine.active.history;
+            const good = h.filter(x => x.wasGood).length;
+
+            let text = '';
+            if (good === 4) { text = 'Perfect incident response. You contained every crisis with the right balance of urgency and precision.'; }
+            else if (good >= 2) { text = 'Reasonable response overall, but some incidents were mishandled. In production, every missed guardrail compounds into larger problems.'; }
+            else { text = 'Critical gaps in incident response. Without proper guardrails AND proper incident handling, AcmeCorp\'s Data Agent is a liability.'; }
+
+            text += '<div class="postmortem" style="margin-top: var(--space-8);">';
+            text += '<div class="postmortem__col postmortem__col--bad">';
+            text += '<div class="postmortem__col-title">What Happened</div>';
+            text += '<div class="postmortem__item"><span class="postmortem__item-icon" style="color: var(--accent-error);">&#10007;</span> Unauthorized access to salary data (no RBAC)</div>';
+            text += '<div class="postmortem__item"><span class="postmortem__item-icon" style="color: var(--accent-error);">&#10007;</span> Destructive DELETE query on production (no write protection)</div>';
+            text += '<div class="postmortem__item"><span class="postmortem__item-icon" style="color: var(--accent-error);">&#10007;</span> Customer PII leaked in responses (no output filtering)</div>';
+            text += '<div class="postmortem__item"><span class="postmortem__item-icon" style="color: var(--accent-error);">&#10007;</span> Rate limit cascade during peak usage (no circuit breaker)</div>';
+            text += '</div>';
+            text += '<div class="postmortem__col postmortem__col--good">';
+            text += '<div class="postmortem__col-title">What Guardrails Would Prevent</div>';
+            text += '<div class="postmortem__item"><span class="postmortem__item-icon" style="color: var(--accent-success);">&#10003;</span> RBAC: Role-based access control limits data by user role</div>';
+            text += '<div class="postmortem__item"><span class="postmortem__item-icon" style="color: var(--accent-success);">&#10003;</span> Write Protection: Read-only DB connections, query allowlisting</div>';
+            text += '<div class="postmortem__item"><span class="postmortem__item-icon" style="color: var(--accent-success);">&#10003;</span> PII Masking: Output filters that redact sensitive data patterns</div>';
+            text += '<div class="postmortem__item"><span class="postmortem__item-icon" style="color: var(--accent-success);">&#10003;</span> Circuit Breaker: Graceful degradation with queuing under load</div>';
+            text += '</div>';
+            text += '</div>';
+            return text;
+          }
+        }
+      }
+    };
+
+    // Initialize
+    Nav.init('m02-sim-guardrails');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      SimulationEngine.init('sim-container', simConfig);
+    });
+  </script>
+</body>
+</html>

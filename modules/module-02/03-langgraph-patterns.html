@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LangGraph Patterns — Module 02 — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Pattern SVG Containers --- */
+    .pattern-svg-wrap {
+      background: var(--bg-primary);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-6);
+      margin: var(--space-4) 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: auto;
+    }
+    .pattern-svg-wrap svg { width: 100%; max-width: 600px; }
+
+    /* --- Matching Exercise --- */
+    .match-exercise { margin: var(--space-6) 0; }
+    .match-scenario {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-4) var(--space-6);
+      margin-bottom: var(--space-4);
+      transition: border-color var(--transition-base), box-shadow var(--transition-base);
+    }
+    .match-scenario.matched-correct {
+      border-color: var(--accent-success);
+      box-shadow: 0 0 12px var(--glow-success);
+    }
+    .match-scenario.matched-wrong {
+      border-color: var(--accent-error);
+      box-shadow: 0 0 12px var(--glow-error);
+    }
+    .match-scenario__text {
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+      line-height: 1.6;
+    }
+    .match-scenario__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-2);
+    }
+    .match-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .match-btn {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--stroke-dim);
+      background: transparent;
+      color: var(--text-secondary);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .match-btn:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.08);
+    }
+    .match-btn.selected {
+      border-color: var(--stroke-primary);
+      background: rgba(161, 0, 255, 0.15);
+      color: var(--text-primary);
+    }
+    .match-btn:disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+    .match-feedback {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      margin-top: var(--space-2);
+      display: none;
+    }
+    .match-feedback.show { display: block; }
+    .match-feedback.correct { color: var(--accent-success); }
+    .match-feedback.wrong { color: var(--accent-error); }
+    .match-score {
+      text-align: center;
+      margin-top: var(--space-6);
+      display: none;
+    }
+    .match-score.show { display: block; }
+
+    /* --- Retry counter visual --- */
+    .retry-counter {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      fill: var(--accent-warning);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 02</span>
+        <span class="separator">/</span>
+        <span class="current">LangGraph Patterns</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Evolving Diagram -->
+        <div class="evolving-diagram reveal" id="evolvingDiagram" style="margin-top: var(--space-8);"></div>
+
+        <!-- ===== SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Scene</span></div>
+          <h1 style="margin-bottom: var(--space-4);">LangGraph Patterns</h1>
+          <p style="font-size: var(--font-lg);">
+            AcmeCorp's architect needs to decide how the agent's internal logic flows.
+            A single chain won't cut it &mdash; real agents need branching, looping, and parallel execution.
+            <strong>Four patterns to choose from, each suited to different tasks.</strong>
+          </p>
+        </section>
+
+        <!-- ===== PATTERN A: SEQUENTIAL CHAIN ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Pattern A</span></div>
+          <h2 style="margin-bottom: var(--space-4);">Sequential Chain</h2>
+          <p>The simplest pattern: each step feeds into the next. No branching, no loops. Predictable and easy to debug.</p>
+
+          <div class="pattern-svg-wrap reveal--scale reveal">
+            <svg viewBox="0 0 580 80" xmlns="http://www.w3.org/2000/svg">
+              <!-- Boxes -->
+              <rect x="10" y="20" width="100" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+              <text x="60" y="45" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="11">Query</text>
+
+              <rect x="160" y="20" width="100" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+              <text x="210" y="45" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="11">Parse</text>
+
+              <rect x="310" y="20" width="100" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+              <text x="360" y="45" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="11">Execute</text>
+
+              <rect x="460" y="20" width="100" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5"/>
+              <text x="510" y="45" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="11">Format</text>
+
+              <!-- Arrows -->
+              <line x1="110" y1="40" x2="160" y2="40" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="260" y1="40" x2="310" y2="40" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="410" y1="40" x2="460" y2="40" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+              <defs>
+                <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#A100FF"/>
+                </marker>
+                <marker id="arrowTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#CC00FF"/>
+                </marker>
+                <marker id="arrowAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">AcmeCorp Example</div>
+            <div class="callout__text">
+              Customer onboarding: create account &rarr; send welcome email &rarr; assign team &rarr; schedule call. Each step depends on the last. If one fails, the chain stops.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PATTERN B: CONDITIONAL BRANCHING ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Pattern B</span></div>
+          <h2 style="margin-bottom: var(--space-4);">Conditional Branching</h2>
+          <p>The agent classifies the user's intent, then routes to the appropriate specialized path. A diamond decision node splits the flow.</p>
+
+          <div class="pattern-svg-wrap reveal--scale reveal">
+            <svg viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg">
+              <!-- Intent Analysis box -->
+              <rect x="10" y="70" width="120" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+              <text x="70" y="95" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10">Intent Analysis</text>
+
+              <!-- Diamond decision -->
+              <polygon points="220,90 260,60 300,90 260,120" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="260" y="95" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="9">Route?</text>
+
+              <!-- Arrow to diamond -->
+              <line x1="130" y1="90" x2="220" y2="90" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+              <!-- Top path: Data Query -->
+              <line x1="300" y1="75" x2="370" y2="35" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <rect x="370" y="10" width="130" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+              <text x="435" y="35" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10">Data Query Path</text>
+              <text x="340" y="48" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8">"find data"</text>
+
+              <!-- Bottom path: Report Gen -->
+              <line x1="300" y1="105" x2="370" y2="145" class="draw-line" stroke="#CC00FF" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+              <rect x="370" y="130" width="130" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5"/>
+              <text x="435" y="155" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="10">Report Generator</text>
+              <text x="340" y="130" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8">"create report"</text>
+            </svg>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">AcmeCorp Example</div>
+            <div class="callout__text">
+              "Find data" goes to the query agent; "Create report" goes to the report generator. The router decides in milliseconds which path to take.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PATTERN C: LOOP WITH FEEDBACK ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Pattern C</span></div>
+          <h2 style="margin-bottom: var(--space-4);">Loop with Feedback</h2>
+          <p>Generate, validate, fix. The agent retries until it gets it right &mdash; or hits a maximum retry count. Essential for SQL generation where the first attempt is often wrong.</p>
+
+          <div class="pattern-svg-wrap reveal--scale reveal">
+            <svg viewBox="0 0 560 140" xmlns="http://www.w3.org/2000/svg">
+              <!-- Generate SQL -->
+              <rect x="10" y="50" width="110" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+              <text x="65" y="75" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10">Generate SQL</text>
+
+              <!-- Validate -->
+              <rect x="170" y="50" width="100" height="40" rx="4" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="220" y="75" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="10">Validate</text>
+
+              <!-- Arrow gen -> validate -->
+              <line x1="120" y1="70" x2="170" y2="70" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+              <!-- Loop-back arrow (invalid) -->
+              <path d="M 195 50 C 195 15, 90 15, 90 50" class="draw-line" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowRed)"/>
+              <text x="140" y="12" text-anchor="middle" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="8">invalid</text>
+
+              <!-- Retry counter -->
+              <rect x="115" y="22" width="50" height="16" rx="3" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="0.8"/>
+              <text x="140" y="33" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="7">retry: 0/3</text>
+
+              <!-- Arrow validate -> execute (valid) -->
+              <line x1="270" y1="70" x2="330" y2="70" class="draw-line" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+              <text x="300" y="62" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="8">valid</text>
+
+              <!-- Execute -->
+              <rect x="330" y="50" width="100" height="40" rx="4" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5"/>
+              <text x="380" y="75" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="10">Execute</text>
+
+              <!-- Arrow execute -> return -->
+              <line x1="430" y1="70" x2="480" y2="70" class="draw-line" stroke="#CC00FF" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+
+              <!-- Return -->
+              <rect x="480" y="50" width="70" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5"/>
+              <text x="515" y="75" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="10">Return</text>
+
+              <defs>
+                <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+                </marker>
+                <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+                </marker>
+              </defs>
+            </svg>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">AcmeCorp Example</div>
+            <div class="callout__text">
+              Query generation: try SQL &rarr; check validity against the schema &rarr; fix if needed &rarr; execute. Most queries converge within 2&ndash;3 retries.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PATTERN D: PARALLEL EXECUTION ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Pattern D</span></div>
+          <h2 style="margin-bottom: var(--space-4);">Parallel Execution</h2>
+          <p>Fan-out from one node to multiple independent tasks, then fan-in to merge results. Dramatically reduces latency when tasks don't depend on each other.</p>
+
+          <div class="pattern-svg-wrap reveal--scale reveal">
+            <svg viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg">
+              <!-- Start node -->
+              <rect x="10" y="70" width="80" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+              <text x="50" y="95" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10">Request</text>
+
+              <!-- Fan-out arrows -->
+              <line x1="90" y1="80" x2="160" y2="30" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="90" y1="90" x2="160" y2="90" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="90" y1="100" x2="160" y2="150" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+              <!-- Parallel task 1 -->
+              <rect x="160" y="10" width="140" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+              <text x="230" y="35" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="9">Schema Discovery</text>
+
+              <!-- Parallel task 2 -->
+              <rect x="160" y="70" width="140" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5"/>
+              <text x="230" y="95" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="9">Row Count Stats</text>
+
+              <!-- Parallel task 3 -->
+              <rect x="160" y="130" width="140" height="40" rx="4" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5"/>
+              <text x="230" y="155" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="9">Recent Tables</text>
+
+              <!-- Fan-in arrows -->
+              <line x1="300" y1="30" x2="380" y2="80" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="300" y1="90" x2="380" y2="90" class="draw-line" stroke="#CC00FF" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+              <line x1="300" y1="150" x2="380" y2="100" class="draw-line" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowAmber)"/>
+
+              <!-- Merge node -->
+              <rect x="380" y="70" width="100" height="40" rx="4" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="2"/>
+              <text x="430" y="95" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="10">Merge</text>
+
+              <!-- Parallel label -->
+              <text x="230" y="175" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8" font-style="italic">runs simultaneously</text>
+            </svg>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">AcmeCorp Example</div>
+            <div class="callout__text">
+              Get schema, row counts, and sample data &mdash; all at once. What would take 3 sequential calls now takes just 1 round-trip. Latency drops from 9 seconds to 3.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== COMPARISON TABLE ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Comparison</span></div>
+          <h2 style="margin-bottom: var(--space-6);">When to Use Which Pattern</h2>
+
+          <div style="overflow-x: auto;">
+            <table class="bp-table">
+              <thead>
+                <tr>
+                  <th>Pattern</th>
+                  <th>Use Case</th>
+                  <th>Latency</th>
+                  <th>Complexity</th>
+                  <th>Error Recovery</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong style="color: var(--stroke-primary);">Sequential</strong></td>
+                  <td>Simple pipelines, ETL steps</td>
+                  <td><span class="badge badge--amber" data-tip="Each step runs one after another, so total latency is the sum of all steps">High (additive)</span></td>
+                  <td><span class="badge badge--green" data-tip="Linear flow with no branching logic to manage">Low</span></td>
+                  <td>Fail-fast; retry entire chain</td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--stroke-primary);">Conditional</strong></td>
+                  <td>Intent routing, feature flags</td>
+                  <td><span class="badge badge--green" data-tip="Only one branch executes, so latency equals the fastest path">Low</span></td>
+                  <td><span class="badge badge--amber" data-tip="Requires a router node and well-defined intent classification">Medium</span></td>
+                  <td>Fallback to default branch</td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--stroke-primary);">Loop</strong></td>
+                  <td>SQL gen, self-correction, validation</td>
+                  <td><span class="badge badge--amber" data-tip="Depends on how many retries are needed — best case is one pass, worst case hits the max retry limit">Variable</span></td>
+                  <td><span class="badge badge--amber" data-tip="Needs validation logic, retry counters, and graceful degradation on max retries">Medium</span></td>
+                  <td>Bounded retries; graceful degrade</td>
+                </tr>
+                <tr>
+                  <td><strong style="color: var(--stroke-primary);">Parallel</strong></td>
+                  <td>Independent sub-tasks, data gathering</td>
+                  <td><span class="badge badge--green" data-tip="All branches run simultaneously — total latency equals the slowest branch, not the sum">Low (concurrent)</span></td>
+                  <td><span class="badge badge--blue" data-tip="Requires fan-out/fan-in orchestration, result merging, and partial failure handling">High</span></td>
+                  <td>Partial results; skip failed branches</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===== KEY INSIGHT ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Key Insight</span></div>
+          <div class="collapsible">
+            <div class="collapsible__header">
+              LangGraph vs LangChain &mdash; When to Use Which?
+              <span class="collapsible__icon">&rsaquo;</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p style="margin-bottom: var(--space-3);">
+                  <strong>LangChain</strong> is excellent for prototyping &mdash; quick linear chains, simple prompt-template-output patterns. It gets you to a demo fast.
+                </p>
+                <p style="margin-bottom: var(--space-3);">
+                  <strong>LangGraph</strong> is built for production. It adds what LangChain lacks: <strong style="color: var(--stroke-primary);">cycles</strong> (retry loops), <strong style="color: var(--stroke-secondary);">parallelism</strong> (fan-out/fan-in), <strong style="color: var(--accent-warning);">conditional routing</strong>, and externalized <strong>state management</strong>.
+                </p>
+                <p style="margin-bottom: var(--space-3);">
+                  The rule of thumb: if your agent needs any of the four patterns on this page, you need LangGraph. If it's a one-shot chain with no branching or retries, LangChain may suffice.
+                </p>
+                <p style="margin-bottom: 0;">
+                  For AcmeCorp's Data Agent, LangGraph is the clear choice &mdash; SQL generation requires retry loops, intent routing requires branching, and context gathering benefits from parallelism.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== MINI INTERACTION: PATTERN MATCHING ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Interactive Exercise</span></div>
+          <h2 style="margin-bottom: var(--space-2);">Match the Scenario to the Pattern</h2>
+          <p>For each real-world scenario, pick the LangGraph pattern that fits best.</p>
+
+          <div class="match-exercise" id="matchExercise">
+            <!-- Scenario 1 -->
+            <div class="match-scenario" id="match-0">
+              <div class="match-scenario__label">Scenario 1</div>
+              <div class="match-scenario__text">
+                A user asks the agent to summarize last week's sales. The agent needs to fetch data from three microservices (inventory, transactions, returns) that don't depend on each other, then combine the results.
+              </div>
+              <div class="match-options">
+                <button class="match-btn" onclick="MatchGame.select(0, 'sequential')">Sequential</button>
+                <button class="match-btn" onclick="MatchGame.select(0, 'conditional')">Conditional</button>
+                <button class="match-btn" onclick="MatchGame.select(0, 'loop')">Loop</button>
+                <button class="match-btn" onclick="MatchGame.select(0, 'parallel')">Parallel</button>
+              </div>
+              <div class="match-feedback" id="match-fb-0"></div>
+            </div>
+
+            <!-- Scenario 2 -->
+            <div class="match-scenario" id="match-1">
+              <div class="match-scenario__label">Scenario 2</div>
+              <div class="match-scenario__text">
+                The agent receives a request and must first determine if it's a "data lookup" or a "data modification." Each type has a completely different execution path with different safety checks.
+              </div>
+              <div class="match-options">
+                <button class="match-btn" onclick="MatchGame.select(1, 'sequential')">Sequential</button>
+                <button class="match-btn" onclick="MatchGame.select(1, 'conditional')">Conditional</button>
+                <button class="match-btn" onclick="MatchGame.select(1, 'loop')">Loop</button>
+                <button class="match-btn" onclick="MatchGame.select(1, 'parallel')">Parallel</button>
+              </div>
+              <div class="match-feedback" id="match-fb-1"></div>
+            </div>
+
+            <!-- Scenario 3 -->
+            <div class="match-scenario" id="match-2">
+              <div class="match-scenario__label">Scenario 3</div>
+              <div class="match-scenario__text">
+                The agent generates a SQL query, but the database returns an error (column not found). The agent needs to re-examine the schema, correct the query, and try again &mdash; up to 3 times.
+              </div>
+              <div class="match-options">
+                <button class="match-btn" onclick="MatchGame.select(2, 'sequential')">Sequential</button>
+                <button class="match-btn" onclick="MatchGame.select(2, 'conditional')">Conditional</button>
+                <button class="match-btn" onclick="MatchGame.select(2, 'loop')">Loop</button>
+                <button class="match-btn" onclick="MatchGame.select(2, 'parallel')">Parallel</button>
+              </div>
+              <div class="match-feedback" id="match-fb-2"></div>
+            </div>
+
+            <!-- Scenario 4 -->
+            <div class="match-scenario" id="match-3">
+              <div class="match-scenario__label">Scenario 4</div>
+              <div class="match-scenario__text">
+                New employee onboarding: validate the employee record, create their database credentials, set up their default dashboards, and send a welcome notification &mdash; each step requires the output of the previous.
+              </div>
+              <div class="match-options">
+                <button class="match-btn" onclick="MatchGame.select(3, 'sequential')">Sequential</button>
+                <button class="match-btn" onclick="MatchGame.select(3, 'conditional')">Conditional</button>
+                <button class="match-btn" onclick="MatchGame.select(3, 'loop')">Loop</button>
+                <button class="match-btn" onclick="MatchGame.select(3, 'parallel')">Parallel</button>
+              </div>
+              <div class="match-feedback" id="match-fb-3"></div>
+            </div>
+          </div>
+
+          <!-- Score display -->
+          <div class="match-score" id="matchScore">
+            <div class="score-card">
+              <div class="score-card__value" id="matchScoreVal">0/4</div>
+              <div class="score-card__label">Patterns Matched Correctly</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV FOOTER ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="02-role-taxonomy.html" class="page-nav__title">Role Taxonomy</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="04-react-loop.html" class="page-nav__title">ReAct Loop</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+
+  <script>
+    // --- Evolving Diagram ---
+    document.addEventListener('DOMContentLoaded', () => {
+      EvolvingDiagram.renderForPage('evolvingDiagram', 'langgraph-patterns');
+    });
+
+    // --- Initialize Nav (scroll reveal, collapsibles, completion trigger) ---
+    Nav.init('m02-langgraph-patterns');
+
+    // --- Pattern Matching Game ---
+    const MatchGame = {
+      answers: { 0: 'parallel', 1: 'conditional', 2: 'loop', 3: 'sequential' },
+      explanations: {
+        0: 'Three independent data sources = fan-out / fan-in. Parallel execution is the best fit.',
+        1: 'Two distinct execution paths based on intent classification = conditional branching.',
+        2: 'Generate, validate, retry on failure = a feedback loop with bounded retries.',
+        3: 'Each step depends on the output of the previous step = a sequential chain.'
+      },
+      selections: {},
+      locked: {},
+
+      select(scenarioIdx, pattern) {
+        if (this.locked[scenarioIdx]) return;
+
+        const correct = this.answers[scenarioIdx];
+        const isCorrect = (pattern === correct);
+        const fb = document.getElementById('match-fb-' + scenarioIdx);
+        const scenario = document.getElementById('match-' + scenarioIdx);
+
+        // Highlight selected button
+        const btns = scenario.querySelectorAll('.match-btn');
+        btns.forEach(b => b.classList.remove('selected'));
+        btns.forEach(b => { if (b.textContent.toLowerCase() === pattern) b.classList.add('selected'); });
+
+        // Show feedback
+        fb.className = 'match-feedback show ' + (isCorrect ? 'correct' : 'wrong');
+        fb.textContent = isCorrect
+          ? '\u2713 Correct! ' + this.explanations[scenarioIdx]
+          : '\u2717 Not quite. ' + this.explanations[scenarioIdx];
+
+        // Lock and style
+        this.locked[scenarioIdx] = true;
+        this.selections[scenarioIdx] = pattern;
+        scenario.classList.add(isCorrect ? 'matched-correct' : 'matched-wrong');
+        btns.forEach(b => b.disabled = true);
+
+        // Check if all answered
+        if (Object.keys(this.locked).length === 4) {
+          const score = Object.keys(this.answers).filter(k => this.selections[k] === this.answers[k]).length;
+          document.getElementById('matchScoreVal').textContent = score + '/4';
+          document.getElementById('matchScore').classList.add('show');
+
+          // Save progress
+          Progress.saveQuizScore('m02-langgraph-match', score, 4);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

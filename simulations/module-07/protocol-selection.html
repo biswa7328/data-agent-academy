@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulation: Protocol Selection &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 07</span>
+        <span class="separator">/</span>
+        <span class="current">Simulation: Protocol Selection</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Interactive Simulation</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Protocol Selection</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            AcmeCorp is expanding its Data Agent ecosystem — connecting to external tools, vendor systems, and partner agents. You must choose the right interoperability protocol for each integration scenario.
+          </p>
+
+          <div class="callout reveal">
+            <div class="callout__label">Mission Brief</div>
+            <div class="callout__text">
+              Five integration scenarios across tool connectivity, agent-to-agent collaboration, and governance. Each requires choosing between MCP, A2A, or custom protocols &mdash; and knowing which MCP primitive or A2A lifecycle state applies. Aim for 5/5.
+            </div>
+          </div>
+        </section>
+
+        <!-- Simulation Container -->
+        <section class="section">
+          <div id="sim-container"></div>
+        </section>
+
+        <!-- Reset Button -->
+        <div class="reveal" style="text-align: center; margin-bottom: var(--space-8);">
+          <button class="btn btn--teal" onclick="SimulationEngine.reset()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+            </svg>
+            Restart Simulation
+          </button>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../../modules/module-07/03-aaif-governance.html" class="page-nav__title">AAIF &amp; Governance</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../../modules/module-07/quiz-checkpoint.html" class="page-nav__title">Quiz Checkpoint</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Protocol Selection Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Simulation Config: Protocol Selection ---
+    SimulationEngine.init('sim-container', {
+      title: 'Protocol Selection',
+      intro: 'AcmeCorp is connecting its Data Agent to a growing ecosystem of tools and partner agents. Your protocol choices determine whether integrations are standardized, maintainable, and secure — or brittle, bespoke, and impossible to scale.',
+      nodes: {
+
+        // ===== DECISION 1: Tool Integration =====
+        'start': {
+          type: 'decision',
+          title: 'Decision 1: Connecting to a BI Tool',
+          description: 'AcmeCorp wants the Data Agent to read dashboards and trigger report generation in their Tableau-like BI platform. The vendor provides an SDK and a REST API. Which integration approach do you use?',
+          choices: [
+            {
+              label: 'Build an MCP server wrapping the vendor API — expose BI functions as MCP Tools',
+              hint: 'Standardized protocol makes the integration reusable and discoverable',
+              next: 'c1-mcp',
+              isGood: true
+            },
+            {
+              label: 'Call the vendor REST API directly from the agent\'s custom tool code',
+              hint: 'Direct integration is fast to implement and avoids protocol overhead',
+              next: 'c1-direct',
+              isGood: false
+            },
+            {
+              label: 'Use A2A protocol to treat the BI platform as an agent peer',
+              hint: 'A2A enables rich bidirectional agent collaboration',
+              next: 'c1-a2a',
+              isGood: false
+            }
+          ]
+        },
+        'c1-mcp': {
+          type: 'consequence',
+          title: 'Correct: MCP Standardizes Tool Connectivity',
+          description: 'You build a Tableau MCP server with three Tools: get_dashboard, run_report, and list_workbooks. Any MCP-compatible agent can now use these tools. When you add a second BI tool next quarter, you build another MCP server — same pattern, different vendor.',
+          consequence: 'MCP\'s purpose is exactly this: standardize the connection between AI agents and tools/data sources. Building an MCP server creates a reusable, discoverable integration. The agent uses the tool via the standard protocol rather than one-off HTTP calls. This is how you build a scalable tool ecosystem.',
+          isGood: true,
+          next: 'decision-2'
+        },
+        'c1-direct': {
+          type: 'consequence',
+          title: 'Brittle: Direct API Calls Don\'t Scale',
+          description: 'The integration works, but it\'s embedded in the agent\'s tool code with hardcoded API keys, vendor-specific error handling, and custom auth logic. When Tableau releases a new API version, you must update the agent itself. When you add Looker next quarter, you write everything again from scratch.',
+          consequence: 'Direct REST calls work for one integration but create maintenance debt at scale. Each vendor integration becomes a unique codebase. MCP exists to solve exactly this problem: one protocol, many integrations. Bespoke tool code is appropriate only when no MCP server exists and building one isn\'t feasible.',
+          isGood: false,
+          next: 'decision-2'
+        },
+        'c1-a2a': {
+          type: 'consequence',
+          title: 'Wrong Protocol: BI Tools Are Not Agents',
+          description: 'A2A is designed for agent-to-agent collaboration — where the other party has autonomy, can decompose tasks, and manages its own state. Tableau is a tool: it executes commands and returns data. Wrapping it in A2A adds unnecessary complexity without the collaboration benefits A2A provides.',
+          consequence: 'Protocol selection must match the integration type. MCP connects agents to tools, resources, and data sources. A2A connects agents to other agents with autonomous capabilities. A BI platform is a tool — it doesn\'t plan, reason, or collaborate. Use MCP for tools, A2A for agents.',
+          isGood: false,
+          next: 'decision-2'
+        },
+
+        // ===== DECISION 2: MCP Primitive Selection =====
+        'decision-2': {
+          type: 'decision',
+          title: 'Decision 2: MCP Primitive Selection',
+          description: 'You\'re building the MCP server for AcmeCorp\'s internal data warehouse. The agent needs to: (1) query live sales data, (2) use a standard "AcmeCorp analyst" system prompt, and (3) read the data schema. Which MCP primitives map to these?',
+          choices: [
+            {
+              label: 'Tool for queries, Prompt for system prompt template, Resource for schema access',
+              hint: 'Each primitive serves a distinct purpose in the MCP spec',
+              next: 'c2-correct',
+              isGood: true
+            },
+            {
+              label: 'All three as Tools — Tools can do anything',
+              hint: 'Tools are the most flexible MCP primitive',
+              next: 'c2-all-tools',
+              isGood: false
+            },
+            {
+              label: 'Tool for queries, Resource for both the system prompt and schema',
+              hint: 'Resources expose read-only content, including text',
+              next: 'c2-mixed',
+              isGood: false
+            }
+          ]
+        },
+        'c2-correct': {
+          type: 'consequence',
+          title: 'Correct: Right Primitive for Each Purpose',
+          description: 'The MCP server exposes: run_sql as a Tool (executable action with side effects), acmecorp_analyst_prompt as a Prompt (reusable system prompt template with parameters), and data_schema as a Resource (read-only data the agent can access). Each primitive is used for its intended purpose.',
+          consequence: 'MCP\'s four primitives are purpose-built: Tools execute actions and may have side effects (queries, writes). Resources expose read-only data (files, schemas, configs). Prompts provide reusable templates the LLM can invoke. Sampling allows servers to request LLM completions. Mapping each capability to the right primitive makes the server intuitive and interoperable.',
+          isGood: true,
+          next: 'decision-3'
+        },
+        'c2-all-tools': {
+          type: 'consequence',
+          title: 'Overloaded: Tools Are for Actions, Not Data',
+          description: 'You expose the schema and system prompt as Tools. Technically they work, but they have an unintended implication: Tools are executable actions. Exposing static data as a Tool suggests it has side effects and should be called conditionally. Clients build unnecessary logic around "when to call" what should be a simple data read.',
+          consequence: 'MCP primitive semantics matter. Tools signal "I do something" — clients treat them as actions to invoke when needed. Resources signal "I contain data" — clients read them upfront or on demand. Misusing primitives creates confusion for any client consuming the server and breaks interoperability expectations.',
+          isGood: false,
+          next: 'decision-3'
+        },
+        'c2-mixed': {
+          type: 'consequence',
+          title: 'Partially Wrong: Prompts Are Not Resources',
+          description: 'Exposing the schema as a Resource is correct. But exposing the system prompt as a Resource instead of a Prompt loses key functionality: Prompts in MCP support parameters and templating. A Resource is just static text — you can\'t pass the analyst\'s role or region as a parameter to customize it.',
+          consequence: 'The MCP Prompt primitive is specifically designed for reusable, parameterized prompt templates. Resources are for static data. A system prompt that should be customizable ("You are an analyst for the {region} region") needs Prompt parameters — which Resources don\'t support.',
+          isGood: false,
+          next: 'decision-3'
+        },
+
+        // ===== DECISION 3: Agent-to-Agent Collaboration =====
+        'decision-3': {
+          type: 'decision',
+          title: 'Decision 3: Agent-to-Agent Collaboration',
+          description: 'AcmeCorp\'s logistics partner, FastShip Co., has their own Shipment Tracking Agent. You want AcmeCorp\'s Data Agent to request delivery status updates from FastShip\'s agent during inventory queries. How do you connect them?',
+          choices: [
+            {
+              label: 'Use A2A protocol — exchange Agent Cards, create a Task, poll for completion',
+              hint: 'A2A is designed for cross-organization agent collaboration',
+              next: 'c3-a2a',
+              isGood: true
+            },
+            {
+              label: 'Build a direct REST API call to FastShip\'s agent endpoint',
+              hint: 'Direct HTTP integration is simple and doesn\'t require a shared protocol',
+              next: 'c3-rest',
+              isGood: false
+            },
+            {
+              label: 'Use MCP — wrap FastShip\'s agent as an MCP Tool',
+              hint: 'MCP can wrap any external service as a Tool',
+              next: 'c3-mcp',
+              isGood: false
+            }
+          ]
+        },
+        'c3-a2a': {
+          type: 'consequence',
+          title: 'Correct: A2A Enables Cross-Organization Agent Collaboration',
+          description: 'AcmeCorp\'s agent reads FastShip\'s Agent Card to discover capabilities and authentication requirements. It creates an A2A Task: "Get delivery status for PO-8821." FastShip\'s agent processes the request asynchronously and streams status updates. When complete, the Task transitions to "done" and AcmeCorp\'s agent reads the result.',
+          consequence: 'A2A is purpose-built for agent-to-agent collaboration across organizational boundaries. Agent Cards provide capability discovery and trust establishment. The Task lifecycle handles async long-running work with streaming updates. This is exactly the pattern A2A was designed for — no need to build custom sync protocols.',
+          isGood: true,
+          next: 'decision-4'
+        },
+        'c3-rest': {
+          type: 'consequence',
+          title: 'Brittle: Custom APIs Break Cross-Org Interoperability',
+          description: 'You build a direct REST call. FastShip uses a custom auth scheme, a proprietary response format, and their own task ID system. When FastShip upgrades their API or you onboard a second logistics partner (QuickFreight), you write everything from scratch again.',
+          consequence: 'Direct REST integrations with external agent systems create brittle, vendor-specific code. A2A defines a standard for agent discovery, authentication, task creation, and result delivery. Using A2A means any A2A-compatible partner agent works with the same integration code.',
+          isGood: false,
+          next: 'decision-4'
+        },
+        'c3-mcp': {
+          type: 'consequence',
+          title: 'Wrong Protocol: Agents Are Not Tools',
+          description: 'Wrapping FastShip\'s Shipment Agent as an MCP Tool misrepresents its nature. An MCP Tool is a function that executes and returns immediately. FastShip\'s agent is autonomous — it decomposes requests, manages its own state, and may take minutes to respond. The MCP Tool model can\'t express async task lifecycle or agent autonomy.',
+          consequence: 'MCP Tools have request/response semantics. A2A Tasks have lifecycle semantics (submitted → working → streaming → done). An autonomous agent with its own reasoning loop is not a Tool. If you treat it as one, you lose the ability to track task progress, stream updates, or handle agent-initiated clarifications.',
+          isGood: false,
+          next: 'decision-4'
+        },
+
+        // ===== DECISION 4: A2A Task Failure =====
+        'decision-4': {
+          type: 'decision',
+          title: 'Decision 4: A2A Task Lifecycle — Failure Handling',
+          description: 'AcmeCorp\'s agent submits a Task to FastShip\'s agent: "Provide all delivery exceptions for the past 30 days." After 10 minutes, the Task status is "working" but no updates have streamed in. The expected completion time was 2 minutes. What do you do?',
+          choices: [
+            {
+              label: 'Check Task status via A2A polling; if still working after 15 min, cancel the Task and retry',
+              hint: 'Use the A2A task management API to inspect and control the Task',
+              next: 'c4-poll',
+              isGood: true
+            },
+            {
+              label: 'Submit the same Task again as a new request in parallel',
+              hint: 'A duplicate request will succeed even if the first is stuck',
+              next: 'c4-duplicate',
+              isGood: false
+            },
+            {
+              label: 'Wait indefinitely — the agent may be processing a large dataset',
+              hint: 'Async tasks sometimes take longer than expected',
+              next: 'c4-wait',
+              isGood: false
+            }
+          ]
+        },
+        'c4-poll': {
+          type: 'consequence',
+          title: 'Correct: Use the A2A Task Lifecycle to Control Tasks',
+          description: 'You poll at 15 minutes — the Task is still in "working" with no progress. You cancel it via the A2A cancel endpoint. FastShip\'s agent confirms cancellation. You retry with a narrower time window (7 days). The retried Task completes in 90 seconds.',
+          consequence: 'A2A\'s Task lifecycle exists precisely to manage long-running async work. Status polling lets you detect stalls. Task cancellation prevents resource waste on the remote agent. The retry with a scoped request reveals the original query was too broad. Control the task lifecycle — don\'t just wait.',
+          isGood: true,
+          next: 'decision-5'
+        },
+        'c4-duplicate': {
+          type: 'consequence',
+          title: 'Dangerous: Duplicate Tasks Create Duplicate Work',
+          description: 'You submit a second identical Task. FastShip\'s agent starts processing it, too. Now you have two Tasks running the same 30-day query. FastShip\'s system sends you two result sets, and your deduplication logic fails to notice they\'re identical — reporting double the exceptions.',
+          consequence: 'Submitting duplicate Tasks without canceling the original creates ambiguity and potential double-processing. In financial or operational systems, duplicate tasks can trigger duplicate actions. Always cancel a stale Task before submitting a replacement. A2A provides explicit task management for exactly this reason.',
+          isGood: false,
+          next: 'decision-5'
+        },
+        'c4-wait': {
+          type: 'consequence',
+          title: 'Blocked: Unbounded Waits Are Not a Strategy',
+          description: 'You wait. After 45 minutes, FastShip\'s agent times out internally and the Task transitions to "failed" without delivering results. The inventory query that needed the data has already been abandoned by the user.',
+          consequence: 'Async tasks require timeout and cancellation handling. "It might take longer" is not a reason to wait indefinitely — it\'s a reason to implement sensible timeouts. A2A gives you task status visibility and cancellation capability. Use them. Unbounded waits block agent workflows and waste resources on both sides.',
+          isGood: false,
+          next: 'decision-5'
+        },
+
+        // ===== DECISION 5: Governance =====
+        'decision-5': {
+          type: 'decision',
+          title: 'Decision 5: Agent Ecosystem Governance',
+          description: 'AcmeCorp now has 12 agents across 4 departments, each integrated with different tools and partner agents. The CTO asks: "How do we ensure all agents meet our security and compliance standards without reviewing each one manually?" What governance approach do you recommend?',
+          choices: [
+            {
+              label: 'Adopt an AAIF-aligned governance framework: standardized Agent Cards, capability registries, and compliance attestations',
+              hint: 'Industry-standard governance structure for multi-agent ecosystems',
+              next: 'c5-aaif',
+              isGood: true
+            },
+            {
+              label: 'Require each team to submit a manual security questionnaire before deploying agents',
+              hint: 'Human review of each agent\'s security posture',
+              next: 'c5-manual',
+              isGood: false
+            },
+            {
+              label: 'Block all external agent integrations until a policy is written from scratch',
+              hint: 'Halt the ecosystem until governance catches up',
+              next: 'c5-block',
+              isGood: false
+            }
+          ]
+        },
+        'c5-aaif': {
+          type: 'consequence',
+          title: 'Correct: AAIF Provides Scalable Governance',
+          description: 'You implement AAIF-aligned governance: every agent publishes a standardized Agent Card declaring capabilities, data access, and compliance certifications. A central Agent Registry tracks all deployed agents. Automated compliance checks verify each agent\'s attestations. New agents must register before they can communicate via A2A.',
+          consequence: 'The Agent Accountability and Interoperability Framework (AAIF) provides exactly what the CTO asked for: scalable, automated governance. Agent Cards are machine-readable — compliance checks run programmatically. The registry gives full visibility. Manual questionnaires don\'t scale; automated attestations do.',
+          isGood: true,
+          next: 'result'
+        },
+        'c5-manual': {
+          type: 'consequence',
+          title: 'Doesn\'t Scale: Manual Review Becomes a Bottleneck',
+          description: 'You implement manual security questionnaires. With 12 agents now and 20 more planned, security reviews take 2-3 weeks each. Teams start bypassing the process for "small" integrations. Compliance gaps accumulate in the agents that didn\'t get reviewed.',
+          consequence: 'Manual governance processes bottleneck agent deployment and incentivize bypass. As agent ecosystems grow, human review doesn\'t scale. Standardized, machine-readable governance (Agent Cards, registries, automated compliance checks) scales to hundreds of agents. Manual processes are a starting point, not a production strategy.',
+          isGood: false,
+          next: 'result'
+        },
+        'c5-block': {
+          type: 'consequence',
+          title: 'Paralyzes Progress: Write Governance Iteratively',
+          description: 'You halt all external integrations. Writing a governance framework from scratch takes 4 months. During that time, business teams find workarounds, building unofficial integrations outside the agent platform. When governance finally ships, the shadow integrations are already entrenched.',
+          consequence: 'Blocking progress until a perfect policy exists creates the shadow IT problem. Governance should be iterative — start with AAIF-aligned standards (they already exist), apply them incrementally, and tighten over time. A pragmatic starting framework today beats a perfect framework next quarter.',
+          isGood: false,
+          next: 'result'
+        },
+
+        // ===== FINAL RESULT =====
+        'result': {
+          type: 'result',
+          title: 'Integration Complete',
+          description: 'You\'ve navigated all 5 protocol selection decisions for AcmeCorp\'s expanding agent ecosystem. Your choices determined whether integrations are standardized, maintainable, and governed — or brittle and compliance-blind.',
+          score: '5/5',
+          scoreLabel: 'Decisions Made',
+          summary: 'Key lessons: Use MCP to connect agents to tools and data sources — it standardizes integrations and creates reusable servers. Use A2A for cross-organization agent collaboration where the other party is autonomous. Map each MCP capability to the right primitive (Tool/Resource/Prompt/Sampling). Use the A2A Task lifecycle to manage async work — poll, cancel, and retry instead of waiting. Adopt AAIF-aligned governance for scalable compliance across growing agent ecosystems.'
+        }
+      }
+    });
+
+    Nav.init('m07-sim-protocol-selection');
+  </script>
+</body>
+</html>

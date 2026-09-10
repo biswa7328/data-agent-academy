@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Guardrails &amp; Trade-offs &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .metrics-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--space-6) 0;
+      font-size: var(--font-sm);
+    }
+    .metrics-table th {
+      text-align: left;
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 2px solid var(--stroke-dim);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+    .metrics-table td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px dashed var(--stroke-dim);
+      color: var(--text-primary);
+    }
+    .metrics-table tr:last-child td {
+      border-bottom: none;
+    }
+    .metrics-table__value {
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .metrics-table__good { color: var(--accent-success); }
+    .metrics-table__warn { color: var(--accent-warning); }
+    .metrics-table__bad { color: var(--accent-error); }
+    .guardrail-flow {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .guardrail-step {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding: var(--space-4) var(--space-5);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      transition: border-color var(--transition-base);
+    }
+    .guardrail-step:hover {
+      border-color: var(--stroke-primary);
+    }
+    .guardrail-step__icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--stroke-dim);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      color: var(--stroke-primary);
+      flex-shrink: 0;
+    }
+    .guardrail-step__content {
+      flex: 1;
+    }
+    .guardrail-step__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-1);
+    }
+    .guardrail-step__desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .tradeoff-row {
+      display: grid;
+      grid-template-columns: 1fr 110px 110px 1fr;
+      gap: var(--space-2);
+      align-items: center;
+    }
+    .golden-rule {
+      margin: var(--space-8) 0;
+      padding: var(--space-8);
+      border: 2px solid var(--accent-warning);
+      border-radius: var(--border-radius-lg);
+      background: rgba(245, 158, 11, 0.04);
+      text-align: center;
+    }
+    .golden-rule__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-2xl);
+      font-weight: 700;
+      color: var(--accent-warning);
+      margin-bottom: var(--space-4);
+    }
+    .golden-rule__text {
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    @media (max-width: 768px) {
+      .tradeoff-row { grid-template-columns: 1fr; }
+      .metrics-table { font-size: var(--font-xs); }
+      .metrics-table th, .metrics-table td { padding: var(--space-2) var(--space-3); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a><span class="separator">/</span>
+        <span>Module 09</span><span class="separator">/</span>
+        <span class="current">Financial Guardrails</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 09 &mdash; Lesson 03</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Financial Guardrails &amp; Trade-offs</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">The cost is down to $1,847. But Derek Kim is not celebrating yet. "What happens when we add 50 more stores next quarter? Or when someone accidentally runs an expensive query 10,000 times?"</p>
+        </header>
+
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">FINANCIAL GUARDRAILS — CIRCUIT BREAKERS</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;">
+            <defs>
+              <filter id="glowRed" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <style>
+                .gr-label { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; }
+                .gr-dim   { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; }
+              </style>
+            </defs>
+            <rect width="700" height="380" rx="12" fill="rgba(15,23,42,0.85)"/>
+
+            <!-- Title -->
+            <text x="350" y="28" text-anchor="middle" class="gr-dim" font-size="11" letter-spacing="0.08em">LAYERED DEFENSE SYSTEM</text>
+
+            <!-- Outermost box: Organization Budget -->
+            <rect x="30" y="42" width="430" height="300" rx="8" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="10,5"/>
+            <text x="45" y="62" class="gr-label" font-size="10" font-weight="700" fill="#f59e0b">ORGANIZATION BUDGET: $2,500/month</text>
+
+            <!-- Department Budgets box -->
+            <rect x="55" y="75" width="380" height="175" rx="6" fill="none" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="8,4"/>
+            <text x="70" y="93" class="gr-label" font-size="9" font-weight="700" fill="#CC00FF">DEPARTMENT BUDGETS</text>
+
+            <!-- Department labels -->
+            <rect x="75" y="102" width="110" height="32" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="130" y="115" text-anchor="middle" class="gr-dim" font-size="8">Store Ops</text>
+            <text x="130" y="128" text-anchor="middle" class="gr-label" font-size="10" font-weight="700" fill="#CC00FF">$800</text>
+
+            <rect x="195" y="102" width="110" height="32" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="250" y="115" text-anchor="middle" class="gr-dim" font-size="8">Analytics</text>
+            <text x="250" y="128" text-anchor="middle" class="gr-label" font-size="10" font-weight="700" fill="#CC00FF">$1,200</text>
+
+            <rect x="315" y="102" width="105" height="32" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="367" y="115" text-anchor="middle" class="gr-dim" font-size="8">Marketing</text>
+            <text x="367" y="128" text-anchor="middle" class="gr-label" font-size="10" font-weight="700" fill="#CC00FF">$500</text>
+
+            <!-- Per-User Limits box -->
+            <rect x="80" y="145" width="330" height="85" rx="5" fill="none" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6,3"/>
+            <text x="95" y="163" class="gr-label" font-size="9" font-weight="700" fill="#A100FF">PER-USER LIMITS</text>
+
+            <rect x="100" y="172" width="120" height="28" rx="4" fill="rgba(74,158,255,0.06)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="160" y="185" text-anchor="middle" class="gr-dim" font-size="8">Manager</text>
+            <text x="160" y="196" text-anchor="middle" class="gr-label" font-size="9" font-weight="700" fill="#A100FF">$5/day</text>
+
+            <rect x="235" y="172" width="120" height="28" rx="4" fill="rgba(74,158,255,0.06)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="295" y="185" text-anchor="middle" class="gr-dim" font-size="8">Analyst</text>
+            <text x="295" y="196" text-anchor="middle" class="gr-label" font-size="9" font-weight="700" fill="#A100FF">$50/day</text>
+
+            <!-- Per-Query Limit (innermost) -->
+            <rect x="140" y="210" width="210" height="30" rx="5" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="2"/>
+            <text x="245" y="230" text-anchor="middle" class="gr-label" font-size="10" font-weight="700" fill="#A100FF">PER-QUERY LIMIT: $0.50</text>
+
+            <!-- Circuit breaker symbols on the right -->
+            <!-- CB 1: WARN at 80% -->
+            <g transform="translate(530, 75)">
+              <line x1="0" y1="35" x2="30" y2="35" stroke="#f59e0b" stroke-width="2.5"/>
+              <line x1="30" y1="35" x2="55" y2="15" stroke="#f59e0b" stroke-width="2.5"/>
+              <line x1="55" y1="35" x2="85" y2="35" stroke="#f59e0b" stroke-width="2.5"/>
+              <circle cx="30" cy="35" r="4" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <circle cx="55" cy="35" r="4" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <text x="42" y="10" text-anchor="middle" class="gr-label" font-size="10" font-weight="700" fill="#f59e0b">WARN</text>
+              <text x="42" y="58" text-anchor="middle" class="gr-dim" font-size="9">at 80%</text>
+            </g>
+
+            <!-- CB 2: THROTTLE at 95% -->
+            <g transform="translate(530, 170)">
+              <line x1="0" y1="35" x2="30" y2="35" stroke="#ef4444" stroke-width="2.5"/>
+              <line x1="30" y1="35" x2="55" y2="10" stroke="#ef4444" stroke-width="2.5"/>
+              <line x1="55" y1="35" x2="85" y2="35" stroke="#ef4444" stroke-width="2.5"/>
+              <circle cx="30" cy="35" r="4" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <circle cx="55" cy="35" r="4" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <text x="42" y="10" text-anchor="middle" class="gr-label" font-size="10" font-weight="700" fill="#ef4444">THROTTLE</text>
+              <text x="42" y="58" text-anchor="middle" class="gr-dim" font-size="9">at 95%</text>
+            </g>
+
+            <!-- CB 3: KILL at 100% -->
+            <g transform="translate(530, 265)" filter="url(#glowRed)">
+              <line x1="0" y1="35" x2="30" y2="35" stroke="#ef4444" stroke-width="3"/>
+              <line x1="30" y1="35" x2="55" y2="5" stroke="#ef4444" stroke-width="3"/>
+              <line x1="55" y1="35" x2="85" y2="35" stroke="#ef4444" stroke-width="3"/>
+              <circle cx="30" cy="35" r="4" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+              <circle cx="55" cy="35" r="4" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+              <text x="42" y="10" text-anchor="middle" class="gr-label" font-size="10" font-weight="700" fill="#ef4444">KILL</text>
+              <text x="42" y="58" text-anchor="middle" class="gr-dim" font-size="9">at 100%</text>
+            </g>
+
+            <!-- Vertical label for circuit breakers -->
+            <text x="572" y="55" text-anchor="middle" class="gr-dim" font-size="9" letter-spacing="0.08em">CIRCUIT BREAKERS</text>
+
+            <!-- Bottom label -->
+            <text x="350" y="368" text-anchor="middle" class="gr-dim" font-size="10" letter-spacing="0.05em">Derek's Monday Dashboard</text>
+          </svg>
+        </div>
+
+        <!-- Derek's Concern -->
+        <section class="section">
+          <div class="section-label reveal">The Next Problem</div>
+          <h2 class="reveal">A One-Time Fix Is Not Enough</h2>
+          <p class="reveal reveal--delay-1">Maya's two-week sprint had been a triumph. DataPulse was running at $1,847 per month, well under Derek Kim's $3,000 threshold. But when Maya presented the results to Derek and Raj in the conference room, the CFO's first question caught her off guard.</p>
+
+          <div class="callout reveal" style="border-color: var(--accent-warning);">
+            <div class="callout__label" style="color: var(--accent-warning);">Derek Kim &mdash; War Room, Day 14</div>
+            <div class="callout__text">
+              "Great work getting us to $1,847. But I've been around long enough to know that costs always creep back up. What happens when we add 50 more stores next quarter? What happens when the Marketing team discovers DataPulse and starts running trend analyses all day? What happens when someone accidentally puts a query in a loop and runs it 10,000 times?" He paused. "I don't want another surprise invoice. I want automated guardrails &mdash; circuit breakers, budgets, alerts. Something that protects us even when nobody is watching."
+            </div>
+          </div>
+
+          <p class="reveal">Maya nodded. She had been thinking the same thing. Optimization without guardrails is like driving fast without brakes. You need automated budget controls, real-time cost tracking, and clear trade-off awareness to stay in control. She and Derek spent the next two hours designing a guardrail system together &mdash; the CFO bringing the financial discipline, Maya bringing the technical implementation.</p>
+        </section>
+
+        <!-- Financial Guardrails -->
+        <section class="section">
+          <div class="section-label reveal">Budget Controls</div>
+          <h2 class="reveal">Five Financial Guardrails</h2>
+          <p class="reveal reveal--delay-1">Every production agent needs layered financial controls. A single runaway session should never be able to blow your monthly budget. Derek and Maya designed AcmeCorp's guardrail system as five concentric rings of protection &mdash; from individual sessions up to the emergency kill switch.</p>
+
+          <div class="guardrail-flow reveal reveal--delay-2">
+            <div class="guardrail-step">
+              <div class="guardrail-step__icon">1</div>
+              <div class="guardrail-step__content">
+                <div class="guardrail-step__title">Per-Session Token Budget</div>
+                <div class="guardrail-step__desc">Every DataPulse session starts with a token budget based on query complexity. Simple lookups &mdash; like Sofia Torres checking yesterday's revenue at Store #47 &mdash; get 5K tokens. Multi-step analysis &mdash; like the cross-regional trend reports Raj Patel requests &mdash; get 25K. When the budget is exhausted, the agent must synthesize a response from what it has &mdash; no silent failures, no unbounded continuation. Derek insisted on this: "If a session can't answer in its budget, it should say so honestly, not keep burning tokens."</div>
+              </div>
+            </div>
+            <div class="guardrail-step">
+              <div class="guardrail-step__icon">2</div>
+              <div class="guardrail-step__content">
+                <div class="guardrail-step__title">Per-User Daily Cap</div>
+                <div class="guardrail-step__desc">Derek and Maya set tiered daily budgets based on role: store managers like Sofia Torres get $5/day (plenty for their typical 15&ndash;20 daily queries), analysts on Raj's team get $50/day for deeper analyses, and automated integrations get a separate pool. This prevents a single power user or runaway script from consuming a disproportionate share of the budget. When the cap is reached, the user sees a clear message explaining the limit and when it resets.</div>
+              </div>
+            </div>
+            <div class="guardrail-step">
+              <div class="guardrail-step__icon">3</div>
+              <div class="guardrail-step__content">
+                <div class="guardrail-step__title">Real-Time Cost Attribution</div>
+                <div class="guardrail-step__desc">Maya tagged every LLM call with the originating user, department, and task type. This enables the granular cost attribution Derek needs: he can tell the CEO exactly how much the Merchandising team's trend analysis costs versus the Supply Chain team's inventory queries. At AcmeCorp, this attribution feeds into the dashboard Derek reviews every Monday morning &mdash; broken down by department, store region, and query type.</div>
+              </div>
+            </div>
+            <div class="guardrail-step">
+              <div class="guardrail-step__icon">4</div>
+              <div class="guardrail-step__content">
+                <div class="guardrail-step__title">Automated Alerts at 80% / 100%</div>
+                <div class="guardrail-step__desc">When a user, department, or the overall system hits 80% of its budget, a Slack alert fires to Maya's ops channel and to the department lead. At 100%, the cap is enforced automatically. Derek wanted these thresholds specifically: "80% gives us time to react. 100% is the hard stop." At AcmeCorp, these alerts also go to Marcus Webb on the Security &amp; Compliance team, so unusual spending patterns get flagged for review.</div>
+              </div>
+            </div>
+            <div class="guardrail-step">
+              <div class="guardrail-step__icon">5</div>
+              <div class="guardrail-step__content">
+                <div class="guardrail-step__title">Kill Switch</div>
+                <div class="guardrail-step__desc">A manual or automated emergency stop that halts all DataPulse operations immediately. Triggered when daily spend exceeds $100 per department or when anomaly detection identifies unusual consumption patterns. Derek was adamant: "This button needs to be one click, not buried in a settings page." Maya built it as a Slack command that any ops team member can trigger, plus an automatic trigger tied to AcmeCorp's cost anomaly detector.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Cost Tracking Dashboard -->
+        <section class="section">
+          <div class="section-label reveal">Observability</div>
+          <h2 class="reveal">Derek's Monday Morning Dashboard</h2>
+          <p class="reveal reveal--delay-1">You cannot optimize what you do not measure. Derek Kim checks these six metrics every Monday morning before his leadership standup. Maya built the dashboard during the final days of the sprint, and it has become one of the most-visited internal tools at AcmeCorp. These metrics should be visible on every agent operations dashboard, updated in real time.</p>
+
+          <div class="reveal reveal--delay-2" style="overflow-x: auto;">
+            <table class="metrics-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Target</th>
+                  <th>Warning</th>
+                  <th>Critical</th>
+                  <th>Why It Matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Cost per task (avg)</strong></td>
+                  <td class="metrics-table__value metrics-table__good">&lt; $0.05</td>
+                  <td class="metrics-table__value metrics-table__warn">$0.05&ndash;$0.15</td>
+                  <td class="metrics-table__value metrics-table__bad">&gt; $0.15</td>
+                  <td>Primary efficiency indicator. AcmeCorp's current average: $0.036. Rising averages signal regression in optimization layers.</td>
+                </tr>
+                <tr>
+                  <td><strong>Cost per task (P99)</strong></td>
+                  <td class="metrics-table__value metrics-table__good">&lt; $0.50</td>
+                  <td class="metrics-table__value metrics-table__warn">$0.50&ndash;$2.00</td>
+                  <td class="metrics-table__value metrics-table__bad">&gt; $2.00</td>
+                  <td>Catches expensive outliers. Raj's complex multi-table analyses hit $0.82 at P99 &mdash; acceptable, but Derek watches this closely.</td>
+                </tr>
+                <tr>
+                  <td><strong>Total daily spend</strong></td>
+                  <td class="metrics-table__value metrics-table__good">Within budget</td>
+                  <td class="metrics-table__value metrics-table__warn">80% of daily cap</td>
+                  <td class="metrics-table__value metrics-table__bad">100% of daily cap</td>
+                  <td>Aggregate control. Triggers the alerts and kill switches Derek designed with Maya.</td>
+                </tr>
+                <tr>
+                  <td><strong>Token waste ratio</strong></td>
+                  <td class="metrics-table__value metrics-table__good">&lt; 10%</td>
+                  <td class="metrics-table__value metrics-table__warn">10&ndash;25%</td>
+                  <td class="metrics-table__value metrics-table__bad">&gt; 25%</td>
+                  <td>Percentage of tokens that did not contribute to the final answer. AcmeCorp dropped from 32% to 7% after Maya's turn limits.</td>
+                </tr>
+                <tr>
+                  <td><strong>Cache hit rate</strong></td>
+                  <td class="metrics-table__value metrics-table__good">&gt; 60%</td>
+                  <td class="metrics-table__value metrics-table__warn">30&ndash;60%</td>
+                  <td class="metrics-table__value metrics-table__bad">&lt; 30%</td>
+                  <td>Measures prompt caching and semantic caching effectiveness. AcmeCorp's overall rate: 71%. Low rates mean cache invalidation issues.</td>
+                </tr>
+                <tr>
+                  <td><strong>Model routing accuracy</strong></td>
+                  <td class="metrics-table__value metrics-table__good">&gt; 90%</td>
+                  <td class="metrics-table__value metrics-table__warn">80&ndash;90%</td>
+                  <td class="metrics-table__value metrics-table__bad">&lt; 80%</td>
+                  <td>Percentage of queries routed to the correct model tier. AcmeCorp's accuracy: 94%. The 6% mis-routes are being tuned by Maya's team.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Cost-Performance Trade-off Matrix -->
+        <section class="section">
+          <div class="section-label reveal">Making Trade-offs</div>
+          <h2 class="reveal">Cost-Performance Trade-off Matrix</h2>
+          <p class="reveal reveal--delay-1">Every optimization comes with a risk. Maya learned this the hard way during the sprint: on Day 6, an over-aggressive context compression setting caused DataPulse to lose critical context on a supplier performance query, giving Lena Park incorrect data for a vendor negotiation. Maya rolled back the compression threshold within an hour, but it reinforced the lesson &mdash; understanding these trade-offs helps you make informed decisions about which strategies to deploy and in what order.</p>
+
+          <div class="reveal reveal--delay-2" style="overflow-x: auto;">
+            <table class="metrics-table">
+              <thead>
+                <tr>
+                  <th>Optimization</th>
+                  <th>Cost Reduction</th>
+                  <th>Quality Risk</th>
+                  <th>Implementation Effort</th>
+                  <th>Key Risk</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Prompt Caching</strong></td>
+                  <td class="metrics-table__value metrics-table__good">~90% input</td>
+                  <td><span class="badge badge--green" data-tip="No implementation complexity — just enable caching on your LLM provider.">None</span></td>
+                  <td><span class="badge badge--green" data-tip="Low risk — worst case is cache invalidation lag on prompt template changes.">Low</span></td>
+                  <td>Cache invalidation on prompt changes</td>
+                </tr>
+                <tr>
+                  <td><strong>Model Cascading</strong></td>
+                  <td class="metrics-table__value metrics-table__good">40&ndash;70%</td>
+                  <td><span class="badge badge--amber" data-tip="Requires building a routing classifier to triage query complexity accurately.">Medium</span></td>
+                  <td><span class="badge badge--amber" data-tip="Risk of mis-routing complex queries to weaker models, producing incorrect results.">Medium</span></td>
+                  <td>Mis-routing complex queries to weaker models</td>
+                </tr>
+                <tr>
+                  <td><strong>Context Compression</strong></td>
+                  <td class="metrics-table__value metrics-table__good">80&ndash;90% tokens</td>
+                  <td><span class="badge badge--amber" data-tip="Needs tuning to avoid over-aggressive pruning that drops critical context.">Medium</span></td>
+                  <td><span class="badge badge--amber" data-tip="Risk of losing important context — like Lena's vendor data incident.">Medium</span></td>
+                  <td>Over-aggressive pruning loses critical context (Lena's vendor data incident)</td>
+                </tr>
+                <tr>
+                  <td><strong>Dynamic Turn Limits</strong></td>
+                  <td class="metrics-table__value">~24%</td>
+                  <td><span class="badge badge--blue" data-tip="Simple to implement — set per-query turn caps based on complexity classification.">Low</span></td>
+                  <td><span class="badge badge--green" data-tip="Low risk — may occasionally terminate genuinely complex multi-step tasks early.">Low</span></td>
+                  <td>Premature termination on genuinely complex tasks</td>
+                </tr>
+                <tr>
+                  <td><strong>Semantic Caching</strong></td>
+                  <td class="metrics-table__value metrics-table__good">50&ndash;80%</td>
+                  <td><span class="badge badge--amber" data-tip="Requires embedding similarity infrastructure and cache invalidation logic.">Medium</span></td>
+                  <td><span class="badge badge--amber" data-tip="Risk of serving stale cached results for time-sensitive queries.">Medium</span></td>
+                  <td>Serving stale data for time-sensitive queries</td>
+                </tr>
+                <tr>
+                  <td><strong>Request Batching</strong></td>
+                  <td class="metrics-table__value">20&ndash;40%</td>
+                  <td><span class="badge badge--green" data-tip="No complexity — just queue requests and send in batches.">None</span></td>
+                  <td><span class="badge badge--blue" data-tip="Low risk — increased latency from waiting to accumulate a batch.">Low</span></td>
+                  <td>Increased latency from waiting to batch</td>
+                </tr>
+                <tr>
+                  <td><strong>Output Token Limits</strong></td>
+                  <td class="metrics-table__value">10&ndash;25%</td>
+                  <td><span class="badge badge--blue" data-tip="Simple — set max_tokens parameter on API calls.">Low</span></td>
+                  <td><span class="badge badge--green" data-tip="Low risk — may truncate responses on edge cases with long outputs.">Low</span></td>
+                  <td>Truncated responses on edge cases</td>
+                </tr>
+                <tr>
+                  <td><strong>Off-Peak Processing</strong></td>
+                  <td class="metrics-table__value">30&ndash;50%</td>
+                  <td><span class="badge badge--green" data-tip="No complexity — schedule batch jobs during off-peak hours.">None</span></td>
+                  <td><span class="badge badge--blue" data-tip="Low risk — results are delayed for batch workloads, not real-time queries.">Low</span></td>
+                  <td>Delayed results for batch workloads</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Golden Rule -->
+        <section class="section">
+          <div class="golden-rule reveal">
+            <div class="golden-rule__title">The Golden Rule</div>
+            <div class="golden-rule__text">
+              Optimize reliability first, cost second. A cheap agent that nobody trusts is worthless. A reliable agent that is slightly over budget can always be optimized &mdash; but lost user trust takes months to rebuild. Maya learned this from the store managers who had abandoned DataPulse before the sprint. Winning them back took longer than cutting the costs.
+            </div>
+          </div>
+          <div class="callout reveal">
+            <div class="callout__label">In Practice</div>
+            <div class="callout__text">
+              Start with optimizations that have zero quality risk: prompt caching, request batching, output token limits, and off-peak processing. Only then move to higher-risk strategies like model cascading and context compression &mdash; and always A/B test them against the baseline before full rollout. Maya A/B tested every medium-risk optimization for 48 hours before going full production at AcmeCorp.
+            </div>
+          </div>
+        </section>
+
+        <!-- AcmeCorp Results After 30 Days -->
+        <section class="section">
+          <div class="section-label reveal">30 Days Later</div>
+          <h2 class="reveal">AcmeCorp's Guardrails in Action</h2>
+          <p class="reveal reveal--delay-1">One month after Maya's sprint and Derek's guardrail implementation, the numbers tell the story. DataPulse is running smoothly at $1,847/month with automated protections in place. Derek's Monday dashboard shows green across the board. Even Sofia Torres is using the tool again &mdash; the semantic caching means her morning revenue queries return in under 100 milliseconds.</p>
+
+          <div class="card-grid card-grid--3 reveal">
+            <div class="bp-card">
+              <div class="bp-card__title">Session Budgets</div>
+              <div class="bp-card__body">
+                <strong>Simple queries:</strong> 5K token budget (Sofia's price checks, single-metric lookups).<br>
+                <strong>Complex analysis:</strong> 25K token budget (Raj's multi-table joins, trend analysis, what-if scenarios).<br>
+                When a session hits its limit, DataPulse returns a partial answer with a note explaining the constraint. No surprises.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Department Kill Switch</div>
+              <div class="bp-card__body">
+                Each department (Merchandising, Supply Chain, Finance, Marketing) has a <strong>$100/day hard cap</strong>. Triggered twice in 30 days &mdash; both from Marketing running large batch trend analyses. Maya resolved it by moving those workloads to the off-peak batch queue. Marcus Webb reviews every kill switch trigger for compliance.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Weekly Reviews</div>
+              <div class="bp-card__body">
+                Every Friday, Maya's team reviews: cache hit rates (current: 71%), model routing accuracy (current: 94%), cost per task trends, and the top 10 most expensive sessions of the week. Derek joins the first Friday of each month. Anomalies trigger investigation &mdash; Priya Sharma flags anything that looks like data quality drift.
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal">
+            <div class="collapsible__header">AcmeCorp's cost dashboard after 30 days of guardrails</div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p><strong>Cost per task (avg):</strong> $0.036 &mdash; down from $0.30 before optimization (88% reduction). Derek's target was $0.05. They beat it.</p>
+                <p><strong>Cost per task (P99):</strong> $0.82 &mdash; complex multi-table analyses with GPT-4 routing. Within acceptable range for the value delivered.</p>
+                <p><strong>Cache hit rate:</strong> 71% &mdash; prompt caching at 89%, semantic caching at 43% (improving weekly as query patterns stabilize across AcmeCorp's 200 stores).</p>
+                <p><strong>Model routing accuracy:</strong> 94% &mdash; 6% of queries mis-routed to the cheaper model that needed the more capable one. Maya is tuning the classifier threshold.</p>
+                <p><strong>Token waste ratio:</strong> 7% &mdash; down from 32% before turn limits and output caps were implemented. Priya validates this weekly.</p>
+                <p><strong>Kill switch triggers:</strong> 2 in 30 days &mdash; both from the Marketing department running large batch trend analyses. Resolved by moving those workloads to the off-peak batch queue. Derek considers two triggers in a month acceptable.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="02-optimization-strategies.html" class="page-nav__title">Optimization Strategies</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="quiz-checkpoint.html" class="page-nav__title">Module 09 Quiz</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m09-financial-guardrails');</script>
+</body>
+</html>

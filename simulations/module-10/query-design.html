@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulation: Query Design &amp; Agent UX &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 10</span>
+        <span class="separator">/</span>
+        <span class="current">Simulation: Query Design &amp; Agent UX</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Interactive Simulation</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Query Design &amp; Agent UX</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            AcmeCorp's Data Agent is technically sound — but store managers find it confusing, produce inconsistent results, and don't trust its answers. You must redesign the semantic layer and conversation UX to make it genuinely useful.
+          </p>
+
+          <div class="callout reveal">
+            <div class="callout__label">Mission Brief</div>
+            <div class="callout__text">
+              Five UX and semantic layer design decisions: how to handle ambiguous queries, when to clarify vs. assume, how to surface data quality issues, how to design the semantic layer for business users, and how to handle multi-turn follow-up questions. Aim for 5/5.
+            </div>
+          </div>
+        </section>
+
+        <!-- Simulation Container -->
+        <section class="section">
+          <div id="sim-container"></div>
+        </section>
+
+        <!-- Reset Button -->
+        <div class="reveal" style="text-align: center; margin-bottom: var(--space-8);">
+          <button class="btn btn--teal" onclick="SimulationEngine.reset()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+            </svg>
+            Restart Simulation
+          </button>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../../modules/module-10/03-data-quality.html" class="page-nav__title">Data Quality</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../../modules/module-10/quiz-checkpoint.html" class="page-nav__title">Quiz Checkpoint</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Query Design &amp; Agent UX Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Simulation Config: Query Design & Agent UX ---
+    SimulationEngine.init('sim-container', {
+      title: 'Query Design & Agent UX',
+      intro: 'You are the UX lead for AcmeCorp\'s Data Agent. The agent produces correct SQL — but store managers complain it\'s frustrating to use. Five design decisions will determine whether it becomes trusted and widely adopted.',
+      nodes: {
+
+        // ===== DECISION 1: Ambiguous Query =====
+        'start': {
+          type: 'decision',
+          title: 'Decision 1: Handling an Ambiguous Query',
+          description: 'A store manager asks: "How are my top products doing?" This is ambiguous — "top" could mean by revenue, by units sold, or by margin. "Doing" could mean this week, this month, or vs. last year. How should the agent respond?',
+          choices: [
+            {
+              label: 'Ask a single clarifying question covering the most critical ambiguity, then proceed',
+              hint: 'One targeted question resolves the most important dimension; make reasonable defaults for the rest',
+              next: 'c1-clarify',
+              isGood: true
+            },
+            {
+              label: 'Ask the user to fully specify the query — "Please tell me the metric, time period, and number of products you want"',
+              hint: 'Require complete specification before proceeding',
+              next: 'c1-full-spec',
+              isGood: false
+            },
+            {
+              label: 'Make all assumptions silently and return results without mentioning the ambiguity',
+              hint: 'Pick the most common interpretation and just answer it',
+              next: 'c1-silent',
+              isGood: false
+            }
+          ]
+        },
+        'c1-clarify': {
+          type: 'consequence',
+          title: 'Correct: One Targeted Question, Reasonable Defaults',
+          description: 'The agent asks: "Do you mean top by revenue, units sold, or profit margin?" The manager says "revenue." The agent proceeds with this month as the default time period (stated transparently in the response) and shows top 10 products. The manager gets a useful answer with minimal friction.',
+          consequence: 'Good conversation design asks the minimum necessary to resolve the most consequential ambiguity. "Revenue vs. units vs. margin" changes the answer fundamentally — the agent must ask. "This month vs. last month" is less critical — use a sensible default and state it. One question feels like assistance; three questions feels like a form.',
+          isGood: true,
+          next: 'decision-2'
+        },
+        'c1-full-spec': {
+          type: 'consequence',
+          title: 'Over-Specified: Interrogating Users Creates Friction',
+          description: 'The agent asks three questions before answering anything. The manager responds: "Why can\'t it just answer? The old SQL tool never asked me this many questions." They start writing manual SQL instead of using the agent, defeating the purpose of the system.',
+          consequence: 'Requiring full specification before answering treats the agent as a form, not an assistant. Analysts are accustomed to iterative refinement — ask one question, get an answer, drill down. Demanding complete upfront specification adds friction that exceeds the perceived value. Minimize clarification questions through smart defaults and transparent assumptions.',
+          isGood: false,
+          next: 'decision-2'
+        },
+        'c1-silent': {
+          type: 'consequence',
+          title: 'Trust-Damaging: Silent Assumptions Hide Interpretation',
+          description: 'The agent silently picks "revenue, this month, top 10." The manager looks at the results and says "That\'s not what I meant — I wanted units sold, not revenue." They now question every answer the agent gives: "What assumptions did it make this time?"',
+          consequence: 'Silent assumptions damage trust because users can\'t verify whether the agent understood them correctly. When the interpretation is wrong, users don\'t just correct this answer — they start second-guessing all answers. Transparent assumptions ("I\'m showing revenue for this month — let me know if you meant something else") are better than silent ones.',
+          isGood: false,
+          next: 'decision-2'
+        },
+
+        // ===== DECISION 2: Semantic Layer Design =====
+        'decision-2': {
+          type: 'decision',
+          title: 'Decision 2: Semantic Layer Design',
+          description: 'The data warehouse has a column called "net_sales_amt_after_rtns_and_promos_excl_tax." Store managers keep asking for "revenue" and getting no results. How do you fix this in the semantic layer?',
+          choices: [
+            {
+              label: 'Create a business-friendly alias "revenue" in the semantic layer that maps to the technical column, with synonyms (sales, income, earnings)',
+              hint: 'The semantic layer translates business language to technical schema',
+              next: 'c2-alias',
+              isGood: true
+            },
+            {
+              label: 'Train store managers to use the exact column name in their queries',
+              hint: 'Technical accuracy ensures the agent always finds the right field',
+              next: 'c2-train',
+              isGood: false
+            },
+            {
+              label: 'Rename the database column to "revenue" in the production schema',
+              hint: 'Fix it at the source — rename the column for clarity',
+              next: 'c2-rename',
+              isGood: false
+            }
+          ]
+        },
+        'c2-alias': {
+          type: 'consequence',
+          title: 'Correct: Semantic Layer Is the Translation Layer',
+          description: 'You add "revenue" as a semantic concept mapping to "net_sales_amt_after_rtns_and_promos_excl_tax" with synonyms: sales, income, earnings, revenue, turnover. When a manager asks "show me revenue," the semantic layer resolves to the correct column. They never need to know the technical name.',
+          consequence: 'The semantic layer\'s job is to translate between business language (how users think) and technical schema (how data is stored). Business users should never need to know internal column naming conventions. Semantic aliases with synonym registration make the agent fluent in business language rather than SQL jargon.',
+          isGood: true,
+          next: 'decision-3'
+        },
+        'c2-train': {
+          type: 'consequence',
+          title: 'Wrong Direction: Users Adapt to Technology, Not Vice Versa',
+          description: 'You hold training sessions. Managers learn the column name for a week, then forget it. New hires have never heard of it. The agent adoption rate plateaus at 30% — only the technically-minded managers use it regularly. The 70% who don\'t "get" the naming conventions never adopt it.',
+          consequence: 'Requiring users to learn technical database internals defeats the purpose of a natural language agent. The agent\'s value is abstracting away technical complexity. When the agent requires technical knowledge to use, it has failed at its core job. The semantic layer should adapt to users, not the other way around.',
+          isGood: false,
+          next: 'decision-3'
+        },
+        'c2-rename': {
+          type: 'consequence',
+          title: 'Risky: Schema Changes Break Existing Systems',
+          description: 'You rename the column in production. The next morning, 14 existing reports fail, 3 ETL pipelines break, and the data engineering team spends the day fixing downstream dependencies. The "simple fix" turns into a 2-day incident.',
+          consequence: 'Renaming production database columns breaks all existing queries, ETL jobs, and reports that reference that column. Schema changes require careful migration planning — not a quick rename. The semantic layer exists precisely to decouple the agent\'s vocabulary from the underlying schema, making column names an implementation detail.',
+          isGood: false,
+          next: 'decision-3'
+        },
+
+        // ===== DECISION 3: Data Quality Surfacing =====
+        'decision-3': {
+          type: 'decision',
+          title: 'Decision 3: Surfacing Data Quality Issues',
+          description: 'A manager asks for total sales for Store 17 last week. The agent runs the query and finds the result: $142,000. However, the data pipeline for Store 17 failed on Wednesday — two days of data are missing. The agent has partial data. What does it do?',
+          choices: [
+            {
+              label: 'Return the result with a clear data quality warning: "Note: Store 17 data is incomplete — Wednesday and Thursday data is missing due to a pipeline failure. This figure may be understated."',
+              hint: 'Deliver value while being transparent about data completeness',
+              next: 'c3-warn',
+              isGood: true
+            },
+            {
+              label: 'Block the query entirely — incomplete data cannot produce a trustworthy answer',
+              hint: 'Withhold results to prevent the manager from acting on bad data',
+              next: 'c3-block',
+              isGood: false
+            },
+            {
+              label: 'Return the $142,000 figure without any caveats — the manager asked for a number, not a data audit',
+              hint: 'Deliver what was asked; it\'s the data team\'s job to fix pipeline issues',
+              next: 'c3-silent',
+              isGood: false
+            }
+          ]
+        },
+        'c3-warn': {
+          type: 'consequence',
+          title: 'Correct: Transparent Results Build Trust',
+          description: 'The agent returns: "$142,000 (incomplete — Wednesday and Thursday data missing due to pipeline failure). Full week figure will be available once the pipeline recovers." The manager knows not to submit this figure for reporting and escalates the pipeline issue. Trust in the agent increases because it was honest.',
+          consequence: 'Data quality transparency is a core UX principle for data agents. Delivering partial data with clear caveats is more useful than withholding results. Users can make informed decisions: "I know this is partial — don\'t submit it to finance." Silent delivery of bad data is the worst outcome — it leads to decisions made on incorrect figures.',
+          isGood: true,
+          next: 'decision-4'
+        },
+        'c3-block': {
+          type: 'consequence',
+          title: 'Too Restrictive: Partial Data Has Value When Disclosed',
+          description: 'The agent returns: "Cannot answer — data quality issues detected." The manager has no sales figure at all, can\'t estimate their week, and escalates urgently to IT: "The agent is completely broken." The partial figure with a caveat would have been useful; silence is not.',
+          consequence: 'Blocking all output when data quality issues exist is over-protective. A partial figure with a clear caveat gives the user something to work with while accurately representing the situation. The alternative — giving users nothing — forces them to find data elsewhere, often in less reliable ways.',
+          isGood: false,
+          next: 'decision-4'
+        },
+        'c3-silent': {
+          type: 'consequence',
+          title: 'Dangerous: Silent Delivery of Incomplete Data',
+          description: 'The manager submits $142,000 as the week\'s revenue in the monthly operations report. The actual figure (with missing days) was $198,000. The discrepancy is caught two weeks later during the regional review. The manager blames the agent: "It gave me the wrong number without any warning."',
+          consequence: 'Silent delivery of incomplete data is the worst outcome. It feels helpful in the moment but creates decisions based on bad information. When the error surfaces later, trust in the agent collapses entirely. Data agents must surface quality issues — this is what separates a trustworthy agent from a risky one.',
+          isGood: false,
+          next: 'decision-4'
+        },
+
+        // ===== DECISION 4: Multi-Turn Follow-Up =====
+        'decision-4': {
+          type: 'decision',
+          title: 'Decision 4: Multi-Turn Conversation Handling',
+          description: 'A manager\'s conversation so far: Turn 1 — "Show me sales for the Northeast region this month." Turn 2 — "Now break it down by product category." Turn 3 — "Which category had the biggest drop vs. last month?" On Turn 3, "category" and "biggest drop" are references to the previous turns. How does the agent handle this?',
+          choices: [
+            {
+              label: 'Maintain conversation context — resolve "category" and "biggest drop" relative to the Northeast, this month, vs. last month comparison established in prior turns',
+              hint: 'Stateful context tracking enables natural conversation flow',
+              next: 'c4-context',
+              isGood: true
+            },
+            {
+              label: 'Treat each turn as independent — ask the user to re-specify the full query for Turn 3',
+              hint: 'Stateless processing ensures each query is unambiguous',
+              next: 'c4-stateless',
+              isGood: false
+            },
+            {
+              label: 'Answer Turn 3 globally (all regions, all time periods) since the user didn\'t re-specify Northeast',
+              hint: 'Without explicit scope, use the broadest interpretation',
+              next: 'c4-global',
+              isGood: false
+            }
+          ]
+        },
+        'c4-context': {
+          type: 'consequence',
+          title: 'Correct: Stateful Context Enables Natural Conversation',
+          description: 'The agent maintains session state: region=Northeast, period=this month. On Turn 3, it resolves the query as "Which product category in the Northeast had the biggest month-over-month revenue drop?" and returns: "Electronics dropped 18% vs. last month — the largest decline across categories." The conversation flows naturally.',
+          consequence: 'Multi-turn conversation is only possible with session state management. Users naturally build on prior context — re-specifying everything on every turn is cognitively exhausting. The agent\'s session context should track: active filters, time periods, entities mentioned, and the intent of prior turns. This is what makes an agent feel intelligent rather than mechanical.',
+          isGood: true,
+          next: 'decision-5'
+        },
+        'c4-stateless': {
+          type: 'consequence',
+          title: 'Frustrating: Stateless Agents Break Conversation Flow',
+          description: 'The agent responds: "Please specify the region, time period, and comparison period for your query." The manager says: "I already told you — Northeast, this month, vs. last month. Why doesn\'t it remember?" They complete the task but leave frustrated and rate the agent poorly.',
+          consequence: 'Stateless processing makes every interaction feel like the first. Users perceive this as the agent being "dumb" — it clearly "knows" the context from the conversation. Requiring re-specification of established context is the top UX complaint for data agents. Session memory is a minimum requirement for a usable conversational agent.',
+          isGood: false,
+          next: 'decision-5'
+        },
+        'c4-global': {
+          type: 'consequence',
+          title: 'Wrong Scope: Ambiguity Should Not Default to Broadest Interpretation',
+          description: 'The agent answers for all regions globally. The manager says "That\'s not what I asked — I wanted just the Northeast." The agent\'s broad interpretation was less useful than the specific answer they wanted. Users disengage when the agent consistently misses their intent.',
+          consequence: 'Defaulting to the broadest interpretation when context is available is the wrong design choice. The conversation clearly established Northeast as the active scope. When context narrows scope, honor the narrower scope. Broad defaults are appropriate only when no prior context exists — not when a conversation has already established specific filters.',
+          isGood: false,
+          next: 'decision-5'
+        },
+
+        // ===== DECISION 5: Formatting the Answer =====
+        'decision-5': {
+          type: 'decision',
+          title: 'Decision 5: Answer Formatting for Business Users',
+          description: 'A regional director asks: "Give me a full performance summary for Q1 2025 across all 5 regions." The result involves 5 regions × 6 metrics × 3 months = 90 data points. How should the agent format this response?',
+          choices: [
+            {
+              label: 'Lead with a 3-sentence executive summary highlighting the top insight, then offer a structured table and a drill-down option',
+              hint: 'Answer-first design: the insight before the data',
+              next: 'c5-summary-first',
+              isGood: true
+            },
+            {
+              label: 'Return the full 90-cell data table — the director asked for full performance data',
+              hint: 'Complete data is what was requested',
+              next: 'c5-raw-table',
+              isGood: false
+            },
+            {
+              label: 'Return a single aggregate figure — the director is busy and needs one number',
+              hint: 'Minimize cognitive load by reducing to the most important metric',
+              next: 'c5-single',
+              isGood: false
+            }
+          ]
+        },
+        'c5-summary-first': {
+          type: 'consequence',
+          title: 'Correct: Insight-First Design Serves Decision Makers',
+          description: 'The agent responds: "Q1 2025 highlights: Southeast led all regions in revenue growth (+14% YoY). Midwest had the weakest performance (-3%). Overall company revenue was $47.2M, up 8% vs. Q1 2024. Full regional breakdown below — ask me to drill into any region for more detail." The director gets the insight immediately and can explore further.',
+          consequence: 'Business executives are decision-makers, not data analysts. They need the key insight first, with supporting data available on demand. Answer-first design (insight → summary table → drill-down option) mirrors how good analysts present to leadership. Dumping raw data transfers the synthesis burden back to the human, negating the agent\'s value.',
+          isGood: true,
+          next: 'result'
+        },
+        'c5-raw-table': {
+          type: 'consequence',
+          title: 'Data Dump: Tables Without Narrative Require Human Synthesis',
+          description: 'The agent returns a 90-cell table with no summary or highlights. The director stares at it for 30 seconds and says "Can you just tell me which region did best?" They asked a business question and received a data export — not an answer.',
+          consequence: 'Returning raw tables to executives is the data agent equivalent of a SQL IDE — it externalizes the synthesis work to the human. The agent\'s job is to answer the question, not return the data needed to answer the question. Business users need insight, not data.',
+          isGood: false,
+          next: 'result'
+        },
+        'c5-single': {
+          type: 'consequence',
+          title: 'Under-Delivered: Oversimplification Loses Context',
+          description: 'The agent returns: "Q1 2025 total company revenue: $47.2M." The director responds: "I asked for a full performance summary across regions — not one number." Oversimplification fails to answer the actual question, making the agent seem incapable of complex analysis.',
+          consequence: 'Reducing a multi-dimensional question to a single number discards the nuance the user explicitly asked for. "Executive summary" does not mean "one metric" — it means "the most important insights, concisely expressed." Match the response complexity to the question complexity: a summary question deserves a summary, not a reduction.',
+          isGood: false,
+          next: 'result'
+        },
+
+        // ===== FINAL RESULT =====
+        'result': {
+          type: 'result',
+          title: 'UX Design Complete',
+          description: 'You\'ve navigated all 5 UX and semantic layer decisions for AcmeCorp\'s Data Agent. Your choices determined whether managers find the agent intuitive, trustworthy, and worth using daily.',
+          score: '5/5',
+          scoreLabel: 'Decisions Made',
+          summary: 'Key UX principles applied: Ask one targeted clarifying question — not an interrogation. The semantic layer translates business language to technical schema, not the reverse. Surface data quality issues transparently; partial data with caveats beats silence or blocked results. Session context enables natural multi-turn conversation. Answer-first design leads with insight, supports with data. These principles are what separate a technically correct agent from a genuinely useful one.'
+        }
+      }
+    });
+
+    Nav.init('m10-sim-query-design');
+  </script>
+</body>
+</html>

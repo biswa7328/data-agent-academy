@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAG Architecture &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .pipeline-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: var(--space-8) 0;
+      overflow-x: auto;
+    }
+    .pipeline-stage {
+      flex: 1;
+      min-width: 160px;
+      padding: var(--space-5);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      text-align: center;
+      position: relative;
+    }
+    .pipeline-stage + .pipeline-stage {
+      margin-left: var(--space-6);
+    }
+    .pipeline-stage + .pipeline-stage::before {
+      content: '';
+      position: absolute;
+      left: calc(-1 * var(--space-6) / 2 - 8px);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 10px solid var(--stroke-primary);
+    }
+    .pipeline-stage__number {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-2);
+    }
+    .pipeline-stage__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    .pipeline-stage__desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .benchmark-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      margin: var(--space-6) 0;
+    }
+    .benchmark-table th {
+      text-align: left;
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 2px solid var(--stroke-dim);
+      color: var(--text-secondary);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .benchmark-table td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px dashed var(--stroke-dim);
+      color: var(--text-primary);
+    }
+    .benchmark-table tr:hover td {
+      background: rgba(161, 0, 255, 0.03);
+    }
+    .accuracy-bar {
+      display: inline-block;
+      height: 8px;
+      border-radius: 4px;
+      margin-right: var(--space-2);
+      vertical-align: middle;
+    }
+    .recommended-row td {
+      background: rgba(204, 0, 255, 0.06);
+      border-left: 3px solid var(--stroke-secondary);
+    }
+    @media (max-width: 768px) {
+      .pipeline-flow { flex-direction: column; }
+      .pipeline-stage + .pipeline-stage { margin-left: 0; margin-top: var(--space-4); }
+      .pipeline-stage + .pipeline-stage::before { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 06</span>
+        <span class="separator">/</span>
+        <span class="current">RAG Architecture</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 06 &mdash; Lesson 02</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">RAG Architecture</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Maya Chen's context engineering fix pushed DataPulse from 42% to 78% accuracy. But the following Friday, Priya Sharma ran her weekly audit and found a new class of failures: the agent was hallucinating column names for tables added in Q2. The static prompt knew <code>fact_sales</code> perfectly &mdash; but it thought the loyalty program table was called <code>customer_rewards</code> when it was actually <code>loyalty_members</code>. DataPulse needed to retrieve fresh knowledge at query time, not rely on stale prompts.
+          </p>
+        </header>
+
+        <!-- Blueprint SVG Diagram: RAG Pipeline -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">DATAPULSE &mdash; RAG PIPELINE</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+            <defs>
+              <filter id="glowR" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
+              <marker id="arrowTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="arrowAmber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker>
+              <marker id="arrowDim" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#334155"/></marker>
+              <style>
+                .rl { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 8.5px; }
+                .rs { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; font-size: 7px; }
+                .rt { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 10px; font-weight: 600; }
+              </style>
+            </defs>
+
+            <!-- Title -->
+            <text x="350" y="22" text-anchor="middle" class="rt" style="fill:#A100FF;font-size:11px;">QUERY-TIME RETRIEVAL PIPELINE</text>
+
+            <!-- Stage 1: USER QUERY -->
+            <rect x="10" y="50" width="75" height="44" rx="3" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5"/>
+            <text x="47" y="69" text-anchor="middle" class="rl">USER</text>
+            <text x="47" y="81" text-anchor="middle" class="rl">QUERY</text>
+
+            <!-- Arrow 1 -->
+            <line x1="87" y1="72" x2="108" y2="72" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue)"/>
+
+            <!-- Stage 2: EMBEDDING -->
+            <rect x="112" y="50" width="80" height="44" rx="3" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.5"/>
+            <text x="152" y="69" text-anchor="middle" class="rl">EMBEDDING</text>
+            <text x="152" y="81" text-anchor="middle" class="rs">text-embed-3-sm</text>
+
+            <!-- Arrow 2 -->
+            <line x1="194" y1="72" x2="215" y2="72" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#arrowTeal)"/>
+
+            <!-- Stage 3: VECTOR DB (cylinder shape) -->
+            <ellipse cx="260" cy="55" rx="35" ry="8" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <rect x="225" y="55" width="70" height="30" fill="rgba(45,212,191,0.08)" stroke="none"/>
+            <line x1="225" y1="55" x2="225" y2="85" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <line x1="295" y1="55" x2="295" y2="85" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <ellipse cx="260" cy="85" rx="35" ry="8" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <text x="260" y="74" text-anchor="middle" class="rl">VECTOR DB</text>
+            <text x="260" y="104" text-anchor="middle" class="rs">pgvector</text>
+
+            <!-- Arrow 3 with label -->
+            <line x1="297" y1="72" x2="330" y2="72" stroke="#f59e0b" stroke-width="1.2" marker-end="url(#arrowAmber)"/>
+            <text x="314" y="65" text-anchor="middle" class="rs" style="fill:#f59e0b;">Top-K</text>
+
+            <!-- Stage 4: RERANKER -->
+            <rect x="334" y="50" width="78" height="44" rx="3" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="373" y="69" text-anchor="middle" class="rl">RERANKER</text>
+            <text x="373" y="81" text-anchor="middle" class="rs">cross-encoder</text>
+
+            <!-- Arrow 4 -->
+            <line x1="414" y1="72" x2="435" y2="72" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue)"/>
+
+            <!-- Stage 5: CONTEXT ASSEMBLY -->
+            <rect x="439" y="50" width="80" height="44" rx="3" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5"/>
+            <text x="479" y="69" text-anchor="middle" class="rl">CONTEXT</text>
+            <text x="479" y="81" text-anchor="middle" class="rl">ASSEMBLY</text>
+
+            <!-- Arrow 5 -->
+            <line x1="521" y1="72" x2="542" y2="72" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue)"/>
+
+            <!-- Stage 6: LLM (glowing) -->
+            <rect x="546" y="46" width="68" height="52" rx="4" fill="rgba(74,158,255,0.15)" stroke="#A100FF" stroke-width="2" filter="url(#glowR)"/>
+            <text x="580" y="69" text-anchor="middle" class="rt" style="fill:#A100FF;">LLM</text>
+            <text x="580" y="83" text-anchor="middle" class="rs">GPT-4</text>
+
+            <!-- Arrow 6 -->
+            <line x1="616" y1="72" x2="637" y2="72" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowBlue)" style="stroke:#10b981;"/>
+
+            <!-- Stage 7: RESPONSE -->
+            <rect x="641" y="50" width="52" height="44" rx="3" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5"/>
+            <text x="667" y="76" text-anchor="middle" class="rl" style="fill:#10b981;">RESP</text>
+
+            <!-- Divider -->
+            <line x1="30" y1="140" x2="670" y2="140" stroke="#334155" stroke-width="1" stroke-dasharray="6,4"/>
+            <text x="350" y="162" text-anchor="middle" class="rs" style="font-size:8px;letter-spacing:0.1em;">INGESTION PIPELINE (OFFLINE)</text>
+
+            <!-- Ingestion Pipeline -->
+            <!-- Source -->
+            <rect x="40" y="180" width="130" height="44" rx="3" fill="rgba(74,158,255,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="105" y="199" text-anchor="middle" class="rl">AcmeCorp Schema</text>
+            <text x="105" y="212" text-anchor="middle" class="rs">500+ tables</text>
+
+            <!-- Arrow -->
+            <line x1="172" y1="202" x2="205" y2="202" stroke="#334155" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrowDim)"/>
+
+            <!-- Chunker -->
+            <rect x="210" y="180" width="90" height="44" rx="3" fill="rgba(45,212,191,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="255" y="199" text-anchor="middle" class="rl" style="fill:#a0a0a0;">CHUNKER</text>
+            <text x="255" y="212" text-anchor="middle" class="rs">table-aware</text>
+
+            <!-- Arrow -->
+            <line x1="302" y1="202" x2="335" y2="202" stroke="#334155" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrowDim)"/>
+
+            <!-- Embedder -->
+            <rect x="340" y="180" width="90" height="44" rx="3" fill="rgba(45,212,191,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="385" y="199" text-anchor="middle" class="rl" style="fill:#a0a0a0;">EMBEDDER</text>
+            <text x="385" y="212" text-anchor="middle" class="rs">batch encode</text>
+
+            <!-- Arrow -->
+            <line x1="432" y1="202" x2="465" y2="202" stroke="#334155" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrowDim)"/>
+
+            <!-- Vector DB -->
+            <rect x="470" y="180" width="100" height="44" rx="3" fill="rgba(45,212,191,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="520" y="199" text-anchor="middle" class="rl" style="fill:#a0a0a0;">VECTOR DB</text>
+            <text x="520" y="212" text-anchor="middle" class="rs">pgvector store</text>
+
+            <!-- Connection line from ingestion VectorDB to query-time VectorDB -->
+            <path d="M520,180 L520,140 L260,140 L260,110" fill="none" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="390" y="135" text-anchor="middle" class="rs" style="fill:#CC00FF;">synced</text>
+
+            <!-- Bottom annotation -->
+            <text x="350" y="260" text-anchor="middle" class="rl" style="fill:#A100FF;font-size:9px;" filter="url(#glowR)">QUERY-TIME: ~200ms &nbsp; | &nbsp; INGESTION: BATCH NIGHTLY</text>
+          </svg>
+        </div>
+
+        <div class="hero-line"></div>
+
+        <!-- Section 1: The RAG Pipeline -->
+        <section class="section">
+          <div class="section-label reveal">Architecture Overview</div>
+          <h2 class="reveal">The Four Stages of RAG</h2>
+          <p class="reveal reveal--delay-1">
+            Every RAG system follows the same fundamental pipeline. Priya's audit report made the case clearly: DataPulse had been operating with a frozen snapshot of AcmeCorp's schema from January, but the data engineering team had added 14 new tables by July. No amount of prompt engineering could keep up with a warehouse that changes quarterly. The agent needed retrieval-augmented generation &mdash; a pipeline to fetch live knowledge and inject it into context at query time. Understanding each stage of this pipeline, and where failures occur, is essential for building reliable retrieval in production.
+          </p>
+
+          <div class="pipeline-flow reveal reveal--delay-2">
+            <div class="pipeline-stage">
+              <div class="pipeline-stage__number">Stage 1</div>
+              <div class="pipeline-stage__title">Ingestion</div>
+              <div class="pipeline-stage__desc">Documents are chunked, embedded into vectors, and stored in a vector database with metadata. At AcmeCorp, this means schema docs, the business glossary, and Shopify integration specs.</div>
+            </div>
+            <div class="pipeline-stage">
+              <div class="pipeline-stage__number">Stage 2</div>
+              <div class="pipeline-stage__title">Retrieval</div>
+              <div class="pipeline-stage__desc">User query is embedded and used to find the most semantically similar chunks from the vector store. When Sofia asks about loyalty program stats, retrieval finds the <code>loyalty_members</code> schema.</div>
+            </div>
+            <div class="pipeline-stage">
+              <div class="pipeline-stage__number">Stage 3</div>
+              <div class="pipeline-stage__title">Augmentation</div>
+              <div class="pipeline-stage__desc">Retrieved chunks are formatted and injected into DataPulse's context window alongside the user query, staying within the 2K-token RAG budget Maya established.</div>
+            </div>
+            <div class="pipeline-stage">
+              <div class="pipeline-stage__number">Stage 4</div>
+              <div class="pipeline-stage__title">Generation</div>
+              <div class="pipeline-stage__desc">The LLM generates a response grounded in both its training knowledge and the retrieved context &mdash; producing SQL that references actual column names, not hallucinated ones.</div>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">Critical Insight</div>
+            <div class="callout__text">
+              Each stage is a potential point of failure. When Priya traced the <code>customer_rewards</code> hallucination, she found the problem started at Stage 1: the new <code>loyalty_members</code> table documentation had never been ingested. Poor chunking in Stage 1 means Stage 2 retrieves irrelevant results. Bad augmentation in Stage 3 means the model ignores good results. <strong>Debug RAG from left to right</strong> &mdash; always start at ingestion.
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Chunking Strategies -->
+        <section class="section">
+          <div class="section-label reveal">The Foundation Decision</div>
+          <h2 class="reveal">5 Chunking Strategies Compared</h2>
+          <p class="reveal reveal--delay-1">
+            Chunking is where RAG succeeds or fails. Maya learned this when she built AcmeCorp's first RAG pipeline using fixed-size 1,024-token chunks. The result: a single chunk contained half of the <code>fact_sales</code> schema mashed together with the beginning of <code>dim_products</code>. DataPulse retrieved that hybrid chunk and generated SQL that mixed columns from both tables. The strategy you choose determines retrieval quality, and retrieval quality determines answer quality. Here are the five main approaches with benchmark accuracy data:
+          </p>
+
+          <div class="reveal reveal--delay-2" style="overflow-x: auto;">
+            <table class="benchmark-table">
+              <thead>
+                <tr>
+                  <th>Strategy</th>
+                  <th>How It Works</th>
+                  <th>Accuracy</th>
+                  <th>Best For</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Fixed-Size</strong></td>
+                  <td>Split every N tokens regardless of content boundaries</td>
+                  <td>
+                    <span class="accuracy-bar" style="width: 69px; background: #fb7185;"></span>~69%
+                  </td>
+                  <td>Prototyping only; baseline comparison</td>
+                </tr>
+                <tr class="recommended-row">
+                  <td><strong>Recursive</strong> <span class="badge badge--teal" data-tip="Recursive chunking offers the best balance of retrieval quality, simplicity, and cost">Recommended</span></td>
+                  <td>Split by paragraphs, then sentences, then tokens &mdash; preserving semantic boundaries</td>
+                  <td>
+                    <span class="accuracy-bar" style="width: 75px; background: #CC00FF;"></span>~75%
+                  </td>
+                  <td>General purpose; best cost/quality ratio</td>
+                </tr>
+                <tr>
+                  <td><strong>Semantic</strong></td>
+                  <td>Use embeddings to detect topic shifts; split at semantic boundaries</td>
+                  <td>
+                    <span class="accuracy-bar" style="width: 92px; background: #A100FF;"></span>91.9% recall / 54% e2e
+                  </td>
+                  <td>High-recall needs; research documents</td>
+                </tr>
+                <tr>
+                  <td><strong>Adaptive</strong></td>
+                  <td>Dynamically adjust chunk size based on content density and structure</td>
+                  <td>
+                    <span class="accuracy-bar" style="width: 87px; background: #a78bfa;"></span>~87%
+                  </td>
+                  <td>Mixed-format documents; varied content types</td>
+                </tr>
+                <tr>
+                  <td><strong>Hierarchical</strong></td>
+                  <td>Create parent-child chunk relationships; retrieve at multiple granularities</td>
+                  <td>
+                    <span class="accuracy-bar" style="width: 80px; background: #f59e0b;"></span>~80%
+                  </td>
+                  <td>Long documents; when context around a chunk matters</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-3">
+            <div class="bp-card">
+              <div class="bp-card__title">Recommended Starting Point</div>
+              <div class="bp-card__body">
+                <strong>Recursive chunking at 256&ndash;512 tokens</strong> with <strong>10&ndash;20% overlap</strong>. This is what Maya settled on for AcmeCorp's business glossary after testing all five strategies. It gives you the best balance of retrieval quality, implementation simplicity, and cost efficiency. Optimize from here based on your evaluation metrics.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">The 80% Rule</div>
+              <div class="bp-card__body">
+                <strong>80% of RAG failures trace to chunking decisions.</strong> Before tuning your embedding model, reranker, or prompt &mdash; fix your chunking. Priya Sharma proved this at AcmeCorp: switching from fixed-size to recursive chunking alone lifted DataPulse's schema-retrieval accuracy from 69% to 75%, with zero changes to any other component.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Deep Dive on Chunking -->
+        <section class="section">
+          <div class="section-label reveal">Implementation Details</div>
+          <h2 class="reveal">Chunking Parameters That Matter</h2>
+          <p class="reveal">
+            When Maya and Priya sat down to configure AcmeCorp's chunking pipeline, they found three parameters dominated the outcome. Getting these right mattered more than the choice of embedding model.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-1">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Chunk Size</div>
+              <div class="bp-card__body">
+                Too small (&lt;100 tokens): loses context, fragments meaning. Too large (&gt;1000 tokens): dilutes relevance, wastes context window. Sweet spot: <strong>256&ndash;512 tokens</strong>. At AcmeCorp, Priya found that 400-token chunks for schema docs kept each table self-contained while staying under the context cliff threshold.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Overlap</div>
+              <div class="bp-card__body">
+                Overlap prevents information loss at chunk boundaries. 10&ndash;20% overlap means a 512-token chunk shares 50&ndash;100 tokens with its neighbors. Critical for preserving cross-boundary concepts like AcmeCorp's glossary entries that reference related terms (e.g., "sell-through rate" referencing "comparable store sales").
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Metadata</div>
+              <div class="bp-card__body">
+                Attach source, section title, document type, and creation date to every chunk. Metadata enables filtering at retrieval time &mdash; when DataPulse retrieves schema docs, it filters by <code>doc_type: schema</code> to avoid pulling glossary entries that happen to mention the same table name.
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal" style="margin-top: var(--space-6);">
+            <button class="collapsible__header" onclick="this.parentElement.classList.toggle('is-open')">
+              <span>Why Semantic Chunking Has High Recall but Low End-to-End Accuracy</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>Semantic chunking achieves 91.9% recall &mdash; meaning it finds the right information 92% of the time. But end-to-end accuracy drops to 54%. Maya tested semantic chunking on AcmeCorp's documentation and saw the same gap. Why?</p>
+                <p><strong>Variable chunk sizes:</strong> Semantic boundaries create chunks ranging from 50 to 2,000+ tokens. AcmeCorp's glossary entry for "comparable store sales" generated a 1,800-token chunk that consumed nearly the entire RAG budget by itself.</p>
+                <p><strong>Over-retrieval:</strong> High recall means you retrieve many potentially relevant chunks, but the LLM then struggles to identify the most important information within that larger context. DataPulse would retrieve 8 somewhat-relevant chunks when only 2 were actually needed.</p>
+                <p><strong>Computational cost:</strong> Semantic chunking requires an embedding pass during ingestion to detect topic shifts, adding latency and cost that may not be justified given the e2e accuracy. Derek Kim flagged the additional compute cost during the project review.</p>
+                <p>The takeaway: high retrieval recall does not automatically translate to high answer accuracy. The LLM's ability to use retrieved context matters just as much.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: AcmeCorp Scenario -->
+        <section class="section">
+          <div class="section-label reveal">Case Study</div>
+          <h2 class="reveal">AcmeCorp: Chunking the Data Warehouse Documentation</h2>
+
+          <div class="callout reveal reveal--delay-1">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              Priya Sharma cataloged everything that needed to go into DataPulse's RAG index. AcmeCorp's data warehouse documentation included three types of content: <strong>table descriptions</strong> (what each of 500+ tables in the PostgreSQL warehouse contains), <strong>column meanings</strong> (business definitions for ambiguous column names like <code>rev_net_adj</code>), and <strong>business glossary entries</strong> (definitions of terms like "comparable store sales" or "sell-through rate" that store managers like Sofia Torres use daily). Each content type required a different chunking approach. Lena Park scheduled a review for Thursday to validate the strategy before ingestion.
+            </div>
+          </div>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Table Descriptions</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--blue" data-tip="Each table description is chunked as a single self-contained unit of 200-400 tokens">One chunk per table</span></div>
+                Each table description is a self-contained unit (table name, purpose, key columns, relationships). Chunked as a single unit of 200&ndash;400 tokens. No overlap needed &mdash; table boundaries are natural semantic boundaries. The star-schema core tables (<code>fact_sales</code>, <code>dim_products</code>, <code>dim_stores</code>, <code>dim_dates</code>) each get their own clean chunk.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Column Meanings</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--teal" data-tip="Column definitions grouped by parent table, 300-600 tokens per chunk with table metadata">Grouped by table</span></div>
+                Column definitions grouped by parent table. Each chunk contains all columns for one table (~300&ndash;600 tokens). Metadata includes table name and schema for precise retrieval filtering. This is how DataPulse now correctly maps "revenue" to <code>SUM(total_amount) WHERE status='completed'</code> in <code>fact_sales</code>.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Business Glossary</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--amber" data-tip="Recursive chunking at 256 tokens with 15% overlap, tagged with term name and domain">Recursive, 256 tokens</span></div>
+                Glossary entries vary in length (50&ndash;500 words). Recursive chunking at 256 tokens with 15% overlap. Each chunk tagged with the term name, business domain, and related terms for cross-referencing. Priya personally validated all 2,000+ glossary entries before ingestion &mdash; a two-day effort that prevented dozens of downstream errors.
+              </div>
+            </div>
+          </div>
+
+          <p class="reveal reveal--delay-3">
+            With the chunking pipeline complete and all three content types ingested, Maya re-ran Priya's original audit queries. The <code>loyalty_members</code> table &mdash; the one DataPulse had been calling <code>customer_rewards</code> &mdash; now resolved correctly every time. The agent's schema-retrieval accuracy climbed from 78% to 86%. But as they would discover in the next lesson, retrieval accuracy and answer accuracy are two different things entirely.
+          </p>
+        </section>
+
+        <!-- Page Navigation -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="01-context-engineering.html" class="page-nav__title">Context Engineering</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="03-retrieval-strategies.html" class="page-nav__title">Retrieval Strategies</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m06-rag-architecture');</script>
+</body>
+</html>

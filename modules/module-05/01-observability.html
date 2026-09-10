@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observability &amp; Structured Tracing &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Trace Viewer --- */
+    .trace-viewer {
+      margin: var(--space-8) 0;
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+    .trace-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-surface);
+      border-bottom: 1px dashed var(--stroke-dim);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+    }
+    .trace-header__id {
+      color: var(--stroke-primary);
+    }
+    .trace-header__status {
+      color: var(--accent-success);
+    }
+    .trace-step {
+      border-bottom: 1px dashed var(--stroke-dim);
+      transition: all var(--transition-base);
+    }
+    .trace-step:last-child {
+      border-bottom: none;
+    }
+    .trace-step__header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      cursor: pointer;
+      transition: background var(--transition-fast);
+      user-select: none;
+    }
+    .trace-step__header:hover {
+      background: rgba(161, 0, 255, 0.03);
+    }
+    .trace-step__type {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--border-radius);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      min-width: 80px;
+      text-align: center;
+    }
+    .trace-step__type--think {
+      border: 1px solid var(--stroke-primary);
+      color: var(--stroke-primary);
+    }
+    .trace-step__type--tool {
+      border: 1px solid var(--stroke-secondary);
+      color: var(--stroke-secondary);
+    }
+    .trace-step__type--result {
+      border: 1px solid var(--accent-success);
+      color: var(--accent-success);
+    }
+    .trace-step__label {
+      flex: 1;
+      font-size: var(--font-sm);
+      color: var(--text-primary);
+    }
+    .trace-step__meta {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      opacity: 0.7;
+      white-space: nowrap;
+    }
+    .trace-step__chevron {
+      transition: transform var(--transition-fast);
+      color: var(--text-secondary);
+      opacity: 0.5;
+    }
+    .trace-step.open .trace-step__chevron {
+      transform: rotate(180deg);
+    }
+    .trace-step__detail {
+      display: none;
+      padding: 0 var(--space-5) var(--space-5) var(--space-5);
+    }
+    .trace-step.open .trace-step__detail {
+      display: block;
+    }
+    .trace-step__detail-inner {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-4);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .trace-step__detail-inner code {
+      color: var(--stroke-secondary);
+    }
+    .trace-summary {
+      display: flex;
+      gap: var(--space-6);
+      padding: var(--space-4) var(--space-5);
+      background: rgba(16, 185, 129, 0.05);
+      border-top: 1px solid rgba(16, 185, 129, 0.2);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--accent-success);
+      flex-wrap: wrap;
+    }
+
+    /* --- Dashboard Metrics --- */
+    .metric-status {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--border-radius);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .metric-status--pass {
+      border: 1px solid var(--accent-success);
+      color: var(--accent-success);
+    }
+    .metric-status--fail {
+      border: 1px solid var(--accent-error);
+      color: var(--accent-error);
+    }
+    .metric-status--warn {
+      border: 1px solid var(--accent-warning);
+      color: var(--accent-warning);
+    }
+    .metric-status--track {
+      border: 1px solid var(--stroke-primary);
+      color: var(--stroke-primary);
+    }
+    .metric-value--fail {
+      color: var(--accent-error);
+    }
+    .metric-value--warn {
+      color: var(--accent-warning);
+    }
+    .dashboard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--space-6);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+    }
+    .dashboard-header__live {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--accent-success);
+    }
+    .dashboard-header__live::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-success);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* --- Trace Level Indicator --- */
+    .trace-level-indicator {
+      display: flex;
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+      flex-wrap: wrap;
+    }
+    .trace-level-item {
+      flex: 1;
+      min-width: 180px;
+      padding: var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      text-align: center;
+      transition: all var(--transition-base);
+      cursor: pointer;
+    }
+    .trace-level-item:hover {
+      border-color: var(--stroke-primary);
+    }
+    .trace-level-item.active {
+      border-color: var(--stroke-secondary);
+      border-style: solid;
+      box-shadow: 0 0 15px var(--glow-teal);
+    }
+    .trace-level-item__num {
+      font-family: var(--font-mono);
+      font-size: var(--font-2xl);
+      font-weight: 700;
+      color: var(--stroke-dim);
+      line-height: 1;
+      margin-bottom: var(--space-2);
+      transition: color 0.4s ease;
+    }
+    .trace-level-item.active .trace-level-item__num {
+      color: var(--stroke-secondary);
+    }
+    .trace-level-item__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 640px) {
+      .trace-header { flex-direction: column; gap: var(--space-2); }
+      .trace-summary { flex-direction: column; gap: var(--space-2); }
+      .trace-level-indicator { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 05</span>
+        <span class="separator">/</span>
+        <span class="current">Observability &amp; Tracing</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Page Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 05 &mdash; Lesson 01</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Observability &amp;<br>Structured Tracing</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            You can&rsquo;t fix what you can&rsquo;t see. Build structured traces, real-time dashboards, and alerting so silent failures never reach the boardroom.
+          </p>
+        </header>
+
+        <!-- ===== BLUEPRINT SVG DIAGRAM ===== -->
+        <div class="evolving-diagram reveal reveal--scale"><div class="evolving-diagram__label">OBSERVABILITY &mdash; TRACE ANATOMY</div>
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+          <defs>
+            <filter id="obs-glow-blue"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#A100FF" flood-opacity="0.6"/></filter>
+            <filter id="obs-glow-green"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#10b981" flood-opacity="0.6"/></filter>
+            <filter id="obs-glow-teal"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#CC00FF" flood-opacity="0.5"/></filter>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="380" rx="12" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <!-- Title -->
+          <text x="350" y="32" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#A100FF" font-weight="700" letter-spacing="2">DATAPULSE STRUCTURED TRACE</text>
+          <!-- REQUEST marker -->
+          <rect x="20" y="55" width="72" height="28" rx="6" fill="none" stroke="#A100FF" stroke-width="1.5" filter="url(#obs-glow-blue)"/>
+          <text x="56" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#A100FF" font-weight="700">REQUEST</text>
+          <!-- RESPONSE marker -->
+          <rect x="608" y="55" width="72" height="28" rx="6" fill="none" stroke="#10b981" stroke-width="1.5" filter="url(#obs-glow-green)"/>
+          <text x="644" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#10b981" font-weight="700">RESPONSE</text>
+          <!-- Connecting lines -->
+          <line x1="92" y1="69" x2="110" y2="69" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+          <line x1="590" y1="69" x2="608" y2="69" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+          <!-- Outer span: agent_turn (full width) -->
+          <rect x="110" y="52" width="480" height="34" rx="6" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="120" y="73" font-family="JetBrains Mono, monospace" font-size="10" fill="#A100FF" font-weight="600">agent_turn</text>
+          <text x="540" y="73" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0" text-anchor="end">2.4s total</text>
+          <!-- Nested spans row -->
+          <!-- Span 1: think (20% = 96px) -->
+          <rect x="120" y="100" width="96" height="44" rx="5" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="168" y="119" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#A100FF" font-weight="600">think</text>
+          <text x="168" y="134" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0">0.3s</text>
+          <!-- Span 2: tool: schema_lookup (15% = 72px) -->
+          <rect x="224" y="100" width="72" height="44" rx="5" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="260" y="119" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#CC00FF" font-weight="600">tool: schema</text>
+          <text x="260" y="134" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0">0.2s</text>
+          <!-- Span 3: tool: sql_execute (40% = 192px) -->
+          <rect x="304" y="100" width="192" height="44" rx="5" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-width="1.5" filter="url(#obs-glow-teal)"/>
+          <text x="400" y="119" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#CC00FF" font-weight="600">tool: sql_execute</text>
+          <text x="400" y="134" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0">0.8s</text>
+          <!-- Span 4: think: validate (10% = 48px) -->
+          <rect x="504" y="100" width="48" height="44" rx="5" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="528" y="119" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7.5" fill="#A100FF" font-weight="600">validate</text>
+          <text x="528" y="134" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0">0.1s</text>
+          <!-- Span 5: format_response (15% = 72px) -->
+          <rect x="560" y="100" width="72" height="44" rx="5" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="596" y="119" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7.5" fill="#10b981" font-weight="600">format_resp</text>
+          <text x="596" y="134" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0">0.2s</text>
+          <!-- Span connection lines -->
+          <line x1="120" y1="86" x2="120" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="3 2"/>
+          <line x1="224" y1="86" x2="224" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="3 2"/>
+          <line x1="304" y1="86" x2="304" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="3 2"/>
+          <line x1="504" y1="86" x2="504" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="3 2"/>
+          <line x1="560" y1="86" x2="560" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="3 2"/>
+          <!-- Span type legend -->
+          <rect x="120" y="165" width="10" height="10" rx="2" fill="rgba(74,158,255,0.3)" stroke="#A100FF" stroke-width="1"/>
+          <text x="136" y="174" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0">LLM reasoning</text>
+          <rect x="250" y="165" width="10" height="10" rx="2" fill="rgba(45,212,191,0.3)" stroke="#CC00FF" stroke-width="1"/>
+          <text x="266" y="174" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0">Tool execution</text>
+          <rect x="390" y="165" width="10" height="10" rx="2" fill="rgba(16,185,129,0.3)" stroke="#10b981" stroke-width="1"/>
+          <text x="406" y="174" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0">Formatting</text>
+          <!-- Divider -->
+          <line x1="40" y1="195" x2="660" y2="195" stroke="#334155" stroke-width="1" stroke-dasharray="6 4"/>
+          <!-- Metadata section -->
+          <text x="350" y="220" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#a0a0a0" letter-spacing="1">TRACE METADATA</text>
+          <!-- Metadata boxes -->
+          <rect x="40" y="238" width="145" height="50" rx="6" fill="rgba(74,158,255,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="5 3"/>
+          <text x="112" y="257" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#a0a0a0">trace_id</text>
+          <text x="112" y="275" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#A100FF" font-weight="600">abc-123</text>
+          <rect x="200" y="238" width="145" height="50" rx="6" fill="rgba(74,158,255,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="5 3"/>
+          <text x="272" y="257" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#a0a0a0">user</text>
+          <text x="272" y="275" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#CC00FF" font-weight="600">sofia_torres</text>
+          <rect x="360" y="238" width="145" height="50" rx="6" fill="rgba(74,158,255,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="5 3"/>
+          <text x="432" y="257" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#a0a0a0">tokens</text>
+          <text x="432" y="275" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#f5f5f5" font-weight="600">4,200</text>
+          <rect x="520" y="238" width="145" height="50" rx="6" fill="rgba(74,158,255,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="5 3"/>
+          <text x="592" y="257" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#a0a0a0">cost</text>
+          <text x="592" y="275" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#f59e0b" font-weight="600">$0.12</text>
+          <!-- Bottom decorative dots -->
+          <circle cx="320" cy="320" r="2" fill="#334155"/>
+          <circle cx="340" cy="320" r="2" fill="#334155"/>
+          <circle cx="360" cy="320" r="2" fill="#334155"/>
+          <circle cx="380" cy="320" r="2" fill="#334155"/>
+          <!-- Bottom label -->
+          <text x="350" y="355" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#334155" letter-spacing="1">Every span is queryable, alertable, and dashboardable</text>
+        </svg>
+        </div>
+
+        <!-- ===== THE SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Scene</div>
+          <h2 style="margin-bottom: var(--space-4);">The Silent Failure That Nobody Noticed</h2>
+          <p>
+            AcmeCorp&rsquo;s Product Owner agent had been silently degrading for two weeks. The VP of Sales kept getting answers, but accuracy had dropped from 94% to 71%. Nobody knew because there was no observability dashboard. The agent was confidently returning wrong revenue numbers.
+          </p>
+          <div class="callout callout--error" style="margin-top: var(--space-6);">
+            <div class="callout__label">Incident Report</div>
+            <div class="callout__text">
+              A Shopify schema migration changed the <code>total_amount</code> column precision from <code>INT</code> to <code>DECIMAL</code>. The agent&rsquo;s SQL was syntactically valid, but the numbers were subtly wrong &mdash; rounding errors compounded across thousands of rows. By the time an analyst spot-checked a report, three board decks had been presented with inaccurate data. The CEO asked: <strong>&ldquo;How did we not catch this for two weeks?&rdquo;</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 1: WHAT TO TRACE ===== -->
+        <section class="section">
+          <div class="section-label reveal">What to Trace</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">Three Levels of Structured Tracing</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">Every agent execution should produce a structured trace. Traces are organized into three levels of granularity &mdash; click each level to explore.</p>
+
+          <!-- Level Selector -->
+          <div class="trace-level-indicator reveal" id="traceLevelSelector">
+            <div class="trace-level-item active" data-level="1">
+              <div class="trace-level-item__num">L1</div>
+              <div class="trace-level-item__title">Trace-Level</div>
+            </div>
+            <div class="trace-level-item" data-level="2">
+              <div class="trace-level-item__num">L2</div>
+              <div class="trace-level-item__title">Step-Level</div>
+            </div>
+            <div class="trace-level-item" data-level="3">
+              <div class="trace-level-item__num">L3</div>
+              <div class="trace-level-item__title">Guardrail Events</div>
+            </div>
+          </div>
+
+          <!-- Level 1: Trace-Level -->
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);" id="trace-level-1">
+            <div class="bp-card__title">
+              <span class="bp-card__number">1</span>
+              Trace-Level Data
+              <span class="badge badge--blue" data-tip="Trace-level data captured once per agent invocation — includes trace ID, user/session context, total duration, tokens, cost, and outcome" style="margin-left: auto;">Per Request</span>
+            </div>
+            <div class="bp-card__body">
+              <p>The top-level envelope for every agent invocation:</p>
+              <table class="bp-table" style="margin: var(--space-4) 0;">
+                <thead><tr><th>Field</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td><code>trace_id</code></td><td>Unique identifier for replay and debugging</td></tr>
+                  <tr><td><code>user_id</code>, <code>session_id</code></td><td>Link traces to users and conversations</td></tr>
+                  <tr><td><code>total_duration</code></td><td>End-to-end latency</td></tr>
+                  <tr><td><code>total_tokens</code>, <code>total_cost</code></td><td>Resource consumption tracking</td></tr>
+                  <tr><td><code>outcome</code></td><td>success / failure / partial</td></tr>
+                </tbody>
+              </table>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp</div>
+                <div class="callout__text">
+                  Every query the VP of Sales makes gets a trace ID. When the board deck numbers were questioned, AcmeCorp could replay trace ID <code>#ACM-47291</code> and see exactly which SQL was executed, what data was returned, and where the precision error crept in.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Level 2: Step-Level -->
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);" id="trace-level-2">
+            <div class="bp-card__title">
+              <span class="bp-card__number">2</span>
+              Step-Level Data
+              <span class="badge badge--teal" data-tip="Step-level data recorded for each ReAct iteration — captures tool calls, inputs, outputs, duration, tokens, and errors" style="margin-left: auto;">Per ReAct Iteration</span>
+            </div>
+            <div class="bp-card__body">
+              <p>Each ReAct iteration within a trace records:</p>
+              <table class="bp-table" style="margin: var(--space-4) 0;">
+                <thead><tr><th>Field</th><th>Purpose</th></tr></thead>
+                <tbody>
+                  <tr><td><code>step_type</code></td><td>think / tool_call / observation</td></tr>
+                  <tr><td><code>tool_name</code></td><td>Which tool was invoked</td></tr>
+                  <tr><td><code>input_params</code></td><td>What was sent to the tool</td></tr>
+                  <tr><td><code>output</code></td><td>What the tool returned (truncated)</td></tr>
+                  <tr><td><code>duration</code>, <code>tokens</code></td><td>Per-step resource tracking</td></tr>
+                  <tr><td><code>error</code></td><td>Error details if step failed</td></tr>
+                </tbody>
+              </table>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp</div>
+                <div class="callout__text">
+                  The Data Engineer agent&rsquo;s trace for &ldquo;Q3 revenue by region&rdquo; shows 4 steps: think (120ms) &rarr; schema_discovery (890ms) &rarr; think (95ms) &rarr; query_execute (2.1s). Total: 3.2 seconds. The <code>schema_discovery</code> step is the bottleneck.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Level 3: Guardrail Events -->
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);" id="trace-level-3">
+            <div class="bp-card__title">
+              <span class="bp-card__number">3</span>
+              Guardrail Events
+              <span class="badge badge--amber" data-tip="Events triggered by safety and governance layers — PII masking, permission blocks, prompt injection detection, and policy overrides" style="margin-left: auto;">Security &amp; Policy</span>
+            </div>
+            <div class="bp-card__body">
+              <p>Events triggered by safety and governance layers:</p>
+              <table class="bp-table" style="margin: var(--space-4) 0;">
+                <thead><tr><th>Event Type</th><th>Example</th></tr></thead>
+                <tbody>
+                  <tr><td>PII detected &amp; masked</td><td>Email addresses redacted before output</td></tr>
+                  <tr><td>Policy violation caught</td><td>Attempted DDL on production blocked</td></tr>
+                  <tr><td>Rate limit hit</td><td>User exceeded 50 queries/hour threshold</td></tr>
+                </tbody>
+              </table>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp</div>
+                <div class="callout__text">
+                  The QA agent&rsquo;s trace logs show 3 PII masking events in the last hour &mdash; customer email addresses in the <code>loyalty_members</code> table being redacted before appearing in quality reports.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== INTERACTIVE TRACE VIEWER ===== -->
+          <h3 class="reveal" style="margin-bottom: var(--space-4);">Interactive Trace Viewer</h3>
+          <p class="reveal" style="margin-bottom: var(--space-4);">Click each step to expand the details. This is trace <code>#ACM-47291</code> &mdash; the VP of Sales asking: <strong>&ldquo;Show me Q3 revenue by region.&rdquo;</strong></p>
+
+          <div class="trace-viewer reveal" id="traceViewer">
+            <div class="trace-header">
+              <span>Trace <span class="trace-header__id">#ACM-47291</span></span>
+              <span>User: VP of Sales</span>
+              <span class="trace-header__status">&#10003; SUCCESS</span>
+            </div>
+
+            <!-- Step 1: THINK -->
+            <div class="trace-step" data-step="1">
+              <div class="trace-step__header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="trace-step__type trace-step__type--think">THINK</span>
+                <span class="trace-step__label">Step 1 &mdash; Need to find which tables have revenue data</span>
+                <span class="trace-step__meta">120ms &middot; 45 tok</span>
+                <svg class="trace-step__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="trace-step__detail">
+                <div class="trace-step__detail-inner">
+                  <strong>Reasoning:</strong> &ldquo;The user wants Q3 revenue broken down by region. I need to discover which tables contain revenue data and region mappings. Let me check the warehouse schema first.&rdquo;<br><br>
+                  <strong>Duration:</strong> 120ms<br>
+                  <strong>Tokens:</strong> 45 (completion)
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: TOOL_CALL -->
+            <div class="trace-step" data-step="2">
+              <div class="trace-step__header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="trace-step__type trace-step__type--tool">TOOL_CALL</span>
+                <span class="trace-step__label">Step 2 &mdash; schema_discovery({database: &ldquo;warehouse&rdquo;})</span>
+                <span class="trace-step__meta">890ms &middot; 210 tok</span>
+                <svg class="trace-step__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="trace-step__detail">
+                <div class="trace-step__detail-inner">
+                  <strong>Tool:</strong> <code>schema_discovery</code><br>
+                  <strong>Input:</strong> <code>{ "database": "warehouse", "filter": "revenue|sales|amount" }</code><br>
+                  <strong>Output:</strong> Found tables: <code>fact_sales</code>, <code>dim_stores</code>, <code>dim_regions</code><br>
+                  &mdash; <code>fact_sales</code>: order_id, store_id, total_amount (DECIMAL), order_date<br>
+                  &mdash; <code>dim_stores</code>: store_id, region_id, store_name<br>
+                  &mdash; <code>dim_regions</code>: region_id, region_name<br><br>
+                  <strong>Duration:</strong> 890ms (network + catalog lookup)<br>
+                  <strong>Tokens:</strong> 210 (prompt + completion)
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: THINK -->
+            <div class="trace-step" data-step="3">
+              <div class="trace-step__header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="trace-step__type trace-step__type--think">THINK</span>
+                <span class="trace-step__label">Step 3 &mdash; Write SQL joining fact_sales to dim_regions, filter Q3</span>
+                <span class="trace-step__meta">95ms &middot; 62 tok</span>
+                <svg class="trace-step__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="trace-step__detail">
+                <div class="trace-step__detail-inner">
+                  <strong>Reasoning:</strong> &ldquo;I have the schema. I need to join fact_sales &rarr; dim_stores &rarr; dim_regions, then SUM(total_amount) grouped by region_name. Filter to Q3 = July-September of the current year.&rdquo;<br><br>
+                  <strong>Duration:</strong> 95ms<br>
+                  <strong>Tokens:</strong> 62 (completion)
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 4: TOOL_CALL -->
+            <div class="trace-step" data-step="4">
+              <div class="trace-step__header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="trace-step__type trace-step__type--tool">TOOL_CALL</span>
+                <span class="trace-step__label">Step 4 &mdash; query_execute({sql: &ldquo;SELECT r.region_name, SUM(s.total_amount)&hellip;&rdquo;})</span>
+                <span class="trace-step__meta">2.1s &middot; 340 tok</span>
+                <svg class="trace-step__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="trace-step__detail">
+                <div class="trace-step__detail-inner">
+                  <strong>Tool:</strong> <code>query_execute</code><br>
+                  <strong>Input:</strong><br>
+                  <code>SELECT r.region_name, SUM(s.total_amount) AS revenue</code><br>
+                  <code>FROM fact_sales s</code><br>
+                  <code>JOIN dim_stores st ON s.store_id = st.store_id</code><br>
+                  <code>JOIN dim_regions r ON st.region_id = r.region_id</code><br>
+                  <code>WHERE s.order_date BETWEEN '2025-07-01' AND '2025-09-30'</code><br>
+                  <code>GROUP BY r.region_name ORDER BY revenue DESC</code><br><br>
+                  <strong>Output:</strong> 5 rows returned<br>
+                  &mdash; Northeast: $4.2M | Southeast: $3.8M | West: $3.1M | Midwest: $2.9M | Southwest: $2.1M<br><br>
+                  <strong>Duration:</strong> 2.1s (query execution + result fetch)<br>
+                  <strong>Tokens:</strong> 340 (prompt + completion)
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 5: THINK -->
+            <div class="trace-step" data-step="5">
+              <div class="trace-step__header" onclick="this.parentElement.classList.toggle('open')">
+                <span class="trace-step__type trace-step__type--think">THINK</span>
+                <span class="trace-step__label">Step 5 &mdash; Format results for business user</span>
+                <span class="trace-step__meta">85ms &middot; 38 tok</span>
+                <svg class="trace-step__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+              <div class="trace-step__detail">
+                <div class="trace-step__detail-inner">
+                  <strong>Reasoning:</strong> &ldquo;Results are ready. Format as a clean table with currency formatting. Add a total row. The VP prefers concise summaries with percentages.&rdquo;<br><br>
+                  <strong>Duration:</strong> 85ms<br>
+                  <strong>Tokens:</strong> 38 (completion)
+                </div>
+              </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="trace-summary">
+              <span><strong>Outcome:</strong> Success</span>
+              <span><strong>Total:</strong> 3.29s</span>
+              <span><strong>Tokens:</strong> 695</span>
+              <span><strong>Cost:</strong> $0.004</span>
+              <span><strong>Steps:</strong> 5</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: KEY METRICS ===== -->
+        <section class="section">
+          <div class="section-label reveal">Key Metrics</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">Production Dashboard</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">These are the metrics every agent operations team should track. Red and amber flags demand immediate attention.</p>
+
+          <div class="dashboard-header reveal">
+            <span>AcmeCorp Agent Dashboard</span>
+            <span class="dashboard-header__live">LIVE</span>
+          </div>
+
+          <div class="reveal">
+            <table class="bp-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Target</th>
+                  <th>AcmeCorp Current</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Task completion rate</strong></td>
+                  <td>&ge; 90%</td>
+                  <td>93%</td>
+                  <td><span class="metric-status metric-status--pass">PASS</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Accuracy (human-rated)</strong></td>
+                  <td>&ge; 95%</td>
+                  <td><span class="metric-value--fail">71% (before fix)</span> &rarr; 96% (after fix)</td>
+                  <td><span class="metric-status metric-status--fail">WAS FAIL</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Average latency (P50)</strong></td>
+                  <td>&lt; 5s</td>
+                  <td>3.2s</td>
+                  <td><span class="metric-status metric-status--pass">PASS</span></td>
+                </tr>
+                <tr>
+                  <td><strong>P99 latency</strong></td>
+                  <td>&lt; 30s</td>
+                  <td>28s</td>
+                  <td><span class="metric-status metric-status--pass">PASS</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Cost per task</strong></td>
+                  <td>Track trend</td>
+                  <td>$0.004/query</td>
+                  <td><span class="metric-status metric-status--track">TRACKING</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Tool reliability</strong></td>
+                  <td>&ge; 99% per tool</td>
+                  <td>schema_discovery: 99.7%<br><span class="metric-value--warn">query_execute: 98.1%</span></td>
+                  <td><span class="metric-status metric-status--warn">WARN</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Hallucination rate</strong></td>
+                  <td>&lt; 2%</td>
+                  <td>0.8%</td>
+                  <td><span class="metric-status metric-status--pass">PASS</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Escalation rate</strong></td>
+                  <td>5&ndash;15%</td>
+                  <td>8%</td>
+                  <td><span class="metric-status metric-status--pass">PASS</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Context utilization</strong></td>
+                  <td>60&ndash;80%</td>
+                  <td>72%</td>
+                  <td><span class="metric-status metric-status--pass">PASS</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout callout--warning reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">Key Takeaway</div>
+            <div class="callout__text">
+              The accuracy metric was the one that caught the board deck incident. Before observability, AcmeCorp had no way to detect the drop from 94% to 71%. After implementing human-rated accuracy sampling, the silent degradation would have been caught within 24 hours, not two weeks.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: OBSERVABILITY PLATFORMS ===== -->
+        <section class="section">
+          <div class="section-label reveal">Observability Platforms</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">Choosing Your Stack</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">The LLM observability ecosystem is maturing fast. Here are the leading platforms and where they shine.</p>
+
+          <div class="reveal">
+            <table class="bp-table">
+              <thead>
+                <tr>
+                  <th>Platform</th>
+                  <th>Best For</th>
+                  <th>Key Feature</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Langfuse</strong></td>
+                  <td>LangChain / LangGraph teams</td>
+                  <td><span class="badge badge--green" data-tip="Langfuse is a free, open-source observability platform with native LangChain/LangGraph integration">Open-source</span> Native integration</td>
+                </tr>
+                <tr>
+                  <td><strong>LangSmith</strong></td>
+                  <td>LangChain ecosystem</td>
+                  <td>Tracing + evaluation + prompt management</td>
+                </tr>
+                <tr>
+                  <td><strong>Arize Phoenix</strong></td>
+                  <td>ML teams</td>
+                  <td>Drift detection, embedding analysis</td>
+                </tr>
+                <tr>
+                  <td><strong>Datadog</strong></td>
+                  <td>Enterprise (existing Datadog users)</td>
+                  <td>APM integration, dashboards</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">AcmeCorp Choice</div>
+            <div class="callout__text">
+              AcmeCorp chose <strong>Langfuse</strong> because they&rsquo;re running LangGraph for orchestration and wanted open-source. The drift detection from Arize Phoenix is on their roadmap for Q2 to catch the kind of silent accuracy degradation that caused the board deck incident.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: OPENTELEMETRY ===== -->
+        <section class="section">
+          <div class="section-label reveal">OpenTelemetry</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">The Emerging Standard</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">
+            OpenTelemetry (OTel) is becoming the vendor-neutral standard for instrumenting LLM applications. It provides semantic conventions for traces, metrics, and logs &mdash; meaning your instrumentation code stays the same regardless of which observability backend you use.
+          </p>
+
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="bp-card__number">&#9889;</span>
+              Why OpenTelemetry Matters
+            </div>
+            <div class="bp-card__body">
+              <p><strong>Vendor neutrality.</strong> Instrument once, export anywhere. Your agent code emits OTel spans &mdash; those spans can flow to Langfuse, Datadog, Jaeger, or any OTel-compatible backend.</p>
+              <p><strong>Semantic conventions.</strong> OTel is developing LLM-specific semantic conventions: <code>gen_ai.system</code>, <code>gen_ai.request.model</code>, <code>gen_ai.usage.input_tokens</code>, <code>gen_ai.usage.output_tokens</code>. These standard attribute names make traces from different teams and tools interoperable.</p>
+              <p style="margin-bottom: 0;"><strong>Future-proof.</strong> As the ecosystem consolidates, OTel will be the common wire format. Investing in it now means you won&rsquo;t have to re-instrument when you switch platforms.</p>
+            </div>
+          </div>
+
+          <div class="callout reveal" style="margin-top: var(--space-4);">
+            <div class="callout__label">AcmeCorp</div>
+            <div class="callout__text">
+              By using OpenTelemetry semantic conventions, AcmeCorp can export traces to Langfuse today and switch to Datadog tomorrow without changing agent code. No vendor lock-in.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: KEY TAKEAWAYS (COLLAPSIBLE) ===== -->
+        <section class="section reveal">
+          <div class="collapsible" id="key-takeaways">
+            <button class="collapsible__header">
+              <span>Key Takeaways</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <div class="bp-card" style="margin: var(--space-4) 0;">
+                  <div class="bp-card__body">
+                    <p><strong>1. Trace everything.</strong> Every agent execution should produce a structured trace with a unique ID. Without traces, debugging production issues is guesswork.</p>
+                    <p><strong>2. Monitor accuracy, not just uptime.</strong> An agent can be &ldquo;up&rdquo; and returning results while being subtly wrong. Human-rated accuracy sampling is the only way to catch silent degradation.</p>
+                    <p><strong>3. Use three levels of granularity.</strong> Trace-level for the big picture, step-level for bottleneck analysis, guardrail events for security and compliance.</p>
+                    <p style="margin-bottom: 0;"><strong>4. Invest in OpenTelemetry.</strong> Vendor-neutral instrumentation means you can switch backends without rewriting code. The LLM semantic conventions are maturing fast.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAVIGATION ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="../../simulations/module-04/multi-agent-orchestration.html" class="page-nav__title">Simulation: Multi-Agent</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="02-testing-evaluation.html" class="page-nav__title">Agent Testing &amp; Evaluation</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    Nav.init('m05-observability');
+
+    // ===== TRACE LEVEL SELECTOR =====
+    (function() {
+      var selector = document.getElementById('traceLevelSelector');
+      if (!selector) return;
+
+      selector.addEventListener('click', function(e) {
+        var item = e.target.closest('.trace-level-item');
+        if (!item) return;
+
+        // Update active states
+        selector.querySelectorAll('.trace-level-item').forEach(function(el) {
+          el.classList.remove('active');
+        });
+        item.classList.add('active');
+
+        var level = item.getAttribute('data-level');
+
+        // Highlight and scroll to the matching card
+        ['1', '2', '3'].forEach(function(l) {
+          var card = document.getElementById('trace-level-' + l);
+          if (card) {
+            card.style.boxShadow = (l === level) ? '0 0 25px var(--glow-teal)' : '';
+            card.style.borderColor = (l === level) ? 'var(--stroke-secondary)' : '';
+          }
+        });
+
+        var target = document.getElementById('trace-level-' + level);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    })();
+
+    // ===== TRACE VIEWER: Expand All Button =====
+    (function() {
+      var viewer = document.getElementById('traceViewer');
+      if (!viewer) return;
+
+      // Add expand-all functionality on header click
+      var header = viewer.querySelector('.trace-header');
+      if (header) {
+        header.style.cursor = 'pointer';
+        header.title = 'Click to expand/collapse all steps';
+        var allOpen = false;
+        header.addEventListener('click', function() {
+          allOpen = !allOpen;
+          viewer.querySelectorAll('.trace-step').forEach(function(step) {
+            if (allOpen) {
+              step.classList.add('open');
+            } else {
+              step.classList.remove('open');
+            }
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

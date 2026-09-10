@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tool Calling — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Page-specific styles --- */
+    .step-flow {
+      position: relative;
+      padding-left: var(--space-10);
+      margin: var(--space-8) 0;
+    }
+    .step-flow::before {
+      content: '';
+      position: absolute;
+      left: 18px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: repeating-linear-gradient(
+        to bottom,
+        var(--stroke-primary) 0,
+        var(--stroke-primary) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+    }
+    .step-item {
+      position: relative;
+      margin-bottom: var(--space-8);
+    }
+    .step-item:last-child { margin-bottom: 0; }
+    .step-number {
+      position: absolute;
+      left: calc(-1 * var(--space-10));
+      top: 0;
+      width: 36px;
+      height: 36px;
+      border: 2px solid var(--stroke-primary);
+      border-radius: 50%;
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      z-index: 2;
+    }
+    .step-item.step-active .step-number {
+      background: var(--stroke-primary);
+      color: var(--bg-primary);
+      box-shadow: 0 0 15px var(--glow-blue);
+    }
+
+    .thought-bubble {
+      background: rgba(161, 0, 255, 0.06);
+      border: 1px dashed var(--stroke-primary);
+      border-radius: 16px;
+      padding: var(--space-4) var(--space-6);
+      position: relative;
+      font-style: italic;
+      color: var(--text-secondary);
+      margin: var(--space-3) 0;
+    }
+    .thought-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 30px;
+      width: 16px;
+      height: 16px;
+      background: rgba(161, 0, 255, 0.06);
+      border-right: 1px dashed var(--stroke-primary);
+      border-bottom: 1px dashed var(--stroke-primary);
+      transform: rotate(45deg);
+    }
+    .thought-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-2);
+      font-style: normal;
+    }
+
+    .user-prompt {
+      background: rgba(204, 0, 255, 0.06);
+      border: 1px solid rgba(204, 0, 255, 0.3);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-4) var(--space-6);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+    }
+    .user-prompt__avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--stroke-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bg-primary);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .user-prompt__text {
+      color: var(--text-primary);
+      font-size: var(--font-base);
+      line-height: 1.6;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin: var(--space-8) 0;
+    }
+    @media (max-width: 768px) {
+      .comparison-grid { grid-template-columns: 1fr; }
+    }
+    .comparison-panel {
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+    }
+    .comparison-panel__header {
+      padding: var(--space-3) var(--space-4);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-bottom: 1px dashed var(--stroke-dim);
+    }
+    .comparison-panel--user .comparison-panel__header {
+      background: rgba(204, 0, 255, 0.08);
+      color: var(--stroke-secondary);
+    }
+    .comparison-panel--system .comparison-panel__header {
+      background: rgba(161, 0, 255, 0.08);
+      color: var(--stroke-primary);
+    }
+    .comparison-panel__body {
+      padding: var(--space-6);
+      background: var(--bg-surface);
+    }
+
+    .trace-step {
+      padding: var(--space-3) var(--space-4);
+      border-left: 2px solid var(--stroke-dim);
+      margin-bottom: var(--space-3);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      transition: border-color 0.3s ease;
+    }
+    .trace-step:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+    }
+    .trace-step__label {
+      color: var(--stroke-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+    }
+
+    /* Exercise builder */
+    .exercise-field {
+      margin-bottom: var(--space-6);
+    }
+    .exercise-field__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--stroke-primary);
+      margin-bottom: var(--space-2);
+      display: block;
+    }
+    .exercise-select {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-3) var(--space-4);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%234a9eff' stroke-width='2'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+    .exercise-select:focus {
+      outline: none;
+      border-color: var(--stroke-primary);
+      box-shadow: 0 0 10px var(--glow-blue);
+    }
+    .exercise-checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .exercise-checkbox {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      transition: all var(--transition-fast);
+    }
+    .exercise-checkbox:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+    }
+    .exercise-checkbox.checked {
+      border-color: var(--stroke-primary);
+      border-style: solid;
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.08);
+    }
+    .exercise-checkbox__box {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--stroke-dim);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all var(--transition-fast);
+    }
+    .exercise-checkbox.checked .exercise-checkbox__box {
+      border-color: var(--stroke-primary);
+      background: var(--stroke-primary);
+    }
+    .exercise-result {
+      margin-top: var(--space-6);
+      padding: var(--space-4) var(--space-6);
+      border-radius: var(--border-radius);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      display: none;
+    }
+    .exercise-result.show { display: block; }
+    .exercise-result--correct {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--accent-success);
+      color: var(--accent-success);
+    }
+    .exercise-result--incorrect {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--accent-error);
+      color: var(--accent-error);
+    }
+
+    .iteration-card {
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-4) var(--space-5);
+      margin-bottom: var(--space-3);
+      background: var(--bg-surface);
+    }
+    .iteration-card__header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+    .iteration-card__number {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .iteration-card__action {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      padding: 2px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--stroke-dim);
+      color: var(--text-secondary);
+    }
+    .iteration-card__body {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== TOP NAV ===== -->
+  <nav class="top-nav">
+    <div class="top-nav__brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>
+      </svg>
+      Data Agent Academy
+    </div>
+    <div class="top-nav__breadcrumb">
+      <a href="../../index.html">Home</a>
+      <span class="separator">/</span>
+      <span>Module 01</span>
+      <span class="separator">/</span>
+      <span class="current">Tool Calling</span>
+    </div>
+  </nav>
+
+  <!-- ===== PROGRESS BAR ===== -->
+  <div class="progress-bar">
+    <div class="progress-bar__fill"></div>
+  </div>
+
+  <!-- ===== PAGE CONTENT ===== -->
+  <div class="page-wrapper">
+    <div class="page-content">
+      <div class="content-container">
+
+        <!-- Evolving Diagram -->
+        <section class="section" style="padding-bottom: var(--space-8);">
+          <div id="evolving-diagram" class="evolving-diagram reveal"></div>
+        </section>
+
+        <!-- ===== 1. THE BRIDGE ===== -->
+        <section class="section reveal">
+          <div class="section-label">
+            <span>The Bridge</span>
+          </div>
+          <h2 style="margin-bottom: var(--space-6);">From Intent to Execution</h2>
+          <div class="bp-card" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__body" style="font-size: var(--font-lg); line-height: 1.8;">
+              The LLM has decided it needs sales data. But how does <strong style="color: var(--stroke-primary);">"I want to query the database"</strong> become <strong style="color: var(--stroke-secondary);">actual SQL execution</strong>? This is the bridge between reasoning and action &mdash; the <strong>tool calling protocol</strong>.
+            </div>
+          </div>
+          <p>
+            Tool calling is the mechanism that turns the LLM's <em>intent</em> into structured function calls. The model doesn't run code &mdash; it emits a JSON request, and the runtime executes it. Let's trace this step by step.
+          </p>
+        </section>
+
+        <!-- ===== 2. STEP-BY-STEP ANIMATION ===== -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>The Protocol</span>
+          </div>
+          <h2 class="reveal" style="margin-bottom: var(--space-8);">Anatomy of a Tool Call</h2>
+
+          <div class="step-flow">
+            <!-- Step 1: User Prompt -->
+            <div class="step-item step-active reveal reveal--delay-1">
+              <div class="step-number">1</div>
+              <h4 style="margin-bottom: var(--space-3); color: var(--text-primary);">User Prompt</h4>
+              <div class="user-prompt">
+                <div class="user-prompt__avatar">U</div>
+                <div class="user-prompt__text">
+                  "Show me Q3 revenue by region"
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: LLM Reasoning -->
+            <div class="step-item reveal reveal--delay-2">
+              <div class="step-number">2</div>
+              <h4 style="margin-bottom: var(--space-3); color: var(--text-primary);">LLM Reasoning</h4>
+              <div class="thought-bubble">
+                <div class="thought-label">Internal Reasoning</div>
+                "The user wants revenue data segmented by region for Q3. I need to first discover which tables contain revenue data, then build and execute a query. Let me start with schema discovery..."
+              </div>
+            </div>
+
+            <!-- Step 3: Function Call -->
+            <div class="step-item reveal reveal--delay-3">
+              <div class="step-number">3</div>
+              <h4 style="margin-bottom: var(--space-3); color: var(--text-primary);">Function Call Emitted</h4>
+              <p style="margin-bottom: var(--space-3);">The LLM outputs a structured JSON request &mdash; not code, just a <strong>declaration of intent</strong>.</p>
+              <div class="terminal">
+                <div class="terminal__header">
+                  <span class="terminal__dot terminal__dot--red"></span>
+                  <span class="terminal__dot terminal__dot--yellow"></span>
+                  <span class="terminal__dot terminal__dot--green"></span>
+                  <span class="terminal__title">llm_output &rarr; function_call</span>
+                </div>
+                <div class="terminal__body">{
+  <span class="terminal__line--keyword">"tool"</span>: <span class="terminal__line--string">"schema_discovery"</span>,
+  <span class="terminal__line--keyword">"parameters"</span>: {
+    <span class="terminal__line--keyword">"search"</span>: <span class="terminal__line--string">"revenue sales"</span>,
+    <span class="terminal__line--keyword">"include_columns"</span>: <span class="terminal__line--string">true</span>
+  }
+}</div>
+              </div>
+            </div>
+
+            <!-- Step 4: Tool Execution -->
+            <div class="step-item reveal reveal--delay-4">
+              <div class="step-number">4</div>
+              <h4 style="margin-bottom: var(--space-3); color: var(--text-primary);">Tool Execution Result</h4>
+              <p style="margin-bottom: var(--space-3);">The runtime executes the function and returns structured data back to the LLM.</p>
+              <div class="terminal">
+                <div class="terminal__header">
+                  <span class="terminal__dot terminal__dot--red"></span>
+                  <span class="terminal__dot terminal__dot--yellow"></span>
+                  <span class="terminal__dot terminal__dot--green"></span>
+                  <span class="terminal__title">tool_result &rarr; llm_context</span>
+                </div>
+                <div class="terminal__body">{
+  <span class="terminal__line--keyword">"status"</span>: <span class="terminal__line--string">"success"</span>,
+  <span class="terminal__line--keyword">"tables"</span>: [
+    {
+      <span class="terminal__line--keyword">"name"</span>: <span class="terminal__line--string">"sales_transactions"</span>,
+      <span class="terminal__line--keyword">"columns"</span>: [<span class="terminal__line--string">"date"</span>, <span class="terminal__line--string">"region"</span>, <span class="terminal__line--string">"revenue"</span>, <span class="terminal__line--string">"store_id"</span>]
+    },
+    {
+      <span class="terminal__line--keyword">"name"</span>: <span class="terminal__line--string">"quarterly_revenue_summary"</span>,
+      <span class="terminal__line--keyword">"columns"</span>: [<span class="terminal__line--string">"quarter"</span>, <span class="terminal__line--string">"region"</span>, <span class="terminal__line--string">"total_revenue"</span>]
+    }
+  ]
+}</div>
+              </div>
+            </div>
+
+            <!-- Step 5: LLM Formats Response -->
+            <div class="step-item reveal reveal--delay-5">
+              <div class="step-number">5</div>
+              <h4 style="margin-bottom: var(--space-3); color: var(--text-primary);">LLM Formats Final Response</h4>
+              <p style="margin-bottom: var(--space-3);">After potentially multiple tool-call rounds, the LLM synthesizes a natural-language answer.</p>
+              <div class="user-prompt" style="border-color: rgba(161, 0, 255, 0.3); background: rgba(161, 0, 255, 0.04);">
+                <div class="user-prompt__avatar" style="background: var(--stroke-primary);">A</div>
+                <div class="user-prompt__text">
+                  "Here's the Q3 revenue breakdown by region:<br><br>
+                  <strong>North:</strong> $4.2M &nbsp; <strong>South:</strong> $3.8M &nbsp; <strong>East:</strong> $5.1M &nbsp; <strong>West:</strong> $4.6M<br><br>
+                  The East region leads Q3 revenue, up 12% from Q2. Would you like me to drill into any specific region?"
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== 3. SIDE-BY-SIDE COMPARISON ===== -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Two Perspectives</span>
+          </div>
+          <h2 class="reveal" style="margin-bottom: var(--space-6);">User View vs. System View</h2>
+          <p class="reveal" style="margin-bottom: var(--space-4);">
+            The magic of a well-built agent is that the user sees a <strong>simple conversation</strong> while a complex orchestration happens behind the scenes.
+          </p>
+
+          <div class="comparison-grid reveal">
+            <!-- LEFT: User view -->
+            <div class="comparison-panel comparison-panel--user">
+              <div class="comparison-panel__header">What the User Sees</div>
+              <div class="comparison-panel__body">
+                <div class="user-prompt" style="margin-bottom: var(--space-4);">
+                  <div class="user-prompt__avatar">U</div>
+                  <div class="user-prompt__text" style="font-size: var(--font-sm);">Show me Q3 revenue by region</div>
+                </div>
+                <div style="padding: var(--space-3) 0; font-size: var(--font-xs); color: var(--text-secondary); font-family: var(--font-mono); display: flex; align-items: center; gap: var(--space-2);">
+                  <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--stroke-secondary); animation: pulse-glow 1.5s ease-in-out infinite;"></span>
+                  Thinking...
+                </div>
+                <div class="user-prompt" style="border-color: rgba(74,158,255,0.3); background: rgba(74,158,255,0.04);">
+                  <div class="user-prompt__avatar" style="background: var(--stroke-primary);">A</div>
+                  <div class="user-prompt__text" style="font-size: var(--font-sm);">
+                    Here's your Q3 revenue by region:<br>
+                    North: $4.2M | South: $3.8M<br>
+                    East: $5.1M | West: $4.6M<br><br>
+                    East leads, up 12% from Q2.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT: System view -->
+            <div class="comparison-panel comparison-panel--system">
+              <div class="comparison-panel__header">What Happens Behind the Scenes</div>
+              <div class="comparison-panel__body">
+                <div class="trace-step">
+                  <div class="trace-step__label">1. Parse Intent</div>
+                  Extract: metric=revenue, period=Q3, groupby=region
+                </div>
+                <div class="trace-step">
+                  <div class="trace-step__label">2. Tool Call: schema_discovery</div>
+                  Search tables matching "revenue" &rarr; found 2 candidates
+                </div>
+                <div class="trace-step">
+                  <div class="trace-step__label">3. Tool Call: execute_query</div>
+                  SELECT region, SUM(revenue) FROM quarterly_revenue_summary WHERE quarter='Q3' GROUP BY region
+                </div>
+                <div class="trace-step">
+                  <div class="trace-step__label">4. Tool Call: execute_query</div>
+                  SELECT region, SUM(revenue) FROM quarterly_revenue_summary WHERE quarter='Q2' GROUP BY region
+                </div>
+                <div class="trace-step">
+                  <div class="trace-step__label">5. Synthesize</div>
+                  Compute Q2&rarr;Q3 delta, format natural language response
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== 4. ACMECORP WORKED TRACE ===== -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Full Trace</span>
+          </div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">AcmeCorp Worked Example</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">
+            Let's trace every iteration the agent takes to answer: <strong style="color: var(--stroke-secondary);">"Show me Q3 revenue by region"</strong>
+          </p>
+
+          <div class="callout reveal" style="margin-bottom: var(--space-6);">
+            <div class="callout__label">AcmeCorp Context</div>
+            <div class="callout__text">
+              AcmeCorp's data warehouse has 47 tables. The agent has access to schema_discovery, execute_query, validate_sql, and format_results tools. The analyst has "regional_viewer" permissions.
+            </div>
+          </div>
+
+          <!-- Collapsible iteration cards -->
+          <div class="collapsible reveal">
+            <div class="collapsible__header">
+              <span>Iteration 1: Schema Discovery</span>
+              <span class="collapsible__icon">&rsaquo;</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <div class="iteration-card">
+                  <div class="iteration-card__header">
+                    <span class="iteration-card__number">Iteration 1</span>
+                    <span class="iteration-card__action">schema_discovery</span>
+                  </div>
+                  <div class="iteration-card__body">
+                    <p><strong>LLM Reasoning:</strong> User wants Q3 revenue by region. I need to find which tables have revenue data and a region column.</p>
+                    <div class="terminal" style="margin: var(--space-3) 0;">
+                      <div class="terminal__header">
+                        <span class="terminal__dot terminal__dot--red"></span>
+                        <span class="terminal__dot terminal__dot--yellow"></span>
+                        <span class="terminal__dot terminal__dot--green"></span>
+                        <span class="terminal__title">function_call</span>
+                      </div>
+                      <div class="terminal__body">{ "tool": "schema_discovery", "parameters": { "search": "revenue region quarterly" } }</div>
+                    </div>
+                    <p><strong>Result:</strong> Found <code>quarterly_revenue_summary</code> with columns: quarter, region, total_revenue, store_count.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal">
+            <div class="collapsible__header">
+              <span>Iteration 2: Build &amp; Validate SQL</span>
+              <span class="collapsible__icon">&rsaquo;</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <div class="iteration-card">
+                  <div class="iteration-card__header">
+                    <span class="iteration-card__number">Iteration 2</span>
+                    <span class="iteration-card__action">validate_sql</span>
+                  </div>
+                  <div class="iteration-card__body">
+                    <p><strong>LLM Reasoning:</strong> I'll build a SELECT query and validate it before execution to catch syntax issues.</p>
+                    <div class="terminal" style="margin: var(--space-3) 0;">
+                      <div class="terminal__header">
+                        <span class="terminal__dot terminal__dot--red"></span>
+                        <span class="terminal__dot terminal__dot--yellow"></span>
+                        <span class="terminal__dot terminal__dot--green"></span>
+                        <span class="terminal__title">function_call</span>
+                      </div>
+                      <div class="terminal__body">{ "tool": "validate_sql", "parameters": { "query": "SELECT region, SUM(total_revenue) AS revenue FROM quarterly_revenue_summary WHERE quarter = 'Q3-2025' GROUP BY region ORDER BY revenue DESC" } }</div>
+                    </div>
+                    <p><strong>Result:</strong> Valid. Estimated rows: 4. Estimated time: 120ms.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal">
+            <div class="collapsible__header">
+              <span>Iteration 3: Execute Query</span>
+              <span class="collapsible__icon">&rsaquo;</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <div class="iteration-card">
+                  <div class="iteration-card__header">
+                    <span class="iteration-card__number">Iteration 3</span>
+                    <span class="iteration-card__action">execute_query</span>
+                  </div>
+                  <div class="iteration-card__body">
+                    <p><strong>LLM Reasoning:</strong> Validation passed. Now execute the query. I'll also fetch Q2 data for comparison context.</p>
+                    <div class="terminal" style="margin: var(--space-3) 0;">
+                      <div class="terminal__header">
+                        <span class="terminal__dot terminal__dot--red"></span>
+                        <span class="terminal__dot terminal__dot--yellow"></span>
+                        <span class="terminal__dot terminal__dot--green"></span>
+                        <span class="terminal__title">function_call</span>
+                      </div>
+                      <div class="terminal__body">{ "tool": "execute_query", "parameters": { "query": "SELECT region, SUM(total_revenue) AS revenue FROM quarterly_revenue_summary WHERE quarter IN ('Q2-2025','Q3-2025') GROUP BY region, quarter ORDER BY region" } }</div>
+                    </div>
+                    <p><strong>Result:</strong> 8 rows returned (4 regions x 2 quarters). Execution time: 95ms.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal">
+            <div class="collapsible__header">
+              <span>Iteration 4: Format &amp; Respond</span>
+              <span class="collapsible__icon">&rsaquo;</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <div class="iteration-card">
+                  <div class="iteration-card__header">
+                    <span class="iteration-card__number">Iteration 4</span>
+                    <span class="iteration-card__action">format_results</span>
+                  </div>
+                  <div class="iteration-card__body">
+                    <p><strong>LLM Reasoning:</strong> I have Q3 data and Q2 data for context. I'll compute the quarter-over-quarter change and present it clearly.</p>
+                    <div class="terminal" style="margin: var(--space-3) 0;">
+                      <div class="terminal__header">
+                        <span class="terminal__dot terminal__dot--red"></span>
+                        <span class="terminal__dot terminal__dot--yellow"></span>
+                        <span class="terminal__dot terminal__dot--green"></span>
+                        <span class="terminal__title">function_call</span>
+                      </div>
+                      <div class="terminal__body">{ "tool": "format_results", "parameters": { "data": [{"region":"East","q3":5100000,"q2":4553571},{"region":"West","q3":4600000,"q2":4371428},{"region":"North","q3":4200000,"q2":4000000},{"region":"South","q3":3800000,"q2":3619047}], "format": "table_with_delta", "title": "Q3 2025 Revenue by Region" } }</div>
+                    </div>
+                    <p><strong>Result:</strong> Formatted table with Q3 values and QoQ change. The LLM composes the final natural-language answer with key insight (East leads, +12%).</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== 5. MINI EXERCISE ===== -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Build It Yourself</span>
+          </div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">Construct a Tool Call</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">
+            An AcmeCorp analyst asks: <strong style="color: var(--stroke-secondary);">"How many orders were placed in December across all stores?"</strong><br>
+            Build the correct function call by selecting the right tool, parameters, and return type.
+          </p>
+
+          <div class="bp-card reveal" id="exerciseCard">
+            <!-- Tool Name -->
+            <div class="exercise-field">
+              <label class="exercise-field__label">1. Select the tool name</label>
+              <select class="exercise-select" id="exerciseTool">
+                <option value="" disabled selected>-- Choose a tool --</option>
+                <option value="schema_discovery">schema_discovery</option>
+                <option value="execute_query">execute_query</option>
+                <option value="format_results">format_results</option>
+              </select>
+            </div>
+
+            <!-- Parameters -->
+            <div class="exercise-field">
+              <label class="exercise-field__label">2. Select the required parameters</label>
+              <div class="exercise-checkbox-group" id="exerciseParams">
+                <div class="exercise-checkbox" data-param="query" onclick="toggleCheckbox(this)">
+                  <div class="exercise-checkbox__box">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none;"><path d="M20 6L9 17l-5-5"/></svg>
+                  </div>
+                  <span>query</span> <span style="color:var(--text-secondary);font-size:var(--font-xs);margin-left:auto;">"SELECT COUNT(*) FROM orders WHERE ..."</span>
+                </div>
+                <div class="exercise-checkbox" data-param="search" onclick="toggleCheckbox(this)">
+                  <div class="exercise-checkbox__box">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none;"><path d="M20 6L9 17l-5-5"/></svg>
+                  </div>
+                  <span>search</span> <span style="color:var(--text-secondary);font-size:var(--font-xs);margin-left:auto;">"orders december"</span>
+                </div>
+                <div class="exercise-checkbox" data-param="timeout" onclick="toggleCheckbox(this)">
+                  <div class="exercise-checkbox__box">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none;"><path d="M20 6L9 17l-5-5"/></svg>
+                  </div>
+                  <span>timeout</span> <span style="color:var(--text-secondary);font-size:var(--font-xs);margin-left:auto;">30000</span>
+                </div>
+                <div class="exercise-checkbox" data-param="format" onclick="toggleCheckbox(this)">
+                  <div class="exercise-checkbox__box">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="display:none;"><path d="M20 6L9 17l-5-5"/></svg>
+                  </div>
+                  <span>format</span> <span style="color:var(--text-secondary);font-size:var(--font-xs);margin-left:auto;">"table"</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Return Type -->
+            <div class="exercise-field">
+              <label class="exercise-field__label">3. Expected return type</label>
+              <select class="exercise-select" id="exerciseReturn">
+                <option value="" disabled selected>-- Choose return type --</option>
+                <option value="table_list">Array of table names</option>
+                <option value="row_set">Row set with columns and values</option>
+                <option value="formatted_string">Pre-formatted display string</option>
+              </select>
+            </div>
+
+            <!-- Submit -->
+            <div style="text-align: center; margin-top: var(--space-6);">
+              <button class="btn btn--primary btn--large" onclick="checkExercise()">
+                Check My Answer
+              </button>
+            </div>
+
+            <!-- Result preview -->
+            <div class="terminal" id="exercisePreview" style="margin-top: var(--space-6);">
+              <div class="terminal__header">
+                <span class="terminal__dot terminal__dot--red"></span>
+                <span class="terminal__dot terminal__dot--yellow"></span>
+                <span class="terminal__dot terminal__dot--green"></span>
+                <span class="terminal__title">your_function_call.json</span>
+              </div>
+              <div class="terminal__body" id="exercisePreviewBody" style="color: #666;">
+// Select options above to build your function call...</div>
+            </div>
+
+            <!-- Feedback -->
+            <div class="exercise-result" id="exerciseResult"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <div class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="03-error-handling.html" class="page-nav__title">Error Handling</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="05-framework-landscape.html" class="page-nav__title">Framework Landscape</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+
+  <script>
+    // --- Page init ---
+    Nav.init('m1-tool-calling');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Evolving diagram
+      EvolvingDiagram.renderForPage('evolving-diagram', 'tool-calling');
+    });
+
+    // --- Checkbox toggle ---
+    function toggleCheckbox(el) {
+      el.classList.toggle('checked');
+      const svg = el.querySelector('svg');
+      if (svg) svg.style.display = el.classList.contains('checked') ? 'block' : 'none';
+      updatePreview();
+    }
+
+    // --- Live preview ---
+    function updatePreview() {
+      const tool = document.getElementById('exerciseTool').value;
+      const params = [];
+      document.querySelectorAll('.exercise-checkbox.checked').forEach(el => {
+        params.push(el.dataset.param);
+      });
+      const returnType = document.getElementById('exerciseReturn').value;
+
+      const preview = document.getElementById('exercisePreviewBody');
+      if (!tool && params.length === 0 && !returnType) {
+        preview.innerHTML = '<span style="color:#666;">// Select options above to build your function call...</span>';
+        return;
+      }
+
+      const paramMap = {
+        query: '"SELECT COUNT(*) AS order_count FROM orders\\n  WHERE order_date >= \'2025-12-01\'\\n  AND order_date < \'2026-01-01\'"',
+        search: '"orders december"',
+        timeout: '30000',
+        format: '"table"'
+      };
+
+      let paramStr = '';
+      if (params.length > 0) {
+        const entries = params.map(p => `    <span class="terminal__line--keyword">"${p}"</span>: <span class="terminal__line--string">${paramMap[p] || '...'}</span>`);
+        paramStr = `\n  <span class="terminal__line--keyword">"parameters"</span>: {\n${entries.join(',\n')}\n  }`;
+      }
+
+      preview.innerHTML = `{
+  <span class="terminal__line--keyword">"tool"</span>: <span class="terminal__line--string">"${tool || '...'}"</span>,${paramStr}${returnType ? `,\n  <span class="terminal__line--keyword">"expected_return"</span>: <span class="terminal__line--string">"${returnType}"</span>` : ''}
+}`;
+    }
+
+    // Update preview when selects change
+    document.getElementById('exerciseTool').addEventListener('change', updatePreview);
+    document.getElementById('exerciseReturn').addEventListener('change', updatePreview);
+
+    // --- Check exercise ---
+    function checkExercise() {
+      const tool = document.getElementById('exerciseTool').value;
+      const selectedParams = [];
+      document.querySelectorAll('.exercise-checkbox.checked').forEach(el => {
+        selectedParams.push(el.dataset.param);
+      });
+      const returnType = document.getElementById('exerciseReturn').value;
+
+      const resultEl = document.getElementById('exerciseResult');
+
+      // Correct answers
+      const correctTool = 'execute_query';
+      const correctParams = ['query'];  // Only query is required for execute_query
+      const correctReturn = 'row_set';
+
+      const toolCorrect = tool === correctTool;
+      const paramsCorrect = selectedParams.length === correctParams.length &&
+        correctParams.every(p => selectedParams.includes(p));
+      const returnCorrect = returnType === correctReturn;
+
+      const allCorrect = toolCorrect && paramsCorrect && returnCorrect;
+
+      if (allCorrect) {
+        resultEl.className = 'exercise-result show exercise-result--correct';
+        resultEl.innerHTML = '<strong>Correct!</strong> The agent needs <code>execute_query</code> with a <code>query</code> parameter containing a COUNT query filtered to December, returning a row set. Schema discovery would come first in a real multi-step flow, but for a direct call, this is the right tool.';
+      } else {
+        let feedback = '<strong>Not quite.</strong> Here\'s what to reconsider:<br>';
+        if (!toolCorrect) feedback += '&bull; <strong>Tool:</strong> We already know the table. We need to <em>execute</em> a query, not discover schemas or format results.<br>';
+        if (!paramsCorrect) feedback += '&bull; <strong>Parameters:</strong> The <code>execute_query</code> tool needs a <code>query</code> parameter with the SQL. Other params like search, timeout, and format belong to different tools.<br>';
+        if (!returnCorrect) feedback += '&bull; <strong>Return type:</strong> A query execution returns a row set (columns + data), not a table list or display string.<br>';
+        resultEl.className = 'exercise-result show exercise-result--incorrect';
+        resultEl.innerHTML = feedback;
+
+        // Shake the card
+        document.getElementById('exerciseCard').classList.add('shake');
+        setTimeout(() => document.getElementById('exerciseCard').classList.remove('shake'), 500);
+      }
+    }
+  </script>
+</body>
+</html>

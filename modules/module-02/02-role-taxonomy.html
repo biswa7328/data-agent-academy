@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Role Taxonomy — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Decision Flowchart --- */
+    .flowchart {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-8);
+      margin: var(--space-6) 0;
+    }
+    .flowchart__question {
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      color: var(--text-primary);
+      margin-bottom: var(--space-6);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .flowchart__step-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: center;
+      margin-bottom: var(--space-2);
+    }
+    .flowchart__buttons {
+      display: flex;
+      gap: var(--space-4);
+      justify-content: center;
+    }
+    .flowchart__btn {
+      padding: var(--space-3) var(--space-8);
+      border: 1.5px solid var(--stroke-primary);
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--stroke-primary);
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      min-width: 100px;
+    }
+    .flowchart__btn:hover {
+      background: rgba(161, 0, 255, 0.1);
+      box-shadow: 0 0 15px var(--glow-blue);
+      color: var(--text-primary);
+    }
+    .flowchart__btn--no {
+      border-color: var(--stroke-dim);
+      color: var(--text-secondary);
+    }
+    .flowchart__btn--no:hover {
+      border-color: var(--accent-warning);
+      color: var(--accent-warning);
+      box-shadow: 0 0 15px var(--glow-warning);
+    }
+    .flowchart__result {
+      text-align: center;
+      padding: var(--space-6);
+      border: 2px solid var(--stroke-secondary);
+      border-radius: var(--border-radius-lg);
+      background: rgba(204, 0, 255, 0.06);
+      margin-top: var(--space-4);
+    }
+    .flowchart__result-type {
+      font-family: var(--font-mono);
+      font-size: var(--font-2xl);
+      color: var(--stroke-secondary);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    .flowchart__result-desc {
+      color: var(--text-secondary);
+      font-size: var(--font-base);
+    }
+    .flowchart__trail {
+      margin-bottom: var(--space-6);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      justify-content: center;
+    }
+    .flowchart__trail-item {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      padding: var(--space-1) var(--space-3);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--border-radius);
+      color: var(--text-secondary);
+    }
+    .flowchart__trail-item--yes { border-color: var(--accent-success); color: var(--accent-success); }
+    .flowchart__trail-item--no { border-color: var(--accent-warning); color: var(--accent-warning); }
+
+    /* --- Scenario Quiz --- */
+    .scenario-quiz { margin: var(--space-6) 0; }
+    .scenario-card {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      margin-bottom: var(--space-4);
+      transition: border-color var(--transition-fast);
+    }
+    .scenario-card__question {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+      line-height: 1.6;
+    }
+    .scenario-card__number { color: var(--stroke-primary); margin-right: var(--space-2); }
+    .scenario-card__options { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+    .scenario-btn {
+      padding: var(--space-2) var(--space-4);
+      border: 1.5px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .scenario-btn:hover { border-color: var(--stroke-primary); color: var(--text-primary); background: rgba(74,158,255,0.05); }
+    .scenario-btn.selected { border-style: solid; border-color: var(--stroke-primary); color: var(--text-primary); background: rgba(74,158,255,0.1); }
+    .scenario-btn.correct { border-style: solid; border-color: var(--accent-success); color: var(--accent-success); background: rgba(16,185,129,0.1); }
+    .scenario-btn.incorrect { border-style: solid; border-color: var(--accent-error); color: var(--accent-error); background: rgba(239,68,68,0.1); }
+    .scenario-card__feedback { margin-top: var(--space-3); font-family: var(--font-mono); font-size: var(--font-sm); min-height: 1.5em; }
+    .scenario-score { text-align: center; margin-top: var(--space-6); font-family: var(--font-mono); font-size: var(--font-base); min-height: 1.5em; }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 02</span>
+        <span class="separator">/</span>
+        <span class="current">Role Taxonomy</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Evolving Diagram -->
+        <div class="evolving-diagram reveal" id="evolving-diagram-container" style="margin-top: var(--space-8);"></div>
+
+        <!-- ===== SECTION 1: Scene Setter ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Agent Specialization</span></div>
+          <h2 style="margin-bottom: var(--space-4);">Role Taxonomy</h2>
+          <p style="font-size: var(--font-lg); max-width: 700px;">
+            AcmeCorp realizes one agent isn't enough. Sales needs something different from data engineering.
+            Different problems call for <strong style="color: var(--stroke-primary);">different agent roles</strong>.
+          </p>
+        </section>
+
+        <!-- ===== SECTION 2: Three Roles ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>The Three Roles</span></div>
+          <h3 class="reveal" style="margin-bottom: var(--space-8);">Agent Archetypes</h3>
+
+          <div class="card-grid card-grid--3 stagger-children reveal">
+
+            <!-- Orchestrator -->
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">1</span>
+                Orchestrator
+              </div>
+              <div class="bp-card__body">
+                <p><strong style="color: var(--stroke-secondary);">Workflow coordinator.</strong> Delegates to sub-agents, manages handoffs, and ensures the pipeline completes end to end.</p>
+                <p style="color: var(--text-secondary); font-size: var(--font-sm);">
+                  <em>Like a wedding planner</em> &mdash; doesn't bake the cake or arrange the flowers, but makes sure everything happens in the right order.
+                </p>
+                <div class="callout" style="margin-bottom: 0;">
+                  <div class="callout__label">AcmeCorp</div>
+                  <div class="callout__text">Coordinates the pipeline: ingest, transform, validate, then generate the report.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Super Agent -->
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">2</span>
+                Super Agent
+              </div>
+              <div class="bp-card__body">
+                <p><strong style="color: var(--stroke-secondary);">Cross-domain generalist.</strong> Broad capabilities, can handle ambiguous requests by deciding what analysis is needed.</p>
+                <p style="color: var(--text-secondary); font-size: var(--font-sm);">
+                  <em>Like a management consultant</em> &mdash; assesses the situation, defines the approach, and marshals resources.
+                </p>
+                <div class="callout" style="margin-bottom: 0;">
+                  <div class="callout__label">AcmeCorp</div>
+                  <div class="callout__text">Handles "analyze our Q3 performance" &mdash; decides what data, what metrics, what format.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Utility Agent -->
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">3</span>
+                Utility Agent
+              </div>
+              <div class="bp-card__body">
+                <p><strong style="color: var(--stroke-secondary);">Single-purpose specialist.</strong> Fast, reliable, does one thing extremely well with minimal overhead.</p>
+                <p style="color: var(--text-secondary); font-size: var(--font-sm);">
+                  <em>Like a translator</em> &mdash; takes input in one form and converts it to another, consistently and quickly.
+                </p>
+                <div class="callout" style="margin-bottom: 0;">
+                  <div class="callout__label">AcmeCorp</div>
+                  <div class="callout__text"><code>sql_agent</code> &mdash; takes natural language, returns SQL, nothing else.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: Comparison Table ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Side-by-Side</span></div>
+          <h3 class="reveal" style="margin-bottom: var(--space-4);">Comparison Matrix</h3>
+
+          <div class="reveal" style="overflow-x: auto;">
+            <table class="bp-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Orchestrator</th>
+                  <th>Super Agent</th>
+                  <th>Utility Agent</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Scope</strong></td>
+                  <td>Cross-agent workflows</td>
+                  <td>Cross-domain analysis</td>
+                  <td>Single task / function</td>
+                </tr>
+                <tr>
+                  <td><strong>Decision Type</strong></td>
+                  <td>Routing & delegation</td>
+                  <td>Strategy & planning</td>
+                  <td>Execution & conversion</td>
+                </tr>
+                <tr>
+                  <td><strong>Complexity</strong></td>
+                  <td style="color: var(--accent-warning);">High</td>
+                  <td style="color: var(--accent-warning);">High</td>
+                  <td style="color: var(--accent-success);">Low</td>
+                </tr>
+                <tr>
+                  <td><strong>Latency</strong></td>
+                  <td>Variable (depends on sub-agents)</td>
+                  <td>Medium-High (multi-step reasoning)</td>
+                  <td style="color: var(--accent-success);">Low (fast, deterministic)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: AcmeCorp Callout ===== -->
+        <section class="section reveal">
+          <div class="callout">
+            <div class="callout__label">AcmeCorp in Practice</div>
+            <div class="callout__text">
+              In practice, AcmeCorp uses a <strong>Super Agent</strong> as the front door. It routes to <strong>Utility Agents</strong> for SQL generation, Shopify API calls, and report generation. An <strong>Orchestrator</strong> manages the nightly data pipeline that feeds them all.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: Decision Flowchart ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Interactive Flowchart</span></div>
+          <h3 class="reveal" style="margin-bottom: var(--space-3);">Which Agent Type Do You Need?</h3>
+          <p class="reveal" style="margin-bottom: var(--space-6);">Answer a few questions and get a recommendation.</p>
+
+          <div class="flowchart reveal" id="flowchart-container">
+            <!-- Rendered by JS -->
+          </div>
+        </section>
+
+        <!-- ===== SECTION 6: Scenario Quiz ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Knowledge Check</span></div>
+          <h3 class="reveal" style="margin-bottom: var(--space-3);">AcmeCorp Scenario Match</h3>
+          <p class="reveal" style="margin-bottom: var(--space-6);">For each scenario, pick the correct agent type.</p>
+
+          <div class="scenario-quiz reveal" id="scenario-quiz">
+            <!-- Rendered by JS -->
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="01-agent-anatomy.html" class="page-nav__title">Agent Anatomy</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="03-langgraph-patterns.html" class="page-nav__title">LangGraph Patterns</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+
+  <script>
+    // ============================================
+    //  Decision Flowchart
+    // ============================================
+    const Flowchart = {
+      steps: [
+        { id: 'q1', question: 'Does the task require coordinating multiple sub-agents or services?', yes: 'r-orchestrator', no: 'q2' },
+        { id: 'q2', question: 'Does the task span multiple domains or require strategic planning?', yes: 'r-super', no: 'q3' },
+        { id: 'q3', question: 'Is the task well-defined with a single, clear input/output?', yes: 'r-utility', no: 'r-super' }
+      ],
+      results: {
+        'r-orchestrator': { type: 'Orchestrator', desc: 'You need a workflow coordinator to delegate and manage sub-agents.' },
+        'r-super': { type: 'Super Agent', desc: 'You need a cross-domain generalist that can plan and adapt to ambiguous requests.' },
+        'r-utility': { type: 'Utility Agent', desc: 'You need a fast, single-purpose specialist for this well-defined task.' }
+      },
+      current: 'q1',
+      trail: [],
+
+      init() { this.current = 'q1'; this.trail = []; this.render(); },
+
+      answer(isYes) {
+        const step = this.steps.find(s => s.id === this.current);
+        if (!step) return;
+        this.trail.push({ question: step.question, answer: isYes ? 'Yes' : 'No' });
+        this.current = isYes ? step.yes : step.no;
+        this.render();
+      },
+
+      render() {
+        const container = document.getElementById('flowchart-container');
+        if (this.results[this.current]) {
+          const r = this.results[this.current];
+          let html = '';
+          if (this.trail.length > 0) {
+            html += '<div class="flowchart__trail">';
+            this.trail.forEach(t => { const cls = t.answer === 'Yes' ? 'flowchart__trail-item--yes' : 'flowchart__trail-item--no'; html += `<span class="flowchart__trail-item ${cls}">${t.answer}</span>`; });
+            html += '</div>';
+          }
+          html += `<div class="flowchart__result"><div class="flowchart__result-type">${r.type}</div><div class="flowchart__result-desc">${r.desc}</div></div><div style="text-align: center; margin-top: var(--space-6);"><button class="btn" onclick="Flowchart.init()">Try Again</button></div>`;
+          container.innerHTML = html;
+          return;
+        }
+        const step = this.steps.find(s => s.id === this.current);
+        let html = '';
+        if (this.trail.length > 0) {
+          html += '<div class="flowchart__trail">';
+          this.trail.forEach(t => { const cls = t.answer === 'Yes' ? 'flowchart__trail-item--yes' : 'flowchart__trail-item--no'; html += `<span class="flowchart__trail-item ${cls}">${t.answer}</span>`; });
+          html += '</div>';
+        }
+        html += `<div class="flowchart__step-label">Question ${this.trail.length + 1}</div><div class="flowchart__question">${step.question}</div><div class="flowchart__buttons"><button class="flowchart__btn" onclick="Flowchart.answer(true)">Yes</button><button class="flowchart__btn flowchart__btn--no" onclick="Flowchart.answer(false)">No</button></div>`;
+        container.innerHTML = html;
+      }
+    };
+
+    // ============================================
+    //  Scenario Quiz
+    // ============================================
+    const ScenarioQuiz = {
+      scenarios: [
+        { question: 'AcmeCorp needs an agent that takes a plain English question and returns a SQL query. Nothing else.', correct: 'utility', explanation: 'A single-purpose, well-defined input/output task is a classic Utility Agent.' },
+        { question: 'The nightly batch pipeline must ingest data from Shopify, run dbt transforms, validate output, and trigger a Slack notification. Multiple systems are involved.', correct: 'orchestrator', explanation: 'Coordinating multiple services in a pipeline is the Orchestrator\'s job.' },
+        { question: '"Analyze our Q3 performance and recommend actions." The agent needs to figure out what data to pull, what metrics matter, and how to present results.', correct: 'super', explanation: 'Ambiguous, cross-domain strategy work is the Super Agent\'s strength.' },
+        { question: 'AcmeCorp wants an agent that converts CSV uploads into standardized Parquet files with schema validation.', correct: 'utility', explanation: 'A clear, single-purpose conversion task fits the Utility Agent role.' }
+      ],
+      answers: {},
+      submitted: false,
+
+      init() { this.answers = {}; this.submitted = false; this.render(); },
+
+      select(idx, type) {
+        if (this.submitted) return;
+        this.answers[idx] = type;
+        this.render();
+        if (Object.keys(this.answers).length === this.scenarios.length) {
+          setTimeout(() => { this.submitted = true; this.render(); }, 300);
+        }
+      },
+
+      render() {
+        const container = document.getElementById('scenario-quiz');
+        const types = ['orchestrator', 'super', 'utility'];
+        const typeLabels = { orchestrator: 'Orchestrator', super: 'Super Agent', utility: 'Utility Agent' };
+        let html = '';
+        this.scenarios.forEach((s, idx) => {
+          html += `<div class="scenario-card"><div class="scenario-card__question"><span class="scenario-card__number">S${idx + 1}.</span> ${s.question}</div><div class="scenario-card__options">`;
+          types.forEach(t => {
+            let cls = 'scenario-btn';
+            if (this.submitted) { if (t === s.correct) cls += ' correct'; else if (this.answers[idx] === t && t !== s.correct) cls += ' incorrect'; }
+            else if (this.answers[idx] === t) { cls += ' selected'; }
+            html += `<button class="${cls}" onclick="ScenarioQuiz.select(${idx}, '${t}')">${typeLabels[t]}</button>`;
+          });
+          html += '</div>';
+          if (this.submitted) {
+            const isCorrect = this.answers[idx] === s.correct;
+            const color = isCorrect ? 'var(--accent-success)' : 'var(--accent-error)';
+            const icon = isCorrect ? '&#10003;' : '&#10007;';
+            html += `<div class="scenario-card__feedback" style="color: ${color};">${icon} ${s.explanation}</div>`;
+          }
+          html += '</div>';
+        });
+        if (this.submitted) {
+          let correct = 0;
+          this.scenarios.forEach((s, idx) => { if (this.answers[idx] === s.correct) correct++; });
+          html += `<div class="scenario-score"><span style="color: var(--stroke-primary); font-size: var(--font-2xl); font-weight: 600;">${correct}/${this.scenarios.length}</span><span style="color: var(--text-secondary);"> scenarios matched correctly</span></div><div style="text-align: center; margin-top: var(--space-4);"><button class="btn" onclick="ScenarioQuiz.init()">Try Again</button></div>`;
+        }
+        container.innerHTML = html;
+      }
+    };
+
+    // --- Init ---
+    Nav.init('m02-role-taxonomy');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      EvolvingDiagram.renderForPage('evolving-diagram-container', 'role-taxonomy');
+      Flowchart.init();
+      ScenarioQuiz.init();
+    });
+  </script>
+</body>
+</html>

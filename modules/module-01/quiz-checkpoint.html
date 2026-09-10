@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Checkpoint — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Celebration Section --- */
+    .celebration {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      margin-top: var(--space-8);
+      background: var(--bg-surface);
+      border: 2px solid var(--stroke-secondary);
+      border-radius: var(--border-radius-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .celebration::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary), var(--accent-success));
+    }
+    .celebration__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--stroke-secondary);
+      margin-bottom: var(--space-6);
+      font-size: var(--font-4xl);
+      box-shadow: 0 0 30px var(--glow-teal);
+    }
+    .celebration__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+    }
+    .celebration__subtitle {
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .celebration__next {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-8);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      background: var(--bg-primary);
+      margin-top: var(--space-4);
+    }
+    .celebration__next-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .celebration__next-title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--stroke-dim);
+    }
+
+    /* --- Stats Row --- */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+    }
+    .stat-box__value {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-2);
+    }
+    .stat-box__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 640px) {
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M9 21V9"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <a href="01-five-layer-arch.html">Module 01</a>
+        <span class="separator">/</span>
+        <span class="current">Quiz Checkpoint</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Module 01 &mdash; Quiz Checkpoint</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Knowledge Checkpoint</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            You've completed all 11 lessons and 2 simulations. Time to test your knowledge. 13 questions covering everything in Module 01.
+          </p>
+
+          <!-- Stats -->
+          <div class="stats-row reveal">
+            <div class="stat-box">
+              <div class="stat-box__value">11</div>
+              <div class="stat-box__label">Topics Covered</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">2</div>
+              <div class="stat-box__label">Simulations Completed</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">13</div>
+              <div class="stat-box__label">Questions Ahead</div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">How It Works</div>
+            <div class="callout__text">
+              Select one answer per question. Once all 13 are answered, click "Check Answers" to see your score with detailed explanations. You need 80% (11/13) for an excellent rating.
+            </div>
+          </div>
+        </section>
+
+        <!-- Quiz Container -->
+        <section class="section">
+          <div id="quiz-container"></div>
+        </section>
+
+        <!-- Celebration (shown via JS after quiz submission) -->
+        <div id="celebration-section" class="reveal" style="display: none;">
+          <div class="celebration">
+            <div class="celebration__badge">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="celebration__title">Module 01 Complete</div>
+            <p class="celebration__subtitle">
+              You've mastered the architecture foundations of Data Agents &mdash; from the five-layer architecture to LangGraph patterns and the ReAct loop.
+            </p>
+            <a href="../module-02/01-agent-anatomy.html" class="btn btn--primary btn--large">
+              Continue to Module 02 &rarr;
+            </a>
+            <div class="celebration__next">
+              <div>
+                <div class="celebration__next-label">Up Next</div>
+                <div class="celebration__next-title">Module 02 &mdash; Agent Anatomy &amp; Reasoning</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="07-advanced-tool-use.html" class="page-nav__title">Advanced Tool Use</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../module-02/01-agent-anatomy.html" class="page-nav__title">Module 02: Agent Anatomy</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Architecture & Design Foundations Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Quiz Questions: Module 1 Quiz Checkpoint ---
+    const questions = [
+      {
+        question: 'Which layer of the five-layer architecture is responsible for PII masking and rate limiting?',
+        options: [
+          'Agent Runtime',
+          'Tool Layer',
+          'Data & Context',
+          'Guardrails'
+        ],
+        correct: 3,
+        explanation: 'Guardrails (Layer 4) handle safety — PII masking, rate limiting, access control, and query validation all live in this layer.'
+      },
+      {
+        question: 'What\'s the primary risk of designing a single do_everything() tool?',
+        options: [
+          'It\'s too slow',
+          'The LLM can\'t reason about when to use it',
+          'It costs more',
+          'It needs more memory'
+        ],
+        correct: 1,
+        explanation: 'The LLM decides tool usage based on descriptions. A vague, overloaded tool leads to incorrect invocations and hallucinated parameters.'
+      },
+      {
+        question: 'Which error handling strategy is appropriate for a "database busy" error?',
+        options: [
+          'Return error to user',
+          'Exponential backoff retry',
+          'Deny with explanation',
+          'Suggest alternatives'
+        ],
+        correct: 1,
+        explanation: 'Transient errors like "database busy" may succeed on retry. Exponential backoff prevents hammering the database while giving it time to recover.'
+      },
+      {
+        question: 'In the circuit breaker pattern, what happens after 5 failures in 60 seconds?',
+        options: [
+          'Retry faster',
+          'Circuit opens — fast-fail all requests',
+          'Reset counter',
+          'Alert the user'
+        ],
+        correct: 1,
+        explanation: 'When failure threshold is exceeded, the circuit enters OPEN state — all requests fast-fail immediately without attempting the tool call, preventing cascade failures.'
+      },
+      {
+        question: 'Why is the Evaluation layer important in production?',
+        options: [
+          'It makes the agent faster',
+          'It tracks cost and quality metrics',
+          'It replaces guardrails',
+          'It stores user data'
+        ],
+        correct: 1,
+        explanation: 'The Evaluation layer (Layer 5) measures query accuracy, tracks cost per interaction, monitors latency, and enables data-driven continuous improvement.'
+      },
+      // --- Tool Calling (Lesson 04) ---
+      {
+        question: 'What does the LLM actually emit during a tool call?',
+        options: [
+          'Executable code',
+          'A structured JSON request',
+          'A natural language command',
+          'A direct database query'
+        ],
+        correct: 1,
+        explanation: 'The LLM emits a structured JSON declaration of intent — tool name and parameters. The agent runtime executes it, not the LLM itself.'
+      },
+      {
+        question: 'In a typical AcmeCorp agent response, how many tool-calling iterations are involved?',
+        options: [
+          'Always exactly one',
+          'Zero — the LLM answers directly from training data',
+          'Multiple iterations, each building on previous results',
+          'Depends on the user\'s subscription tier'
+        ],
+        correct: 2,
+        explanation: 'Real-world agent responses involve multiple tool-calling iterations — schema discovery, query building, validation, and result formatting each require separate tool calls that build on each other.'
+      },
+      // --- Framework Landscape (Lesson 05) ---
+      {
+        question: 'Which framework is best suited for complex stateful workflows with retry loops and human-in-the-loop checkpoints?',
+        options: [
+          'CrewAI',
+          'AutoGen',
+          'LangGraph',
+          'OpenAI Agents SDK'
+        ],
+        correct: 2,
+        explanation: 'LangGraph uses graph-first state machines with explicit versioned state and the strongest production tooling (LangSmith). It excels at complex stateful workflows with conditional branching, retry loops, and human-in-the-loop checkpoints.'
+      },
+      {
+        question: 'What is the main trade-off of using AutoGen for multi-agent coordination?',
+        options: [
+          'No support for Azure or cloud environments',
+          'Conversation-based coordination can be unpredictable and uses higher tokens',
+          'Cannot run agents in parallel',
+          'Requires LangGraph as an underlying dependency'
+        ],
+        correct: 1,
+        explanation: 'AutoGen\'s conversational multi-agent model is powerful for collaborative reasoning but can be unpredictable — agents may loop or over-debate — and the message-passing approach typically uses more tokens than graph-based frameworks.'
+      },
+      // --- Alternative Reasoning (Lesson 06) ---
+      {
+        question: 'Which reasoning pattern generates multiple candidate approaches simultaneously and prunes the least promising ones?',
+        options: [
+          'ReAct',
+          'Plan-and-Execute',
+          'Tree-of-Thought',
+          'Reflexion'
+        ],
+        correct: 2,
+        explanation: 'Tree-of-Thought generates a branching tree of reasoning paths, evaluates each with a critic, pursues the most promising branch, and prunes dead ends. Best for complex analytical problems with multiple valid approaches — but costs 3–5x more tokens than ReAct.'
+      },
+      {
+        question: 'A data agent fails its first attempt at root cause analysis, explicitly critiques its own output, then retries with those insights. Which pattern is this?',
+        options: [
+          'ReAct',
+          'Plan-and-Execute',
+          'Tree-of-Thought',
+          'Reflexion'
+        ],
+        correct: 3,
+        explanation: 'Reflexion follows an Execute → Reflect → Learn → Retry cycle. The agent\'s self-critique produces explicit learning insights that inform the next attempt — ideal for debugging and iterative investigation.'
+      },
+      // --- Advanced Tool Use (Lesson 07) ---
+      {
+        question: 'AcmeCorp reduced SQL formatting errors from 25% to under 3% using which technique?',
+        options: [
+          'Tool Search',
+          'Programmatic tool calling',
+          'Few-shot examples in tool definitions',
+          'MCP lazy loading'
+        ],
+        correct: 2,
+        explanation: 'Adding 2–3 few-shot examples (200–400 tokens) to tool definitions dropped SQL formatting errors from 25% to under 3%. Examples show the agent exactly what correct input/output looks like, eliminating ambiguity far more effectively than description text alone.'
+      },
+      {
+        question: 'What is the primary benefit of programmatic tool calling over one-at-a-time LLM-decided calls?',
+        options: [
+          'Better accuracy on each individual call',
+          'The agent writes a code block handling many calls at once — drastically reducing time and token cost',
+          'Simpler error handling with no retries needed',
+          'Works without requiring any framework'
+        ],
+        correct: 1,
+        explanation: 'Programmatic tool calling lets the agent write a single code block with loops and conditionals instead of 200 separate LLM reasoning cycles. AcmeCorp\'s 200-store data quality check dropped from 10 minutes to 15 seconds and from 400K to 2K tokens.'
+      }
+    ];
+
+    // Initialize
+    Nav.init('m1-quiz-final');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      QuizEngine.init('quiz-container', questions);
+
+      // Override submit to show celebration section
+      const originalSubmit = QuizEngine.submit.bind(QuizEngine);
+      QuizEngine.submit = function(containerId) {
+        originalSubmit(containerId);
+        const state = this.activeQuizzes[containerId];
+        if (state && state.submitted) {
+          const celebSection = document.getElementById('celebration-section');
+          if (celebSection) {
+            celebSection.style.display = 'block';
+            requestAnimationFrame(() => {
+              celebSection.classList.add('visible');
+              celebSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+          }
+        }
+      };
+    });
+  </script>
+</body>
+</html>

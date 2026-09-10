@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alternative Reasoning Patterns &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Pattern Flow Diagram --- */
+    .pattern-flow {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-4);
+      background: var(--bg-primary);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin: var(--space-4) 0;
+      overflow-x: auto;
+      flex-wrap: wrap;
+    }
+    .pattern-flow__step {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--border-radius);
+      white-space: nowrap;
+      border: 1px solid;
+    }
+    .pattern-flow__step--think {
+      background: rgba(161, 0, 255, 0.12);
+      color: var(--stroke-primary);
+      border-color: rgba(161, 0, 255, 0.3);
+    }
+    .pattern-flow__step--act {
+      background: rgba(204, 0, 255, 0.12);
+      color: var(--stroke-secondary);
+      border-color: rgba(204, 0, 255, 0.3);
+    }
+    .pattern-flow__step--observe {
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--accent-warning);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+    .pattern-flow__step--reflect {
+      background: rgba(168, 85, 247, 0.12);
+      color: #a855f7;
+      border-color: rgba(168, 85, 247, 0.3);
+    }
+    .pattern-flow__arrow {
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      font-size: var(--font-sm);
+      flex-shrink: 0;
+    }
+
+    /* --- Comparison Table --- */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      margin: var(--space-6) 0;
+    }
+    .compare-table th,
+    .compare-table td {
+      padding: var(--space-3) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      text-align: left;
+      vertical-align: top;
+    }
+    .compare-table th {
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+    .compare-table tr:hover td {
+      background: var(--bg-surface);
+    }
+
+    /* --- Scenario Cards --- */
+    .scenario-card {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5) var(--space-6);
+      margin-bottom: var(--space-4);
+      transition: border-color var(--transition-base);
+    }
+    .scenario-card:hover {
+      border-color: var(--stroke-primary);
+    }
+    .scenario-card__query {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--stroke-primary);
+      padding: var(--space-2) var(--space-3);
+      background: rgba(161, 0, 255, 0.08);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--space-3);
+      display: inline-block;
+    }
+    .scenario-card__pattern {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-2);
+    }
+
+    @media (max-width: 768px) {
+      .compare-table { font-size: var(--font-xs); }
+      .compare-table th, .compare-table td { padding: var(--space-2); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a><span class="separator">/</span>
+        <span>Module 01</span><span class="separator">/</span>
+        <span class="current">Alternative Reasoning</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 02 &mdash; Lesson 06</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Alternative Reasoning Patterns</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            ReAct is the default, but it's not the only way agents can think. Four distinct reasoning patterns serve different problem types &mdash; and production systems often combine them.
+          </p>
+        </header>
+
+        <!-- Blueprint Diagram: Reasoning Patterns -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">REASONING PATTERNS</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+            <defs>
+              <filter id="glow10">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <marker id="arrowBlue10" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#A100FF"/>
+              </marker>
+              <marker id="arrowTeal10" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#CC00FF"/>
+              </marker>
+              <marker id="arrowAmber10" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
+              </marker>
+              <marker id="arrowGreen10" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+              </marker>
+            </defs>
+
+            <!-- Background -->
+            <rect width="700" height="380" rx="8" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-dasharray="4,4"/>
+
+            <!-- Quadrant dividers -->
+            <line x1="350" y1="20" x2="350" y2="340" stroke="#1e293b" stroke-dasharray="3,5"/>
+            <line x1="20" y1="180" x2="680" y2="180" stroke="#1e293b" stroke-dasharray="3,5"/>
+
+            <!-- ===== Top-Left: ReAct (circular, blue) ===== -->
+            <rect x="20" y="20" width="320" height="155" rx="6" fill="none" stroke="#334155" stroke-dasharray="4,4"/>
+            <text x="35" y="42" fill="#A100FF" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700">ReAct</text>
+
+            <!-- Circular flow: Think -> Act -> Observe -> loop -->
+            <rect x="55" y="65" width="70" height="32" rx="5" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-dasharray="3,2"/>
+            <text x="90" y="85" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="10">Think</text>
+
+            <line x1="125" y1="81" x2="150" y2="81" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue10)"/>
+
+            <rect x="155" y="65" width="70" height="32" rx="5" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-dasharray="3,2"/>
+            <text x="190" y="85" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="10">Act</text>
+
+            <line x1="225" y1="81" x2="250" y2="81" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue10)"/>
+
+            <rect x="255" y="65" width="70" height="32" rx="5" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-dasharray="3,2"/>
+            <text x="290" y="85" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="10">Observe</text>
+
+            <!-- Loop arrow back from Observe to Think -->
+            <path d="M 290 97 C 290 135, 90 135, 90 97" fill="none" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrowBlue10)"/>
+            <text x="190" y="148" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">loop until done</text>
+
+            <!-- ===== Top-Right: Plan-and-Execute (linear, teal) ===== -->
+            <rect x="360" y="20" width="320" height="155" rx="6" fill="none" stroke="#334155" stroke-dasharray="4,4"/>
+            <text x="375" y="42" fill="#CC00FF" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700">Plan-and-Execute</text>
+
+            <!-- Plan box -->
+            <rect x="380" y="60" width="80" height="40" rx="5" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-dasharray="3,2"/>
+            <text x="420" y="78" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="9" font-weight="600">PLAN</text>
+            <text x="420" y="91" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="7">(full plan)</text>
+
+            <line x1="460" y1="80" x2="480" y2="80" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#arrowTeal10)"/>
+
+            <!-- Steps -->
+            <rect x="485" y="60" width="55" height="30" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-dasharray="3,2"/>
+            <text x="512" y="79" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="8">Step 1</text>
+
+            <line x1="540" y1="75" x2="555" y2="75" stroke="#CC00FF" stroke-width="1" marker-end="url(#arrowTeal10)"/>
+
+            <rect x="560" y="60" width="55" height="30" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-dasharray="3,2"/>
+            <text x="587" y="79" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="8">Step 2</text>
+
+            <line x1="615" y1="75" x2="630" y2="75" stroke="#CC00FF" stroke-width="1" marker-end="url(#arrowTeal10)"/>
+
+            <rect x="635" y="60" width="35" height="30" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-dasharray="3,2"/>
+            <text x="652" y="79" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">S3</text>
+
+            <text x="540" y="120" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">sequential execution</text>
+
+            <!-- ===== Bottom-Left: Tree-of-Thought (tree, amber) ===== -->
+            <rect x="20" y="185" width="320" height="150" rx="6" fill="none" stroke="#334155" stroke-dasharray="4,4"/>
+            <text x="35" y="207" fill="#f59e0b" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700">Tree-of-Thought</text>
+
+            <!-- Root -->
+            <circle cx="90" cy="270" r="12" fill="rgba(245,158,11,0.15)" stroke="#f59e0b" stroke-dasharray="3,2"/>
+            <text x="90" y="274" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="8">R</text>
+
+            <!-- Level 1 branches -->
+            <line x1="102" y1="265" x2="150" y2="240" stroke="#f59e0b" stroke-width="1"/>
+            <line x1="102" y1="270" x2="150" y2="270" stroke="#f59e0b" stroke-width="1"/>
+            <line x1="102" y1="275" x2="150" y2="300" stroke="#f59e0b" stroke-width="1"/>
+
+            <circle cx="158" cy="240" r="8" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-dasharray="2,2"/>
+            <circle cx="158" cy="270" r="8" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-dasharray="2,2"/>
+            <circle cx="158" cy="300" r="8" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-dasharray="2,2"/>
+
+            <!-- Level 2 branches from top -->
+            <line x1="166" y1="237" x2="210" y2="225" stroke="#334155" stroke-width="1"/>
+            <line x1="166" y1="243" x2="210" y2="250" stroke="#10b981" stroke-width="1.5"/>
+            <circle cx="218" cy="225" r="6" fill="rgba(51,65,81,0.3)" stroke="#334155" stroke-dasharray="2,2"/>
+            <circle cx="218" cy="250" r="6" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1.5"/>
+            <text x="234" y="254" fill="#10b981" font-family="JetBrains Mono,monospace" font-size="8" font-weight="600">BEST</text>
+
+            <!-- Level 2 branches from middle -->
+            <line x1="166" y1="267" x2="210" y2="260" stroke="#334155" stroke-width="1"/>
+            <line x1="166" y1="273" x2="210" y2="280" stroke="#334155" stroke-width="1"/>
+            <circle cx="218" cy="260" r="6" fill="rgba(51,65,81,0.3)" stroke="#334155" stroke-dasharray="2,2"/>
+            <circle cx="218" cy="280" r="6" fill="rgba(51,65,81,0.3)" stroke="#334155" stroke-dasharray="2,2"/>
+
+            <!-- Level 2 branches from bottom -->
+            <line x1="166" y1="297" x2="210" y2="295" stroke="#334155" stroke-width="1"/>
+            <line x1="166" y1="303" x2="210" y2="310" stroke="#334155" stroke-width="1"/>
+            <circle cx="218" cy="295" r="6" fill="rgba(51,65,81,0.3)" stroke="#334155" stroke-dasharray="2,2"/>
+            <circle cx="218" cy="310" r="6" fill="rgba(51,65,81,0.3)" stroke="#334155" stroke-dasharray="2,2"/>
+
+            <text x="180" y="328" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">evaluate &amp; prune branches</text>
+
+            <!-- ===== Bottom-Right: Reflexion (loop, green) ===== -->
+            <rect x="360" y="185" width="320" height="150" rx="6" fill="none" stroke="#334155" stroke-dasharray="4,4"/>
+            <text x="375" y="207" fill="#10b981" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700">Reflexion</text>
+
+            <!-- Act -->
+            <rect x="385" y="230" width="60" height="28" rx="5" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-dasharray="3,2"/>
+            <text x="415" y="248" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="9">Act</text>
+
+            <line x1="445" y1="244" x2="470" y2="244" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowGreen10)"/>
+
+            <!-- Evaluate -->
+            <rect x="475" y="230" width="70" height="28" rx="5" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-dasharray="3,2"/>
+            <text x="510" y="248" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="9">Evaluate</text>
+
+            <line x1="545" y1="244" x2="575" y2="244" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowGreen10)"/>
+
+            <!-- Reflect -->
+            <rect x="580" y="230" width="65" height="28" rx="5" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-dasharray="3,2"/>
+            <text x="612" y="248" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="9">Reflect</text>
+
+            <!-- Loop arrow: Reflect -> back to Act, with "memory" label -->
+            <path d="M 612 258 C 612 300, 415 300, 415 258" fill="none" stroke="#10b981" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrowGreen10)"/>
+            <text x="513" y="296" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8">&#x2191; memory</text>
+            <text x="513" y="310" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">retry with insight</text>
+
+            <!-- Center Diamond: CHOOSE BY TASK TYPE -->
+            <polygon points="350,155 395,180 350,205 305,180" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,3" filter="url(#glow10)"/>
+            <text x="350" y="177" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7" font-weight="600">CHOOSE BY</text>
+            <text x="350" y="188" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono,monospace" font-size="7" font-weight="700">TASK TYPE</text>
+
+            <!-- Bottom border label -->
+            <text x="350" y="370" text-anchor="middle" fill="#334155" font-family="JetBrains Mono,monospace" font-size="8">REASONING PATTERN SELECTION MATRIX</text>
+          </svg>
+        </div>
+
+        <!-- ===== SECTION: The Four Patterns ===== -->
+        <section class="section">
+          <div class="section-label reveal">Core Patterns</div>
+          <h2 class="reveal">Four Ways Agents Reason</h2>
+
+          <!-- 1. ReAct -->
+          <div class="bp-card reveal">
+            <div class="bp-card__number">01</div>
+            <div class="bp-card__title">ReAct (Reason + Act)</div>
+            <div class="bp-card__body">
+              <div class="pattern-flow">
+                <span class="pattern-flow__step pattern-flow__step--think">Think</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--act">Act</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--observe">Observe</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--think">Repeat</span>
+              </div>
+              <p><strong>How it works:</strong> The agent reasons about what to do, takes an action (tool call), observes the result, then decides the next step. This cycle repeats until the agent has enough information to respond.</p>
+              <p><strong>Best for:</strong> General-purpose tool-use tasks. Data lookups, API calls, question-answering with retrieval. The bread and butter of most production agents.</p>
+              <p><strong>Weakness:</strong> Can get stuck in loops &mdash; retrying the same failed approach repeatedly. No explicit planning phase means the agent may take inefficient paths through complex multi-step problems.</p>
+              <div class="tag-row">
+                <span class="badge badge--blue" data-tip="ReAct handles most tool-use tasks without specialized planning">General Purpose</span>
+                <span class="badge badge--green" data-tip="Single reasoning path per step keeps token usage minimal">Low Cost</span>
+                <span class="badge badge--amber" data-tip="Can retry the same failed approach without recognizing the pattern">Loop Risk</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Plan-and-Execute -->
+          <div class="bp-card reveal">
+            <div class="bp-card__number">02</div>
+            <div class="bp-card__title">Plan-and-Execute</div>
+            <div class="bp-card__body">
+              <div class="pattern-flow">
+                <span class="pattern-flow__step pattern-flow__step--think">Plan (Full)</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--act">Execute Step 1</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--act">Execute Step 2</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--observe">...</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--think">Replan?</span>
+              </div>
+              <p><strong>How it works:</strong> A Planner LLM creates a complete step-by-step plan before any execution begins. An Executor LLM (often a smaller, cheaper model) carries out each step. After execution, the planner can optionally revise the remaining plan based on results.</p>
+              <p><strong>Best for:</strong> Complex multi-step workflows where the path needs to be coordinated upfront &mdash; generating reports, running multi-stage analyses, building dashboards. The explicit plan provides transparency and predictability.</p>
+              <p><strong>Weakness:</strong> Rigid. The initial plan may not account for surprises. Replanning adds latency. If the planner misunderstands the task, every execution step carries the error forward.</p>
+              <div class="tag-row">
+                <span class="badge badge--blue" data-tip="Best suited for multi-step tasks requiring coordinated execution">Complex Workflows</span>
+                <span class="badge badge--teal" data-tip="Explicit upfront plan makes execution transparent and auditable">Predictable</span>
+                <span class="badge badge--amber" data-tip="Initial plan may not adapt well to unexpected results mid-execution">Rigid Plans</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Tree-of-Thought -->
+          <div class="bp-card reveal">
+            <div class="bp-card__number">03</div>
+            <div class="bp-card__title">Tree-of-Thought (ToT)</div>
+            <div class="bp-card__body">
+              <div class="pattern-flow">
+                <span class="pattern-flow__step pattern-flow__step--think">Generate 3 Paths</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--observe">Evaluate Each</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--act">Pursue Best</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--think">Branch Again?</span>
+              </div>
+              <p><strong>How it works:</strong> Instead of following a single reasoning path, the agent generates multiple candidate approaches simultaneously. Each path is evaluated (often by the same LLM acting as a critic), and the most promising path is pursued further. Unsuccessful paths are pruned. This creates a tree structure of explored reasoning.</p>
+              <p><strong>Best for:</strong> Complex analytical problems where multiple valid approaches exist. Root cause analysis, optimization problems, strategic planning. The breadth of exploration often finds better solutions than single-path reasoning.</p>
+              <p><strong>Weakness:</strong> Expensive. Generating and evaluating multiple paths multiplies token usage by 3-5x compared to ReAct. Latency increases significantly. Only justified for high-value decisions where solution quality matters more than speed or cost.</p>
+              <div class="tag-row">
+                <span class="badge badge--blue" data-tip="Explores multiple reasoning paths to find the optimal solution">High-Value Decisions</span>
+                <span class="badge badge--teal" data-tip="Breadth of exploration typically yields better solutions than single-path">Best Quality</span>
+                <span class="badge badge--amber" data-tip="Generating and evaluating multiple paths multiplies token usage 3-5x">High Cost</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Reflexion -->
+          <div class="bp-card reveal">
+            <div class="bp-card__number">04</div>
+            <div class="bp-card__title">Reflexion</div>
+            <div class="bp-card__body">
+              <div class="pattern-flow">
+                <span class="pattern-flow__step pattern-flow__step--act">Execute</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--reflect">Reflect</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--think">Learn</span>
+                <span class="pattern-flow__arrow">&rarr;</span>
+                <span class="pattern-flow__step pattern-flow__step--act">Retry</span>
+              </div>
+              <p><strong>How it works:</strong> The agent executes a task, then explicitly reflects on the result: What worked? What failed? What should be different next time? This self-critique produces a concrete learning insight that informs the next attempt. Unlike simple retry, Reflexion creates genuine self-improvement loops.</p>
+              <p><strong>Best for:</strong> Tasks where learning from failure materially improves results. Debugging code, investigating anomalies, iterating on data analysis. The reflection step transforms failures from dead ends into stepping stones.</p>
+              <p><strong>Weakness:</strong> Higher latency due to the reflection overhead on every iteration. The reflection quality depends on the LLM's self-assessment capability. Can over-correct if the reflection misdiagnoses the failure.</p>
+              <div class="tag-row">
+                <span class="badge badge--blue" data-tip="Ideal for debugging, anomaly analysis, and iterative data exploration">Investigation</span>
+                <span class="badge badge--teal" data-tip="Explicit self-critique transforms failures into actionable learning">Self-Improving</span>
+                <span class="badge badge--amber" data-tip="Reflection overhead adds latency on every iteration cycle">Higher Latency</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION: When to Use What ===== -->
+        <section class="section">
+          <div class="section-label reveal">Comparison</div>
+          <h2 class="reveal">When to Use Each Pattern</h2>
+
+          <div style="overflow-x: auto;" class="reveal reveal--delay-1">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Pattern</th>
+                  <th>Best For</th>
+                  <th>Avoid When</th>
+                  <th>Cost</th>
+                  <th>Latency</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>ReAct</strong></td>
+                  <td>General tool-use, data lookups, simple Q&amp;A</td>
+                  <td>Complex multi-step tasks with dependencies</td>
+                  <td>Low</td>
+                  <td>Low</td>
+                </tr>
+                <tr>
+                  <td><strong>Plan-and-Execute</strong></td>
+                  <td>Reports, multi-stage analyses, coordinated workflows</td>
+                  <td>Dynamic tasks where the path can't be predicted</td>
+                  <td>Medium</td>
+                  <td>Medium</td>
+                </tr>
+                <tr>
+                  <td><strong>Tree-of-Thought</strong></td>
+                  <td>Root cause analysis, optimization, strategic decisions</td>
+                  <td>Simple lookups, cost-sensitive operations</td>
+                  <td>High (3-5x)</td>
+                  <td>High</td>
+                </tr>
+                <tr>
+                  <td><strong>Reflexion</strong></td>
+                  <td>Debugging, anomaly investigation, iterative analysis</td>
+                  <td>Tasks with strict latency requirements</td>
+                  <td>Medium-High</td>
+                  <td>High</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">Production Reality</div>
+            <div class="callout__text">
+              Start with ReAct as your default. Add Plan-and-Execute for complex multi-step workflows where upfront coordination pays off. Use Tree-of-Thought and Reflexion selectively for high-value tasks where quality justifies the cost and latency overhead. Most production agents use ReAct for 80% of queries, with specialized patterns triggered by task complexity detection.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION: Combining Patterns ===== -->
+        <section class="section">
+          <div class="section-label reveal">Advanced Strategy</div>
+          <h2 class="reveal">Combining Patterns in Production</h2>
+
+          <p class="reveal reveal--delay-1">
+            Production agents don't pick one pattern and use it forever. The most effective architectures route queries to different reasoning patterns based on complexity analysis. A lightweight classifier (often a small LLM call or heuristic) examines the incoming query and selects the appropriate pattern.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Complexity Router</div>
+              <div class="bp-card__body">
+                <p>A classifier assigns each query a complexity tier: <strong>Simple</strong> (ReAct), <strong>Complex</strong> (Plan-and-Execute), <strong>Investigative</strong> (Reflexion), or <strong>Strategic</strong> (Tree-of-Thought). This routing happens in under 500ms and saves significant cost by avoiding expensive patterns for simple queries.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Pattern Escalation</div>
+              <div class="bp-card__body">
+                <p>Start with ReAct. If the agent loops 3 times without progress, automatically escalate to Plan-and-Execute. If the plan fails, escalate to Reflexion. This graceful degradation ensures simple queries stay fast while complex ones get the reasoning depth they need.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION: AcmeCorp Scenarios ===== -->
+        <section class="section">
+          <div class="section-label reveal">Case Study</div>
+          <h2 class="reveal">AcmeCorp: Pattern Selection in Action</h2>
+
+          <p class="reveal reveal--delay-1">
+            AcmeCorp's data agent receives queries of vastly different complexity. Here's how each reasoning pattern handles a real scenario from their retail analytics platform.
+          </p>
+
+          <div class="scenario-card reveal">
+            <div class="scenario-card__pattern" style="color: var(--stroke-primary);">ReAct Pattern</div>
+            <div class="scenario-card__query">"Show me revenue for Q4"</div>
+            <p>Simple data retrieval. The agent thinks (need Q4 revenue data), acts (runs SQL query), observes (gets results), and responds. One cycle, under 3 seconds. ReAct handles this perfectly &mdash; no planning overhead needed.</p>
+          </div>
+
+          <div class="scenario-card reveal">
+            <div class="scenario-card__pattern" style="color: var(--stroke-secondary);">Plan-and-Execute Pattern</div>
+            <div class="scenario-card__query">"Create a quarterly business review with charts comparing all regions against targets"</div>
+            <p>Complex multi-step workflow. The planner creates a 6-step plan: (1) fetch regional targets, (2) pull actual revenue by region, (3) calculate variances, (4) generate comparison charts, (5) identify top and bottom performers, (6) compile into formatted report. The executor processes each step sequentially, with the planner monitoring progress and adjusting if a data source is unavailable.</p>
+          </div>
+
+          <div class="scenario-card reveal">
+            <div class="scenario-card__pattern" style="color: #a855f7;">Reflexion Pattern</div>
+            <div class="scenario-card__query">"Investigate why Southwest revenue dropped 30%"</div>
+            <p>Investigative task. First attempt: checks if stores closed &mdash; no closures found. Reflects: store count is stable, so the issue is per-store performance. Second attempt: examines product category trends &mdash; finds electronics dropped 45%. Reflects: electronics is the driver, but why? Third attempt: correlates with a competitor store opening. The reflection step transformed each dead end into a more targeted hypothesis, converging on the root cause in 3 iterations.</p>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">Pattern Selection Heuristic</div>
+            <div class="callout__text">
+              AcmeCorp's complexity router uses a simple heuristic: if the query contains action verbs like "show" or "get" with a single metric &rarr; ReAct. If it mentions "compare," "review," or "report" with multiple dimensions &rarr; Plan-and-Execute. If it asks "why" or "investigate" &rarr; Reflexion. This simple classification correctly routes 85% of queries to the optimal pattern.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Collapsible: Implementation Tips ===== -->
+        <section class="section">
+          <div class="section-label reveal">Implementation Notes</div>
+          <h2 class="reveal">Production Implementation Tips</h2>
+
+          <div class="collapsible reveal">
+            <div class="collapsible__header">
+              <span>Setting Max Iterations per Pattern</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p><strong>ReAct:</strong> Cap at 5-8 iterations. If the agent hasn't converged by then, it's likely stuck in a loop. Escalate to Plan-and-Execute.</p>
+                <p><strong>Plan-and-Execute:</strong> Maximum 10 plan steps. Longer plans degrade in quality. If a task genuinely needs more than 10 steps, decompose it into sub-tasks.</p>
+                <p><strong>Tree-of-Thought:</strong> Generate 3 branches maximum. More branches rarely improve quality but always increase cost. Prune aggressively after evaluation.</p>
+                <p><strong>Reflexion:</strong> Maximum 3 reflection cycles. Diminishing returns after the third attempt. If still failing, surface the partial result to the user with a transparency note.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal">
+            <div class="collapsible__header">
+              <span>Measuring Pattern Effectiveness</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>Track three metrics per pattern: <strong>success rate</strong> (did the agent produce a correct result?), <strong>cost per query</strong> (total tokens consumed), and <strong>latency</strong> (wall-clock time). Plot these on a weekly dashboard. If a pattern's success rate drops below 70%, investigate whether queries are being misrouted or if the underlying data has changed.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== INTERACTIVE EXERCISE: Reasoning Pattern Picker ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Interactive Exercise</span></div>
+          <h2 style="margin-bottom: var(--space-2);">Match the Query to the Reasoning Pattern</h2>
+          <p>For each AcmeCorp user query, pick the reasoning pattern that would handle it most effectively.</p>
+
+          <div class="match-exercise" id="rpExercise">
+            <div class="match-scenario" id="rp-match-0" style="background: var(--bg-surface); border: 1px dashed var(--stroke-dim); border-radius: var(--border-radius); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-4);">
+              <div class="match-scenario__label" style="font-family: var(--font-mono); font-size: var(--font-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: var(--space-2);">Query 1</div>
+              <div class="match-scenario__text" style="font-size: var(--font-base); color: var(--text-primary); margin-bottom: var(--space-3); line-height: 1.6;">
+                "Show me total sales for the Northeast region last month."
+              </div>
+              <div class="match-options" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                <button class="match-btn" onclick="RPGame.select(0, 'react')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">ReAct</button>
+                <button class="match-btn" onclick="RPGame.select(0, 'plan-execute')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Plan-and-Execute</button>
+                <button class="match-btn" onclick="RPGame.select(0, 'tree-of-thought')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Tree-of-Thought</button>
+                <button class="match-btn" onclick="RPGame.select(0, 'reflexion')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Reflexion</button>
+              </div>
+              <div class="match-feedback" id="rp-fb-0" style="margin-top: var(--space-3); font-size: var(--font-sm); line-height: 1.6; display: none;"></div>
+            </div>
+
+            <div class="match-scenario" id="rp-match-1" style="background: var(--bg-surface); border: 1px dashed var(--stroke-dim); border-radius: var(--border-radius); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-4);">
+              <div class="match-scenario__label" style="font-family: var(--font-mono); font-size: var(--font-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: var(--space-2);">Query 2</div>
+              <div class="match-scenario__text" style="font-size: var(--font-base); color: var(--text-primary); margin-bottom: var(--space-3); line-height: 1.6;">
+                "Compare revenue, inventory turnover, and customer satisfaction across all 5 regions, then create a quarterly performance report with recommendations."
+              </div>
+              <div class="match-options" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                <button class="match-btn" onclick="RPGame.select(1, 'react')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">ReAct</button>
+                <button class="match-btn" onclick="RPGame.select(1, 'plan-execute')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Plan-and-Execute</button>
+                <button class="match-btn" onclick="RPGame.select(1, 'tree-of-thought')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Tree-of-Thought</button>
+                <button class="match-btn" onclick="RPGame.select(1, 'reflexion')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Reflexion</button>
+              </div>
+              <div class="match-feedback" id="rp-fb-1" style="margin-top: var(--space-3); font-size: var(--font-sm); line-height: 1.6; display: none;"></div>
+            </div>
+
+            <div class="match-scenario" id="rp-match-2" style="background: var(--bg-surface); border: 1px dashed var(--stroke-dim); border-radius: var(--border-radius); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-4);">
+              <div class="match-scenario__label" style="font-family: var(--font-mono); font-size: var(--font-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: var(--space-2);">Query 3</div>
+              <div class="match-scenario__text" style="font-size: var(--font-base); color: var(--text-primary); margin-bottom: var(--space-3); line-height: 1.6;">
+                "What is causing the 30% revenue drop in the Southwest region?" The answer isn't obvious and may require multiple hypotheses and iterative investigation.
+              </div>
+              <div class="match-options" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                <button class="match-btn" onclick="RPGame.select(2, 'react')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">ReAct</button>
+                <button class="match-btn" onclick="RPGame.select(2, 'plan-execute')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Plan-and-Execute</button>
+                <button class="match-btn" onclick="RPGame.select(2, 'tree-of-thought')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Tree-of-Thought</button>
+                <button class="match-btn" onclick="RPGame.select(2, 'reflexion')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Reflexion</button>
+              </div>
+              <div class="match-feedback" id="rp-fb-2" style="margin-top: var(--space-3); font-size: var(--font-sm); line-height: 1.6; display: none;"></div>
+            </div>
+
+            <div class="match-scenario" id="rp-match-3" style="background: var(--bg-surface); border: 1px dashed var(--stroke-dim); border-radius: var(--border-radius); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-4);">
+              <div class="match-scenario__label" style="font-family: var(--font-mono); font-size: var(--font-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: var(--space-2);">Query 4</div>
+              <div class="match-scenario__text" style="font-size: var(--font-base); color: var(--text-primary); margin-bottom: var(--space-3); line-height: 1.6;">
+                "Should we expand into the Pacific Northwest?" There are multiple valid approaches to analyze this (market data, competitor analysis, logistics costs) and the agent should explore several reasoning paths before picking the best one.
+              </div>
+              <div class="match-options" style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
+                <button class="match-btn" onclick="RPGame.select(3, 'react')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">ReAct</button>
+                <button class="match-btn" onclick="RPGame.select(3, 'plan-execute')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Plan-and-Execute</button>
+                <button class="match-btn" onclick="RPGame.select(3, 'tree-of-thought')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Tree-of-Thought</button>
+                <button class="match-btn" onclick="RPGame.select(3, 'reflexion')" style="padding: var(--space-2) var(--space-4); background: var(--bg-primary); border: 1px solid var(--stroke-dim); border-radius: var(--border-radius); color: var(--text-primary); cursor: pointer; font-family: var(--font-mono); font-size: var(--font-sm);">Reflexion</button>
+              </div>
+              <div class="match-feedback" id="rp-fb-3" style="margin-top: var(--space-3); font-size: var(--font-sm); line-height: 1.6; display: none;"></div>
+            </div>
+          </div>
+
+          <div class="match-score" id="rpScore" style="text-align: center; margin-top: var(--space-6); display: none;">
+            <div class="score-card" style="display: inline-block; background: var(--bg-surface); border: 1px solid var(--stroke-primary); border-radius: var(--border-radius-lg); padding: var(--space-4) var(--space-8); box-shadow: 0 0 20px var(--glow-blue);">
+              <div class="score-card__value" id="rpScoreVal" style="font-family: var(--font-mono); font-size: var(--font-3xl); font-weight: 700; color: var(--stroke-primary);">0/4</div>
+              <div class="score-card__label" style="font-size: var(--font-sm); color: var(--text-secondary);">Patterns Matched Correctly</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="05-framework-landscape.html" class="page-nav__title">Framework Landscape</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="07-advanced-tool-use.html" class="page-nav__title">Advanced Tool Use</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Architecture &amp; Design Foundations Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m1-alternative-reasoning');</script>
+  <script>
+    const RPGame = {
+      answers: { 0: 'react', 1: 'plan-execute', 2: 'reflexion', 3: 'tree-of-thought' },
+      explanations: {
+        0: 'A simple, single-metric lookup is ideal for ReAct \u2014 one think-act-observe cycle is all it takes.',
+        1: 'Multi-dimensional comparison across regions with a structured report requires upfront planning. Plan-and-Execute breaks this into ordered sub-tasks.',
+        2: 'Investigative "why" questions need iterative hypothesis testing. Reflexion lets the agent learn from each failed hypothesis and refine its approach.',
+        3: 'Open-ended strategic questions benefit from exploring multiple reasoning paths simultaneously. Tree-of-Thought generates and evaluates competing analyses before selecting the best.'
+      },
+      selections: {},
+      locked: {},
+
+      select(idx, choice) {
+        if (this.locked[idx]) return;
+        const correct = this.answers[idx];
+        const isCorrect = (choice === correct);
+        const fb = document.getElementById('rp-fb-' + idx);
+        const scenario = document.getElementById('rp-match-' + idx);
+        const btns = scenario.querySelectorAll('.match-btn');
+
+        btns.forEach(b => {
+          b.style.borderColor = 'var(--stroke-dim)';
+          b.style.background = 'var(--bg-primary)';
+        });
+        btns.forEach(b => {
+          const val = b.onclick.toString().match(/'([^']+)'\)$/);
+          if (val && val[1] === choice) {
+            b.style.borderColor = isCorrect ? 'var(--accent-success)' : 'var(--accent-error)';
+            b.style.background = isCorrect ? 'rgba(204, 0, 255, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+          }
+        });
+
+        fb.style.display = 'block';
+        fb.style.color = isCorrect ? 'var(--accent-success)' : 'var(--accent-error)';
+        fb.textContent = (isCorrect ? '\u2713 Correct! ' : '\u2717 Not quite. ') + this.explanations[idx];
+
+        this.locked[idx] = true;
+        this.selections[idx] = choice;
+        scenario.style.borderColor = isCorrect ? 'var(--accent-success)' : 'var(--accent-error)';
+        scenario.style.boxShadow = isCorrect ? '0 0 12px var(--glow-success)' : '0 0 12px var(--glow-error)';
+        btns.forEach(b => b.disabled = true);
+
+        if (Object.keys(this.locked).length === 4) {
+          const score = Object.keys(this.answers).filter(k => this.selections[k] === this.answers[k]).length;
+          document.getElementById('rpScoreVal').textContent = score + '/4';
+          document.getElementById('rpScore').style.display = 'block';
+          Progress.saveQuizScore('m1-reasoning-match', score, 4);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

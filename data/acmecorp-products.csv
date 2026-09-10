@@ -1,0 +1,31 @@
+product_id,product_name,category,subcategory,unit_price,cost_price,supplier_id,is_active
+1,Ultra HD Smart TV 55",Electronics,TVs,699.99,420.00,101,true
+2,Wireless Noise-Canceling Headphones,Electronics,Audio,249.99,125.00,101,true
+3,Bluetooth Portable Speaker,Electronics,Audio,79.99,38.00,102,true
+4,Laptop Stand Adjustable,Electronics,Accessories,49.99,22.00,102,true
+5,Smartphone Fast Charger,Electronics,Accessories,29.99,12.00,103,true
+6,Wireless Keyboard and Mouse Combo,Electronics,Accessories,59.99,28.00,103,false
+7,Men's Premium Cotton T-Shirt,Clothing,Men,34.99,14.00,201,true
+8,Women's Running Jacket,Clothing,Women,89.99,42.00,201,true
+9,Unisex Fleece Hoodie,Clothing,Unisex,64.99,30.00,202,true
+10,Men's Slim Fit Jeans,Clothing,Men,54.99,25.00,202,true
+11,Women's Yoga Leggings,Clothing,Women,44.99,18.00,203,true
+12,Kids Winter Parka,Clothing,Kids,79.99,38.00,203,true
+13,Stainless Steel Cookware Set,Home,Kitchen,149.99,72.00,301,true
+14,Memory Foam Bed Pillows (2-pack),Home,Bedroom,39.99,16.00,301,true
+15,Robot Vacuum Cleaner,Home,Cleaning,299.99,165.00,302,true
+16,Scented Soy Candle Set,Home,Decor,24.99,8.00,302,true
+17,Bamboo Bathroom Organizer,Home,Bath,34.99,15.00,303,true
+18,LED Desk Lamp with USB Port,Home,Office,44.99,20.00,303,false
+19,Organic Trail Mix (12-pack),Food,Snacks,18.99,9.50,401,true
+20,Cold Brew Coffee Concentrate,Food,Beverages,12.99,5.00,401,true
+21,Artisan Sourdough Bread,Food,Bakery,6.99,3.20,402,true
+22,Grass-Fed Beef Jerky (6-pack),Food,Snacks,24.99,13.00,402,true
+23,Sparkling Water Variety Pack,Food,Beverages,9.99,4.50,403,true
+24,Dark Chocolate Assortment Box,Food,Snacks,14.99,6.00,403,true
+25,Yoga Mat Premium Non-Slip,Sports,Yoga,39.99,16.00,501,true
+26,Adjustable Dumbbell Set,Sports,Weights,199.99,95.00,501,true
+27,Running Shoes — Neutral Cushion,Sports,Footwear,129.99,58.00,502,true
+28,Insulated Water Bottle 32oz,Sports,Accessories,27.99,11.00,502,true
+29,Resistance Bands Set (5-pack),Sports,Fitness,19.99,7.00,503,true
+30,Camping Backpack 50L,Sports,Outdoor,89.99,42.00,503,true

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error Handling Strategies — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Page-specific styles --- */
+    .error-type-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: var(--font-lg);
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .error-type-icon--transient { border: 2px solid var(--accent-warning); color: var(--accent-warning); }
+    .error-type-icon--validation { border: 2px solid var(--stroke-primary); color: var(--stroke-primary); }
+    .error-type-icon--permission { border: 2px solid var(--accent-error); color: var(--accent-error); }
+    .error-type-icon--notfound { border: 2px solid var(--stroke-secondary); color: var(--stroke-secondary); }
+    .error-type-icon--timeout { border: 2px solid #a78bfa; color: #a78bfa; }
+
+    .strategy-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      padding: var(--space-1) var(--space-3);
+      border-radius: 12px;
+      margin-top: var(--space-2);
+    }
+    .strategy-badge--backoff { background: rgba(245,158,11,0.12); color: var(--accent-warning); border: 1px solid rgba(245,158,11,0.3); }
+    .strategy-badge--clear { background: rgba(74,158,255,0.12); color: var(--stroke-primary); border: 1px solid rgba(74,158,255,0.3); }
+    .strategy-badge--deny { background: rgba(239,68,68,0.12); color: var(--accent-error); border: 1px solid rgba(239,68,68,0.3); }
+    .strategy-badge--suggest { background: rgba(45,212,191,0.12); color: var(--stroke-secondary); border: 1px solid rgba(45,212,191,0.3); }
+    .strategy-badge--partial { background: rgba(167,139,250,0.12); color: #a78bfa; border: 1px solid rgba(167,139,250,0.3); }
+
+    /* Circuit Breaker interactive */
+    .circuit-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-8);
+      flex-wrap: wrap;
+      margin: var(--space-8) 0;
+    }
+    .circuit-state-box {
+      width: 160px;
+      padding: var(--space-6) var(--space-4);
+      border: 2px solid var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      text-align: center;
+      font-family: var(--font-mono);
+      transition: all 0.5s ease;
+      position: relative;
+      background: var(--bg-surface);
+    }
+    .circuit-state-box.active {
+      transform: scale(1.08);
+    }
+    .circuit-state-box .state-label {
+      font-size: var(--font-lg);
+      font-weight: 700;
+      margin-bottom: var(--space-2);
+    }
+    .circuit-state-box .state-desc {
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+    }
+    .circuit-arrow {
+      font-size: var(--font-2xl);
+      color: var(--stroke-dim);
+      font-family: var(--font-mono);
+    }
+    .circuit-controls {
+      text-align: center;
+      margin-top: var(--space-6);
+      display: flex;
+      gap: var(--space-4);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .circuit-log {
+      margin-top: var(--space-4);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      max-height: 120px;
+      overflow-y: auto;
+      padding: var(--space-3);
+      background: var(--bg-surface);
+      border: 1px dashed var(--grid-line);
+      border-radius: var(--border-radius);
+    }
+    .circuit-log .log-entry {
+      padding: 2px 0;
+    }
+    .circuit-log .log-entry--fail { color: var(--accent-error); }
+    .circuit-log .log-entry--success { color: var(--accent-success); }
+    .circuit-log .log-entry--warn { color: var(--accent-warning); }
+
+    .failure-counter {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      font-weight: 700;
+      text-align: center;
+      margin: var(--space-4) 0;
+      transition: color 0.3s ease;
+    }
+
+    .backoff-visual {
+      display: flex;
+      align-items: flex-end;
+      gap: var(--space-3);
+      justify-content: center;
+      margin: var(--space-4) 0;
+      height: 60px;
+    }
+    .backoff-bar {
+      width: 40px;
+      background: linear-gradient(to top, var(--stroke-primary), var(--stroke-secondary));
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-primary);
+      padding-top: var(--space-1);
+      transition: height 0.5s ease;
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== TOP NAV ===== -->
+  <nav class="top-nav">
+    <div class="top-nav__brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>
+      </svg>
+      Data Agent Academy
+    </div>
+    <div class="top-nav__breadcrumb">
+      <a href="../../index.html">Home</a>
+      <span class="separator">/</span>
+      <span>Module 01</span>
+      <span class="separator">/</span>
+      <span class="current">Error Handling</span>
+    </div>
+  </nav>
+
+  <!-- ===== PROGRESS BAR ===== -->
+  <div class="progress-bar">
+    <div class="progress-bar__fill"></div>
+  </div>
+
+  <!-- ===== PAGE CONTENT ===== -->
+  <div class="page-wrapper">
+    <div class="page-content">
+      <div class="content-container">
+
+        <!-- Evolving Diagram -->
+        <section class="section" style="padding-bottom: var(--space-8);">
+          <div id="evolving-diagram" class="evolving-diagram reveal"></div>
+        </section>
+
+        <!-- ===== 1. THE SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label">
+            <span>The Scene</span>
+          </div>
+          <h2 style="margin-bottom: var(--space-6);">When Things Go Wrong</h2>
+          <div class="bp-card" style="border-color: var(--accent-warning); margin-bottom: var(--space-6);">
+            <div class="bp-card__body" style="font-size: var(--font-lg); line-height: 1.8;">
+              It's <strong style="color: var(--accent-warning);">Monday morning</strong>. AcmeCorp's database is under heavy load from weekend batch jobs. The agent starts getting <strong style="color: var(--accent-error);">timeouts</strong>. An analyst asks about a table that was renamed last week. A store clerk tries to peek at salary data. A product SKU lookup hits a discontinued item.
+            </div>
+          </div>
+          <p>
+            A production-grade Data Agent doesn't just handle the happy path. It needs a <strong>strategy for every failure mode</strong>. Let's explore the five error categories your agent must handle, each illustrated with a real AcmeCorp scenario.
+          </p>
+        </section>
+
+        <!-- ===== 2. FIVE ERROR TYPES ===== -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Error Taxonomy</span>
+          </div>
+          <h2 class="reveal" style="margin-bottom: var(--space-8);">Five Error Types Every Agent Must Handle</h2>
+
+          <!-- Error Type 1: Transient -->
+          <div class="bp-card reveal reveal--delay-1" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="error-type-icon error-type-icon--transient">T</span>
+              Transient Errors
+            </div>
+            <div class="bp-card__body">
+              <p><strong>What:</strong> Network timeouts, database busy signals, rate limits. The request is valid but the system is temporarily unable to serve it.</p>
+              <span class="strategy-badge strategy-badge--backoff">Strategy: Exponential Backoff</span>
+              <div class="backoff-visual" style="margin-top: var(--space-4);">
+                <div style="text-align:center;">
+                  <div class="backoff-bar" style="height:15px;">1s</div>
+                  <div style="font-size:var(--font-xs);color:var(--text-secondary);margin-top:4px;">Retry 1</div>
+                </div>
+                <div style="text-align:center;">
+                  <div class="backoff-bar" style="height:30px;">2s</div>
+                  <div style="font-size:var(--font-xs);color:var(--text-secondary);margin-top:4px;">Retry 2</div>
+                </div>
+                <div style="text-align:center;">
+                  <div class="backoff-bar" style="height:60px;">4s</div>
+                  <div style="font-size:var(--font-xs);color:var(--text-secondary);margin-top:4px;">Retry 3</div>
+                </div>
+              </div>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp Scenario</div>
+                <div class="callout__text">
+                  Database busy from weekend batch jobs. Agent retries with exponential backoff: 1s, 2s, 4s. On the third retry, the batch job completes and the query succeeds.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Type 2: Validation -->
+          <div class="bp-card reveal reveal--delay-2" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="error-type-icon error-type-icon--validation">V</span>
+              Validation Errors
+            </div>
+            <div class="bp-card__body">
+              <p><strong>What:</strong> Invalid SQL syntax, bad parameters, malformed requests. The user's intent can't be translated to a valid operation.</p>
+              <span class="strategy-badge strategy-badge--clear">Strategy: Clear Error + Guidance</span>
+              <div class="terminal" style="margin-top: var(--space-4);">
+                <div class="terminal__header">
+                  <span class="terminal__dot terminal__dot--red"></span>
+                  <span class="terminal__dot terminal__dot--yellow"></span>
+                  <span class="terminal__dot terminal__dot--green"></span>
+                  <span class="terminal__title">validation_error.log</span>
+                </div>
+                <div class="terminal__body"><span class="terminal__line terminal__line--comment">// User: "Show me data from the inventory_v1 table"</span>
+<span class="terminal__line terminal__line--keyword">ERROR:</span> Table "inventory_v1" does not exist.
+<span class="terminal__line terminal__line--string">SUGGESTION:</span> Did you mean "inventory_v2" or "inventory_current"?</div>
+              </div>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp Scenario</div>
+                <div class="callout__text">
+                  An analyst asks about a table that was renamed after last month's migration. Instead of a cryptic SQL error, the agent suggests the correct table names.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Type 3: Permission -->
+          <div class="bp-card reveal reveal--delay-3" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="error-type-icon error-type-icon--permission">P</span>
+              Permission Errors
+            </div>
+            <div class="bp-card__body">
+              <p><strong>What:</strong> Unauthorized access attempts. The user is trying to access data beyond their role's scope.</p>
+              <span class="strategy-badge strategy-badge--deny">Strategy: Deny + Explanation</span>
+              <div class="terminal" style="margin-top: var(--space-4);">
+                <div class="terminal__header">
+                  <span class="terminal__dot terminal__dot--red"></span>
+                  <span class="terminal__dot terminal__dot--yellow"></span>
+                  <span class="terminal__dot terminal__dot--green"></span>
+                  <span class="terminal__title">access_control.log</span>
+                </div>
+                <div class="terminal__body"><span class="terminal__line terminal__line--keyword">ACCESS DENIED</span>
+<span class="terminal__line">Role: store_clerk | Requested: regional_salary_data</span>
+<span class="terminal__line terminal__line--comment">// Policy: salary data restricted to HR + Finance roles</span>
+<span class="terminal__line terminal__line--string">RESPONSE:</span> "I can't show salary data for your role.
+Contact HR or your regional manager for access."</div>
+              </div>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp Scenario</div>
+                <div class="callout__text">
+                  A store clerk tries to access regional salary data. The agent explains the access restriction and directs them to the appropriate channel for requesting access.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Type 4: Not Found -->
+          <div class="bp-card reveal reveal--delay-4" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="error-type-icon error-type-icon--notfound">N</span>
+              Not Found Errors
+            </div>
+            <div class="bp-card__body">
+              <p><strong>What:</strong> Missing tables, deprecated resources, deleted data. The thing the user wants simply doesn't exist anymore.</p>
+              <span class="strategy-badge strategy-badge--suggest">Strategy: Suggest Alternatives</span>
+              <div class="terminal" style="margin-top: var(--space-4);">
+                <div class="terminal__header">
+                  <span class="terminal__dot terminal__dot--red"></span>
+                  <span class="terminal__dot terminal__dot--yellow"></span>
+                  <span class="terminal__dot terminal__dot--green"></span>
+                  <span class="terminal__title">resource_lookup.log</span>
+                </div>
+                <div class="terminal__body"><span class="terminal__line terminal__line--keyword">NOT FOUND:</span> Product SKU "AC-WIDGET-001" discontinued
+<span class="terminal__line terminal__line--string">ALTERNATIVES:</span>
+  - "AC-WIDGET-002" (successor product)
+  - "products_archive" table for historical data
+  - "similar_products" view for related items</div>
+              </div>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp Scenario</div>
+                <div class="callout__text">
+                  A product manager looks up a discontinued SKU. The agent points them to the successor product and the archive table for historical comparison.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Type 5: Timeout -->
+          <div class="bp-card reveal reveal--delay-5" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="error-type-icon error-type-icon--timeout">O</span>
+              Timeout Errors
+            </div>
+            <div class="bp-card__body">
+              <p><strong>What:</strong> Long-running queries that exceed the allowed execution window. The query is valid but too expensive to complete in one shot.</p>
+              <span class="strategy-badge strategy-badge--partial">Strategy: Partial Results + Continue</span>
+              <div class="terminal" style="margin-top: var(--space-4);">
+                <div class="terminal__header">
+                  <span class="terminal__dot terminal__dot--red"></span>
+                  <span class="terminal__dot terminal__dot--yellow"></span>
+                  <span class="terminal__dot terminal__dot--green"></span>
+                  <span class="terminal__title">query_execution.log</span>
+                </div>
+                <div class="terminal__body"><span class="terminal__line terminal__line--keyword">TIMEOUT</span> after 30s | Query: 3-year cross-store join
+<span class="terminal__line terminal__line--string">PARTIAL RESULTS:</span> 2 of 3 years completed (2022, 2023)
+<span class="terminal__line terminal__line--comment">// Offering user a choice:</span>
+<span class="terminal__line">"I have results for 2022-2023. Want me to continue</span>
+<span class="terminal__line"> with 2024, or is this enough?"</span></div>
+              </div>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp Scenario</div>
+                <div class="callout__text">
+                  A finance analyst runs a complex three-year cross-store revenue join. After 30 seconds, the agent returns partial results for 2022-2023 and offers to continue fetching 2024 data.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== 3. CIRCUIT BREAKER INTERACTIVE ===== -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Interactive</span>
+          </div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">Circuit Breaker Pattern</h2>
+          <p class="reveal">
+            When transient errors pile up, a <strong>circuit breaker</strong> prevents your agent from hammering a failing service. Click the buttons to see the state transitions in action.
+          </p>
+
+          <div class="bp-card reveal" style="margin-top: var(--space-6);">
+            <div class="circuit-container" id="circuitDiagram">
+              <!-- CLOSED state -->
+              <div class="circuit-state-box circuit-closed active" id="cb-closed">
+                <div class="state-label" style="color: var(--accent-success);">CLOSED</div>
+                <div class="state-desc">Requests flow normally</div>
+              </div>
+              <div class="circuit-arrow">&rarr;</div>
+              <!-- OPEN state -->
+              <div class="circuit-state-box" id="cb-open">
+                <div class="state-label" style="color: var(--accent-error);">OPEN</div>
+                <div class="state-desc">Requests blocked</div>
+              </div>
+              <div class="circuit-arrow">&rarr;</div>
+              <!-- HALF-OPEN state -->
+              <div class="circuit-state-box" id="cb-half-open">
+                <div class="state-label" style="color: var(--accent-warning);">HALF-OPEN</div>
+                <div class="state-desc">Testing recovery</div>
+              </div>
+            </div>
+
+            <div style="text-align:center;">
+              <div style="font-family:var(--font-mono);font-size:var(--font-xs);color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.1em;">Failure Count</div>
+              <div class="failure-counter" id="failureCount" style="color:var(--accent-success);">0 / 5</div>
+            </div>
+
+            <div class="circuit-controls">
+              <button class="btn" id="btnTriggerFailure" onclick="circuitBreaker.triggerFailure()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                Trigger Failure
+              </button>
+              <button class="btn btn--disabled" id="btnWait" onclick="circuitBreaker.waitCooldown()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                Wait (Cooldown)
+              </button>
+              <button class="btn btn--teal btn--disabled" id="btnTestRequest" onclick="circuitBreaker.testRequest()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                Test Request
+              </button>
+              <button class="btn" style="border-color: var(--text-secondary); color: var(--text-secondary);" onclick="circuitBreaker.reset()">
+                Reset
+              </button>
+            </div>
+
+            <div class="circuit-log" id="circuitLog">
+              <div class="log-entry">Circuit breaker initialized. State: CLOSED. Threshold: 5 failures.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== 4. MINI QUIZ ===== -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Knowledge Check</span>
+          </div>
+          <h2 class="reveal" style="margin-bottom: var(--space-6);">Error Scenario Quiz</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">
+            For each scenario, pick the <strong>correct error handling strategy</strong>. Think about what kind of error each one represents.
+          </p>
+          <div id="error-quiz"></div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <div class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="02-tool-definitions.html" class="page-nav__title">Tool Definitions</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="04-tool-calling.html" class="page-nav__title">Tool Calling</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+
+  <script>
+    // --- Page init ---
+    Nav.init('m1-error-handling');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Evolving diagram
+      EvolvingDiagram.renderForPage('evolving-diagram', 'error-handling');
+
+      // Quiz
+      QuizEngine.init('error-quiz', [
+        {
+          question: 'AcmeCorp\'s database returns "connection refused" for 3 seconds during peak load. What should the agent do?',
+          options: [
+            'Return an error and ask the user to try again later',
+            'Retry with exponential backoff (1s, 2s, 4s)',
+            'Switch to a backup database automatically',
+            'Deny the request and log it as a security event'
+          ],
+          correct: 1,
+          explanation: 'This is a transient error. Exponential backoff gives the system time to recover without overwhelming it further.'
+        },
+        {
+          question: 'A marketing intern asks the agent: "Show me salary data for all regional managers." They have a marketing role. What happens?',
+          options: [
+            'Return partial salary data with names redacted',
+            'Retry the query with elevated permissions',
+            'Deny with explanation and suggest contacting HR for access',
+            'Suggest alternative tables the intern might find useful'
+          ],
+          correct: 2,
+          explanation: 'This is a permission error. The agent must deny access, explain why, and direct them to the right channel.'
+        },
+        {
+          question: 'An analyst runs a query joining 5 years of transaction data across all 200 stores. After 30 seconds, it times out. What\'s the best response?',
+          options: [
+            'Deny the query as too complex and refuse to run it',
+            'Retry with exponential backoff',
+            'Return whatever partial results are available and offer to continue',
+            'Silently break it into smaller queries and combine the results'
+          ],
+          correct: 2,
+          explanation: 'Timeout errors are best handled by returning partial results and letting the user decide whether to continue. Transparency builds trust.'
+        }
+      ]);
+    });
+
+    // --- Circuit Breaker Interactive ---
+    const circuitBreaker = {
+      state: 'CLOSED',   // CLOSED | OPEN | HALF_OPEN
+      failures: 0,
+      threshold: 5,
+
+      log(msg, type) {
+        const logEl = document.getElementById('circuitLog');
+        const entry = document.createElement('div');
+        entry.className = 'log-entry' + (type ? ' log-entry--' + type : '');
+        entry.textContent = msg;
+        logEl.appendChild(entry);
+        logEl.scrollTop = logEl.scrollHeight;
+      },
+
+      updateUI() {
+        const closed = document.getElementById('cb-closed');
+        const open = document.getElementById('cb-open');
+        const halfOpen = document.getElementById('cb-half-open');
+        const counter = document.getElementById('failureCount');
+        const btnFail = document.getElementById('btnTriggerFailure');
+        const btnWait = document.getElementById('btnWait');
+        const btnTest = document.getElementById('btnTestRequest');
+
+        // Reset all
+        [closed, open, halfOpen].forEach(el => {
+          el.className = 'circuit-state-box';
+        });
+
+        // Active state
+        if (this.state === 'CLOSED') {
+          closed.classList.add('circuit-closed', 'active');
+          counter.style.color = this.failures > 2 ? 'var(--accent-warning)' : 'var(--accent-success)';
+          btnFail.classList.remove('btn--disabled');
+          btnWait.classList.add('btn--disabled');
+          btnTest.classList.add('btn--disabled');
+        } else if (this.state === 'OPEN') {
+          open.classList.add('circuit-open', 'active');
+          counter.style.color = 'var(--accent-error)';
+          btnFail.classList.add('btn--disabled');
+          btnWait.classList.remove('btn--disabled');
+          btnTest.classList.add('btn--disabled');
+        } else if (this.state === 'HALF_OPEN') {
+          halfOpen.classList.add('circuit-half-open', 'active');
+          counter.style.color = 'var(--accent-warning)';
+          btnFail.classList.add('btn--disabled');
+          btnWait.classList.add('btn--disabled');
+          btnTest.classList.remove('btn--disabled');
+        }
+
+        counter.textContent = this.failures + ' / ' + this.threshold;
+      },
+
+      triggerFailure() {
+        if (this.state !== 'CLOSED') return;
+        this.failures++;
+        this.log('Failure #' + this.failures + ' recorded. ' + (this.threshold - this.failures) + ' remaining before circuit opens.', 'fail');
+
+        if (this.failures >= this.threshold) {
+          this.state = 'OPEN';
+          this.log('CIRCUIT OPENED. All requests now blocked. Waiting for cooldown...', 'fail');
+        }
+        this.updateUI();
+      },
+
+      waitCooldown() {
+        if (this.state !== 'OPEN') return;
+        this.log('Cooldown period elapsed (simulated 30s). Moving to HALF-OPEN state...', 'warn');
+        this.state = 'HALF_OPEN';
+        this.updateUI();
+      },
+
+      testRequest() {
+        if (this.state !== 'HALF_OPEN') return;
+        // Simulate success (80% chance) or failure
+        const success = Math.random() > 0.2;
+        if (success) {
+          this.state = 'CLOSED';
+          this.failures = 0;
+          this.log('Test request SUCCEEDED. Circuit CLOSED. Failures reset to 0.', 'success');
+        } else {
+          this.state = 'OPEN';
+          this.log('Test request FAILED. Circuit back to OPEN. Another cooldown required.', 'fail');
+        }
+        this.updateUI();
+      },
+
+      reset() {
+        this.state = 'CLOSED';
+        this.failures = 0;
+        document.getElementById('circuitLog').innerHTML = '<div class="log-entry">Circuit breaker reset. State: CLOSED. Threshold: 5 failures.</div>';
+        this.updateUI();
+        this.log('Ready. Click "Trigger Failure" to simulate errors.', '');
+      }
+    };
+
+    // Initialize circuit breaker UI
+    circuitBreaker.updateUI();
+  </script>
+</body>
+</html>

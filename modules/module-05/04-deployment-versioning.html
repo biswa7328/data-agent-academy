@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deployment Patterns &amp; Versioning &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Deployment Pattern Cards --- */
+    .deploy-card {
+      position: relative;
+      margin-bottom: var(--space-8);
+    }
+
+    /* --- Version Grid --- */
+    .version-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+    .version-item {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      text-align: center;
+      transition: all var(--transition-base);
+    }
+    .version-item:hover {
+      border-color: var(--stroke-secondary);
+      box-shadow: 0 0 15px var(--glow-teal);
+    }
+    .version-item__icon {
+      font-size: 28px;
+      margin-bottom: var(--space-2);
+      display: block;
+    }
+    .version-item__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+      font-weight: 600;
+    }
+    .version-item__tool {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-secondary);
+      margin-bottom: var(--space-2);
+    }
+    .version-item__note {
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      line-height: 1.4;
+      opacity: 0.8;
+    }
+
+    /* --- Manifest Code Block --- */
+    .manifest-block {
+      background: var(--bg-surface);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--stroke-secondary);
+      line-height: 1.8;
+      overflow-x: auto;
+      margin: var(--space-6) 0;
+    }
+    .manifest-block .key { color: var(--stroke-primary); }
+    .manifest-block .val { color: var(--text-secondary); }
+    .manifest-block .title-line { color: var(--accent-success); font-weight: 600; }
+
+    /* --- Before/After Cards --- */
+    .ba-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin: var(--space-6) 0;
+    }
+    .ba-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .ba-list li {
+      padding: var(--space-2) 0 var(--space-2) var(--space-5);
+      position: relative;
+      color: var(--text-secondary);
+      font-size: var(--font-sm);
+      border-bottom: 1px dashed rgba(161, 0, 255, 0.1);
+      line-height: 1.5;
+    }
+    .ba-list li:last-child { border-bottom: none; }
+    .ba-list--before li::before {
+      content: '\00d7';
+      position: absolute;
+      left: 0;
+      top: var(--space-2);
+      color: var(--accent-error);
+      font-weight: 700;
+      font-size: var(--font-base);
+    }
+    .ba-list--after li::before {
+      content: '\2713';
+      position: absolute;
+      left: 0;
+      top: var(--space-2);
+      color: var(--accent-success);
+      font-weight: 700;
+      font-size: var(--font-sm);
+    }
+
+    /* --- Pattern Matcher Interactive --- */
+    .pm-checker { margin: var(--space-8) 0; }
+    .pm-item {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      transition: all var(--transition-base);
+    }
+    .pm-item__question {
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+      line-height: 1.6;
+    }
+    .pm-item__options {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .pm-btn {
+      flex: 1;
+      min-width: 120px;
+      padding: var(--space-3) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .pm-btn:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.05);
+    }
+    .pm-btn.correct {
+      border-style: solid;
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      background: rgba(16, 185, 129, 0.15);
+      pointer-events: none;
+    }
+    .pm-btn.wrong {
+      border-color: var(--accent-error);
+      border-style: solid;
+      animation: shake 0.5s ease-in-out;
+    }
+    .pm-item.solved .pm-btn:not(.correct) {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .pm-item.solved {
+      border-style: solid;
+      border-color: var(--accent-success);
+    }
+    .pm-score {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      padding: var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin-top: var(--space-4);
+      display: none;
+    }
+    .pm-score.show { display: block; }
+    .pm-score.perfect {
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      box-shadow: 0 0 15px var(--glow-success);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    @media (max-width: 768px) {
+      .version-grid { grid-template-columns: 1fr 1fr; }
+      .ba-grid { grid-template-columns: 1fr; }
+      .pm-item__options { flex-direction: column; }
+    }
+    @media (max-width: 480px) {
+      .version-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 05</span>
+        <span class="separator">/</span>
+        <span class="current">Deployment &amp; Versioning</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Page Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 05 &mdash; Lesson 04</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Deployment Patterns<br>&amp; Versioning</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Ship agent updates safely and track every moving piece &mdash; because a prompt change can break things just as badly as a code change.
+          </p>
+        </header>
+
+        <!-- ===== BLUEPRINT SVG DIAGRAM ===== -->
+        <div class="evolving-diagram reveal reveal--scale"><div class="evolving-diagram__label">DEPLOYMENT STRATEGIES</div>
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+          <defs>
+            <filter id="dep-glow-green"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#10b981" flood-opacity="0.6"/></filter>
+            <filter id="dep-glow-blue"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#A100FF" flood-opacity="0.5"/></filter>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="380" rx="12" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <!-- Title -->
+          <text x="350" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#A100FF" font-weight="700" letter-spacing="2">DEPLOYMENT STRATEGIES</text>
+
+          <!-- === CANARY (left) === -->
+          <text x="120" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#f5f5f5" font-weight="700" letter-spacing="1">CANARY</text>
+          <!-- v1.2 large box -->
+          <rect x="30" y="75" width="140" height="100" rx="6" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="100" y="120" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#A100FF" font-weight="600">v1.2</text>
+          <text x="100" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0">(95%)</text>
+          <!-- v1.3 small box -->
+          <rect x="175" y="135" width="48" height="40" rx="5" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1.5" filter="url(#dep-glow-green)"/>
+          <text x="199" y="154" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#10b981" font-weight="600">v1.3</text>
+          <text x="199" y="168" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">(5%)</text>
+          <!-- Gradual shift arrow -->
+          <line x1="170" y1="185" x2="195" y2="185" stroke="#10b981" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="120" y="200" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">gradual shift &rarr;</text>
+
+          <!-- === BLUE-GREEN (center) === -->
+          <text x="350" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#f5f5f5" font-weight="700" letter-spacing="1">BLUE-GREEN</text>
+          <!-- Blue box -->
+          <rect x="265" y="75" width="80" height="100" rx="6" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="1.8" filter="url(#dep-glow-blue)"/>
+          <text x="305" y="110" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#A100FF" font-weight="700">BLUE</text>
+          <text x="305" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#A100FF">v1.2</text>
+          <text x="305" y="145" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">(active)</text>
+          <!-- Green box -->
+          <rect x="355" y="75" width="80" height="100" rx="6" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="395" y="110" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#10b981" font-weight="700">GREEN</text>
+          <text x="395" y="125" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#10b981">v1.3</text>
+          <text x="395" y="145" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">(standby)</text>
+          <!-- Switch arrow between them -->
+          <path d="M335,155 Q350,175 365,155" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <polygon points="363,151 369,157 361,159" fill="#f59e0b"/>
+          <text x="350" y="200" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#f59e0b">instant switch</text>
+
+          <!-- === SHADOW (right) === -->
+          <text x="580" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#f5f5f5" font-weight="700" letter-spacing="1">SHADOW</text>
+          <!-- v1.2 live box -->
+          <rect x="505" y="75" width="100" height="100" rx="6" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="555" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#A100FF" font-weight="600">v1.2</text>
+          <text x="555" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#a0a0a0">(live)</text>
+          <!-- v1.3 shadow/dashed ghost box -->
+          <rect x="615" y="90" width="70" height="70" rx="6" fill="rgba(51,65,85,0.15)" stroke="#334155" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <text x="650" y="122" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#334155" font-weight="600">v1.3</text>
+          <text x="650" y="140" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#334155">(shadow)</text>
+          <text x="580" y="200" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">compare silently</text>
+
+          <!-- Divider -->
+          <line x1="40" y1="225" x2="660" y2="225" stroke="#334155" stroke-width="1" stroke-dasharray="6 4"/>
+
+          <!-- ROLLBACK bar -->
+          <rect x="60" y="245" width="580" height="36" rx="6" fill="rgba(239,68,68,0.06)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="350" y="260" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#ef4444" font-weight="700" letter-spacing="1">ROLLBACK</text>
+          <text x="350" y="275" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#a0a0a0">&lt; 30 seconds to revert any deployment</text>
+
+          <!-- Progression arrow -->
+          <text x="350" y="310" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0" letter-spacing="1">DATAPULSE PROGRESSION</text>
+          <rect x="120" y="320" width="80" height="24" rx="5" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="160" y="336" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#A100FF">Canary</text>
+          <line x1="200" y1="332" x2="240" y2="332" stroke="#334155" stroke-width="1"/>
+          <polygon points="238,328 246,332 238,336" fill="#334155"/>
+          <rect x="248" y="320" width="80" height="24" rx="5" fill="rgba(51,65,85,0.15)" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="288" y="336" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#a0a0a0">Shadow</text>
+          <line x1="328" y1="332" x2="368" y2="332" stroke="#334155" stroke-width="1"/>
+          <polygon points="366,328 374,332 366,336" fill="#334155"/>
+          <rect x="376" y="320" width="100" height="24" rx="5" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1" stroke-dasharray="4 3"/>
+          <text x="426" y="336" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#10b981">Blue-Green</text>
+
+          <!-- Bottom decorative dots -->
+          <circle cx="320" cy="360" r="2" fill="#334155"/>
+          <circle cx="340" cy="360" r="2" fill="#334155"/>
+          <circle cx="360" cy="360" r="2" fill="#334155"/>
+          <circle cx="380" cy="360" r="2" fill="#334155"/>
+        </svg>
+        </div>
+
+        <!-- ===== THE SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Scene</div>
+          <h2 style="margin-bottom: var(--space-4);">The Version Mismatch That Hallucinated Table Names</h2>
+          <p>
+            After the $47K prompt update incident (Lesson 03), AcmeCorp&rsquo;s data team updated the Data Engineer agent&rsquo;s prompt to fix <code>schema_discovery</code> vs <code>query_execute</code> selection. The fix worked great &mdash; for two weeks. Then a different engineer reverted the LLM model from Claude 3.5 to Claude 3 to cut costs. But the new prompt was written for Claude 3.5&rsquo;s instruction-following capabilities and was incompatible with Claude 3.
+          </p>
+          <p>
+            The agent started hallucinating table names, referencing <code>sales.revenue</code> instead of the correct <code>sales.total_amount</code>. Nobody connected the dots because the prompt change and the model change were tracked in different systems.
+          </p>
+          <div class="callout callout--error" style="margin-top: var(--space-6);">
+            <div class="callout__label">Incident Report</div>
+            <div class="callout__text">
+              Thursday, 10:15 AM &mdash; The Data Engineer agent begins returning queries against <code>sales.revenue</code>, a table that does not exist. The LLM confidently fabricates column names. Three analysts build reports on the hallucinated data before anyone notices. Root cause: prompt v14 was designed for Claude 3.5&rsquo;s structured output format, but the model had been silently downgraded to Claude 3. AcmeCorp needed a unified version manifest.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 1: FOUR DEPLOYMENT PATTERNS ===== -->
+        <section class="section">
+          <div class="section-label reveal">Deployment Patterns</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-6);">Four Ways to Ship Agent Updates</h2>
+
+          <!-- Canary Deployment -->
+          <div class="deploy-card reveal">
+            <div class="bp-card" style="border-left: 4px solid var(--accent-success);">
+              <div class="bp-card__title">
+                <span class="bp-card__number" style="border-color: var(--accent-success); color: var(--accent-success);">1</span>
+                Canary Deployment
+                <span class="badge badge--green" data-tip="Canary deployment routes a small percentage of traffic to the new version, gradually increasing if metrics hold" style="margin-left: auto;">Gradual Rollout</span>
+              </div>
+              <div class="bp-card__body">
+                <p><strong>Route 5% of traffic to the new version.</strong> Monitor for 24&ndash;48 hours. If metrics hold, gradually increase to 25%, 50%, then 100%. If anything degrades, roll back instantly with zero user impact.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <div class="callout__label">AcmeCorp Implementation</div>
+                  <div class="callout__text">
+                    After implementing canary deploys, AcmeCorp routes new agent versions to the Southwest region first (their smallest, 22 stores). The QA agent&rsquo;s 47 daily validation checks run against both old and new versions. If accuracy drops or the $0.004/query cost target is exceeded, traffic stays at 5% and the team investigates.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shadow Mode -->
+          <div class="deploy-card reveal">
+            <div class="bp-card" style="border-left: 4px solid var(--stroke-primary);">
+              <div class="bp-card__title">
+                <span class="bp-card__number" style="border-color: var(--stroke-primary); color: var(--stroke-primary);">2</span>
+                Shadow Mode
+                <span class="badge badge--blue" data-tip="Shadow mode runs the new agent alongside the old one — only the old version's output reaches users while the new version is evaluated offline" style="margin-left: auto;">Zero Risk Testing</span>
+              </div>
+              <div class="bp-card__body">
+                <p><strong>New agent runs alongside old one.</strong> Both process every request, but only the old version&rsquo;s output is shown to users. The new version&rsquo;s outputs are logged and compared offline &mdash; perfect for testing major changes without any user-facing risk.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <div class="callout__label">AcmeCorp Implementation</div>
+                  <div class="callout__text">
+                    When AcmeCorp added chain-of-thought reasoning to the PO agent, they ran it in shadow mode for one week. Both the old and new PO agents answered the VP of Sales&rsquo; queries. The team compared outputs offline. The new version was more complete but 3x slower &mdash; they optimized before going live.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Blue-Green Deployment -->
+          <div class="deploy-card reveal">
+            <div class="bp-card" style="border-left: 4px solid var(--stroke-secondary);">
+              <div class="bp-card__title">
+                <span class="bp-card__number" style="border-color: var(--stroke-secondary); color: var(--stroke-secondary);">3</span>
+                Blue-Green Deployment
+                <span class="badge badge--teal" data-tip="Blue-green maintains two identical environments and switches traffic atomically — roll back in seconds by flipping the load balancer" style="margin-left: auto;">Instant Rollback</span>
+              </div>
+              <div class="bp-card__body">
+                <p><strong>Two identical environments. Switch atomically.</strong> The &ldquo;blue&rdquo; environment runs the current version while &ldquo;green&rdquo; runs the new one. A load balancer flips traffic from blue to green. If anything goes wrong, flip back in seconds.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <div class="callout__label">AcmeCorp Implementation</div>
+                  <div class="callout__text">
+                    AcmeCorp uses blue-green for the Data Steward agent because it handles compliance checks. If the new version has a bug in PII detection, they can switch back to the old version in under 60 seconds. No compliance gap.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feature Flags -->
+          <div class="deploy-card reveal">
+            <div class="bp-card" style="border-left: 4px solid var(--accent-warning);">
+              <div class="bp-card__title">
+                <span class="bp-card__number" style="border-color: var(--accent-warning); color: var(--accent-warning);">4</span>
+                Feature Flags
+                <span class="badge badge--amber" data-tip="Feature flags enable or disable agent behaviors without redeployment — toggle capabilities per user, team, or region" style="margin-left: auto;">Per-User Control</span>
+              </div>
+              <div class="bp-card__body">
+                <p><strong>Enable or disable agent behaviors without redeployment.</strong> Wrap new capabilities in conditional flags. Toggle them on for specific users, teams, or regions &mdash; no code deploy needed.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <div class="callout__label">AcmeCorp Implementation</div>
+                  <div class="callout__text">
+                    When adding Shopify table support, AcmeCorp used a feature flag. The Data Engineer agent could toggle between &ldquo;Shopify-enabled&rdquo; and &ldquo;warehouse-only&rdquo; mode. This let them test Shopify integration with 3 power users before enabling it for everyone.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: ROLLBACK COMPLEXITY ===== -->
+        <section class="section reveal">
+          <div class="section-label">Rollback Complexity</div>
+          <h2 style="margin-bottom: var(--space-4);">Why Agent Rollback Is Harder Than Traditional Software</h2>
+          <p style="margin-bottom: var(--space-6);">
+            Traditional software rollback is straightforward: deploy the previous version. Agent rollback is fundamentally different because agents <strong>take actions in the real world</strong>. They write to databases, send messages, and call external APIs. You can roll back the agent, but you cannot un-send an email or un-create a Jira ticket.
+          </p>
+
+          <div class="callout callout--warning" style="margin-bottom: var(--space-6);">
+            <div class="callout__label">AcmeCorp Lesson Learned</div>
+            <div class="callout__text">
+              When AcmeCorp rolled back the prompt update, the damage was already done &mdash; 14 stores had placed inventory orders based on hallucinated data. Rolling back the agent didn&rsquo;t roll back the purchase orders.
+            </div>
+          </div>
+
+          <table class="bp-table">
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Rollback Difficulty</th>
+                <th>Why</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Agent code</td>
+                <td><span class="badge badge--green" data-tip="Agent code rollback is simple — just redeploy the previous version from version control">Easy</span></td>
+                <td>Just deploy previous version</td>
+              </tr>
+              <tr>
+                <td>Prompts</td>
+                <td><span class="badge badge--green" data-tip="Prompts are version-controlled text — swap back to the previous version instantly">Easy</span></td>
+                <td>Version-controlled, swap back</td>
+              </tr>
+              <tr>
+                <td>Model version</td>
+                <td><span class="badge badge--amber" data-tip="Model version rollback requires re-testing with current prompts — behavior may differ across model versions">Medium</span></td>
+                <td>May need re-testing with current prompts</td>
+              </tr>
+              <tr>
+                <td>Database writes</td>
+                <td><span class="badge badge--error" data-tip="Database writes are hard to roll back — the agent has already inserted or updated records that may have downstream dependencies" style="border-color: var(--accent-error); color: var(--accent-error);">Hard</span></td>
+                <td>Agent already INSERT&rsquo;d/UPDATE&rsquo;d records</td>
+              </tr>
+              <tr>
+                <td>Sent messages</td>
+                <td><span class="badge badge--error" data-tip="Sent messages cannot be unsent — Slack notifications and emails are already delivered to recipients" style="border-color: var(--accent-error); color: var(--accent-error);">Impossible</span></td>
+                <td>Slack notifications, emails already delivered</td>
+              </tr>
+              <tr>
+                <td>External API calls</td>
+                <td><span class="badge badge--error" data-tip="External API calls are irreversible — Jira tickets, orders, and third-party actions cannot be undone" style="border-color: var(--accent-error); color: var(--accent-error);">Impossible</span></td>
+                <td>Jira tickets created, orders placed</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout" style="margin-top: var(--space-6);">
+            <div class="callout__label">Key Takeaway</div>
+            <div class="callout__text">
+              The best rollback strategy is a good canary strategy &mdash; catch problems before they affect most users.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: SEVEN THINGS TO VERSION ===== -->
+        <section class="section">
+          <div class="section-label reveal">Version Everything</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">Seven Things to Version</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">An agent is not just code. It&rsquo;s code + prompts + model + config + data + tools + guardrails. Change any one piece and you have a different agent. Version all seven.</p>
+
+          <div class="version-grid reveal">
+            <div class="version-item">
+              <span class="version-item__icon">&#128187;</span>
+              <div class="version-item__label">Code</div>
+              <div class="version-item__tool">Git + SemVer</div>
+            </div>
+            <div class="version-item">
+              <span class="version-item__icon">&#9997;</span>
+              <div class="version-item__label">Prompts</div>
+              <div class="version-item__tool">LangSmith / PromptLayer</div>
+              <div class="version-item__note">A prompt change altered AcmeCorp&rsquo;s tool selection behavior as much as a code change would.</div>
+            </div>
+            <div class="version-item">
+              <span class="version-item__icon">&#129302;</span>
+              <div class="version-item__label">Models</div>
+              <div class="version-item__tool">MLflow / Registry</div>
+              <div class="version-item__note">The Claude 3.5 &rarr; Claude 3 revert caused hallucinated table names.</div>
+            </div>
+            <div class="version-item">
+              <span class="version-item__icon">&#9881;</span>
+              <div class="version-item__label">Configuration</div>
+              <div class="version-item__tool">Config-as-code</div>
+              <div class="version-item__note">Temperature, max_tokens, top-k per persona.</div>
+            </div>
+            <div class="version-item">
+              <span class="version-item__icon">&#128450;</span>
+              <div class="version-item__label">Data / Embeddings</div>
+              <div class="version-item__tool">DVC / LakeFS</div>
+              <div class="version-item__note">When Shopify tables were added, the RAG embeddings needed updating.</div>
+            </div>
+            <div class="version-item">
+              <span class="version-item__icon">&#128295;</span>
+              <div class="version-item__label">Tool Schemas</div>
+              <div class="version-item__tool">Schema Registry</div>
+              <div class="version-item__note">MCP server definitions change when tools are added or modified.</div>
+            </div>
+            <div class="version-item">
+              <span class="version-item__icon">&#128737;</span>
+              <div class="version-item__label">Guardrail Policies</div>
+              <div class="version-item__tool">OPA / Git</div>
+              <div class="version-item__note">The PII masking rules that prevent customer email exposure.</div>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top: var(--space-6);">
+            <div class="callout__label">AcmeCorp Solution</div>
+            <div class="callout__text">
+              AcmeCorp now pins all 7 components in a single deploy manifest. Every release includes: code hash, prompt hash, model ID, tool schema version, guardrail policy version, embedding version, and config hash. The manifest is the single source of truth. You can reproduce any past agent state by deploying its manifest.
+            </div>
+          </div>
+
+          <div class="manifest-block reveal">
+            <span class="title-line">acmecorp-agent-v2.4.1:</span><br>
+            &nbsp;&nbsp;<span class="key">code:</span> <span class="val">git@abc123</span><br>
+            &nbsp;&nbsp;<span class="key">prompt:</span> <span class="val">prompt-v14 (sha: def456)</span><br>
+            &nbsp;&nbsp;<span class="key">model:</span> <span class="val">claude-3.5-sonnet-20250601</span><br>
+            &nbsp;&nbsp;<span class="key">tools:</span> <span class="val">mcp-schema-v3.2</span><br>
+            &nbsp;&nbsp;<span class="key">guardrails:</span> <span class="val">policy-v2.1</span><br>
+            &nbsp;&nbsp;<span class="key">embeddings:</span> <span class="val">embed-20250315</span><br>
+            &nbsp;&nbsp;<span class="key">config:</span> <span class="val">temp=0.1, max_tokens=2048</span>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: BEFORE & AFTER ===== -->
+        <section class="section reveal">
+          <div class="section-label">Transformation</div>
+          <h2 style="margin-bottom: var(--space-6);">Before &amp; After &mdash; AcmeCorp&rsquo;s Journey</h2>
+
+          <div class="ba-grid">
+            <div class="bp-card" style="border-left: 4px solid var(--accent-error);">
+              <div class="bp-card__title">
+                <span class="bp-card__number" style="border-color: var(--accent-error); color: var(--accent-error);">&#10007;</span>
+                Before
+              </div>
+              <div class="bp-card__body">
+                <ul class="ba-list ba-list--before">
+                  <li>ALTER TABLE incident &mdash; 4-hour outage, 200 stores affected</li>
+                  <li>Prompt update &mdash; $47K in wrong inventory orders across 14 stores</li>
+                  <li>PII exposure &mdash; raw customer emails shown to VP of Sales</li>
+                  <li>Shopify tables missing &mdash; agent couldn&rsquo;t find new data sources</li>
+                  <li>No version tracking &mdash; prompt/model mismatch caused hallucinated table names</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bp-card" style="border-left: 4px solid var(--accent-success);">
+              <div class="bp-card__title">
+                <span class="bp-card__number" style="border-color: var(--accent-success); color: var(--accent-success);">&#10003;</span>
+                After
+              </div>
+              <div class="bp-card__body">
+                <ul class="ba-list ba-list--after">
+                  <li>125 golden test cases catch regressions before production</li>
+                  <li>Canary deploys &mdash; new versions serve Southwest region (22 stores) for 48 hours first</li>
+                  <li>Zero safety violations in 3 months of gated deployments</li>
+                  <li>Automated schema re-embedding on every migration</li>
+                  <li>Pinned version manifests &mdash; prompt + model + tools always in sync</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top: var(--space-6);">
+            <div class="callout__label">The Bottom Line</div>
+            <div class="callout__text">
+              40%+ of agentic AI deployments will be canceled by 2027 due to costs, unclear value, or poor risk controls (Gartner). AcmeCorp was on track to be in that 40% after three production incidents in their first month. The evaluation gate, version pinning, and canary deployment infrastructure cost two weeks of engineering time &mdash; but prevented an estimated $200K+ in potential damages over the following quarter.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: INTERACTIVE — MATCH THE DEPLOYMENT PATTERN ===== -->
+        <section class="section reveal">
+          <div class="section-label">Knowledge Check</div>
+          <h2 style="margin-bottom: var(--space-4);">Match the Deployment Pattern</h2>
+          <p style="margin-bottom: var(--space-6);">For each scenario, pick the deployment pattern that best fits. Get all 4 right to prove you&rsquo;ve mastered deployment strategy.</p>
+
+          <div class="pm-checker" id="pmChecker">
+
+            <div class="pm-item" data-answer="shadow" id="pm-1">
+              <div class="pm-item__question">
+                <span class="badge badge--blue" data-tip="Data Architect agent — responsible for schema design and structural changes; errors could corrupt years of data" style="margin-right: var(--space-2);">Data Architect</span>
+                AcmeCorp wants to test a new reasoning prompt for the Data Architect agent. Schema changes could corrupt years of data if wrong.
+              </div>
+              <div class="pm-item__options">
+                <button class="pm-btn" data-choice="canary">Canary</button>
+                <button class="pm-btn" data-choice="shadow">Shadow</button>
+                <button class="pm-btn" data-choice="bluegreen">Blue-Green</button>
+                <button class="pm-btn" data-choice="flags">Feature Flags</button>
+              </div>
+            </div>
+
+            <div class="pm-item" data-answer="canary" id="pm-2">
+              <div class="pm-item__question">
+                <span class="badge badge--green" data-tip="Quality Analyst agent — runs anomaly detection and validation checks; low-risk threshold tweaks suit gradual rollout" style="margin-right: var(--space-2);">Quality Analyst</span>
+                The QA agent&rsquo;s anomaly detection got a minor threshold tweak. Low risk, but need to verify in production.
+              </div>
+              <div class="pm-item__options">
+                <button class="pm-btn" data-choice="canary">Canary</button>
+                <button class="pm-btn" data-choice="shadow">Shadow</button>
+                <button class="pm-btn" data-choice="bluegreen">Blue-Green</button>
+                <button class="pm-btn" data-choice="flags">Feature Flags</button>
+              </div>
+            </div>
+
+            <div class="pm-item" data-answer="bluegreen" id="pm-3">
+              <div class="pm-item__question">
+                <span class="badge badge--teal" data-tip="Data Steward agent — handles PII masking and compliance checks; critical bugs need instant rollback capability" style="margin-right: var(--space-2);">Data Steward</span>
+                A critical PII masking bug was found in the Data Steward agent. Need an immediate fix with instant rollback option.
+              </div>
+              <div class="pm-item__options">
+                <button class="pm-btn" data-choice="canary">Canary</button>
+                <button class="pm-btn" data-choice="shadow">Shadow</button>
+                <button class="pm-btn" data-choice="bluegreen">Blue-Green</button>
+                <button class="pm-btn" data-choice="flags">Feature Flags</button>
+              </div>
+            </div>
+
+            <div class="pm-item" data-answer="flags" id="pm-4">
+              <div class="pm-item__question">
+                <span class="badge badge--amber" data-tip="Data Engineer agent — builds and manages data pipelines; new integrations benefit from per-user feature flag testing" style="margin-right: var(--space-2);">Data Engineer</span>
+                Adding Shopify inventory lookup to the Data Engineer agent. Want to test with a few users first.
+              </div>
+              <div class="pm-item__options">
+                <button class="pm-btn" data-choice="canary">Canary</button>
+                <button class="pm-btn" data-choice="shadow">Shadow</button>
+                <button class="pm-btn" data-choice="bluegreen">Blue-Green</button>
+                <button class="pm-btn" data-choice="flags">Feature Flags</button>
+              </div>
+            </div>
+
+            <div class="pm-score" id="pmScore"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAVIGATION ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="03-cicd-eval-gates.html" class="page-nav__title">CI/CD &amp; Evaluation Gates</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="quiz-checkpoint.html" class="page-nav__title">Module 05 Quiz</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    Nav.init('m05-deployment-versioning');
+
+    // ===== MATCH THE DEPLOYMENT PATTERN ENGINE =====
+    (function() {
+      var solved = 0;
+      var total = 4;
+      var container = document.getElementById('pmChecker');
+      var scoreEl = document.getElementById('pmScore');
+
+      container.addEventListener('click', function(e) {
+        var btn = e.target.closest('.pm-btn');
+        if (!btn) return;
+
+        var item = btn.closest('.pm-item');
+        if (item.classList.contains('solved')) return;
+
+        var answer = item.getAttribute('data-answer');
+        var choice = btn.getAttribute('data-choice');
+
+        if (choice === answer) {
+          btn.classList.add('correct');
+          item.classList.add('solved');
+          solved++;
+
+          if (solved === total) {
+            scoreEl.textContent = 'All ' + total + ' deployment patterns matched correctly!';
+            scoreEl.classList.add('show', 'perfect');
+          }
+        } else {
+          btn.classList.add('wrong');
+          setTimeout(function() { btn.classList.remove('wrong'); }, 600);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

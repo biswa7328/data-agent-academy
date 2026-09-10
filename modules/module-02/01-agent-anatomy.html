@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Anatomy — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Component Connection SVG --- */
+    .anatomy-svg-wrap {
+      display: flex;
+      justify-content: center;
+      padding: var(--space-6) 0;
+    }
+    .anatomy-svg-wrap svg {
+      width: 100%;
+      max-width: 620px;
+    }
+
+    /* --- Slot Interaction --- */
+    .slot-board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+    }
+    .slot-item {
+      background: var(--bg-surface);
+      border: 2px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+    .slot-item:hover {
+      border-color: var(--stroke-primary);
+      background: rgba(161, 0, 255, 0.04);
+    }
+    .slot-item.filled {
+      border-style: solid;
+      border-color: var(--stroke-secondary);
+      color: var(--text-primary);
+      background: rgba(204, 0, 255, 0.06);
+    }
+    .slot-item.correct {
+      border-color: var(--accent-success);
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--accent-success);
+    }
+    .slot-item.incorrect {
+      border-color: var(--accent-error);
+      background: rgba(239, 68, 68, 0.08);
+      color: var(--accent-error);
+    }
+    .slot-item__number {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--stroke-primary);
+      background: var(--bg-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+    }
+    .label-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      justify-content: center;
+    }
+    .label-chip {
+      padding: var(--space-2) var(--space-4);
+      border: 1.5px solid var(--stroke-primary);
+      border-radius: var(--border-radius);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--stroke-primary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      user-select: none;
+    }
+    .label-chip:hover {
+      background: rgba(161, 0, 255, 0.1);
+      box-shadow: 0 0 12px var(--glow-blue);
+    }
+    .label-chip.selected {
+      background: var(--stroke-primary);
+      color: var(--bg-primary);
+    }
+    .label-chip.placed {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .interaction-feedback {
+      text-align: center;
+      margin-top: var(--space-6);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      min-height: 2em;
+    }
+
+    @media (max-width: 640px) {
+      .slot-board {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 02</span>
+        <span class="separator">/</span>
+        <span class="current">Agent Anatomy</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Evolving Diagram -->
+        <div class="evolving-diagram reveal" id="evolving-diagram-container" style="margin-top: var(--space-8);"></div>
+
+        <!-- ===== SECTION 1: Scene Setter ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Opening the Hood</span></div>
+          <h2 style="margin-bottom: var(--space-4);">Agent Anatomy</h2>
+          <p style="font-size: var(--font-lg); max-width: 700px;">
+            Now that we know what AcmeCorp's agent needs externally, let's open the hood and see what's inside.
+            Every Data Agent is built from <strong style="color: var(--stroke-primary);">six internal components</strong> working together.
+          </p>
+        </section>
+
+        <!-- ===== SECTION 2: Six Components ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Internal Components</span></div>
+          <h3 class="reveal" style="margin-bottom: var(--space-8);">The Six Building Blocks</h3>
+
+          <div class="card-grid card-grid--2 stagger-children reveal">
+
+            <!-- 1. LLM -->
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">1</span>
+                LLM (Core Reasoning Engine)
+              </div>
+              <div class="bp-card__body">
+                <p>The brain of the agent. Makes decisions, generates plans, and interprets natural language into structured actions.</p>
+                <div class="callout" style="margin-bottom: 0;">
+                  <div class="callout__label">AcmeCorp Example</div>
+                  <div class="callout__text">Interprets "top products" as needing a GROUP BY + ORDER BY query against the sales table.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Reasoning Graph -->
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">2</span>
+                Reasoning Graph
+              </div>
+              <div class="bp-card__body">
+                <p>Orchestrates multi-step logic via LangGraph. Defines the order of operations and branching decisions the agent follows.</p>
+                <div class="callout" style="margin-bottom: 0;">
+                  <div class="callout__label">AcmeCorp Example</div>
+                  <div class="callout__text">Decides: first discover schema, then write SQL, then format the results for the user.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Memory -->
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">3</span>
+                Memory
+              </div>
+              <div class="bp-card__body">
+                <p>Short-term (conversation context) + long-term (persistent storage). Enables continuity across interactions and sessions.</p>
+                <div class="callout" style="margin-bottom: 0;">
+                  <div class="callout__label">AcmeCorp Example</div>
+                  <div class="callout__text">Remembers you asked about Q2 earlier, so "same thing for Q3" makes sense without re-explaining.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Tools -->
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">4</span>
+                Tools
+              </div>
+              <div class="bp-card__body">
+                <p>Actions the agent can execute: database queries, API calls, file operations, and computations in the real world.</p>
+                <div class="callout" style="margin-bottom: 0;">
+                  <div class="callout__label">AcmeCorp Example</div>
+                  <div class="callout__text">The actual <code>query_execute</code>, <code>schema_discovery</code> functions that hit the warehouse.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Policies -->
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">5</span>
+                Policies
+              </div>
+              <div class="bp-card__body">
+                <p>Rules and guardrails: rate limits, validation logic, access controls, and safety constraints that bound behavior.</p>
+                <div class="callout" style="margin-bottom: 0;">
+                  <div class="callout__label">AcmeCorp Example</div>
+                  <div class="callout__text">Store-level analysts can't run queries touching salary tables. Only HQ admins have that access.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. Context -->
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">6</span>
+                Context
+              </div>
+              <div class="bp-card__body">
+                <p>Background knowledge: schema documentation, past resolutions, RAG-indexed domain knowledge that informs decisions.</p>
+                <div class="callout" style="margin-bottom: 0;">
+                  <div class="callout__label">AcmeCorp Example</div>
+                  <div class="callout__text">Knows that "revenue" in AcmeCorp means <code>sales.total_amount</code>, not <code>orders.subtotal</code>.</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: Sports Team Analogy ===== -->
+        <section class="section reveal">
+          <div class="collapsible">
+            <div class="collapsible__header">
+              <span>Think of it like a sports team...</span>
+              <svg class="collapsible__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p style="margin-bottom: var(--space-3);">
+                  <strong style="color: var(--stroke-primary);">LLM</strong> is the quarterback &mdash; reads the field and makes the play call.
+                </p>
+                <p style="margin-bottom: var(--space-3);">
+                  <strong style="color: var(--stroke-primary);">Reasoning Graph</strong> is the playbook &mdash; defines what sequence of plays to run.
+                </p>
+                <p style="margin-bottom: var(--space-3);">
+                  <strong style="color: var(--stroke-primary);">Memory</strong> is the team's game tape &mdash; remembers what worked before and what the opponent did last time.
+                </p>
+                <p style="margin-bottom: var(--space-3);">
+                  <strong style="color: var(--stroke-primary);">Tools</strong> are the players' skills &mdash; passing, blocking, running. The actual capabilities.
+                </p>
+                <p style="margin-bottom: var(--space-3);">
+                  <strong style="color: var(--stroke-primary);">Policies</strong> are the referee &mdash; enforces the rules, flags illegal moves.
+                </p>
+                <p style="margin-bottom: 0;">
+                  <strong style="color: var(--stroke-primary);">Context</strong> is the scouting report &mdash; background intelligence about the field, the opponent, the conditions.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: How Components Connect ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Architecture Diagram</span></div>
+          <h3 class="reveal" style="margin-bottom: var(--space-4);">How the Components Connect</h3>
+          <p class="reveal">The LLM sits at the center, orchestrating all other components. Every decision flows through it.</p>
+
+          <div class="anatomy-svg-wrap reveal">
+            <svg viewBox="0 0 620 400" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <filter id="svg-glow">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+                <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <polygon points="0 0, 8 3, 0 6" fill="#A100FF"/>
+                </marker>
+              </defs>
+
+              <!-- Center: LLM -->
+              <rect x="240" y="160" width="140" height="60" rx="6" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="2" filter="url(#svg-glow)"/>
+              <text x="310" y="186" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="13" font-weight="600">LLM</text>
+              <text x="310" y="205" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="9">Core Reasoning</text>
+
+              <!-- Top: Reasoning Graph -->
+              <rect x="230" y="20" width="160" height="50" rx="5" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <text x="310" y="50" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="11">Reasoning Graph</text>
+              <line x1="310" y1="160" x2="310" y2="70" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+
+              <!-- Top Right: Memory -->
+              <rect x="460" y="60" width="130" height="50" rx="5" fill="rgba(74,158,255,0.06)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <text x="525" y="90" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="11">Memory</text>
+              <line x1="380" y1="170" x2="460" y2="95" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+
+              <!-- Bottom Right: Tools -->
+              <rect x="460" y="270" width="130" height="50" rx="5" fill="rgba(74,158,255,0.06)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <text x="525" y="300" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="11">Tools</text>
+              <line x1="380" y1="210" x2="460" y2="285" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+
+              <!-- Bottom: Policies -->
+              <rect x="230" y="320" width="160" height="50" rx="5" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <text x="310" y="350" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="11">Policies</text>
+              <line x1="310" y1="220" x2="310" y2="320" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+
+              <!-- Top Left: Context -->
+              <rect x="30" y="60" width="130" height="50" rx="5" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <text x="95" y="90" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="11">Context</text>
+              <line x1="240" y1="170" x2="160" y2="95" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowhead)"/>
+
+              <!-- Dimension annotation -->
+              <text x="310" y="395" text-anchor="middle" fill="#5a0090" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em">
+                LLM ORCHESTRATES ALL COMPONENTS
+              </text>
+            </svg>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: Mini Interaction ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Interactive Exercise</span></div>
+          <h3 class="reveal" style="margin-bottom: var(--space-3);">Build the Agent: Place the Components</h3>
+          <p class="reveal" style="margin-bottom: var(--space-8);">
+            Click a label below, then click the correct slot to place it. Match each component to its role in the agent.
+          </p>
+
+          <div class="reveal" id="slot-interaction">
+            <div class="slot-board" id="slot-board">
+              <div class="slot-item" data-slot="llm" onclick="SlotGame.placeInSlot('llm')">
+                <span class="slot-item__number">1</span>
+                <span class="slot-hint">Core reasoning engine</span>
+              </div>
+              <div class="slot-item" data-slot="reasoning" onclick="SlotGame.placeInSlot('reasoning')">
+                <span class="slot-item__number">2</span>
+                <span class="slot-hint">Multi-step orchestration</span>
+              </div>
+              <div class="slot-item" data-slot="memory" onclick="SlotGame.placeInSlot('memory')">
+                <span class="slot-item__number">3</span>
+                <span class="slot-hint">Conversation continuity</span>
+              </div>
+              <div class="slot-item" data-slot="tools" onclick="SlotGame.placeInSlot('tools')">
+                <span class="slot-item__number">4</span>
+                <span class="slot-hint">Execute real actions</span>
+              </div>
+              <div class="slot-item" data-slot="policies" onclick="SlotGame.placeInSlot('policies')">
+                <span class="slot-item__number">5</span>
+                <span class="slot-hint">Rules & guardrails</span>
+              </div>
+              <div class="slot-item" data-slot="context" onclick="SlotGame.placeInSlot('context')">
+                <span class="slot-item__number">6</span>
+                <span class="slot-hint">Background knowledge</span>
+              </div>
+            </div>
+
+            <div class="label-pool" id="label-pool">
+              <div class="label-chip" data-label="memory" onclick="SlotGame.selectLabel('memory')">Memory</div>
+              <div class="label-chip" data-label="tools" onclick="SlotGame.selectLabel('tools')">Tools</div>
+              <div class="label-chip" data-label="llm" onclick="SlotGame.selectLabel('llm')">LLM</div>
+              <div class="label-chip" data-label="policies" onclick="SlotGame.selectLabel('policies')">Policies</div>
+              <div class="label-chip" data-label="context" onclick="SlotGame.selectLabel('context')">Context</div>
+              <div class="label-chip" data-label="reasoning" onclick="SlotGame.selectLabel('reasoning')">Reasoning Graph</div>
+            </div>
+
+            <div class="interaction-feedback" id="slot-feedback"></div>
+
+            <div style="text-align: center; margin-top: var(--space-4);">
+              <button class="btn" onclick="SlotGame.reset()" style="font-size: var(--font-xs);">Reset</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../module-01/quiz-checkpoint.html" class="page-nav__title">Module 01 Assessment</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="02-role-taxonomy.html" class="page-nav__title">Role Taxonomy</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+
+  <script>
+    // --- Slot Placement Game ---
+    const SlotGame = {
+      selectedLabel: null,
+      placements: {},
+      correctMap: {
+        llm: 'llm',
+        reasoning: 'reasoning',
+        memory: 'memory',
+        tools: 'tools',
+        policies: 'policies',
+        context: 'context'
+      },
+
+      selectLabel(label) {
+        document.querySelectorAll('.label-chip').forEach(el => el.classList.remove('selected'));
+        this.selectedLabel = label;
+        const chip = document.querySelector(`.label-chip[data-label="${label}"]`);
+        if (chip && !chip.classList.contains('placed')) {
+          chip.classList.add('selected');
+        }
+      },
+
+      placeInSlot(slot) {
+        if (!this.selectedLabel) return;
+
+        if (this.placements[slot]) {
+          const oldLabel = this.placements[slot];
+          const oldChip = document.querySelector(`.label-chip[data-label="${oldLabel}"]`);
+          if (oldChip) oldChip.classList.remove('placed');
+          delete this.placements[slot];
+        }
+
+        for (const [s, l] of Object.entries(this.placements)) {
+          if (l === this.selectedLabel) {
+            delete this.placements[s];
+            const slotEl = document.querySelector(`.slot-item[data-slot="${s}"]`);
+            if (slotEl) {
+              slotEl.classList.remove('filled');
+              const hint = slotEl.querySelector('.slot-hint');
+              const hintMap = {
+                llm: 'Core reasoning engine',
+                reasoning: 'Multi-step orchestration',
+                memory: 'Conversation continuity',
+                tools: 'Execute real actions',
+                policies: 'Rules & guardrails',
+                context: 'Background knowledge'
+              };
+              if (hint) hint.textContent = hintMap[s];
+            }
+          }
+        }
+
+        this.placements[slot] = this.selectedLabel;
+        const slotEl = document.querySelector(`.slot-item[data-slot="${slot}"]`);
+        const labelNames = {
+          llm: 'LLM', reasoning: 'Reasoning Graph', memory: 'Memory',
+          tools: 'Tools', policies: 'Policies', context: 'Context'
+        };
+        if (slotEl) {
+          slotEl.classList.add('filled');
+          const hint = slotEl.querySelector('.slot-hint');
+          if (hint) hint.textContent = labelNames[this.selectedLabel];
+        }
+
+        const chip = document.querySelector(`.label-chip[data-label="${this.selectedLabel}"]`);
+        if (chip) {
+          chip.classList.remove('selected');
+          chip.classList.add('placed');
+        }
+        this.selectedLabel = null;
+
+        if (Object.keys(this.placements).length === 6) {
+          this.checkAll();
+        }
+      },
+
+      checkAll() {
+        let correct = 0;
+        for (const [slot, label] of Object.entries(this.placements)) {
+          const slotEl = document.querySelector(`.slot-item[data-slot="${slot}"]`);
+          if (this.correctMap[slot] === label) {
+            slotEl.classList.add('correct');
+            slotEl.classList.remove('incorrect');
+            correct++;
+          } else {
+            slotEl.classList.add('incorrect');
+            slotEl.classList.remove('correct');
+          }
+        }
+        const feedback = document.getElementById('slot-feedback');
+        if (correct === 6) {
+          feedback.innerHTML = '<span style="color: var(--accent-success);">All correct! You know the agent anatomy.</span>';
+        } else {
+          feedback.innerHTML = `<span style="color: var(--accent-warning);">${correct}/6 correct. Try resetting and placing them again.</span>`;
+        }
+      },
+
+      reset() {
+        this.selectedLabel = null;
+        this.placements = {};
+        document.querySelectorAll('.label-chip').forEach(el => {
+          el.classList.remove('selected', 'placed');
+        });
+        const hintMap = {
+          llm: 'Core reasoning engine',
+          reasoning: 'Multi-step orchestration',
+          memory: 'Conversation continuity',
+          tools: 'Execute real actions',
+          policies: 'Rules & guardrails',
+          context: 'Background knowledge'
+        };
+        document.querySelectorAll('.slot-item').forEach(el => {
+          el.classList.remove('filled', 'correct', 'incorrect');
+          const hint = el.querySelector('.slot-hint');
+          if (hint) hint.textContent = hintMap[el.dataset.slot];
+        });
+        document.getElementById('slot-feedback').innerHTML = '';
+      }
+    };
+
+    // --- Init ---
+    Nav.init('m02-agent-anatomy');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      EvolvingDiagram.renderForPage('evolving-diagram-container', 'agent-anatomy');
+    });
+  </script>
+</body>
+</html>

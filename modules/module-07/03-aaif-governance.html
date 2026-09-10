@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AAIF Governance &amp; Emerging Protocols &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Governance Diagram --- */
+    .gov-stack {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .gov-stack__tier {
+      width: 100%;
+      max-width: 600px;
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      text-align: center;
+      transition: all var(--transition-base);
+    }
+    .gov-stack__tier:hover { border-color: var(--stroke-secondary); }
+    .gov-stack__tier--top {
+      border-color: var(--stroke-secondary);
+      border-style: solid;
+      box-shadow: 0 0 15px var(--glow-teal);
+    }
+    .gov-stack__tier-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-2);
+    }
+    .gov-stack__tier-title {
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .gov-stack__tier-desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      margin-top: var(--space-2);
+    }
+    .gov-stack__arrow {
+      font-family: var(--font-mono);
+      color: var(--stroke-dim);
+      font-size: var(--font-lg);
+    }
+
+    /* --- Co-founder Grid --- */
+    .founder-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+    .founder-chip {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-4);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-primary);
+      transition: all var(--transition-base);
+    }
+    .founder-chip:hover {
+      border-color: var(--stroke-secondary);
+      color: var(--stroke-secondary);
+    }
+    .founder-chip__role {
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      margin-top: var(--space-1);
+    }
+
+    /* --- Protocol Cards --- */
+    .proto-card {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      margin-bottom: var(--space-4);
+      transition: all var(--transition-base);
+    }
+    .proto-card:hover { border-color: var(--stroke-secondary); }
+    .proto-card__header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .proto-card__abbr {
+      font-family: var(--font-mono);
+      font-size: var(--font-xl);
+      font-weight: 700;
+      color: var(--stroke-primary);
+      min-width: 60px;
+    }
+    .proto-card__name {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .proto-card__status {
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+    }
+    .proto-card__body {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 640px) {
+      .founder-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M9 21V9"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 07</span>
+        <span class="separator">/</span>
+        <span class="current">AAIF Governance</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 07 &mdash; Lesson 03</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">AAIF Governance &amp; Emerging Protocols</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            How the industry ensures MCP and A2A remain open, vendor-neutral standards &mdash; and what protocols are coming next.
+          </p>
+        </header>
+
+        <!-- ===== INLINE SVG DIAGRAM: AAIF Governance Stack ===== -->
+        <div class="evolving-diagram reveal reveal--scale"><div class="evolving-diagram__label">AAIF GOVERNANCE STACK</div>
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;font-family:'JetBrains Mono',monospace;">
+          <defs>
+            <filter id="glowBlue3"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="380" fill="transparent"/>
+          <!-- Corner brackets -->
+          <path d="M4,20 L4,4 L20,4" stroke="#334155" stroke-width="1.5" fill="none"/>
+          <path d="M680,4 L696,4 L696,20" stroke="#334155" stroke-width="1.5" fill="none"/>
+          <path d="M4,360 L4,376 L20,376" stroke="#334155" stroke-width="1.5" fill="none"/>
+          <path d="M680,376 L696,376 L696,360" stroke="#334155" stroke-width="1.5" fill="none"/>
+
+          <!-- Corner label -->
+          <text x="690" y="18" text-anchor="end" fill="#334155" font-size="8" letter-spacing="0.1em">AcmeCorp Implementation</text>
+
+          <!-- Layer 1 (outermost): GOVERNANCE POLICIES — amber -->
+          <rect x="80" y="20" width="520" height="330" rx="8" fill="rgba(245,158,11,0.04)" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="6,3"/>
+          <text x="100" y="44" fill="#f59e0b" font-size="11" font-weight="700" letter-spacing="0.05em">GOVERNANCE POLICIES</text>
+          <text x="580" y="40" text-anchor="end" fill="#a0a0a0" font-size="9">Trust Boundaries</text>
+          <text x="580" y="54" text-anchor="end" fill="#a0a0a0" font-size="9">Audit Requirements</text>
+
+          <!-- Layer 2: AGENT REGISTRY — teal -->
+          <rect x="120" y="68" width="440" height="262" rx="7" fill="rgba(45,212,191,0.04)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="6,3"/>
+          <text x="140" y="92" fill="#CC00FF" font-size="11" font-weight="700" letter-spacing="0.05em">AGENT REGISTRY</text>
+          <text x="540" y="88" text-anchor="end" fill="#a0a0a0" font-size="9">Agent Cards</text>
+          <text x="540" y="102" text-anchor="end" fill="#a0a0a0" font-size="9">Capability Index</text>
+
+          <!-- Layer 3: PROTOCOL LAYER — blue dashed -->
+          <rect x="160" y="116" width="360" height="194" rx="6" fill="rgba(74,158,255,0.04)" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="6,3"/>
+          <text x="180" y="140" fill="#A100FF" font-size="11" font-weight="700" letter-spacing="0.05em">PROTOCOL LAYER</text>
+          <text x="500" y="136" text-anchor="end" fill="#a0a0a0" font-size="9">MCP (Tools)</text>
+          <text x="500" y="150" text-anchor="end" fill="#a0a0a0" font-size="9">A2A (Agents)</text>
+
+          <!-- Layer 4 (innermost): AGENT RUNTIME — blue solid, glowing -->
+          <rect x="200" y="164" width="280" height="126" rx="5" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="2" filter="url(#glowBlue3)"/>
+          <text x="340" y="188" text-anchor="middle" fill="#A100FF" font-size="11" font-weight="700" letter-spacing="0.05em">AGENT RUNTIME</text>
+
+          <!-- Agent boxes inside runtime -->
+          <rect x="215" y="200" width="110" height="34" rx="4" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="0.8" stroke-dasharray="6,3"/>
+          <text x="270" y="222" text-anchor="middle" fill="#f5f5f5" font-size="10">DataPulse</text>
+
+          <rect x="340" y="200" width="110" height="34" rx="4" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="0.8" stroke-dasharray="6,3"/>
+          <text x="395" y="222" text-anchor="middle" fill="#f5f5f5" font-size="10">InsightBot</text>
+
+          <rect x="255" y="248" width="170" height="34" rx="4" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="6,3"/>
+          <text x="340" y="270" text-anchor="middle" fill="#f5f5f5" font-size="10">ComplianceGuard</text>
+
+          <!-- Side dimension marker: AAIF FRAMEWORK -->
+          <line x1="40" y1="30" x2="40" y2="340" stroke="#334155" stroke-width="0.8"/>
+          <line x1="35" y1="30" x2="45" y2="30" stroke="#334155" stroke-width="0.8"/>
+          <line x1="35" y1="340" x2="45" y2="340" stroke="#334155" stroke-width="0.8"/>
+          <text x="32" y="195" text-anchor="middle" fill="#a0a0a0" font-size="9" letter-spacing="0.1em" transform="rotate(-90, 32, 195)">AAIF FRAMEWORK</text>
+
+          <!-- Bottom label -->
+          <text x="350" y="370" text-anchor="middle" fill="#334155" font-size="9" letter-spacing="0.15em">AI AGENT INTEROPERABILITY FRAMEWORK — GOVERNANCE STACK</text>
+        </svg>
+        </div>
+
+        <!-- ===== SECTION 1: What is AAIF ===== -->
+        <section class="section">
+          <div class="section-label reveal">The Problem</div>
+          <h2 class="reveal">When Connectivity Is Not Enough</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            Three agents were now collaborating via A2A at AcmeCorp. DataPulse handled analytics,
+            InsightBot owned marketing attribution, and ComplianceGuard audited everything. Then
+            Marcus Webb got a call from legal on a Wednesday afternoon in October.
+          </p>
+          <p class="reveal" style="line-height: 1.7; margin-top: var(--space-4);">
+            &ldquo;We need an audit trail of every agent decision,&rdquo; the lawyer said. &ldquo;Who
+            authorized InsightBot to share marketing data with DataPulse? What happens if ComplianceGuard
+            and DataPulse give contradictory answers about the same dataset? And if we switch LLM providers
+            next year, do we lose all our agent integrations?&rdquo; Marcus brought the questions to the
+            next leadership meeting. Derek Kim, the CFO, added his own concern: &ldquo;We&rsquo;re
+            building on MCP and A2A. What happens if the companies behind these protocols change the
+            spec in ways that break our agents?&rdquo;
+          </p>
+          <p class="reveal" style="line-height: 1.7; margin-top: var(--space-4);">
+            Maya Chen had the answer. Both MCP and A2A were governed by the <strong>Agentic AI Foundation
+            (AAIF)</strong>, a collaborative initiative under the <strong>Linux Foundation</strong>. Its
+            mission: ensure interoperability protocols remain open, vendor-neutral, and community-driven
+            &mdash; preventing any single company from controlling the agent ecosystem. For Marcus, that
+            meant audit standards. For Derek, it meant no vendor lock-in. For Maya, it meant her MCP
+            servers would not become obsolete overnight.
+          </p>
+
+          <div class="gov-stack reveal">
+            <div class="gov-stack__tier gov-stack__tier--top">
+              <div class="gov-stack__tier-label">Governance Layer</div>
+              <div class="gov-stack__tier-title">AAIF (Linux Foundation)</div>
+              <div class="gov-stack__tier-desc">Stewards both protocols, manages specs, ensures vendor neutrality</div>
+            </div>
+            <div class="gov-stack__arrow">&darr;</div>
+            <div class="gov-stack__tier">
+              <div class="gov-stack__tier-label">Protocol Layer</div>
+              <div class="gov-stack__tier-title">MCP + A2A</div>
+              <div class="gov-stack__tier-desc">Open specifications for agent-tool and agent-agent communication</div>
+            </div>
+            <div class="gov-stack__arrow">&darr;</div>
+            <div class="gov-stack__tier">
+              <div class="gov-stack__tier-label">Implementation Layer</div>
+              <div class="gov-stack__tier-title">SDKs, Servers, Agents</div>
+              <div class="gov-stack__tier-desc">AcmeCorp&rsquo;s DataPulse, InsightBot, ComplianceGuard &mdash; and the community</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: Co-founders ===== -->
+        <section class="section">
+          <div class="section-label reveal">Who&rsquo;s Behind It</div>
+          <h2 class="reveal">AAIF Co-Founders</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            AAIF was established by the major AI platform providers, ensuring that all major players
+            have a seat at the table. This broad coalition prevents any single vendor from dominating
+            the protocol direction. When Derek Kim asked Maya whether AcmeCorp was betting on a
+            single company&rsquo;s proprietary standard, she showed him the co-founder list.
+          </p>
+
+          <div class="founder-grid reveal">
+            <div class="founder-chip">
+              OpenAI
+              <div class="founder-chip__role">GPT Platform</div>
+            </div>
+            <div class="founder-chip">
+              Anthropic
+              <div class="founder-chip__role">Claude Platform</div>
+            </div>
+            <div class="founder-chip">
+              Google
+              <div class="founder-chip__role">Gemini Platform</div>
+            </div>
+            <div class="founder-chip">
+              Microsoft
+              <div class="founder-chip__role">Azure AI</div>
+            </div>
+            <div class="founder-chip">
+              Amazon (AWS)
+              <div class="founder-chip__role">Bedrock</div>
+            </div>
+            <div class="founder-chip">
+              Block
+              <div class="founder-chip__role">Fintech</div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">Why This Matters for AcmeCorp</div>
+            <div class="callout__text">
+              When competitors collaborate on standards, everyone benefits. MCP originated at Anthropic
+              and A2A at Google &mdash; both are now governed jointly under AAIF. This means neither
+              company can unilaterally change the spec to favor their own platform. For AcmeCorp, it
+              means the five MCP servers Maya built and the three A2A Agent Cards she published are
+              investments protected by open governance, not proprietary bets.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: What AAIF Governs ===== -->
+        <section class="section">
+          <div class="section-label reveal">Scope</div>
+          <h2 class="reveal">What AAIF Governs</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            Marcus Webb&rsquo;s legal questions had concrete answers in the AAIF framework. Each area
+            of governance maps to a real concern AcmeCorp&rsquo;s leadership raised.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal" style="margin-top: var(--space-6);">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Protocol Specifications</div>
+              <div class="bp-card__body">
+                Maintains the official MCP and A2A specs. All changes go through an open RFC process
+                with community review. Breaking changes require broad consensus. This addressed
+                Derek&rsquo;s fear &mdash; no single vendor can push a breaking change that obsoletes
+                AcmeCorp&rsquo;s agents overnight.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Conformance Testing</div>
+              <div class="bp-card__body">
+                Defines test suites to verify that implementations correctly follow the spec. Ensures
+                that an MCP server tested against one client works with all clients. Maya runs the
+                AAIF conformance suite against every MCP server before deploying to production &mdash;
+                it caught a serialization bug in her Shopify server before it reached DataPulse.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Reference Implementations</div>
+              <div class="bp-card__body">
+                Provides official SDKs in TypeScript, Python, Java, and Kotlin. These serve as the
+                canonical implementation that other tools can validate against. AcmeCorp&rsquo;s
+                agents are built on the Python SDK; Priya Sharma uses the TypeScript SDK for her
+                data quality validation scripts.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">04</div>
+              <div class="bp-card__title">Security Standards</div>
+              <div class="bp-card__body">
+                Defines authentication, authorization, and trust models for both protocols. Ensures
+                agents can safely interact across organizational boundaries. This was Marcus&rsquo;s
+                key requirement &mdash; the AAIF security framework gave him the audit trail
+                and access controls legal demanded.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: Emerging Protocols ===== -->
+        <section class="section">
+          <div class="section-label reveal">What&rsquo;s Next</div>
+          <h2 class="reveal">Emerging Protocols</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            MCP and A2A are the established standards that AcmeCorp has adopted. But the ecosystem
+            continues to evolve. Lena Park keeps an eye on two emerging protocols that could shape
+            AcmeCorp&rsquo;s agent architecture in the coming year.
+          </p>
+
+          <div class="proto-card reveal" style="margin-top: var(--space-6);">
+            <div class="proto-card__header">
+              <div class="proto-card__abbr">ACP</div>
+              <div>
+                <div class="proto-card__name">Agent Communication Protocol</div>
+                <div class="proto-card__status"><span class="badge badge--amber" data-tip="ACP is an emerging REST-native protocol for agent communication, simpler than A2A for web teams">Emerging</span></div>
+              </div>
+            </div>
+            <div class="proto-card__body">
+              ACP takes a <strong>REST-native</strong> approach to agent communication. While A2A uses
+              its own task-based model, ACP maps directly onto standard REST patterns (POST to create
+              tasks, GET to check status, etc.). This makes it immediately familiar to web developers
+              and easy to integrate with existing API infrastructure, load balancers, and monitoring tools.
+              Maya noted that ACP would be simpler for AcmeCorp&rsquo;s web team to adopt if they
+              ever need to build agent integrations into the customer-facing portal.
+            </div>
+          </div>
+
+          <div class="proto-card reveal">
+            <div class="proto-card__header">
+              <div class="proto-card__abbr">ANP</div>
+              <div>
+                <div class="proto-card__name">Agent Network Protocol</div>
+                <div class="proto-card__status"><span class="badge badge--amber" data-tip="ANP is an emerging protocol for decentralized, peer-to-peer agent mesh networks without central infrastructure">Emerging</span></div>
+              </div>
+            </div>
+            <div class="proto-card__body">
+              ANP targets <strong>decentralized, peer-to-peer</strong> agent networks. While A2A assumes
+              a client-server model, ANP enables agents to form mesh networks, discover peers through
+              decentralized registries, and communicate without centralized infrastructure. Raj Patel
+              flagged ANP as potentially relevant if AcmeCorp ever needs its agents to collaborate
+              with partner or supplier agents outside the company&rsquo;s network boundary.
+            </div>
+          </div>
+
+          <div class="collapsible reveal" style="margin-top: var(--space-6);">
+            <div class="collapsible__header" onclick="this.parentElement.classList.toggle('open')">
+              <span>How do these protocols relate to MCP and A2A?</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                MCP and A2A are the foundation. ACP and ANP explore alternative design points &mdash;
+                ACP for teams that want pure REST, ANP for decentralized use cases. In practice,
+                most production systems like AcmeCorp&rsquo;s will use MCP (for tools) and A2A (for agents),
+                with ACP and ANP serving specialized niches. The AAIF ensures all these protocols can
+                coexist and interoperate &mdash; AcmeCorp does not have to pick one and abandon the others.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: Why Open Standards ===== -->
+        <section class="section">
+          <div class="section-label reveal">Strategic Impact</div>
+          <h2 class="reveal">Why Open Standards Matter</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            Derek Kim asked Maya to quantify the value of open standards for the next board presentation.
+            She framed it around three strategic benefits that directly affect AcmeCorp&rsquo;s bottom line.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal" style="margin-top: var(--space-6);">
+            <div class="bp-card">
+              <div class="bp-card__title">No Vendor Lock-In</div>
+              <div class="bp-card__body">
+                AcmeCorp&rsquo;s MCP servers work with any compliant client. If the team decides to
+                switch LLM providers &mdash; as they tested during the summer &mdash; every MCP server
+                and A2A integration keeps working. Derek estimated this saved six months of re-engineering
+                compared to a proprietary approach.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Future-Proof Investments</div>
+              <div class="bp-card__body">
+                Standards evolve through open governance. AcmeCorp&rsquo;s agent architecture will grow
+                with the ecosystem rather than being left behind by a proprietary API change. Lena Park
+                called this &ldquo;building on bedrock instead of sand.&rdquo;
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Ecosystem Network Effects</div>
+              <div class="bp-card__body">
+                Every new MCP server in the open-source ecosystem benefits AcmeCorp. Maya found
+                community-built MCP servers for PostgreSQL and S3 &mdash; she only had to build
+                the Shopify and Google Sheets servers herself. Each new A2A-compatible agent becomes
+                a potential collaborator.
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">Historical Parallel</div>
+            <div class="callout__text">
+              Open standards have a strong track record: HTTP gave us the web, SMTP gave us email,
+              OAuth gave us secure delegated access. MCP and A2A are poised to do the same for
+              the AI agent ecosystem &mdash; creating a shared layer that benefits everyone, from
+              a 200-store retailer like AcmeCorp to the largest enterprises.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 6: AcmeCorp LLM Migration ===== -->
+        <section class="section">
+          <div class="section-label reveal">Case Study</div>
+          <h2 class="reveal">AcmeCorp: The LLM Migration That Took Days, Not Months</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            In November, Raj Patel ran benchmarks showing that a different LLM provider generated
+            more accurate SQL for AcmeCorp&rsquo;s star schema. Maya proposed a migration. Derek Kim
+            was skeptical: &ldquo;Last time we switched a core vendor, it took the team four months.&rdquo;
+            Maya smiled. &ldquo;That was before MCP.&rdquo;
+          </p>
+
+          <div class="callout reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">Before vs. After: The LLM Swap</div>
+            <div class="callout__text">
+              <strong>What changed:</strong> The LLM provider powering DataPulse, InsightBot, and
+              ComplianceGuard. Maya updated the MCP client library, adjusted prompt templates for
+              the new model&rsquo;s style, and re-ran the AAIF conformance tests.<br><br>
+              <strong>What stayed the same:</strong> All five MCP servers (PostgreSQL, Shopify,
+              Salesforce, Google Sheets, S3). All three A2A Agent Cards. All tool definitions
+              and schemas. All of Marcus&rsquo;s security and auth configuration. The entire
+              migration took four days. Derek called it &ldquo;the fastest vendor swap in
+              AcmeCorp history.&rdquo;
+            </div>
+          </div>
+
+          <div class="card-grid card-grid--2 reveal" style="margin-top: var(--space-6);">
+            <div class="bp-card">
+              <div class="bp-card__title">What Changed</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-3);">
+                  <span class="badge badge--green" data-tip="Components that changed during AcmeCorp's LLM migration thanks to open protocol abstraction">Swapped</span>
+                </div>
+                <ul style="padding-left: var(--space-5); line-height: 1.8;">
+                  <li>LLM provider (model swap)</li>
+                  <li>MCP client library version</li>
+                  <li>Prompt templates for new model</li>
+                </ul>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">What Stayed the Same</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-3);">
+                  <span class="badge badge--blue" data-tip="MCP servers, A2A integrations, and security config stayed intact because open standards decouple the protocol layer from the model layer">Preserved</span>
+                </div>
+                <ul style="padding-left: var(--space-5); line-height: 1.8;">
+                  <li>All 5 MCP server deployments</li>
+                  <li>All 3 A2A agent integrations</li>
+                  <li>Tool definitions and schemas</li>
+                  <li>Security and auth configuration</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">Key Takeaway</div>
+            <div class="callout__text">
+              Building on AAIF-governed standards means your agent investments are portable. The protocol
+              layer is decoupled from the model layer. When better models arrive (and they will), your
+              tool and agent integrations carry forward. AcmeCorp learned this lesson the best way
+              possible &mdash; by experiencing a painless migration that would have been agonizing
+              without open standards.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="02-a2a-protocol.html" class="page-nav__title">A2A Protocol</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="quiz-checkpoint.html" class="page-nav__title">Module 07 Quiz</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m07-aaif-governance');</script>
+</body>
+</html>

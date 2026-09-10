@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retrieval Strategies &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-sm);
+      margin: var(--space-6) 0;
+    }
+    .compare-table th {
+      text-align: left;
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 2px solid var(--stroke-dim);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+    .compare-table td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px dashed var(--stroke-dim);
+      color: var(--text-primary);
+      vertical-align: top;
+    }
+    .compare-table tr:hover td {
+      background: rgba(161, 0, 255, 0.03);
+    }
+    .retrieval-flow {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-5);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin: var(--space-4) 0;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+    .retrieval-flow__step {
+      padding: var(--space-2) var(--space-4);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--border-radius);
+      white-space: nowrap;
+      color: var(--text-primary);
+      background: var(--bg-primary);
+    }
+    .retrieval-flow__arrow {
+      color: var(--stroke-primary);
+      flex-shrink: 0;
+    }
+    .vdb-feature {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: var(--font-xs);
+      font-family: var(--font-mono);
+    }
+    .vdb-feature--yes { background: rgba(204, 0, 255, 0.15); color: var(--text-teal); }
+    .vdb-feature--no { background: rgba(251, 113, 133, 0.15); color: #fb7185; }
+    .vdb-feature--partial { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 06</span>
+        <span class="separator">/</span>
+        <span class="current">Retrieval Strategies</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 06 &mdash; Lesson 03</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Retrieval Strategies &amp; Vector Databases</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            RAG was live. DataPulse's schema-retrieval accuracy hit 86%. Then two bug reports landed on Lena Park's desk the same Monday morning. Sofia Torres: "I asked about my store's top products and got results for the entire Southwest region." And from a marketing intern: "I searched for SKU AC-WIDGET-001 and DataPulse said it doesn't exist." Two different failures, one root cause &mdash; the retrieval strategy.
+          </p>
+        </header>
+
+        <!-- Blueprint SVG Diagram: Retrieval Strategy Comparison -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">RETRIEVAL STRATEGY COMPARISON</div>
+          <svg viewBox="0 0 700 370" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+            <defs>
+              <filter id="glowH" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <marker id="aBlue3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
+              <marker id="aTeal3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="aGreen3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#10b981"/></marker>
+              <linearGradient id="hybridGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#A100FF"/>
+                <stop offset="100%" stop-color="#CC00FF"/>
+              </linearGradient>
+              <marker id="aHybrid3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <style>
+                .sl { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 9px; }
+                .ss { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; font-size: 7.5px; }
+                .st { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 10.5px; font-weight: 600; }
+              </style>
+            </defs>
+
+            <!-- Title -->
+            <text x="350" y="24" text-anchor="middle" class="st" style="fill:#A100FF;font-size:11px;">THREE RETRIEVAL PATHS</text>
+
+            <!-- === PATH 1: DENSE (Semantic) === -->
+            <text x="95" y="62" text-anchor="middle" class="st" style="fill:#A100FF;font-size:9px;">DENSE (Semantic)</text>
+
+            <!-- Query box (shared left) -->
+            <rect x="20" y="72" width="60" height="32" rx="3" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5"/>
+            <text x="50" y="92" text-anchor="middle" class="sl">Query</text>
+
+            <!-- Arrow -->
+            <line x1="82" y1="88" x2="120" y2="88" stroke="#A100FF" stroke-width="1.2" marker-end="url(#aBlue3)"/>
+
+            <!-- Embedding circle -->
+            <circle cx="155" cy="88" r="22" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.2"/>
+            <text x="155" y="85" text-anchor="middle" class="ss" style="fill:#A100FF;">Embed-</text>
+            <text x="155" y="95" text-anchor="middle" class="ss" style="fill:#A100FF;">ding</text>
+
+            <!-- Arrow -->
+            <line x1="179" y1="88" x2="230" y2="88" stroke="#A100FF" stroke-width="1.2" marker-end="url(#aBlue3)"/>
+
+            <!-- ANN Search circle -->
+            <circle cx="270" cy="88" r="28" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.2"/>
+            <text x="270" y="85" text-anchor="middle" class="ss" style="fill:#A100FF;">ANN</text>
+            <text x="270" y="95" text-anchor="middle" class="ss" style="fill:#A100FF;">Search</text>
+
+            <!-- Arrow -->
+            <line x1="300" y1="88" x2="350" y2="88" stroke="#A100FF" stroke-width="1.2" marker-end="url(#aBlue3)"/>
+
+            <!-- Ranked Results -->
+            <rect x="356" y="72" width="90" height="32" rx="3" fill="rgba(74,158,255,0.06)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="401" y="92" text-anchor="middle" class="sl" style="fill:#A100FF;">Ranked Results</text>
+
+            <!-- === PATH 2: SPARSE (Keyword) === -->
+            <text x="95" y="155" text-anchor="middle" class="st" style="fill:#CC00FF;font-size:9px;">SPARSE (Keyword)</text>
+
+            <!-- Query box -->
+            <rect x="20" y="165" width="60" height="32" rx="3" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.5"/>
+            <text x="50" y="185" text-anchor="middle" class="sl">Query</text>
+
+            <!-- Arrow -->
+            <line x1="82" y1="181" x2="120" y2="181" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#aTeal3)"/>
+
+            <!-- BM25 Index circle -->
+            <circle cx="155" cy="181" r="22" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.2"/>
+            <text x="155" y="178" text-anchor="middle" class="ss" style="fill:#CC00FF;">BM25</text>
+            <text x="155" y="188" text-anchor="middle" class="ss" style="fill:#CC00FF;">Index</text>
+
+            <!-- Arrow -->
+            <line x1="179" y1="181" x2="230" y2="181" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#aTeal3)"/>
+
+            <!-- Term Match circle -->
+            <circle cx="270" cy="181" r="28" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.2"/>
+            <text x="270" y="178" text-anchor="middle" class="ss" style="fill:#CC00FF;">Term</text>
+            <text x="270" y="188" text-anchor="middle" class="ss" style="fill:#CC00FF;">Match</text>
+
+            <!-- Arrow -->
+            <line x1="300" y1="181" x2="350" y2="181" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#aTeal3)"/>
+
+            <!-- Ranked Results -->
+            <rect x="356" y="165" width="90" height="32" rx="3" fill="rgba(45,212,191,0.06)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="401" y="185" text-anchor="middle" class="sl" style="fill:#CC00FF;">Ranked Results</text>
+
+            <!-- === PATH 3: HYBRID === -->
+            <text x="95" y="248" text-anchor="middle" class="st" style="fill:url(#hybridGrad);font-size:9px;">HYBRID</text>
+
+            <!-- Query box -->
+            <rect x="20" y="258" width="60" height="32" rx="3" fill="rgba(74,158,255,0.08)" stroke="url(#hybridGrad)" stroke-width="1.5"/>
+            <text x="50" y="278" text-anchor="middle" class="sl">Query</text>
+
+            <!-- Two forking arrows -->
+            <line x1="82" y1="270" x2="110" y2="260" stroke="#A100FF" stroke-width="1" stroke-dasharray="3,2"/>
+            <line x1="82" y1="278" x2="110" y2="288" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3,2"/>
+
+            <!-- Dense mini node -->
+            <circle cx="135" cy="255" r="14" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1"/>
+            <text x="135" y="258" text-anchor="middle" class="ss" style="fill:#A100FF;font-size:6px;">Dense</text>
+
+            <!-- Sparse mini node -->
+            <circle cx="135" cy="293" r="14" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1"/>
+            <text x="135" y="296" text-anchor="middle" class="ss" style="fill:#CC00FF;font-size:6px;">Sparse</text>
+
+            <!-- Converge arrows to RRF diamond -->
+            <line x1="150" y1="258" x2="195" y2="274" stroke="#A100FF" stroke-width="1"/>
+            <line x1="150" y1="290" x2="195" y2="274" stroke="#CC00FF" stroke-width="1"/>
+
+            <!-- RRF Fusion diamond -->
+            <polygon points="220,250 250,274 220,298 190,274" fill="rgba(167,139,250,0.15)" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="220" y="271" text-anchor="middle" class="ss" style="fill:#a78bfa;font-size:7px;">RRF</text>
+            <text x="220" y="281" text-anchor="middle" class="ss" style="fill:#a78bfa;font-size:7px;">Fusion</text>
+
+            <!-- Arrow to Final Results -->
+            <line x1="252" y1="274" x2="350" y2="274" stroke="url(#hybridGrad)" stroke-width="1.5" marker-end="url(#aGreen3)"/>
+
+            <!-- Final Results (glowing) -->
+            <rect x="356" y="258" width="90" height="32" rx="3" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="1.5" filter="url(#glowH)"/>
+            <text x="401" y="278" text-anchor="middle" class="sl" style="fill:#10b981;">Final Results</text>
+
+            <!-- DataPulse's Choice indicator -->
+            <rect x="460" y="260" width="130" height="28" rx="14" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="525" y="278" text-anchor="middle" class="ss" style="fill:#10b981;font-size:8px;">DataPulse's Choice</text>
+            <!-- Small arrow pointing left -->
+            <line x1="458" y1="274" x2="450" y2="274" stroke="#10b981" stroke-width="1" marker-end="url(#aGreen3)"/>
+
+            <!-- Bottom annotation -->
+            <rect x="120" y="330" width="460" height="30" rx="4" fill="rgba(74,158,255,0.04)" stroke="#334155" stroke-width="1" stroke-dasharray="6,4"/>
+            <text x="350" y="349" text-anchor="middle" class="sl" style="fill:#A100FF;font-size:8.5px;">HYBRID = SEMANTIC UNDERSTANDING + EXACT MATCH PRECISION</text>
+          </svg>
+        </div>
+
+        <div class="hero-line"></div>
+
+        <!-- Section 1: Four Retrieval Types -->
+        <section class="section">
+          <div class="section-label reveal">Retrieval Taxonomy</div>
+          <h2 class="reveal">4 Retrieval Strategies</h2>
+          <p class="reveal">
+            Lena Park pulled Maya Chen into a war room to investigate. Sofia's bug was a scope problem &mdash; the vector retriever found the most semantically similar chunks about "top products in the Southwest" but had no way to filter by Sofia's store-level access. The intern's bug was a modality problem &mdash; the embedding model did not handle product codes like "AC-WIDGET-001" well because they have no semantic meaning. These two failures illustrate why choosing the right retrieval strategy is a production-critical decision.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-1">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Dense (Vector Search)</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--blue" data-tip="Dense vector search finds semantically similar content even when exact keywords differ">Semantic Matching</span></div>
+                Embeds queries and documents into dense vector space. Finds semantically similar content even when exact keywords differ. Excels at understanding intent: "revenue" matches "sales income" and "top-line figures." This is what caught Sofia's Southwest region results &mdash; semantically relevant, but too broad. Struggles with exact term matching and rare identifiers like AcmeCorp's SKU codes.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Sparse (BM25 / Keyword)</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--amber" data-tip="BM25 keyword search excels at exact term matching like column names, SKUs, and error codes">Exact Matching</span></div>
+                Traditional keyword-based search using term frequency and inverse document frequency. Precise when users know exact names: column names, table identifiers, error codes. This would have caught "AC-WIDGET-001" perfectly. But misses semantic relationships &mdash; when Sofia asks about "revenue," pure BM25 will not match chunks that discuss "sales income" or <code>SUM(total_amount)</code>.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Hybrid Search</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--teal" data-tip="Combines dense and sparse retrieval via Reciprocal Rank Fusion for best-of-both results">Recommended</span></div>
+                Combines dense and sparse retrieval, then fuses the results (typically via Reciprocal Rank Fusion). Gets the best of both worlds: semantic understanding plus exact keyword matching. This is what Maya implemented for DataPulse &mdash; the go-to strategy for production data agents that need to handle both natural language questions from store managers and exact SKU lookups from the supply chain team.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">04</div>
+              <div class="bp-card__title">Reranking</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);"><span class="badge badge--green" data-tip="Cross-encoder reranking as a second pass to improve precision on initial retrieval results">Quality Layer</span></div>
+                A second-pass model (cross-encoder) that reranks initial retrieval results for relevance. More computationally expensive but significantly improves precision. Maya added this as the final stage of DataPulse's pipeline &mdash; it caught cases where hybrid search returned both a relevant schema chunk and a tangentially related glossary entry, correctly promoting the schema chunk to the top.
+              </div>
+            </div>
+          </div>
+
+          <div class="reveal reveal--delay-2" style="margin-top: var(--space-6);">
+            <h3 style="font-family: var(--font-mono); margin-bottom: var(--space-4);">Recommended: Hybrid + Reranking Pipeline</h3>
+            <p style="margin-bottom: var(--space-4);">This is the pipeline Maya deployed for DataPulse after the Monday war room. Every query from AcmeCorp's 200 stores now flows through this exact sequence:</p>
+            <div class="retrieval-flow">
+              <div class="retrieval-flow__step">User Query</div>
+              <span class="retrieval-flow__arrow">&rarr;</span>
+              <div class="retrieval-flow__step">Dense Search (top 20)</div>
+              <span class="retrieval-flow__arrow">+</span>
+              <div class="retrieval-flow__step">BM25 Search (top 20)</div>
+              <span class="retrieval-flow__arrow">&rarr;</span>
+              <div class="retrieval-flow__step">RRF Fusion</div>
+              <span class="retrieval-flow__arrow">&rarr;</span>
+              <div class="retrieval-flow__step">Cross-Encoder Rerank</div>
+              <span class="retrieval-flow__arrow">&rarr;</span>
+              <div class="retrieval-flow__step">Top 5 Chunks</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Contextual Retrieval -->
+        <section class="section">
+          <div class="section-label reveal">Advanced Technique</div>
+          <h2 class="reveal">Contextual Retrieval</h2>
+          <p class="reveal reveal--delay-1">
+            Even with hybrid search deployed, Priya Sharma's next audit surfaced a subtler problem. DataPulse retrieved a chunk that said "sell-through rate increased 12% year-over-year in the southwest region" &mdash; but could not determine which quarter, which product category, or which report the number came from. The chunk was an orphan, stripped of its origin. Anthropic's Contextual Retrieval approach addresses this fundamental RAG problem by prepending a short document-level context to each chunk before embedding.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Without Contextual Retrieval</div>
+              <div class="bp-card__body">
+                <p style="font-family: var(--font-mono); font-size: var(--font-sm); padding: var(--space-3); background: var(--bg-primary); border-radius: var(--border-radius); border: 1px dashed var(--stroke-dim);">
+                  "The sell-through rate increased 12% year-over-year in the southwest region."
+                </p>
+                <p style="margin-top: var(--space-3); font-size: var(--font-sm); color: var(--text-secondary);">
+                  Which document? What time period? What product category? The chunk is an orphan &mdash; stripped of its origin context. DataPulse had no way to tell Sofia Torres whether this was about her store or the entire region, or whether it was from Q3 or Q4.
+                </p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">With Contextual Retrieval</div>
+              <div class="bp-card__body">
+                <p style="font-family: var(--font-mono); font-size: var(--font-sm); padding: var(--space-3); background: var(--bg-primary); border-radius: var(--border-radius); border: 1px dashed var(--stroke-dim);">
+                  <span style="color: var(--stroke-secondary);">[From: Q3 FY24 Regional Performance Report, Section: Southwest Apparel Metrics]</span> "The sell-through rate increased 12% year-over-year in the southwest region."
+                </p>
+                <p style="margin-top: var(--space-3); font-size: var(--font-sm); color: var(--text-secondary);">
+                  Now the chunk carries its origin. DataPulse can tell Sofia this is from the Q3 (July&ndash;September) regional report, specifically the apparel section. Retrieval is more precise and the LLM can cite sources accurately.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">Impact at AcmeCorp</div>
+            <div class="callout__text">
+              After Maya added contextual prefixes to every chunk in the RAG index, Priya's accuracy audit showed retrieval failure rates dropped by 49%. Combined with hybrid search and reranking, the full pipeline reduced retrieval failures by up to 67% compared to DataPulse's original naive vector search. The context prefix adds ~50&ndash;100 tokens per chunk at ingestion time but dramatically improves retrieval precision. Derek Kim approved the additional compute cost without hesitation once he saw the accuracy numbers.
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Vector Database Comparison -->
+        <section class="section">
+          <div class="section-label reveal">Infrastructure</div>
+          <h2 class="reveal">Vector Database Comparison</h2>
+          <p class="reveal reveal--delay-1">
+            With the retrieval strategy decided, Maya needed to choose where to store AcmeCorp's vectors. The team already ran PostgreSQL for their data warehouse, which made one option particularly attractive. But Raj Patel wanted to understand the full landscape before committing. The vector database you choose determines your scalability, cost model, and available features. Here is a comparison of the six most common options for production RAG systems:
+          </p>
+
+          <div class="reveal reveal--delay-2" style="overflow-x: auto;">
+            <table class="compare-table">
+              <thead>
+                <tr>
+                  <th>Database</th>
+                  <th>Type</th>
+                  <th>Hybrid Search</th>
+                  <th>Managed Cloud</th>
+                  <th>Scale</th>
+                  <th>Best For</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Milvus</strong></td>
+                  <td>Open-source, distributed</td>
+                  <td><span class="vdb-feature vdb-feature--yes">Yes</span></td>
+                  <td><span class="vdb-feature vdb-feature--yes">Zilliz Cloud</span></td>
+                  <td>Billions of vectors</td>
+                  <td>Large-scale production; GPU acceleration</td>
+                </tr>
+                <tr>
+                  <td><strong>Pinecone</strong></td>
+                  <td>Fully managed SaaS</td>
+                  <td><span class="vdb-feature vdb-feature--yes">Yes</span></td>
+                  <td><span class="vdb-feature vdb-feature--yes">Native</span></td>
+                  <td>Billions of vectors</td>
+                  <td>Teams wanting zero-ops; fast time-to-market</td>
+                </tr>
+                <tr>
+                  <td><strong>Weaviate</strong></td>
+                  <td>Open-source, modular</td>
+                  <td><span class="vdb-feature vdb-feature--yes">Yes</span></td>
+                  <td><span class="vdb-feature vdb-feature--yes">Weaviate Cloud</span></td>
+                  <td>Hundreds of millions</td>
+                  <td>Multi-modal data; built-in vectorization</td>
+                </tr>
+                <tr>
+                  <td><strong>Qdrant</strong></td>
+                  <td>Open-source, Rust-based</td>
+                  <td><span class="vdb-feature vdb-feature--yes">Yes</span></td>
+                  <td><span class="vdb-feature vdb-feature--yes">Qdrant Cloud</span></td>
+                  <td>Hundreds of millions</td>
+                  <td>Performance-critical apps; advanced filtering</td>
+                </tr>
+                <tr>
+                  <td><strong>ChromaDB</strong></td>
+                  <td>Open-source, embedded</td>
+                  <td><span class="vdb-feature vdb-feature--no">No</span></td>
+                  <td><span class="vdb-feature vdb-feature--partial">Limited</span></td>
+                  <td>Millions of vectors</td>
+                  <td>Prototyping; local development; small datasets</td>
+                </tr>
+                <tr>
+                  <td><strong>pgvector</strong></td>
+                  <td>PostgreSQL extension</td>
+                  <td><span class="vdb-feature vdb-feature--partial">Via SQL</span></td>
+                  <td><span class="vdb-feature vdb-feature--yes">Any PG host</span></td>
+                  <td>Tens of millions</td>
+                  <td>Teams already on Postgres; simpler deployments</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="collapsible reveal reveal--delay-3">
+            <button class="collapsible__header" onclick="this.parentElement.classList.toggle('is-open')">
+              <span>Decision Guide: Which Vector Database Should You Choose?</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p><strong>Start with pgvector</strong> if you already use PostgreSQL, have fewer than 10M vectors, and want to minimize infrastructure complexity. This is what AcmeCorp chose &mdash; their PostgreSQL data warehouse already held the 500+ table schemas, so adding pgvector kept everything in one place. Marcus Webb from Security appreciated not having to vet a new vendor.</p>
+                <p><strong>Choose Pinecone</strong> if you want a fully managed solution, your team does not want to manage infrastructure, and you are willing to pay for convenience. Best for startups and small teams moving fast.</p>
+                <p><strong>Choose Qdrant or Milvus</strong> for large-scale production systems where you need fine-grained control over indexing, filtering, and performance. Both offer excellent hybrid search and scale to billions of vectors. Raj Patel noted these as the fallback if AcmeCorp outgrows pgvector's capacity.</p>
+                <p><strong>Use ChromaDB</strong> for prototyping and local development only. Maya used it during DataPulse's initial proof-of-concept, but it is not designed for production workloads serving 200 stores.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: Embedding Management -->
+        <section class="section">
+          <div class="section-label reveal">Operations</div>
+          <h2 class="reveal">Embedding Model Considerations</h2>
+          <p class="reveal">
+            With pgvector deployed and hybrid search running, Maya turned to the operational challenges that would keep DataPulse's RAG pipeline healthy over time. Priya Sharma set up a monitoring dashboard to track three critical dimensions:
+          </p>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-1">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Versioning</div>
+              <div class="bp-card__body">
+                Embedding models change. When you upgrade from <code>text-embedding-ada-002</code> to <code>text-embedding-3-small</code>, all existing vectors become incompatible. Plan for full re-embedding on model upgrades. Maya learned this when a model update silently broke retrieval for 30% of AcmeCorp's glossary entries. Now the team tracks which model version produced each vector.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Drift Monitoring</div>
+              <div class="bp-card__body">
+                As your document corpus changes, embedding distributions shift. Priya monitors retrieval quality weekly using a golden query set of 50 questions that AcmeCorp's store managers actually asked during the first month. When recall drops below 85%, she triggers a re-indexing job. Set alerts and re-embed periodically if source documents update frequently.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Quantization</div>
+              <div class="bp-card__body">
+                Full <code>float32</code> embeddings are expensive to store and search. Binary or scalar quantization can reduce memory usage by 4&ndash;32x with minimal accuracy loss (typically &lt;2%). Essential for scaling to millions of vectors cost-effectively. Derek Kim approved the quantization project after Maya showed it would cut vector storage costs by 75% with less than 1% accuracy impact.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 5: AcmeCorp Scenario -->
+        <section class="section">
+          <div class="section-label reveal">Case Study</div>
+          <h2 class="reveal">AcmeCorp: How Hybrid Search Solved Two Bugs at Once</h2>
+
+          <div class="callout reveal reveal--delay-1">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              Remember the two bugs from Monday morning? Sofia Torres asked: <em>"What was the revenue for my store last quarter?"</em> and got the entire Southwest region. A marketing intern searched for <em>"SKU AC-WIDGET-001"</em> and got nothing. Hybrid search fixed both. For Sofia's query, the dense component found chunks about "revenue," "sales income," and "top-line figures" while the sparse component matched the exact column name <code>revenue_net</code> in schema documentation. For the intern's query, BM25 caught the exact SKU string that dense search missed entirely. Lena Park closed both tickets the same afternoon.
+            </div>
+          </div>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Dense-Only Results (Before)</div>
+              <div class="bp-card__body">
+                Retrieves glossary entries about "sales income" and "top-line revenue" &mdash; good semantic matches but misses the exact schema column <code>revenue_net</code> in <code>fact_sales</code>. DataPulse cannot write correct SQL to filter by <code>dim_stores.store_id = 47</code> without the column name. Meanwhile, "AC-WIDGET-001" returns zero results because embeddings encode meaning, not alphanumeric patterns.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Hybrid + Rerank Results (After)</div>
+              <div class="bp-card__body">
+                Retrieves both the business glossary definition of revenue (<code>SUM(total_amount) WHERE status='completed'</code>) <em>and</em> the schema documentation showing <code>revenue_net</code> in <code>fact_sales</code> with its joins to <code>dim_stores.region</code>. DataPulse generates correct SQL on the first attempt. Sofia gets her Store #47 numbers. The intern finds AC-WIDGET-001 in the product catalog. DataPulse's overall accuracy climbs to 91%.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Page Navigation -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="02-rag-architecture.html" class="page-nav__title">RAG Architecture</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="04-agentic-rag.html" class="page-nav__title">Agentic RAG</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m06-retrieval-strategies');</script>
+</body>
+</html>

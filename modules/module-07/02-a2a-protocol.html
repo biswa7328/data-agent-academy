@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent-to-Agent Protocol (A2A) &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Comparison Diagram --- */
+    .axis-diagram {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin: var(--space-8) 0;
+    }
+    .axis-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+      transition: all var(--transition-base);
+    }
+    .axis-box:hover { border-color: var(--stroke-secondary); }
+    .axis-box__icon {
+      font-size: var(--font-3xl);
+      margin-bottom: var(--space-3);
+    }
+    .axis-box__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      font-weight: 700;
+      margin-bottom: var(--space-2);
+    }
+    .axis-box__title--blue { color: var(--stroke-primary); }
+    .axis-box__title--teal { color: var(--stroke-secondary); }
+    .axis-box__direction {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-3);
+    }
+    .axis-box__desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* --- Task Lifecycle --- */
+    .lifecycle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-3);
+      margin: var(--space-8) 0;
+      flex-wrap: wrap;
+    }
+    .lifecycle__step {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-3) var(--space-5);
+      border-radius: var(--border-radius);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      font-weight: 600;
+      transition: all var(--transition-base);
+    }
+    .lifecycle__step--submitted {
+      border: 1px solid var(--stroke-dim);
+      color: var(--text-secondary);
+    }
+    .lifecycle__step--working {
+      border: 1px solid var(--stroke-primary);
+      color: var(--stroke-primary);
+      box-shadow: 0 0 10px var(--glow-blue);
+    }
+    .lifecycle__step--input {
+      border: 1px solid var(--accent-warning);
+      color: var(--accent-warning);
+    }
+    .lifecycle__step--completed {
+      border: 1px solid var(--accent-success);
+      color: var(--accent-success);
+    }
+    .lifecycle__step--failed {
+      border: 1px solid var(--accent-error);
+      color: var(--accent-error);
+    }
+    .lifecycle__arrow {
+      font-family: var(--font-mono);
+      color: var(--stroke-dim);
+      font-size: var(--font-lg);
+    }
+
+    /* --- Comparison Table --- */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--space-6) 0;
+      font-size: var(--font-sm);
+    }
+    .comparison-table th {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 2px solid var(--stroke-dim);
+      text-align: left;
+    }
+    .comparison-table td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px dashed var(--stroke-dim);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .comparison-table tr:hover td {
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.02);
+    }
+    .comparison-table td:first-child {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .axis-diagram { grid-template-columns: 1fr; }
+      .lifecycle { flex-direction: column; }
+      .lifecycle__arrow { transform: rotate(90deg); }
+      .comparison-table { font-size: var(--font-xs); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M9 21V9"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 07</span>
+        <span class="separator">/</span>
+        <span class="current">A2A Protocol</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 07 &mdash; Lesson 02</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Agent-to-Agent Protocol (A2A)</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            When agents need to collaborate with other agents &mdash; not just tools &mdash; A2A provides the horizontal communication layer.
+          </p>
+        </header>
+
+        <!-- ===== INLINE SVG DIAGRAM: A2A Collaboration Network ===== -->
+        <div class="evolving-diagram reveal reveal--scale"><div class="evolving-diagram__label">A2A — AGENT COLLABORATION NETWORK</div>
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;font-family:'JetBrains Mono',monospace;">
+          <defs>
+            <filter id="glowBlue2"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="glowTeal2"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <marker id="arrowA" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1"/></marker>
+            <marker id="arrowB" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto"><path d="M8,0 L0,3 L8,6" fill="none" stroke="#A100FF" stroke-width="1"/></marker>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="380" fill="transparent"/>
+          <!-- Corner brackets -->
+          <path d="M4,20 L4,4 L20,4" stroke="#334155" stroke-width="1.5" fill="none"/>
+          <path d="M680,4 L696,4 L696,20" stroke="#334155" stroke-width="1.5" fill="none"/>
+          <path d="M4,360 L4,376 L20,376" stroke="#334155" stroke-width="1.5" fill="none"/>
+          <path d="M680,376 L696,376 L696,360" stroke="#334155" stroke-width="1.5" fill="none"/>
+
+          <!-- Agent nodes in triangle arrangement -->
+          <!-- Top: DataPulse -->
+          <rect x="280" y="30" width="140" height="56" rx="6" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="350" y="53" text-anchor="middle" fill="#f5f5f5" font-size="12" font-weight="700">DataPulse</text>
+          <text x="350" y="73" text-anchor="middle" fill="#a0a0a0" font-size="9">Sales &amp; Analytics</text>
+
+          <!-- Bottom-left: InsightBot -->
+          <rect x="80" y="180" width="140" height="56" rx="6" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="150" y="203" text-anchor="middle" fill="#f5f5f5" font-size="12" font-weight="700">InsightBot</text>
+          <text x="150" y="223" text-anchor="middle" fill="#a0a0a0" font-size="9">Marketing</text>
+
+          <!-- Bottom-right: ComplianceGuard -->
+          <rect x="480" y="180" width="140" height="56" rx="6" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="550" y="203" text-anchor="middle" fill="#f5f5f5" font-size="12" font-weight="700">ComplianceGuard</text>
+          <text x="550" y="223" text-anchor="middle" fill="#a0a0a0" font-size="9">Audit &amp; Risk</text>
+
+          <!-- Double-headed arrows between agents -->
+          <!-- DataPulse <-> InsightBot -->
+          <line x1="295" y1="80" x2="205" y2="180" stroke="#A100FF" stroke-width="1" stroke-dasharray="6,3" marker-end="url(#arrowA)" marker-start="url(#arrowB)"/>
+          <rect x="185" y="115" width="90" height="22" rx="3" fill="rgba(74,158,255,0.12)"/>
+          <text x="230" y="130" text-anchor="middle" fill="#A100FF" font-size="9">task/delegate</text>
+
+          <!-- DataPulse <-> ComplianceGuard -->
+          <line x1="405" y1="80" x2="498" y2="180" stroke="#A100FF" stroke-width="1" stroke-dasharray="6,3" marker-end="url(#arrowA)" marker-start="url(#arrowB)"/>
+          <rect x="425" y="115" width="88" height="22" rx="3" fill="rgba(74,158,255,0.12)"/>
+          <text x="469" y="130" text-anchor="middle" fill="#A100FF" font-size="9">task/validate</text>
+
+          <!-- InsightBot <-> ComplianceGuard -->
+          <line x1="220" y1="215" x2="480" y2="215" stroke="#A100FF" stroke-width="1" stroke-dasharray="6,3" marker-end="url(#arrowA)" marker-start="url(#arrowB)"/>
+          <rect x="305" y="195" width="88" height="22" rx="3" fill="rgba(74,158,255,0.12)"/>
+          <text x="349" y="210" text-anchor="middle" fill="#A100FF" font-size="9">task/audit</text>
+
+          <!-- Center: A2A Protocol diamond -->
+          <g transform="translate(350,155)" filter="url(#glowBlue2)">
+            <rect x="-42" y="-18" width="84" height="36" rx="4" fill="rgba(74,158,255,0.15)" stroke="#A100FF" stroke-width="1.5" transform="rotate(0)"/>
+            <text x="0" y="5" text-anchor="middle" fill="#A100FF" font-size="10" font-weight="700">A2A Protocol</text>
+          </g>
+
+          <!-- Task lifecycle at bottom -->
+          <text x="350" y="280" text-anchor="middle" fill="#a0a0a0" font-size="10" letter-spacing="0.1em">TASK LIFECYCLE</text>
+
+          <!-- submitted -->
+          <rect x="75" y="300" width="100" height="32" rx="4" fill="transparent" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="125" y="320" text-anchor="middle" fill="#a0a0a0" font-size="10">submitted</text>
+
+          <!-- arrow -->
+          <line x1="180" y1="316" x2="210" y2="316" stroke="#334155" stroke-width="1"/>
+          <polygon points="210,313 218,316 210,319" fill="#334155"/>
+
+          <!-- working -->
+          <rect x="222" y="300" width="100" height="32" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5" filter="url(#glowTeal2)"/>
+          <text x="272" y="320" text-anchor="middle" fill="#A100FF" font-size="10">working</text>
+
+          <!-- arrow -->
+          <line x1="327" y1="316" x2="357" y2="316" stroke="#334155" stroke-width="1"/>
+          <polygon points="357,313 365,316 357,319" fill="#334155"/>
+
+          <!-- input-needed -->
+          <rect x="369" y="300" width="110" height="32" rx="4" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="424" y="320" text-anchor="middle" fill="#f59e0b" font-size="10">input-needed</text>
+
+          <!-- arrow -->
+          <line x1="484" y1="316" x2="514" y2="316" stroke="#334155" stroke-width="1"/>
+          <polygon points="514,313 522,316 514,319" fill="#334155"/>
+
+          <!-- completed -->
+          <rect x="526" y="300" width="100" height="32" rx="4" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5"/>
+          <text x="576" y="320" text-anchor="middle" fill="#10b981" font-size="10">completed</text>
+
+          <!-- Bottom label -->
+          <text x="350" y="365" text-anchor="middle" fill="#334155" font-size="9" letter-spacing="0.15em">AGENT-TO-AGENT PROTOCOL — HORIZONTAL COLLABORATION</text>
+        </svg>
+        </div>
+
+        <!-- ===== SECTION 1: MCP vs A2A ===== -->
+        <section class="section">
+          <div class="section-label reveal">Two Complementary Protocols</div>
+          <h2 class="reveal">Vertical vs. Horizontal Communication</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            DataPulse was no longer alone. By midsummer, Maya Chen had built a second agent &mdash;
+            <strong>InsightBot</strong> &mdash; for AcmeCorp&rsquo;s marketing team, specializing in
+            campaign attribution and customer segmentation. Marcus Webb, Security &amp; Compliance Officer,
+            had also requested a third agent: <strong>ComplianceGuard</strong>, focused on PII detection,
+            access-log auditing, and regulatory checks across AcmeCorp&rsquo;s 200 stores.
+          </p>
+          <p class="reveal" style="line-height: 1.7; margin-top: var(--space-4);">
+            The trouble surfaced on a Tuesday in August. Sofia Torres asked DataPulse: &ldquo;Show me
+            which products in Store&nbsp;#47 are underperforming relative to their marketing spend.&rdquo;
+            DataPulse had the sales data. But marketing attribution &mdash; ad spend per SKU, campaign
+            ROI, channel breakdowns &mdash; lived exclusively in InsightBot&rsquo;s domain. DataPulse
+            could not answer the question.
+          </p>
+          <p class="reveal" style="line-height: 1.7; margin-top: var(--space-4);">
+            Raj Patel suggested the obvious fix: &ldquo;Just have DataPulse call InsightBot&rsquo;s API.&rdquo;
+            Maya groaned. &ldquo;That&rsquo;s the N&times;M problem all over again, but for agents talking
+            to agents. Three agents today, maybe eight next year. Do we really want every agent hardcoded
+            to every other agent?&rdquo; The answer was no. MCP solved the vertical problem &mdash; agents
+            reaching down to tools. Now they needed a standard for the <strong>horizontal</strong> problem
+            &mdash; agents talking to peer agents. That standard is <strong>A2A</strong>.
+          </p>
+
+          <div class="axis-diagram reveal">
+            <div class="axis-box">
+              <div class="axis-box__icon">&darr;</div>
+              <div class="axis-box__title axis-box__title--blue">MCP</div>
+              <div class="axis-box__direction">Vertical &mdash; Agent to Tool</div>
+              <div class="axis-box__desc">
+                DataPulse uses MCP to query PostgreSQL, pull Shopify inventory, read Google Sheets.
+                The agent is always the initiator; tools are passive responders.
+              </div>
+            </div>
+            <div class="axis-box">
+              <div class="axis-box__icon">&harr;</div>
+              <div class="axis-box__title axis-box__title--teal">A2A</div>
+              <div class="axis-box__direction">Horizontal &mdash; Agent to Agent</div>
+              <div class="axis-box__desc">
+                DataPulse uses A2A to ask InsightBot for marketing attribution data, or to request
+                ComplianceGuard to verify a query before execution. Both sides are intelligent actors.
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">Key Distinction</div>
+            <div class="callout__text">
+              MCP servers are deterministic tool wrappers &mdash; AcmeCorp&rsquo;s PostgreSQL server
+              always returns the same rows for the same query. A2A peers are autonomous agents that can
+              reason, plan, and make decisions &mdash; InsightBot might refuse a data request if it
+              violates marketing data policies. The protocols are complementary; a production
+              system like AcmeCorp&rsquo;s uses both.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: Core Concepts ===== -->
+        <section class="section">
+          <div class="section-label reveal">Core Concepts</div>
+          <h2 class="reveal">Three Pillars of A2A</h2>
+
+          <div class="card-grid card-grid--3 reveal" style="margin-top: var(--space-6);">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Agent Cards</div>
+              <div class="bp-card__body">
+                <span class="badge badge--blue" data-tip="Agent Cards let agents find and identify each other via a standard JSON descriptor at a well-known URL">Discovery Mechanism</span>
+                <p style="margin-top: var(--space-3);">
+                  Every A2A-compatible agent publishes a JSON descriptor at
+                  <code>/.well-known/agent.json</code>. This card declares the agent&rsquo;s name,
+                  capabilities, supported skills, authentication requirements, and endpoint URL.
+                  Maya published Agent Cards for all three of AcmeCorp&rsquo;s agents &mdash;
+                  DataPulse, InsightBot, and ComplianceGuard &mdash; so each could discover the
+                  others automatically.
+                </p>
+                <p style="margin-top: var(--space-2); font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">
+                  Like a business card for AI agents
+                </p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Task Lifecycle</div>
+              <div class="bp-card__body">
+                <span class="badge badge--teal" data-tip="A2A tasks follow a well-defined lifecycle: submitted, working, input-required, completed, or failed">State Machine</span>
+                <p style="margin-top: var(--space-3);">
+                  Every A2A interaction is a <strong>Task</strong> with a well-defined lifecycle.
+                  Tasks move through states: submitted, working, input-required, completed, or failed.
+                  Both agents can observe and influence the state. When DataPulse asks InsightBot
+                  for marketing data, the request becomes a tracked task with a unique ID that
+                  Raj can audit later.
+                </p>
+                <p style="margin-top: var(--space-2); font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">
+                  Async-first: supports long-running agent work
+                </p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Capability Routing</div>
+              <div class="bp-card__body">
+                <span class="badge badge--amber" data-tip="Agents route tasks to peers based on declared skills in Agent Cards, avoiding hardcoded addresses">Smart Delegation</span>
+                <p style="margin-top: var(--space-3);">
+                  Agent Cards declare specific skills (e.g., &ldquo;campaign-attribution&rdquo;,
+                  &ldquo;pii-detection&rdquo;). A requesting agent can discover and route tasks to the
+                  most capable peer based on declared capabilities. DataPulse does not need to
+                  know <em>which</em> agent handles compliance &mdash; it routes by skill, and
+                  ComplianceGuard answers because its card declares that capability.
+                </p>
+                <p style="margin-top: var(--space-2); font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">
+                  No hardcoded agent addresses needed
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: Task Lifecycle Detail ===== -->
+        <section class="section">
+          <div class="section-label reveal">Task Lifecycle</div>
+          <h2 class="reveal">How A2A Tasks Flow</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            A2A tasks follow a state machine pattern. Let&rsquo;s trace Sofia&rsquo;s original question
+            &mdash; &ldquo;products underperforming relative to marketing spend&rdquo; &mdash; as it
+            flows between DataPulse and InsightBot.
+          </p>
+
+          <div class="lifecycle reveal">
+            <div class="lifecycle__step lifecycle__step--submitted">submitted</div>
+            <div class="lifecycle__arrow">&rarr;</div>
+            <div class="lifecycle__step lifecycle__step--working">working</div>
+            <div class="lifecycle__arrow">&rarr;</div>
+            <div class="lifecycle__step lifecycle__step--input">input-required</div>
+            <div class="lifecycle__arrow">&rarr;</div>
+            <div class="lifecycle__step lifecycle__step--completed">completed</div>
+          </div>
+          <div style="text-align: center; margin-top: var(--space-2);">
+            <span style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">
+              Any state can transition to <span style="color: var(--accent-error);">failed</span>
+            </span>
+          </div>
+
+          <div class="collapsible reveal" style="margin-top: var(--space-6);">
+            <div class="collapsible__header" onclick="this.parentElement.classList.toggle('open')">
+              <span>Submitted &mdash; DataPulse sends a task to InsightBot</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                DataPulse creates a task with a message: &ldquo;Provide marketing spend and campaign
+                attribution data for Store&nbsp;#47 SKUs, fiscal Q3.&rdquo; The task
+                includes a unique ID, DataPulse&rsquo;s identity, and the list of SKUs as an artifact.
+                InsightBot acknowledges receipt and the task enters its queue.
+              </div>
+            </div>
+          </div>
+          <div class="collapsible reveal" style="margin-top: var(--space-2);">
+            <div class="collapsible__header" onclick="this.parentElement.classList.toggle('open')">
+              <span>Working &mdash; InsightBot processes the request</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                InsightBot reasons about the task, uses its own MCP tools to query the Salesforce
+                marketing database, and begins assembling attribution data per SKU. DataPulse
+                subscribes to streaming updates via Server-Sent Events (SSE) so it can show Sofia
+                a progress indicator rather than a blank screen.
+              </div>
+            </div>
+          </div>
+          <div class="collapsible reveal" style="margin-top: var(--space-2);">
+            <div class="collapsible__header" onclick="this.parentElement.classList.toggle('open')">
+              <span>Input-Required &mdash; InsightBot asks for clarification</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                InsightBot pauses: &ldquo;Do you want paid media only, or should I include organic
+                and email attribution?&rdquo; DataPulse relays the question to Sofia, who replies
+                &ldquo;all channels.&rdquo; DataPulse sends the clarification back, and InsightBot
+                resumes processing. This multi-turn negotiation between agents happens transparently.
+              </div>
+            </div>
+          </div>
+          <div class="collapsible reveal" style="margin-top: var(--space-2);">
+            <div class="collapsible__header" onclick="this.parentElement.classList.toggle('open')">
+              <span>Completed / Failed &mdash; Terminal states</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                InsightBot returns a structured artifact with per-SKU marketing spend, channel
+                breakdown, and campaign ROI. DataPulse merges this with its own sales data from
+                PostgreSQL and delivers Sofia her answer: a ranked list of products where marketing
+                spend is high but revenue is low. Failed tasks include error details &mdash; for
+                instance, if InsightBot could not access the Salesforce data, it would return a
+                failure with context for debugging.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: Comparison Table ===== -->
+        <section class="section">
+          <div class="section-label reveal">Side-by-Side</div>
+          <h2 class="reveal">MCP vs A2A Comparison</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            Maya pinned this comparison table on the team&rsquo;s Confluence page after Raj asked her
+            to explain when to use each protocol. The short answer: MCP for tools, A2A for agents.
+          </p>
+
+          <div class="reveal" style="overflow-x: auto;">
+            <table class="comparison-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>MCP</th>
+                  <th>A2A</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Direction</td>
+                  <td>Vertical (agent &darr; tool)</td>
+                  <td>Horizontal (agent &harr; agent)</td>
+                </tr>
+                <tr>
+                  <td>Purpose</td>
+                  <td>Connect agents to tools &amp; data</td>
+                  <td>Enable agent collaboration</td>
+                </tr>
+                <tr>
+                  <td>Initiated By</td>
+                  <td>Always the agent (client)</td>
+                  <td>Either agent can initiate</td>
+                </tr>
+                <tr>
+                  <td>Transport</td>
+                  <td>JSON-RPC 2.0 over stdio/HTTP</td>
+                  <td>HTTP/HTTPS + SSE for streaming</td>
+                </tr>
+                <tr>
+                  <td>Discovery</td>
+                  <td>Capability negotiation at connect</td>
+                  <td>Agent Cards at <code>/.well-known/</code></td>
+                </tr>
+                <tr>
+                  <td>AcmeCorp Example</td>
+                  <td>DataPulse querying PostgreSQL</td>
+                  <td>DataPulse delegating to InsightBot</td>
+                </tr>
+                <tr>
+                  <td>Governance</td>
+                  <td>AAIF (Linux Foundation)</td>
+                  <td>AAIF (Linux Foundation)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: Agent Card Deep Dive ===== -->
+        <section class="section">
+          <div class="section-label reveal">Deep Dive</div>
+          <h2 class="reveal">Inside an Agent Card</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            An Agent Card is a JSON document that declares everything another agent needs to start
+            collaborating. Here is what DataPulse&rsquo;s Agent Card looks like in practice &mdash;
+            and what each field means for AcmeCorp&rsquo;s multi-agent ecosystem.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal" style="margin-top: var(--space-6);">
+            <div class="bp-card">
+              <div class="bp-card__title">Identity &amp; Endpoint</div>
+              <div class="bp-card__body">
+                <code>name</code>, <code>description</code>, <code>url</code> &mdash; who the agent is and
+                where to reach it. DataPulse&rsquo;s card declares its name as &ldquo;DataPulse&rdquo;,
+                describes it as AcmeCorp&rsquo;s analytics agent, and provides the internal endpoint URL
+                where other agents can submit tasks.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Skills</div>
+              <div class="bp-card__body">
+                An array of skill objects, each with an <code>id</code>, <code>name</code>, and
+                <code>description</code>. DataPulse declares skills like &ldquo;sales-analytics&rdquo;
+                and &ldquo;inventory-reporting&rdquo;. InsightBot declares &ldquo;campaign-attribution&rdquo;
+                and &ldquo;customer-segmentation&rdquo;. ComplianceGuard declares &ldquo;pii-detection&rdquo;
+                and &ldquo;access-audit&rdquo;.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Authentication</div>
+              <div class="bp-card__body">
+                Declares supported auth schemes (OAuth 2.0, API key, etc.). Marcus Webb required all three
+                AcmeCorp agents to use OAuth 2.0 with mutual TLS for inter-agent communication &mdash;
+                ensuring that no unauthorized agent can submit tasks.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Capabilities</div>
+              <div class="bp-card__body">
+                Flags for supported features: <code>streaming</code> (SSE updates),
+                <code>pushNotifications</code> (webhook callbacks), and <code>stateTransitionHistory</code>
+                (audit trail). Marcus insisted on <code>stateTransitionHistory</code> for ComplianceGuard
+                so every agent interaction produces a full audit log.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 6: AcmeCorp Multi-Agent Collaboration ===== -->
+        <section class="section">
+          <div class="section-label reveal">Case Study</div>
+          <h2 class="reveal">AcmeCorp: Three Agents, One Ecosystem</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            By September &mdash; the end of AcmeCorp&rsquo;s fiscal Q3 &mdash; all three agents were
+            live and collaborating via A2A. The transformation was dramatic. Questions that previously
+            required manual data pulls from multiple teams now resolved automatically through agent
+            collaboration.
+          </p>
+
+          <div class="callout reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">Before vs. After A2A</div>
+            <div class="callout__text">
+              <strong>Before:</strong> Sofia asks DataPulse a cross-domain question. DataPulse says
+              &ldquo;I don&rsquo;t have marketing data.&rdquo; Sofia emails the marketing analyst. Two
+              days later, she gets a spreadsheet. She manually combines it with DataPulse&rsquo;s output.<br><br>
+              <strong>After:</strong> Sofia asks DataPulse the same question. DataPulse discovers
+              InsightBot via its Agent Card, submits a task, receives structured data in seconds,
+              merges it with sales figures, and delivers a unified answer. Total time: 12 seconds.
+            </div>
+          </div>
+
+          <div class="card-grid card-grid--2 reveal" style="margin-top: var(--space-6);">
+            <div class="bp-card">
+              <div class="bp-card__title">DataPulse</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-3);">
+                  <span class="badge badge--blue" data-tip="DataPulse queries PostgreSQL, Shopify, and S3 to deliver revenue, trend, and stock-level insights">Sales Analytics</span>
+                  <span class="badge badge--blue" data-tip="Tracks stock levels across AcmeCorp's 200 stores via MCP-connected data sources">Inventory Reporting</span>
+                </div>
+                <p>
+                  AcmeCorp&rsquo;s original agent. Connects to PostgreSQL, Shopify, and S3 via MCP.
+                  When it encounters a question outside its domain, it discovers peer agents through
+                  their Agent Cards and delegates via A2A. Lena Park tracks its delegation patterns
+                  to plan future agent capabilities.
+                </p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">InsightBot</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-3);">
+                  <span class="badge badge--teal" data-tip="InsightBot maps ad spend to revenue across paid, organic, and email channels per SKU">Campaign Attribution</span>
+                  <span class="badge badge--teal" data-tip="Groups AcmeCorp customers into behavioral segments for targeted marketing analysis">Customer Segmentation</span>
+                </div>
+                <p>
+                  The marketing team&rsquo;s agent. Connects to Salesforce CRM and Google Analytics
+                  via MCP. Publishes its Agent Card at <code>/.well-known/agent.json</code> declaring
+                  campaign-attribution and customer-segmentation skills. Receives tasks from DataPulse
+                  and returns structured marketing data.
+                </p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">ComplianceGuard</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-3);">
+                  <span class="badge badge--amber" data-tip="ComplianceGuard scans query results for personally identifiable information before delivery">PII Detection</span>
+                  <span class="badge badge--amber" data-tip="Logs every agent interaction and validates user permissions against AcmeCorp's RBAC policies">Access Auditing</span>
+                </div>
+                <p>
+                  Marcus Webb&rsquo;s compliance agent. Both DataPulse and InsightBot route sensitive
+                  queries through ComplianceGuard before returning results. It checks for PII exposure,
+                  validates access permissions, and logs every decision. Priya Sharma reviews
+                  ComplianceGuard&rsquo;s weekly audit reports for data governance.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">Result</div>
+            <div class="callout__text">
+              AcmeCorp&rsquo;s three agents handle cross-domain questions that no single agent could
+              answer alone. Adding a fourth agent next quarter &mdash; a forecasting specialist Raj
+              has been requesting &mdash; requires publishing one Agent Card and deploying one service.
+              The existing agents will discover it automatically through A2A. No rewiring, no custom
+              integration code.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="01-mcp-protocol.html" class="page-nav__title">MCP Protocol</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="03-aaif-governance.html" class="page-nav__title">AAIF Governance</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m07-a2a-protocol');</script>
+</body>
+</html>

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Final Assessment &amp; Course Complete &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Stats Row --- */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+    }
+    .stat-box__value {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-2);
+    }
+    .stat-box__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 640px) {
+      .stats-row { grid-template-columns: 1fr; }
+    }
+
+    /* ===== COURSE COMPLETE CELEBRATION ===== */
+    .course-complete {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      margin-top: var(--space-10);
+      background: var(--bg-surface);
+      border: 2px solid transparent;
+      border-radius: var(--border-radius-lg);
+      position: relative;
+      overflow: hidden;
+      animation: celebrationFadeIn 0.8s ease-out forwards;
+    }
+
+    @keyframes celebrationFadeIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Glowing animated border */
+    .course-complete::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      border-radius: var(--border-radius-lg);
+      background: linear-gradient(90deg, #A100FF, #CC00FF, #f59e0b, #A100FF);
+      background-size: 300% 100%;
+      animation: borderGlow 3s linear infinite;
+      z-index: -1;
+    }
+    .course-complete::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px; right: 2px; bottom: 2px;
+      border-radius: calc(var(--border-radius-lg) - 2px);
+      background: var(--bg-surface);
+      z-index: -1;
+    }
+
+    @keyframes borderGlow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    /* Pulsing glow around the whole section */
+    .course-complete-wrapper {
+      position: relative;
+      animation: outerGlow 2s ease-in-out infinite alternate;
+    }
+    @keyframes outerGlow {
+      from { filter: drop-shadow(0 0 8px rgba(161, 0, 255, 0.15)); }
+      to { filter: drop-shadow(0 0 25px rgba(204, 0, 255, 0.3)); }
+    }
+
+    /* Large trophy badge */
+    .course-complete__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid var(--stroke-secondary);
+      margin-bottom: var(--space-6);
+      font-size: 56px;
+      animation: badgePulse 2s ease-in-out infinite alternate, badgeEntrance 0.6s ease-out 0.3s both;
+      box-shadow: 0 0 40px rgba(204, 0, 255, 0.3), 0 0 80px rgba(204, 0, 255, 0.1);
+    }
+    @keyframes badgePulse {
+      from { box-shadow: 0 0 30px rgba(204, 0, 255, 0.3), 0 0 60px rgba(204, 0, 255, 0.1); transform: scale(1); }
+      to { box-shadow: 0 0 50px rgba(161, 0, 255, 0.4), 0 0 100px rgba(161, 0, 255, 0.15); transform: scale(1.05); }
+    }
+    @keyframes badgeEntrance {
+      from { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+      to { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+
+    .course-complete__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-4xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+      animation: titleSlide 0.5s ease-out 0.5s both;
+    }
+    @keyframes titleSlide {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .course-complete__subtitle {
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+      max-width: 550px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+      animation: titleSlide 0.5s ease-out 0.7s both;
+    }
+
+    /* Confetti particles */
+    .confetti-container {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      opacity: 0;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(600px) rotate(720deg) scale(0.3); }
+    }
+
+    /* Concept grid */
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--space-3);
+      margin: var(--space-6) 0;
+      text-align: left;
+    }
+    .concept-tag {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
+      background: var(--bg-primary);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .concept-tag:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+    }
+    .concept-tag svg {
+      flex-shrink: 0;
+      color: var(--stroke-secondary);
+    }
+
+    /* What's Next cards */
+    .next-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+      text-align: left;
+    }
+    .next-card {
+      padding: var(--space-6);
+      background: var(--bg-primary);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .next-card:hover {
+      border-color: var(--stroke-primary);
+      transform: translateY(-2px);
+    }
+    .next-card__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px dashed var(--stroke-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-4);
+      color: var(--stroke-secondary);
+    }
+    .next-card__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .next-card__desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      .next-grid { grid-template-columns: 1fr; }
+      .concept-grid { grid-template-columns: repeat(2, 1fr); }
+      .course-complete__title { font-size: var(--font-2xl); }
+    }
+
+    /* Section divider inside celebration */
+    .cc-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary));
+      margin: var(--space-8) auto;
+      border-radius: 1px;
+    }
+
+    .cc-section-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--stroke-secondary);
+      margin-bottom: var(--space-4);
+    }
+
+    .cc-heading {
+      font-family: var(--font-mono);
+      font-size: var(--font-xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 05</span>
+        <span class="separator">/</span>
+        <span class="current">Final Assessment</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Module 05 &mdash; Final Assessment</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Course Final Assessment</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            This is the final assessment covering all 5 modules of the Data Agent Academy. 24 questions stand between you and course completion.
+          </p>
+
+          <!-- Stats -->
+          <div class="stats-row reveal">
+            <div class="stat-box">
+              <div class="stat-box__value">5</div>
+              <div class="stat-box__label">Modules Complete</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">24</div>
+              <div class="stat-box__label">Final Questions</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">80%</div>
+              <div class="stat-box__label">Pass Threshold</div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">How It Works</div>
+            <div class="callout__text">
+              Select one answer per question. Once all 24 are answered, click "Check Answers" to see your score with detailed explanations. This quiz covers Module 05 AgentOps topics <strong>plus cross-module questions</strong> from Modules 01&ndash;04. You need 80% (20/24) for an excellent rating.
+            </div>
+          </div>
+        </section>
+
+        <!-- Quiz Container -->
+        <section class="section">
+          <div id="quiz-container"></div>
+        </section>
+
+        <!-- ===== COURSE COMPLETE CELEBRATION (shown after quiz) ===== -->
+        <div id="celebration-section" class="reveal" style="display: none;">
+          <div class="course-complete-wrapper">
+            <div class="course-complete">
+
+              <!-- Confetti particles (generated by JS) -->
+              <div class="confetti-container" id="confetti-container"></div>
+
+              <!-- Badge -->
+              <div class="course-complete__badge" style="position: relative; z-index: 2;">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="1.5">
+                  <path d="M12 15l-3.5 2 .67-3.89L6 10.11l3.92-.57L12 6l2.08 3.54 3.92.57-3.17 3L15.5 17z"/>
+                  <path d="M8 21l1-4.5L5 13l4.5-.5L12 8l2.5 4.5L19 13l-4 3.5L16 21l-4-2.5L8 21z" opacity="0.3"/>
+                </svg>
+              </div>
+
+              <!-- Title -->
+              <div class="course-complete__title" style="position: relative; z-index: 2;">Training Complete</div>
+              <p class="course-complete__subtitle" style="position: relative; z-index: 2;">
+                You've mastered Data Agent Architecture across 5 modules &mdash; from foundational layers to persona design, multi-agent collaboration, and observability, testing, deployment, and AgentOps.
+              </p>
+
+              <div class="cc-divider"></div>
+
+              <!-- Concepts Recap -->
+              <div style="position: relative; z-index: 2; text-align: center;">
+                <div class="cc-section-label">Concepts Mastered</div>
+                <div class="cc-heading">Your Knowledge Map</div>
+
+                <div class="concept-grid">
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    5-Layer Architecture
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Tool Design
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Error Handling
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Tool Calling
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Agent Anatomy
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Roles &amp; Taxonomy
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    LangGraph Patterns
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    ReAct Loop
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    5 Personas
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Guardrails
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Goal Decomposition
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Multi-Agent Patterns
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Memory Systems
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    State &amp; Failure
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Observability &amp; Tracing
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    CI/CD Eval Gates
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Deployment Patterns
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Agent Versioning
+                  </div>
+                </div>
+              </div>
+
+              <div class="cc-divider"></div>
+
+              <!-- What's Next -->
+              <div style="position: relative; z-index: 2; text-align: center;">
+                <div class="cc-section-label">What's Next?</div>
+                <div class="cc-heading">Continue Your Journey</div>
+
+                <div class="next-grid">
+                  <div class="next-card">
+                    <div class="next-card__icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div class="next-card__title">Build Your Own Agent</div>
+                    <div class="next-card__desc">Apply what you've learned by building a Data Agent for your own domain using the patterns and architecture from this course.</div>
+                  </div>
+                  <div class="next-card">
+                    <div class="next-card__icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <div class="next-card__title">Explore LangGraph Docs</div>
+                    <div class="next-card__desc">Dive deeper into LangGraph's official documentation to master advanced graph patterns, persistence, and streaming.</div>
+                  </div>
+                  <div class="next-card">
+                    <div class="next-card__icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <div class="next-card__title">Review AcmeCorp Case Study</div>
+                    <div class="next-card__desc">Revisit the AcmeCorp scenarios to reinforce how 5-layer architecture, personas, and multi-agent orchestration work in practice.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cc-divider"></div>
+
+              <!-- Final AcmeCorp callout -->
+              <div style="position: relative; z-index: 2;">
+                <div class="callout" style="text-align: left; margin: 0 auto; max-width: 600px;">
+                  <div class="callout__label">AcmeCorp Status</div>
+                  <div class="callout__text">
+                    AcmeCorp's Data Agent is now fully architected across 5 modules &mdash; from foundation to personas to multi-agent collaboration to AgentOps. Their 200-store retail operation has a complete agent blueprint covering 5 personas, failure recovery, memory systems, orchestration patterns, and production-grade observability, testing, deployment, and versioning capabilities. <strong>Your training is complete.</strong>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="04-deployment-versioning.html" class="page-nav__title">Deployment &amp; Versioning</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../module-06/01-context-engineering.html" class="page-nav__title">Module 06: Context Engineering</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Course Final Assessment
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Quiz Config: Course Final Assessment — 20 Questions ---
+    QuizEngine.init('quiz-container', [
+      // === Module 05 Questions (1-8): AcmeCorp AgentOps Scenarios ===
+      {
+        question: "AcmeCorp\u2019s Product Owner agent silently degraded from 94% to 71% accuracy over two weeks because of a Shopify schema migration. What would have caught this earliest?",
+        options: [
+          "Unit tests on the PII masking function",
+          "A production observability dashboard tracking accuracy metrics",
+          "Running the golden dataset once before deployment",
+          "Adding more guardrails to the PO agent"
+        ],
+        correct: 1,
+        explanation: "A production observability dashboard with continuous accuracy tracking would detect the gradual degradation in real time. Unit tests only run at build time, a one-time golden dataset run wouldn\u2019t catch post-deployment drift, and guardrails prevent bad outputs but don\u2019t monitor accuracy trends."
+      },
+      {
+        question: "After the board deck incident, AcmeCorp needed to investigate trace #ACM-47291. Which trace data would help identify the decimal precision bug?",
+        options: [
+          "The trace ID and user ID only",
+          "Step-level data showing tool inputs, outputs, and the SQL query executed",
+          "The total cost of the query",
+          "The agent\u2019s system prompt version"
+        ],
+        correct: 1,
+        explanation: "Step-level structured tracing that captures tool inputs, outputs, and the actual SQL query executed lets engineers pinpoint exactly where the decimal precision was lost. Trace ID alone is just a reference, cost data doesn\u2019t reveal logic errors, and the prompt version doesn\u2019t show runtime behavior."
+      },
+      {
+        question: "AcmeCorp\u2019s initial 20 hand-picked test queries all passed, but 23% of production queries returned wrong results. Which testing level was missing?",
+        options: [
+          "Unit tests \u2014 they didn\u2019t test individual functions",
+          "Prompt tests \u2014 they didn\u2019t test tool selection",
+          "Integration tests with a golden dataset covering edge cases",
+          "End-to-end evaluation \u2014 they needed human reviewers"
+        ],
+        correct: 2,
+        explanation: "A comprehensive golden dataset with edge cases (fiscal calendar quirks, multi-step queries, ambiguous terms) would have exposed the 23% failure rate. Hand-picked \u201chappy path\u201d queries missed real-world complexity. Integration tests with representative production scenarios are the critical missing layer."
+      },
+      {
+        question: "AcmeCorp\u2019s golden dataset includes a test case where a user says \u2018last quarter\u2019s sales.\u2019 Why is this in the \u2018Fiscal Calendar Edge Cases\u2019 category?",
+        options: [
+          "Because the query involves multiple tables",
+          "Because AcmeCorp\u2019s fiscal Q3 is July\u2013September, not the calendar quarter",
+          "Because it tests the agent\u2019s memory of previous conversations",
+          "Because it requires PII masking"
+        ],
+        correct: 1,
+        explanation: "AcmeCorp\u2019s fiscal year doesn\u2019t align with the calendar year, so \u2018last quarter\u2019 must resolve to the fiscal quarter (July\u2013September), not the calendar quarter. This is a common edge case where agents default to calendar dates and return incorrect results."
+      },
+      {
+        question: "AcmeCorp\u2019s evaluation gate uses blocking vs. warning criteria. Which metric should be a BLOCKING criterion (deployment stops if it fails)?",
+        options: [
+          "Context utilization exceeding 85%",
+          "Tool efficiency ratio above 1.8x optimal",
+          "Safety violations greater than zero",
+          "Hallucination rate above 1%"
+        ],
+        correct: 2,
+        explanation: "Safety violations (PII leaks, unauthorized data access, harmful outputs) must be a hard blocker \u2014 even one safety violation should stop deployment. Context utilization, tool efficiency, and hallucination rate are important but can be warnings that allow deployment with review."
+      },
+      {
+        question: "The $47K inventory incident was caused by a three-word prompt change that went straight to production. Which CI/CD stage would have prevented this?",
+        options: [
+          "Unit tests \u2014 they test tool functions",
+          "The evaluation gate running the golden dataset against the new prompt version",
+          "Canary deployment after the gate passed",
+          "Version tagging in Git"
+        ],
+        correct: 1,
+        explanation: "The evaluation gate runs the golden dataset against every prompt change before it can reach production. It would have caught the accuracy regression caused by the three-word change. Unit tests don\u2019t test prompt behavior, canary comes after the gate, and version tagging tracks changes but doesn\u2019t validate them."
+      },
+      {
+        question: "AcmeCorp routes new agent versions to the Southwest region (22 stores) for 48 hours before full rollout. Which deployment pattern is this?",
+        options: [
+          "Blue-Green Deployment",
+          "Shadow Mode",
+          "Canary Deployment",
+          "Feature Flags"
+        ],
+        correct: 2,
+        explanation: "Canary Deployment routes a small percentage of traffic (the Southwest region\u2019s 22 stores) to the new version while the rest stays on the current version. Blue-Green swaps entire environments, Shadow Mode runs both versions but only serves from the old one, and Feature Flags toggle functionality per-user."
+      },
+      {
+        question: "An engineer reverted AcmeCorp\u2019s LLM from Claude 3.5 to Claude 3, but the prompt was written for Claude 3.5. The agent hallucinated table names. What practice prevents this?",
+        options: [
+          "Running unit tests on every code push",
+          "Using a pinned version manifest that ties prompt version to model version",
+          "Adding more guardrails to block hallucinations",
+          "Using shadow mode for all model changes"
+        ],
+        correct: 1,
+        explanation: "A pinned version manifest ensures that prompt versions, model versions, and tool configurations stay in sync. When an engineer reverts the model, the manifest enforces that the matching prompt version is also used, preventing mismatches that cause hallucinations."
+      },
+      // === Cross-Module Questions from Modules 01-04 (9-20) ===
+      {
+        question: "At which planning level does an agent execute 'SELECT region, SUM(revenue) FROM sales GROUP BY region'?",
+        options: [
+          "Strategic",
+          "Tactical",
+          "Operational",
+          "Meta-planning"
+        ],
+        correct: 2,
+        explanation: "Operational is the level where specific actions are executed \u2014 running SQL queries, calling APIs, and retrieving data. Strategic sets high-level goals, Tactical breaks them into steps, and Operational carries out each step."
+      },
+      {
+        question: "Which multi-agent pattern is best when tasks are independent and can run concurrently?",
+        options: [
+          "Sequential Handoff",
+          "Parallel Execution",
+          "Supervisor",
+          "Debate"
+        ],
+        correct: 1,
+        explanation: "Parallel Execution runs independent tasks simultaneously for maximum speed. Sequential Handoff is for dependent tasks, Supervisor is for coordinated delegation, and Debate is for resolving conflicting viewpoints."
+      },
+      {
+        question: "AcmeCorp's agent remembers that 'revenue' always means net_sales minus returns. This is stored in:",
+        options: [
+          "Working Memory",
+          "Session Memory",
+          "Long-Term Memory",
+          "Cache"
+        ],
+        correct: 2,
+        explanation: "Persistent business definitions like metric formulas are stored in Long-Term Memory. Working Memory holds the current task context, Session Memory tracks the conversation, and Cache is for temporary performance optimization."
+      },
+      {
+        question: "In the state transition model, an agent that proactively alerts the VP about a sales drop is in which state?",
+        options: [
+          "Reactive",
+          "Reasoning",
+          "Executing",
+          "Proactive"
+        ],
+        correct: 3,
+        explanation: "Proactive agents monitor conditions and alert stakeholders without being asked. Reactive agents wait for requests, Reasoning agents are planning next steps, and Executing agents are carrying out a specific action."
+      },
+      {
+        question: "Which failure recovery strategy returns partial results when a service is completely unavailable?",
+        options: [
+          "Retry with backoff",
+          "Fallback to alternative",
+          "Graceful degradation",
+          "Circuit breaker"
+        ],
+        correct: 2,
+        explanation: "Graceful degradation returns what is available rather than failing completely \u2014 for example, showing cached data when a live source is down. Retry attempts the same call again, Fallback uses a different source, and Circuit Breaker stops calling a failing service."
+      },
+      {
+        question: "The A2A protocol is complementary to MCP because:",
+        options: [
+          "A2A replaces MCP entirely",
+          "A2A handles agent-to-agent communication, MCP handles tool integration",
+          "They are the same protocol with different names",
+          "MCP is deprecated in favor of A2A"
+        ],
+        correct: 1,
+        explanation: "A2A (Agent-to-Agent) manages communication between agents, while MCP (Model Context Protocol) manages how agents access tools and data sources. They serve different layers of the agent architecture and work together."
+      },
+      {
+        question: "Which collaboration pattern involves agents arguing different positions with an evaluator?",
+        options: [
+          "Sequential",
+          "Parallel",
+          "Supervisor",
+          "Debate"
+        ],
+        correct: 3,
+        explanation: "The Debate Pattern uses multiple agents to argue different positions while an evaluator or mediator synthesizes the best answer. This improves decision quality through structured disagreement and analysis from multiple perspectives."
+      },
+      {
+        question: "During memory consolidation, what happens at session end?",
+        options: [
+          "All memory is deleted",
+          "Key learnings are summarized and written to long-term memory",
+          "Only errors are stored",
+          "The context window is cleared without saving"
+        ],
+        correct: 1,
+        explanation: "Memory consolidation distills important interactions, definitions, and learnings from the session into long-term memory for future use. This ensures the agent gets smarter over time without retaining every raw detail."
+      },
+      {
+        question: "[Cross-module] Which layer of the five-layer architecture is responsible for PII masking?",
+        options: [
+          "Agent Runtime",
+          "Tool Layer",
+          "Data & Context",
+          "Guardrails"
+        ],
+        correct: 3,
+        explanation: "The Guardrails layer enforces policy including PII protection, input validation, output filtering, and compliance rules. It acts as a safety boundary around the agent's operations to prevent sensitive data exposure."
+      },
+      {
+        question: "[Cross-module] In the ReAct loop, after the THINK step, the agent:",
+        options: [
+          "Returns a response to the user",
+          "Calls a tool (ACT)",
+          "Enters sleep mode",
+          "Requests user input"
+        ],
+        correct: 1,
+        explanation: "The ReAct cycle is THINK \u2192 ACT \u2192 OBSERVE. After reasoning about what to do (THINK), the agent executes an action like calling a tool or API (ACT), then examines the result (OBSERVE) before deciding the next step."
+      },
+      {
+        question: "[Cross-module] Which persona should lead a GDPR compliance audit at AcmeCorp?",
+        options: [
+          "Data Engineer",
+          "Data Steward",
+          "Quality Analyst",
+          "Product Owner"
+        ],
+        correct: 1,
+        explanation: "Data Stewards manage compliance, access controls, and audit trails. They own governance operations including GDPR, data classification, and regulatory reporting \u2014 making them the right persona for compliance audits."
+      },
+      {
+        question: "[Cross-module] AcmeCorp wants their agent to handle 'same-store sales growth excluding new locations.' This requires:",
+        options: [
+          "Just a SQL query",
+          "Business metric definition + data filtering + calculation",
+          "A new database table",
+          "Manual calculation by a human"
+        ],
+        correct: 1,
+        explanation: "Complex business metrics need a definition from the Product Owner (what qualifies as 'same-store'), filtering logic from the Data Engineer (exclude new locations), and proper computation. It is a multi-step, multi-persona task."
+      },
+      // === Additional Module 05 Questions (21-24 mapped to Q13-Q16) ===
+      {
+        question: "AcmeCorp runs their new agent version alongside production but only serves responses from the old version. Which deployment pattern is this?",
+        options: [
+          "Canary",
+          "Shadow Mode",
+          "Blue-Green",
+          "Feature Flags"
+        ],
+        correct: 1,
+        explanation: "Shadow mode runs new version in parallel but doesn\u2019t serve its responses to users \u2014 only compares outputs for validation."
+      },
+      {
+        question: "AcmeCorp\u2019s CI/CD pipeline reports: \u2018tool_selection_accuracy: 93%\u2019. According to their evaluation gate config, this should:",
+        options: [
+          "Pass (above threshold)",
+          "Block deployment (below 95% blocking threshold)",
+          "Generate a warning only",
+          "Skip to canary deployment"
+        ],
+        correct: 1,
+        explanation: "Tool selection accuracy has a blocking threshold of \u226595%. At 93%, this fails the blocking criterion and deployment is halted."
+      },
+      {
+        question: "Which of these is NOT one of AcmeCorp\u2019s 7 golden dataset categories?",
+        options: [
+          "Fiscal Calendar Edge Cases",
+          "Multi-Table Joins",
+          "Load Testing Scenarios",
+          "Permission Boundaries"
+        ],
+        correct: 2,
+        explanation: "The 7 golden dataset categories are Simple Lookups, Multi-Table Joins, Fiscal Calendar Edge Cases, Permission Boundaries, Error Recovery, Memory & Context, and Safety & PII. Load testing is a separate concern."
+      },
+      {
+        question: "[Cross-module] AcmeCorp\u2019s observability dashboard shows the Data Steward agent\u2019s PII detection rate dropped from 100% to 89%. Which Module 03 concept is most relevant to fixing this?",
+        options: [
+          "Tool calling patterns",
+          "Guardrail policy tuning",
+          "ReAct loop optimization",
+          "Persona taxonomy updates"
+        ],
+        correct: 1,
+        explanation: "PII detection is handled by the guardrails layer (Module 03). A drop in detection rate means the guardrail policies need tuning \u2014 possibly the PII patterns need updating for new data formats."
+      }
+    ]);
+
+    // --- Show celebration after quiz submission ---
+    var originalOnComplete = QuizEngine.onComplete;
+    QuizEngine.onComplete = function(score, total) {
+      if (originalOnComplete) originalOnComplete(score, total);
+      Progress.saveQuizScore('m05-quiz', score, total);
+      var section = document.getElementById('celebration-section');
+      if (section) {
+        section.style.display = 'block';
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        generateConfetti();
+      }
+    };
+
+    // Listen for quiz completion via DOM observation
+    var quizObserver = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        m.addedNodes.forEach(function(node) {
+          if (node.nodeType === 1 && (node.classList.contains('score-card') || node.querySelector && node.querySelector('.score-card'))) {
+            setTimeout(function() {
+              var section = document.getElementById('celebration-section');
+              if (section) {
+                section.style.display = 'block';
+                setTimeout(function() {
+                  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  generateConfetti();
+                }, 400);
+              }
+              // Extract score from the score card
+              var scoreEl = document.querySelector('.score-card');
+              if (scoreEl) {
+                var text = scoreEl.textContent || '';
+                var match = text.match(/(\d+)\s*\/\s*(\d+)/);
+                if (match) {
+                  Progress.saveQuizScore('m05-quiz', parseInt(match[1]), parseInt(match[2]));
+                }
+              }
+            }, 800);
+          }
+        });
+      });
+    });
+    quizObserver.observe(document.getElementById('quiz-container'), { childList: true, subtree: true });
+
+    // --- Confetti Generator ---
+    function generateConfetti() {
+      var container = document.getElementById('confetti-container');
+      if (!container) return;
+      container.innerHTML = '';
+      var colors = ['#A100FF', '#CC00FF', '#f59e0b', '#a78bfa', '#f472b6', '#34d399'];
+      for (var i = 0; i < 60; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'confetti';
+        var size = Math.random() * 8 + 4;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = '-10px';
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+        particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        particle.style.animationDelay = (Math.random() * 1.5) + 's';
+        container.appendChild(particle);
+      }
+      // Second wave
+      setTimeout(function() {
+        for (var i = 0; i < 30; i++) {
+          var particle = document.createElement('div');
+          particle.className = 'confetti';
+          var size = Math.random() * 6 + 3;
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          particle.style.left = Math.random() * 100 + '%';
+          particle.style.top = '-10px';
+          particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+          particle.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+          particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+          particle.style.animationDelay = (Math.random() * 1) + 's';
+          container.appendChild(particle);
+        }
+      }, 1500);
+    }
+
+    Nav.init('m05-quiz-final');
+  </script>
+</body>
+</html>

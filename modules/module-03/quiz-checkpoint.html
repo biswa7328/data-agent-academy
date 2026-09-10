@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 03 Quiz Checkpoint — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Celebration Section --- */
+    .celebration {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      margin-top: var(--space-8);
+      background: var(--bg-surface);
+      border: 2px solid var(--stroke-secondary);
+      border-radius: var(--border-radius-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .celebration::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary), var(--accent-success));
+    }
+    .celebration__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--stroke-secondary);
+      margin-bottom: var(--space-6);
+      font-size: var(--font-4xl);
+      box-shadow: 0 0 30px var(--glow-teal);
+    }
+    .celebration__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+    }
+    .celebration__subtitle {
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .celebration__next {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-8);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      background: var(--bg-primary);
+      margin-top: var(--space-4);
+    }
+    .celebration__next-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .celebration__next-title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--stroke-dim);
+    }
+
+    /* --- Stats Row --- */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+    }
+    .stat-box__value {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-2);
+    }
+    .stat-box__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 640px) {
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 03</span>
+        <span class="separator">/</span>
+        <span class="current">Quiz Checkpoint</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Module 03 &mdash; Final Assessment</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Persona Design Checkpoint</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            You've explored persona design, guardrails, autonomy levels, and HITL patterns. Time to prove your understanding with 11 targeted questions.
+          </p>
+
+          <!-- Stats -->
+          <div class="stats-row reveal">
+            <div class="stat-box">
+              <div class="stat-box__value">5</div>
+              <div class="stat-box__label">Personas</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">6</div>
+              <div class="stat-box__label">Guardrail Types</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">6</div>
+              <div class="stat-box__label">HITL Patterns</div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">How It Works</div>
+            <div class="callout__text">
+              Select one answer per question. Once all 11 are answered, click "Check Answers" to see your score with detailed explanations. You need 80% (9/11) for an excellent rating.
+            </div>
+          </div>
+        </section>
+
+        <!-- Quiz Container -->
+        <section class="section">
+          <div id="quiz-container"></div>
+        </section>
+
+        <!-- Celebration (shown via JS after quiz submission) -->
+        <div id="celebration-section" class="reveal" style="display: none;">
+          <div class="celebration">
+            <div class="celebration__badge">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="celebration__title">Module 03 Complete</div>
+            <p class="celebration__subtitle">
+              You've mastered persona design &mdash; from the five data team roles and their guardrails to graduated autonomy levels. Time to see how agents collaborate.
+            </p>
+            <a href="../module-04/01-goal-decomposition.html" class="btn btn--primary btn--large">
+              Start Module 04 &rarr;
+            </a>
+            <div class="celebration__next">
+              <div>
+                <div class="celebration__next-label">Up Next</div>
+                <div class="celebration__next-title">Module 04 &mdash; Autonomy &amp; Collaboration</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../../simulations/module-03/persona-assignment.html" class="page-nav__title">Simulation: Assign Personas</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../module-04/01-goal-decomposition.html" class="page-nav__title">Autonomy &amp; Collaboration</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Persona Design Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Quiz Questions: Module 03 Persona Design ---
+    QuizEngine.init('quiz-container', [
+      {
+        question: 'Which persona is primarily responsible for building ETL pipelines?',
+        options: [
+          'Data Steward',
+          'Data Engineer',
+          'Quality Analyst',
+          'Product Owner'
+        ],
+        correct: 1,
+        explanation: 'Data Engineers build and maintain pipelines &mdash; ETL/ELT jobs, connectors, scheduling, and data ingestion are core to their role.'
+      },
+      {
+        question: 'What type of guardrail prevents a Data Engineer agent from modifying production schemas directly?',
+        options: [
+          'Rate Limiting',
+          'PII Masking',
+          'Scope Checking',
+          'Output Filtering'
+        ],
+        correct: 2,
+        explanation: 'Scope checking ensures agents can only access environments and resources within their defined boundaries &mdash; preventing a dev-scoped agent from touching production.'
+      },
+      {
+        question: 'At Graduated Autonomy Level 2, the agent...',
+        options: [
+          'Suggests actions, human approves all',
+          'Acts autonomously on routine tasks, pauses for high-stakes decisions',
+          'Operates independently with no oversight',
+          'Is fully autonomous with self-correction'
+        ],
+        correct: 1,
+        explanation: 'Level 2 (Supervised Autonomy) balances efficiency with safety &mdash; routine operations proceed automatically while high-risk actions require human approval.'
+      },
+      {
+        question: 'Which persona would define what "revenue" means in the context of AcmeCorp\'s dashboards?',
+        options: [
+          'Data Engineer',
+          'Data Architect',
+          'Product Owner',
+          'Data Steward'
+        ],
+        correct: 2,
+        explanation: 'Product Owners translate business needs into data definitions. They know whether "revenue" means gross, net, or adjusted &mdash; and which exclusions apply.'
+      },
+      {
+        question: 'A Data Steward agent should have which access level on production?',
+        options: [
+          'Full read-write',
+          'Read-only',
+          'No access',
+          'Write-only'
+        ],
+        correct: 1,
+        explanation: 'Data Stewards need to monitor, audit, and review production data for compliance, but they should never modify production data directly &mdash; read-only access enforces this boundary.'
+      },
+      {
+        question: 'Which guardrail type would prevent a Product Owner agent from seeing individual customer emails?',
+        options: [
+          'Authentication',
+          'Authorization',
+          'PII Masking',
+          'Scope Checking'
+        ],
+        correct: 2,
+        explanation: 'PII Masking redacts sensitive fields (emails, phone numbers, SSNs) before results reach the requesting agent or user &mdash; the Product Owner sees aggregated data, not individual records.'
+      },
+      {
+        question: 'Why are personas better than a single "do everything" agent?',
+        options: [
+          'Faster response times',
+          'Role-based access control and easier validation',
+          'Lower LLM costs',
+          'Simpler architecture'
+        ],
+        correct: 1,
+        explanation: 'Personas enable targeted guardrails (each role gets only the permissions it needs) and clearer testing boundaries (you can validate each persona\'s behavior independently).'
+      },
+      {
+        question: 'Which persona combination would AcmeCorp use for a data migration from MySQL to Snowflake?',
+        options: [
+          'Data Architect designs schema, Data Engineer executes migration',
+          'Product Owner defines needs, Quality Analyst validates',
+          'Data Steward audits, Data Engineer designs',
+          'Quality Analyst tests, Product Owner approves'
+        ],
+        correct: 0,
+        explanation: 'The Data Architect designs the target Snowflake schema (column types, clustering keys, relationships), then the Data Engineer handles the actual migration (extraction, transformation, loading, and validation).'
+      },
+      {
+        question: 'Which HITL pattern requires two separate approvals before an agent can execute a high-risk action?',
+        options: [
+          'Approval Gate',
+          'Dual Approval (Four-Eyes Principle)',
+          'Sampled Review',
+          'Return of Control'
+        ],
+        correct: 1,
+        explanation: 'The Four-Eyes Principle requires two independent approvals, ensuring no single person can authorize a high-risk action &mdash; a standard in regulated industries like banking and healthcare.'
+      },
+      {
+        question: 'In the Graduated Autonomy Model, at which level does the agent operate independently with humans reviewing after the fact?',
+        options: [
+          'Level 1',
+          'Level 2',
+          'Level 3',
+          'Level 4'
+        ],
+        correct: 2,
+        explanation: 'Level 3 allows independent operation with post-hoc auditing &mdash; the human role shifts from approver to auditor, reviewing completed actions rather than pre-approving them.'
+      },
+      {
+        question: 'Which HITL pattern allows the human to not just approve/reject but also modify the agent\'s parameters?',
+        options: [
+          'Approval Gate',
+          'Exception-Based Review',
+          'Confidence-Based Escalation',
+          'Return of Control (ROC)'
+        ],
+        correct: 3,
+        explanation: 'Return of Control goes beyond binary approve/reject &mdash; the human can modify parameters, redirect the agent, or take over entirely, enabling true human-agent collaboration.'
+      }
+    ]);
+
+    // --- Show celebration after quiz submission ---
+    const originalCallback = QuizEngine.onComplete;
+    QuizEngine.onComplete = function(score, total) {
+      if (originalCallback) originalCallback(score, total);
+      const celebration = document.getElementById('celebration-section');
+      if (celebration) {
+        celebration.style.display = 'block';
+        celebration.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
+    // Listen for quiz completion via DOM observation
+    const quizContainer = document.getElementById('quiz-container');
+    if (quizContainer) {
+      const observer = new MutationObserver(function(mutations) {
+        const scoreCard = quizContainer.querySelector('.score-card');
+        if (scoreCard) {
+          const celebration = document.getElementById('celebration-section');
+          if (celebration) {
+            celebration.style.display = 'block';
+            setTimeout(function() {
+              celebration.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+          }
+          observer.disconnect();
+        }
+      });
+      observer.observe(quizContainer, { childList: true, subtree: true });
+    }
+
+    Nav.init('m03-quiz-final');
+  </script>
+</body>
+</html>

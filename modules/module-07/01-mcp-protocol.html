@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Model Context Protocol (MCP) &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Integration Math --- */
+    .math-comparison {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: var(--space-6);
+      align-items: center;
+      margin: var(--space-8) 0;
+    }
+    .math-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+      transition: all var(--transition-base);
+    }
+    .math-box:hover {
+      border-color: var(--stroke-secondary);
+    }
+    .math-box__formula {
+      font-family: var(--font-mono);
+      font-size: var(--font-2xl);
+      font-weight: 700;
+      margin-bottom: var(--space-2);
+    }
+    .math-box__formula--red { color: var(--accent-error); }
+    .math-box__formula--green { color: var(--accent-success); }
+    .math-box__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .math-box__example {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      margin-top: var(--space-3);
+    }
+    .math-arrow {
+      font-size: var(--font-3xl);
+      color: var(--stroke-secondary);
+      font-family: var(--font-mono);
+    }
+
+    /* --- Flow Diagram --- */
+    .flow-diagram {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+      flex-wrap: wrap;
+    }
+    .flow-node {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-4) var(--space-5);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      transition: all var(--transition-base);
+    }
+    .flow-node:hover { border-color: var(--stroke-secondary); }
+    .flow-node--primary {
+      border-color: var(--stroke-primary);
+      border-style: solid;
+      color: var(--stroke-primary);
+    }
+    .flow-node--secondary {
+      border-color: var(--stroke-secondary);
+      border-style: solid;
+      color: var(--stroke-secondary);
+    }
+    .flow-node__label {
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-1);
+    }
+    .flow-arrow {
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      color: var(--stroke-dim);
+    }
+
+    @media (max-width: 768px) {
+      .math-comparison { grid-template-columns: 1fr; }
+      .math-arrow { transform: rotate(90deg); }
+      .flow-diagram { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M9 21V9"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 07</span>
+        <span class="separator">/</span>
+        <span class="current">MCP Protocol</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 07 &mdash; Lesson 01</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Model Context Protocol (MCP)</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            The universal standard that lets any AI agent talk to any tool &mdash; without custom integration code.
+          </p>
+        </header>
+
+        <!-- ===== INLINE SVG DIAGRAM: MCP Architecture ===== -->
+        <div class="evolving-diagram reveal reveal--scale"><div class="evolving-diagram__label">MCP ARCHITECTURE — N+M vs N×M</div>
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;font-family:'JetBrains Mono',monospace;">
+          <defs>
+            <filter id="glowBlue1"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="380" fill="transparent"/>
+          <!-- Corner brackets -->
+          <path d="M4,20 L4,4 L20,4" stroke="#334155" stroke-width="1.5" fill="none"/>
+          <path d="M680,4 L696,4 L696,20" stroke="#334155" stroke-width="1.5" fill="none"/>
+          <path d="M4,360 L4,376 L20,376" stroke="#334155" stroke-width="1.5" fill="none"/>
+          <path d="M680,376 L696,376 L696,360" stroke="#334155" stroke-width="1.5" fill="none"/>
+
+          <!-- BEFORE label -->
+          <text x="170" y="30" text-anchor="middle" fill="#a0a0a0" font-size="11" letter-spacing="0.1em">BEFORE (N×M)</text>
+
+          <!-- BEFORE: Agent boxes (left side) -->
+          <rect x="30" y="60" width="110" height="36" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="85" y="83" text-anchor="middle" fill="#f5f5f5" font-size="10">DataPulse</text>
+          <rect x="30" y="120" width="110" height="36" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="85" y="143" text-anchor="middle" fill="#f5f5f5" font-size="10">InsightBot</text>
+          <rect x="30" y="180" width="110" height="36" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="85" y="203" text-anchor="middle" fill="#f5f5f5" font-size="10">ComplianceGuard</text>
+
+          <!-- BEFORE: Tool boxes (right side of left half) -->
+          <rect x="210" y="48" width="100" height="28" rx="4" fill="rgba(239,68,68,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="260" y="67" text-anchor="middle" fill="#a0a0a0" font-size="9">PostgreSQL</text>
+          <rect x="210" y="84" width="100" height="28" rx="4" fill="rgba(239,68,68,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="260" y="103" text-anchor="middle" fill="#a0a0a0" font-size="9">Shopify</text>
+          <rect x="210" y="120" width="100" height="28" rx="4" fill="rgba(239,68,68,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="260" y="139" text-anchor="middle" fill="#a0a0a0" font-size="9">Salesforce</text>
+          <rect x="210" y="156" width="100" height="28" rx="4" fill="rgba(239,68,68,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="260" y="175" text-anchor="middle" fill="#a0a0a0" font-size="9">Sheets</text>
+          <rect x="210" y="192" width="100" height="28" rx="4" fill="rgba(239,68,68,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="260" y="211" text-anchor="middle" fill="#a0a0a0" font-size="9">S3</text>
+
+          <!-- BEFORE: Criss-cross lines (15 total: 3 agents x 5 tools) -->
+          <!-- DataPulse to all 5 -->
+          <line x1="140" y1="78" x2="210" y2="62" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="78" x2="210" y2="98" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="78" x2="210" y2="134" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="78" x2="210" y2="170" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="78" x2="210" y2="206" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <!-- InsightBot to all 5 -->
+          <line x1="140" y1="138" x2="210" y2="62" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="138" x2="210" y2="98" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="138" x2="210" y2="134" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="138" x2="210" y2="170" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="138" x2="210" y2="206" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <!-- ComplianceGuard to all 5 -->
+          <line x1="140" y1="198" x2="210" y2="62" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="198" x2="210" y2="98" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="198" x2="210" y2="134" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="198" x2="210" y2="170" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+          <line x1="140" y1="198" x2="210" y2="206" stroke="#ef4444" stroke-width="0.7" stroke-dasharray="4,3" opacity="0.6"/>
+
+          <!-- BEFORE label: 15 integrations -->
+          <text x="170" y="248" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="700">15 custom integrations</text>
+
+          <!-- Separator -->
+          <line x1="350" y1="20" x2="350" y2="260" stroke="#334155" stroke-width="1" stroke-dasharray="3,3"/>
+          <text x="350" y="275" text-anchor="middle" fill="#334155" font-size="18">&#x2192;</text>
+
+          <!-- AFTER label -->
+          <text x="525" y="30" text-anchor="middle" fill="#a0a0a0" font-size="11" letter-spacing="0.1em">AFTER (N+M)</text>
+
+          <!-- AFTER: Agent boxes -->
+          <rect x="380" y="60" width="100" height="36" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="430" y="83" text-anchor="middle" fill="#f5f5f5" font-size="10">DataPulse</text>
+          <rect x="380" y="120" width="100" height="36" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="430" y="143" text-anchor="middle" fill="#f5f5f5" font-size="10">InsightBot</text>
+          <rect x="380" y="180" width="100" height="36" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="430" y="203" text-anchor="middle" fill="#f5f5f5" font-size="10">ComplianceGuard</text>
+
+          <!-- AFTER: MCP central bar -->
+          <rect x="510" y="50" width="40" height="178" rx="6" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="2" filter="url(#glowBlue1)"/>
+          <text x="530" y="130" text-anchor="middle" fill="#A100FF" font-size="11" font-weight="700">M</text>
+          <text x="530" y="145" text-anchor="middle" fill="#A100FF" font-size="11" font-weight="700">C</text>
+          <text x="530" y="160" text-anchor="middle" fill="#A100FF" font-size="11" font-weight="700">P</text>
+
+          <!-- AFTER: Tool boxes -->
+          <rect x="580" y="48" width="90" height="28" rx="4" fill="rgba(16,185,129,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="625" y="67" text-anchor="middle" fill="#a0a0a0" font-size="9">PostgreSQL</text>
+          <rect x="580" y="84" width="90" height="28" rx="4" fill="rgba(16,185,129,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="625" y="103" text-anchor="middle" fill="#a0a0a0" font-size="9">Shopify</text>
+          <rect x="580" y="120" width="90" height="28" rx="4" fill="rgba(16,185,129,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="625" y="139" text-anchor="middle" fill="#a0a0a0" font-size="9">Salesforce</text>
+          <rect x="580" y="156" width="90" height="28" rx="4" fill="rgba(16,185,129,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="625" y="175" text-anchor="middle" fill="#a0a0a0" font-size="9">Sheets</text>
+          <rect x="580" y="192" width="90" height="28" rx="4" fill="rgba(16,185,129,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+          <text x="625" y="211" text-anchor="middle" fill="#a0a0a0" font-size="9">S3</text>
+
+          <!-- AFTER: Agent-to-MCP lines (3) -->
+          <line x1="480" y1="78" x2="510" y2="100" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="6,3"/>
+          <line x1="480" y1="138" x2="510" y2="138" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="6,3"/>
+          <line x1="480" y1="198" x2="510" y2="178" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="6,3"/>
+
+          <!-- AFTER: MCP-to-Tool lines (5) -->
+          <line x1="550" y1="95" x2="580" y2="62" stroke="#10b981" stroke-width="1.2" stroke-dasharray="6,3"/>
+          <line x1="550" y1="110" x2="580" y2="98" stroke="#10b981" stroke-width="1.2" stroke-dasharray="6,3"/>
+          <line x1="550" y1="138" x2="580" y2="134" stroke="#10b981" stroke-width="1.2" stroke-dasharray="6,3"/>
+          <line x1="550" y1="160" x2="580" y2="170" stroke="#10b981" stroke-width="1.2" stroke-dasharray="6,3"/>
+          <line x1="550" y1="178" x2="580" y2="206" stroke="#10b981" stroke-width="1.2" stroke-dasharray="6,3"/>
+
+          <!-- AFTER label: 8 connections -->
+          <text x="525" y="248" text-anchor="middle" fill="#10b981" font-size="11" font-weight="700">8 standard connections</text>
+
+          <!-- Dimension markers at bottom -->
+          <line x1="40" y1="310" x2="310" y2="310" stroke="#334155" stroke-width="0.8"/>
+          <line x1="40" y1="305" x2="40" y2="315" stroke="#334155" stroke-width="0.8"/>
+          <line x1="310" y1="305" x2="310" y2="315" stroke="#334155" stroke-width="0.8"/>
+          <text x="175" y="330" text-anchor="middle" fill="#a0a0a0" font-size="9">3 × 5 = 15 integrations</text>
+
+          <line x1="390" y1="310" x2="660" y2="310" stroke="#334155" stroke-width="0.8"/>
+          <line x1="390" y1="305" x2="390" y2="315" stroke="#334155" stroke-width="0.8"/>
+          <line x1="660" y1="305" x2="660" y2="315" stroke="#334155" stroke-width="0.8"/>
+          <text x="525" y="330" text-anchor="middle" fill="#a0a0a0" font-size="9">3 + 5 = 8 connections</text>
+
+          <!-- Bottom label -->
+          <text x="350" y="365" text-anchor="middle" fill="#334155" font-size="9" letter-spacing="0.15em">MODEL CONTEXT PROTOCOL — UNIVERSAL ADAPTER</text>
+        </svg>
+        </div>
+
+        <!-- ===== SECTION 1: The Integration Problem ===== -->
+        <section class="section">
+          <div class="section-label reveal">The Problem MCP Solves</div>
+          <h2 class="reveal">The N &times; M Integration Nightmare</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            Maya Chen hit a wall in March. DataPulse &mdash; the data agent she had built for AcmeCorp&rsquo;s
+            200-store retail operation &mdash; worked beautifully with their PostgreSQL warehouse. It could
+            query <code>fact_sales</code>, join across <code>dim_stores</code> and <code>dim_products</code>,
+            and return results in seconds. Then Raj Patel, VP of Analytics, asked her to add Shopify inventory
+            data. Maya wrote a custom connector: bespoke auth, bespoke error handling, bespoke schema mapping.
+            It took her a week.
+          </p>
+          <p class="reveal" style="line-height: 1.7; margin-top: var(--space-4);">
+            Then came Salesforce CRM for the sales team. Then Google Sheets, because Derek Kim&rsquo;s finance
+            group maintained manual revenue adjustments in a spreadsheet. Then the S3 data lake, where
+            historical archives lived. Each connector was bespoke &mdash; different auth flows, different
+            error handling, different schemas. &ldquo;I&rsquo;ve written five custom integrations,&rdquo; Maya
+            told Lena Park at their Friday standup. &ldquo;When Shopify updated their API last month, I spent
+            three days fixing just that one connector.&rdquo;
+          </p>
+          <p class="reveal" style="line-height: 1.7; margin-top: var(--space-4);">
+            Lena did the math. Five data sources, one agent &mdash; five integrations. But AcmeCorp was
+            planning three specialized agents for next quarter: DataPulse for analytics, an InsightBot for
+            marketing, and a ComplianceGuard agent that Marcus Webb had been requesting. That meant
+            <strong>3 agents &times; 5 sources = 15 integrations</strong>. &ldquo;We need a standard,&rdquo;
+            Lena said. Without one, every new agent or data source multiplied the maintenance burden.
+            That standard is <strong>MCP</strong>.
+          </p>
+
+          <div class="math-comparison reveal">
+            <div class="math-box">
+              <div class="math-box__formula math-box__formula--red">N &times; M</div>
+              <div class="math-box__label">Without MCP</div>
+              <div class="math-box__example">3 agents &times; 5 sources = 15 integrations</div>
+            </div>
+            <div class="math-arrow">&rarr;</div>
+            <div class="math-box">
+              <div class="math-box__formula math-box__formula--green">N + M</div>
+              <div class="math-box__label">With MCP</div>
+              <div class="math-box__example">3 agents + 5 sources = 8 integrations</div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">Think of it like USB</div>
+            <div class="callout__text">
+              Before USB, every device had a proprietary cable. MCP is the &ldquo;USB-C for AI agents&rdquo; &mdash; a
+              single standard that any agent can speak and any tool can implement. Maya&rsquo;s five bespoke
+              connectors would become five MCP servers, each reusable by every agent AcmeCorp deploys.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: MCP Architecture ===== -->
+        <section class="section">
+          <div class="section-label reveal">Architecture</div>
+          <h2 class="reveal">How MCP Works</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            MCP uses a <strong>client-server architecture</strong> built on <strong>JSON-RPC 2.0</strong>.
+            The agent hosts an MCP client that connects to one or more MCP servers. Each server wraps
+            a specific tool, database, or service. When Maya refactored DataPulse to use MCP, the agent
+            itself shrank &mdash; it no longer needed to know how PostgreSQL authentication worked, or how
+            to page through Shopify&rsquo;s REST API. Each MCP server handled those details internally.
+          </p>
+
+          <div class="flow-diagram reveal">
+            <div class="flow-node">
+              <div class="flow-node__label">Sofia Torres</div>
+              Query
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node--primary">
+              <div class="flow-node__label">DataPulse</div>
+              MCP Client
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node--secondary">
+              <div class="flow-node__label">MCP Server</div>
+              PostgreSQL
+            </div>
+          </div>
+
+          <div class="flow-diagram reveal" style="margin-top: var(--space-2);">
+            <div class="flow-node" style="visibility: hidden;">spacer</div>
+            <div class="flow-arrow" style="visibility: hidden;">&rarr;</div>
+            <div class="flow-node flow-node--primary">
+              <div class="flow-node__label">Same Agent</div>
+              MCP Client
+            </div>
+            <div class="flow-arrow">&rarr;</div>
+            <div class="flow-node flow-node--secondary">
+              <div class="flow-node__label">MCP Server</div>
+              Shopify / Salesforce / S3
+            </div>
+          </div>
+
+          <div class="card-grid card-grid--2 reveal" style="margin-top: var(--space-8);">
+            <div class="bp-card">
+              <div class="bp-card__title">Transport Layer</div>
+              <div class="bp-card__body">
+                MCP supports both <strong>stdio</strong> (local processes) and <strong>HTTP + SSE</strong>
+                (remote servers). The protocol is transport-agnostic &mdash; the same JSON-RPC messages
+                work over either channel. AcmeCorp runs their PostgreSQL MCP server as a local process
+                on the same machine as DataPulse (stdio), while the Shopify server runs as a remote
+                HTTP service shared across all three agents.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Capability Negotiation</div>
+              <div class="bp-card__body">
+                On connection, client and server exchange capability declarations. The client discovers
+                what the server can do (tools, resources, prompts) through standardized listing endpoints.
+                When Maya deployed a new Google Sheets MCP server, DataPulse discovered it automatically
+                at startup &mdash; no code changes to the agent.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: Four MCP Primitives ===== -->
+        <section class="section">
+          <div class="section-label reveal">Core Concepts</div>
+          <h2 class="reveal">The Four MCP Primitives</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            MCP defines four primitive types that cover every interaction pattern between agents and tools.
+            Each one maps to a real need Maya encountered while building AcmeCorp&rsquo;s integrations.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal" style="margin-top: var(--space-6);">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Resources</div>
+              <div class="bp-card__body">
+                <span class="badge badge--blue" data-tip="Read-only data endpoints the agent can access — files, schemas, configs. No side effects, like a GET request.">Data to Read</span>
+                <p style="margin-top: var(--space-3);">
+                  Resources expose data the agent can read &mdash; files, database schemas, API docs,
+                  configuration. Think of them as GET endpoints. They provide context without side effects.
+                  At AcmeCorp, the PostgreSQL MCP server exposes the star schema
+                  (<code>fact_sales</code>, <code>dim_products</code>, <code>dim_stores</code>,
+                  <code>dim_dates</code>) as resources so DataPulse can understand the data model
+                  before writing queries.
+                </p>
+                <p style="margin-top: var(--space-2); font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">
+                  Example: <code>resource://postgres/schema/fact_sales</code>
+                </p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Tools</div>
+              <div class="bp-card__body">
+                <span class="badge badge--teal" data-tip="Callable functions with defined inputs/outputs. The LLM decides when to invoke them. Can have side effects like writing data.">Functions to Execute</span>
+                <p style="margin-top: var(--space-3);">
+                  Tools are callable functions with defined inputs and outputs. The LLM decides when to
+                  invoke them based on their descriptions. They can have side effects (writing data,
+                  sending messages). When Sofia Torres asks DataPulse for Southwest region revenue,
+                  the agent calls <code>execute_query</code> on the PostgreSQL MCP server with a
+                  generated SQL statement.
+                </p>
+                <p style="margin-top: var(--space-2); font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">
+                  Example: <code>tool://postgres/execute_query</code>
+                </p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Prompts</div>
+              <div class="bp-card__body">
+                <span class="badge badge--amber" data-tip="Reusable interaction recipes that encode best practices for working with a specific tool or domain.">Template Patterns</span>
+                <p style="margin-top: var(--space-3);">
+                  Prompts are reusable template patterns that servers can offer to clients. They encode
+                  best practices for interacting with a specific tool or domain &mdash; like pre-built
+                  interaction recipes. Priya Sharma, AcmeCorp&rsquo;s Data Steward, contributed a
+                  <code>validate_query</code> prompt template that checks SQL against data governance
+                  rules before execution.
+                </p>
+                <p style="margin-top: var(--space-2); font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">
+                  Example: <code>prompt://postgres/validate_query</code>
+                </p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">04</div>
+              <div class="bp-card__title">Sampling</div>
+              <div class="bp-card__body">
+                <span class="badge badge--green" data-tip="Inverts the flow: the server requests LLM completions from the client, enabling agentic behaviors inside the tool server.">Server &rarr; LLM Requests</span>
+                <p style="margin-top: var(--space-3);">
+                  Sampling inverts the flow: the server requests LLM completions from the client. This
+                  enables agentic behaviors <em>inside</em> the tool server itself &mdash; the server
+                  can ask the LLM to reason about intermediate results. AcmeCorp&rsquo;s Salesforce
+                  MCP server uses sampling to classify incoming CRM queries (sales pipeline vs. customer
+                  support) before routing them to the right Salesforce object.
+                </p>
+                <p style="margin-top: var(--space-2); font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">
+                  Example: Server asks LLM to classify a query before executing
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: MCP Benefits ===== -->
+        <section class="section">
+          <div class="section-label reveal">Why MCP Matters</div>
+          <h2 class="reveal">Key Benefits</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            Two months after adopting MCP, Maya presented the results to Raj and Derek Kim. The numbers
+            told the story: what had been 15 planned integrations dropped to 8. Maintenance incidents
+            from API changes fell by 60%. Here is why the protocol delivers those gains.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal" style="margin-top: var(--space-6);">
+            <div class="bp-card">
+              <div class="bp-card__title">Portability</div>
+              <div class="bp-card__body">
+                Switch LLM providers without rewriting tool integrations. Your MCP servers work with
+                Claude, GPT, Gemini &mdash; any MCP-compatible client. AcmeCorp tested a model swap
+                from one provider to another; every MCP server kept working without a single change.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Discovery</div>
+              <div class="bp-card__body">
+                Agents dynamically discover available tools and their schemas at runtime. No hardcoded
+                tool registries or manual configuration. When Maya deployed the S3 MCP server on a
+                Thursday afternoon, DataPulse discovered it at its next restart &mdash; no redeployment.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Security</div>
+              <div class="bp-card__body">
+                MCP servers run in isolation with their own credentials. The agent never sees database
+                passwords &mdash; only the MCP interface. Marcus Webb approved the architecture
+                specifically because DataPulse never touches raw PostgreSQL credentials.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Community Ecosystem</div>
+              <div class="bp-card__body">
+                A growing library of open-source MCP servers for databases, SaaS tools, cloud services,
+                and more. Build once, share everywhere. Maya found open-source MCP servers for both
+                PostgreSQL and S3 &mdash; she only had to write the Shopify and Google Sheets servers
+                from scratch.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Composability</div>
+              <div class="bp-card__body">
+                An agent can connect to multiple MCP servers simultaneously. Add capabilities by
+                deploying new servers &mdash; no agent code changes needed. DataPulse currently
+                connects to five MCP servers; adding a sixth for a new data source is a configuration
+                change, not an engineering sprint.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Standardized Auth</div>
+              <div class="bp-card__body">
+                MCP defines OAuth 2.1 based authorization flows, so authentication is consistent across
+                all tool integrations. No more maintaining five different auth implementations &mdash;
+                the pattern Maya hated most about the bespoke connector era.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: Deep Dive ===== -->
+        <section class="section">
+          <div class="section-label reveal">Deep Dive</div>
+          <h2 class="reveal">MCP Message Lifecycle</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            Let&rsquo;s trace what happens when Sofia Torres, Store Manager for Store&nbsp;#47 in the
+            Southwest region, asks DataPulse: &ldquo;What were my top 10 products by revenue last
+            quarter?&rdquo; The question passes through four stages of the MCP message lifecycle.
+          </p>
+
+          <div class="collapsible reveal" style="margin-top: var(--space-6);">
+            <div class="collapsible__header" onclick="this.parentElement.classList.toggle('open')">
+              <span>1. Initialize &mdash; Client connects and negotiates capabilities</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                The client sends an <code>initialize</code> request with its protocol version and
+                capabilities. The server responds with its own capabilities (supported primitives,
+                tool list, resource list). Both sides agree on the protocol version to use.
+                At AcmeCorp, this happens once when DataPulse starts up &mdash; it establishes
+                connections to all five MCP servers and caches their capability declarations.
+              </div>
+            </div>
+          </div>
+          <div class="collapsible reveal" style="margin-top: var(--space-2);">
+            <div class="collapsible__header" onclick="this.parentElement.classList.toggle('open')">
+              <span>2. Discover &mdash; Client lists available tools and resources</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                The client calls <code>tools/list</code> and <code>resources/list</code> to enumerate
+                what the server offers. Each tool includes its name, description, and JSON Schema for
+                parameters. This information is passed to the LLM for tool-use decisions. DataPulse
+                learns that the PostgreSQL server offers <code>execute_query</code>,
+                <code>list_tables</code>, and <code>get_schema</code> tools, along with schema
+                resources for every table in AcmeCorp&rsquo;s star schema.
+              </div>
+            </div>
+          </div>
+          <div class="collapsible reveal" style="margin-top: var(--space-2);">
+            <div class="collapsible__header" onclick="this.parentElement.classList.toggle('open')">
+              <span>3. Invoke &mdash; Agent calls a tool via JSON-RPC</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                When the LLM selects a tool, the client sends a <code>tools/call</code> request with
+                the tool name and arguments. The server executes the function and returns the result.
+                The response includes structured content (text, images, or embedded resources).
+                For Sofia&rsquo;s query, DataPulse sends an <code>execute_query</code> call with
+                SQL that filters <code>fact_sales</code> by Store&nbsp;#47 and AcmeCorp&rsquo;s fiscal
+                Q3 (July&ndash;September).
+              </div>
+            </div>
+          </div>
+          <div class="collapsible reveal" style="margin-top: var(--space-2);">
+            <div class="collapsible__header" onclick="this.parentElement.classList.toggle('open')">
+              <span>4. Respond &mdash; Result flows back to the LLM</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                The tool result is formatted and returned to the LLM as an observation. The LLM can
+                then reason about the result, make another tool call, or compose a final response
+                to the user. The cycle repeats as needed. DataPulse receives Sofia&rsquo;s top-10
+                product list, formats it with revenue figures and percentage changes, and delivers
+                the answer &mdash; all within seconds.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 6: AcmeCorp Architecture ===== -->
+        <section class="section">
+          <div class="section-label reveal">Case Study</div>
+          <h2 class="reveal">AcmeCorp&rsquo;s MCP Architecture</h2>
+          <p class="reveal" style="line-height: 1.7;">
+            By June, Maya had replaced all five bespoke connectors with MCP servers. The before-and-after
+            picture was stark: what had been a fragile web of custom code became a clean, modular
+            architecture. Lena Park called it &ldquo;the best refactor we&rsquo;ve done all year.&rdquo;
+          </p>
+
+          <div class="callout reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">Before vs. After</div>
+            <div class="callout__text">
+              <strong>Before MCP:</strong> 5 bespoke connectors, each with unique auth code, error handling,
+              and schema mapping. Shopify API v2024-01 update broke DataPulse for 3 days. Maya was the only
+              person who understood all five connectors.<br><br>
+              <strong>After MCP:</strong> 5 standardized MCP servers, each independently deployable and
+              testable. When Shopify updated their API again in May, Maya fixed the Shopify MCP server in
+              2 hours &mdash; DataPulse and the other two planned agents never noticed.
+            </div>
+          </div>
+
+          <div class="card-grid card-grid--3 reveal" style="margin-top: var(--space-6);">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">PostgreSQL MCP Server</div>
+              <div class="bp-card__body">
+                Exposes <code>execute_query</code> tool, <code>schema</code> resources for all 500+
+                tables in AcmeCorp&rsquo;s warehouse, and a <code>validate_query</code> prompt
+                contributed by Priya Sharma. Handles connection pooling, credential management,
+                and query timeouts internally.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Shopify MCP Server</div>
+              <div class="bp-card__body">
+                Wraps Shopify&rsquo;s REST and GraphQL APIs for inventory and order data. Provides
+                <code>get_inventory</code> and <code>list_orders</code> tools. When Shopify releases
+                a new API version, Maya updates this single server &mdash; all agents benefit
+                immediately.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Salesforce MCP Server</div>
+              <div class="bp-card__body">
+                Connects to AcmeCorp&rsquo;s Salesforce CRM. Offers <code>query_accounts</code>
+                and <code>get_pipeline</code> tools. Uses sampling to let the LLM classify whether
+                an incoming request is about sales pipeline or customer support before hitting the
+                right Salesforce object.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">04</div>
+              <div class="bp-card__title">Google Sheets MCP Server</div>
+              <div class="bp-card__body">
+                Derek Kim&rsquo;s finance team maintains manual revenue adjustments in Google Sheets.
+                This server exposes <code>read_range</code> and <code>list_sheets</code> tools so
+                DataPulse can incorporate the finance team&rsquo;s corrections without anyone
+                changing their workflow.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">05</div>
+              <div class="bp-card__title">S3 Data Lake MCP Server</div>
+              <div class="bp-card__body">
+                AcmeCorp&rsquo;s historical archives (pre-2023 data) live in S3 as Parquet files.
+                This server provides <code>query_parquet</code> and <code>list_objects</code> tools.
+                When Raj needs year-over-year comparisons, DataPulse seamlessly queries both
+                PostgreSQL (current) and S3 (historical).
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal" style="margin-top: var(--space-6);">
+            <div class="callout__label">Key Insight</div>
+            <div class="callout__text">
+              Adding a new data source is just deploying a new MCP server. The agent discovers it
+              automatically through capability negotiation. No redeployment of the agent itself required.
+              When AcmeCorp onboards their next data source, Maya estimates it will take days instead
+              of the weeks each bespoke connector used to require.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="../module-06/quiz-checkpoint.html" class="page-nav__title">Module 06 Quiz</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="02-a2a-protocol.html" class="page-nav__title">A2A Protocol</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m07-mcp-protocol');</script>
+</body>
+</html>

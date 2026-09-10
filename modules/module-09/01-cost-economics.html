@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Cost Economics &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .cost-iceberg {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: var(--space-8) 0;
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+    }
+    .cost-iceberg__visible {
+      width: 100%;
+      padding: var(--space-6);
+      background: rgba(161, 0, 255, 0.06);
+      text-align: center;
+      border-bottom: 2px solid var(--stroke-primary);
+      position: relative;
+    }
+    .cost-iceberg__visible::after {
+      content: 'WATERLINE — What the CFO Sees';
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-primary);
+      padding: 0 var(--space-4);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      white-space: nowrap;
+    }
+    .cost-iceberg__hidden {
+      width: 100%;
+      padding: var(--space-8) var(--space-6) var(--space-6);
+      background: var(--bg-surface);
+    }
+    .cost-iceberg__item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px dashed var(--stroke-dim);
+      font-size: var(--font-sm);
+    }
+    .cost-iceberg__item:last-child {
+      border-bottom: none;
+    }
+    .cost-iceberg__pct {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--accent-error);
+    }
+    .stat-highlight {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      margin: var(--space-8) 0;
+      padding: var(--space-6);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      background: var(--bg-surface);
+    }
+    .stat-highlight__number {
+      font-family: var(--font-mono);
+      font-size: var(--font-4xl);
+      font-weight: 700;
+      color: var(--accent-error);
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .stat-highlight__text {
+      font-size: var(--font-base);
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .comparison-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin: var(--space-3) 0;
+    }
+    .comparison-bar__fill {
+      height: 28px;
+      border-radius: var(--border-radius);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-3);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      font-weight: 600;
+      color: var(--bg-primary);
+    }
+    .comparison-bar__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      min-width: 100px;
+    }
+    .case-study {
+      margin: var(--space-8) 0;
+      border: 2px solid var(--accent-success);
+      border-radius: var(--border-radius-lg);
+      overflow: hidden;
+    }
+    .case-study__header {
+      background: rgba(16, 185, 129, 0.08);
+      padding: var(--space-4) var(--space-6);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--accent-success);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .case-study__body {
+      padding: var(--space-6);
+    }
+    .case-study__row {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-3) 0;
+      border-bottom: 1px dashed var(--stroke-dim);
+      font-size: var(--font-sm);
+    }
+    .case-study__row:last-child { border-bottom: none; }
+    .case-study__before {
+      font-family: var(--font-mono);
+      color: var(--accent-error);
+      text-decoration: line-through;
+    }
+    .case-study__after {
+      font-family: var(--font-mono);
+      color: var(--accent-success);
+      font-weight: 700;
+    }
+    @media (max-width: 640px) {
+      .stat-highlight { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a><span class="separator">/</span>
+        <span>Module 09</span><span class="separator">/</span>
+        <span class="current">Cost Economics</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 09 &mdash; Lesson 01</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Agent Cost Economics</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">Derek Kim stared at the number on his screen for a full thirty seconds before firing off the Slack message that would change everything about how AcmeCorp ran DataPulse.</p>
+        </header>
+
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">DATAPULSE — COST ANATOMY ($15,247/month)</div>
+          <svg viewBox="0 0 760 440" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:760px;">
+            <defs>
+              <filter id="glow01" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <marker id="arrowhead01" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#A100FF"/>
+              </marker>
+              <style>
+                .svg-label { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; }
+                .svg-dim   { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; }
+              </style>
+            </defs>
+            <!-- background -->
+            <rect width="760" height="440" rx="12" fill="rgba(15,23,42,0.85)"/>
+
+            <!-- Title — centered over the full canvas -->
+            <text x="380" y="24" text-anchor="middle" class="svg-dim" font-size="11" letter-spacing="0.08em">DEREK KIM'S INVOICE BREAKDOWN</text>
+
+            <!--
+              Pie: center (240, 240), r=100
+              Left edge x=140, right edge x=340, top y=140, bottom y=340
+              Angles clockwise from 12-o'clock (top):
+                LLM Inference  62% → 0° to 223.2°
+                Redundant RAG  18% → 223.2° to 288°
+                Failed Retries 11% → 288° to 327.6°
+                Embedding Regen 9% → 327.6° to 360°
+
+              Arc endpoints (cx=240, cy=240, r=100):
+                0°      → (240, 140)
+                223.2°  → (240+100·sin223.2°, 240−100·cos223.2°) = (171.6, 313.0)
+                288°    → (240+100·sin288°,   240−100·cos288°)   = (144.9, 209.1)
+                327.6°  → (240+100·sin327.6°, 240−100·cos327.6°) = (186.4, 155.6)
+            -->
+
+            <!-- 62% LLM Inference -->
+            <path d="M240,140 A100,100 0 1,1 171.6,313.0 L240,240 Z"
+                  fill="rgba(245,158,11,0.25)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3"/>
+            <!-- 18% Redundant RAG -->
+            <path d="M171.6,313.0 A100,100 0 0,1 144.9,209.1 L240,240 Z"
+                  fill="rgba(245,158,11,0.15)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3"/>
+            <!-- 11% Failed Retries -->
+            <path d="M144.9,209.1 A100,100 0 0,1 186.4,155.6 L240,240 Z"
+                  fill="rgba(239,68,68,0.25)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,3"/>
+            <!-- 9% Embedding Regen -->
+            <path d="M186.4,155.6 A100,100 0 0,1 240,140 L240,240 Z"
+                  fill="rgba(51,65,85,0.4)" stroke="#334155" stroke-width="1.5" stroke-dasharray="6,3"/>
+
+            <!--
+              Slice midpoint angles (clockwise from top, for center 240,240 r=100):
+                LLM Inference  111.6° → pie edge (333, 277)  → label RIGHT of pie
+                Redundant RAG  255.6° → pie edge (143, 265)  → label BOTTOM-LEFT
+                Failed Retries 307.8° → pie edge (161, 179)  → label UPPER-LEFT
+                Embedding Regen 343.8°→ pie edge (212, 144)  → label TOP (above pie)
+            -->
+
+            <!-- Leader lines from pie edge midpoints toward labels -->
+            <line x1="333" y1="277" x2="372" y2="290" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="3,2"/>
+            <line x1="143" y1="265" x2="88"  y2="300" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="3,2"/>
+            <line x1="161" y1="179" x2="104" y2="162" stroke="#ef4444" stroke-width="0.8" stroke-dasharray="3,2"/>
+            <line x1="212" y1="144" x2="205" y2="108" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3,2"/>
+
+            <!-- LLM Inference (62%) — right of pie, vertically at pie mid-right -->
+            <text x="375" y="288" class="svg-label" font-size="10" font-weight="700">LLM INFERENCE</text>
+            <text x="375" y="304" class="svg-label" font-size="13" font-weight="700" fill="#f59e0b">$9,453</text>
+            <text x="375" y="318" class="svg-dim" font-size="9">62%</text>
+
+            <!-- Redundant RAG (18%) — bottom-left, below and left of pie -->
+            <text x="88" y="308" text-anchor="middle" class="svg-label" font-size="9" font-weight="700">REDUNDANT RAG</text>
+            <text x="88" y="324" text-anchor="middle" class="svg-label" font-size="12" font-weight="700" fill="#f59e0b">$2,744</text>
+            <text x="88" y="338" text-anchor="middle" class="svg-dim" font-size="9">18%</text>
+
+            <!-- Failed Retries (11%) — upper-left, beside the slice -->
+            <text x="100" y="152" text-anchor="end" class="svg-label" font-size="9" font-weight="700">FAILED RETRIES</text>
+            <text x="100" y="167" text-anchor="end" class="svg-label" font-size="12" font-weight="700" fill="#ef4444">$1,677</text>
+            <text x="100" y="181" text-anchor="end" class="svg-dim" font-size="9">11%</text>
+
+            <!-- Embedding Regen (9%) — above pie top, centred on slice -->
+            <text x="205" y="96" text-anchor="middle" class="svg-label" font-size="9" font-weight="700">EMBEDDING REGEN</text>
+            <text x="205" y="83" text-anchor="middle" class="svg-label" font-size="12" font-weight="700" fill="#a0a0a0">$1,373</text>
+            <text x="205" y="109" text-anchor="middle" class="svg-dim" font-size="9">9%</text>
+
+            <!-- Center donut label -->
+            <circle cx="240" cy="240" r="40" fill="rgba(15,23,42,0.92)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="240" y="235" text-anchor="middle" class="svg-label" font-size="9">TOTAL</text>
+            <text x="240" y="252" text-anchor="middle" class="svg-label" font-size="13" font-weight="700" fill="#ef4444">$15,247</text>
+
+            <!-- Target circle — right side -->
+            <circle cx="630" cy="240" r="55" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="2" stroke-dasharray="8,4" filter="url(#glow01)"/>
+            <text x="630" y="230" text-anchor="middle" class="svg-label" font-size="9" font-weight="700" fill="#10b981">TARGET</text>
+            <text x="630" y="250" text-anchor="middle" class="svg-label" font-size="16" font-weight="700" fill="#10b981">$3,000</text>
+
+            <!-- Arrow: right edge of pie (340,240) → left edge of target (575,240) -->
+            <line x1="342" y1="240" x2="568" y2="240" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowhead01)"/>
+            <rect x="382" y="218" width="118" height="20" rx="4" fill="rgba(15,23,42,0.92)"/>
+            <text x="441" y="232" text-anchor="middle" class="svg-label" font-size="9" fill="#A100FF">80% reduction needed</text>
+
+            <!-- Bottom caption -->
+            <text x="380" y="425" text-anchor="middle" class="svg-dim" font-size="10" letter-spacing="0.05em">Derek Kim's Invoice Breakdown</text>
+          </svg>
+        </div>
+
+        <!-- The Invoice That Started It All -->
+        <section class="section">
+          <div class="section-label reveal">The Wake-Up Call</div>
+          <h2 class="reveal">$15,247</h2>
+          <p class="reveal reveal--delay-1">It was 9:47 PM on a Tuesday when Derek Kim, AcmeCorp's CFO, opened the first monthly AWS + OpenAI invoice for DataPulse. The number hit him like a gut punch: <strong>$15,247</strong>. He pulled up Slack and typed a message to Raj Patel, VP of Analytics, that the entire data team would be quoting for weeks:</p>
+
+          <div class="callout reveal" style="border-color: var(--accent-error);">
+            <div class="callout__label" style="color: var(--accent-error);">Derek Kim &mdash; Slack, 9:47 PM</div>
+            <div class="callout__text">
+              "This was supposed to save us money. We're spending more on AI tokens than we spend on the entire analytics team's software licenses. At this rate, the annual run rate is $183K &mdash; that's 3x our projected ROI. Explain."
+            </div>
+          </div>
+
+          <p class="reveal">Raj pulled Maya Chen, Lead Data Engineer, into a war room the next morning at 7:30 AM. Before anyone else arrived, Maya had already pulled the usage logs. She walked Raj through where the money was actually going, and the picture was ugly.</p>
+        </section>
+
+        <!-- Gartner Warning -->
+        <section class="section">
+          <div class="stat-highlight reveal">
+            <div class="stat-highlight__number">40%+</div>
+            <div class="stat-highlight__text">
+              <strong>Gartner projects that more than 40% of agentic AI deployments will be scaled back or canceled by 2027</strong> due to escalating, unpredictable costs. AcmeCorp was on track to become one of those statistics. The problem is not that agents are expensive to build &mdash; it is that they are expensive to run, and the costs compound in ways teams do not anticipate. Maya had lived this firsthand: DataPulse processed 3,200 queries per day across AcmeCorp's 200 stores, and every single one was hitting GPT-4 at $30 per million input tokens.
+            </div>
+          </div>
+        </section>
+
+        <!-- The Unreliability Tax -->
+        <section class="section">
+          <div class="section-label reveal">The Hidden Multiplier</div>
+          <h2 class="reveal">The Unreliability Tax</h2>
+          <p class="reveal reveal--delay-1">Maya broke down AcmeCorp's DataPulse spend into four buckets, and what she found shocked even Raj. Fully 62% of the bill was LLM inference &mdash; every single query, from Sofia Torres asking for her morning revenue numbers at Store #47 to complex cross-regional trend analyses, was hitting GPT-4. Another 18% was redundant RAG retrievals: the same schema lookups repeated thousands of times a day because nothing was cached. 11% was failed queries that retried three times before erroring out. And 9% was embedding generation for the same documents being re-indexed nightly.</p>
+
+          <p class="reveal">"We're burning money on waste," Maya told Raj. "The actual value-generating queries are maybe 40% of our spend." Probabilistic agents create hidden costs that never appear cleanly on your cloud bill. Every percentage point below perfect reliability triggers a cascade of expenses that traditional software never faces.</p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">Retry Storms</div>
+              <div class="bp-card__body">When DataPulse failed on a query, it retried &mdash; with an even larger context window. Maya found queries that should have cost $0.05 ballooning to $0.50 after three retries. AcmeCorp's 11% failure rate meant 352 queries per day were running this expensive retry loop, burning through tokens, compute, and latency.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Human Review Overhead</div>
+              <div class="bp-card__body">Priya Sharma, AcmeCorp's Data Steward, was spending three hours every day verifying DataPulse outputs before they went to executives. At $50/hr for a knowledge worker, even 5 minutes of review per failed task costs more than the entire agent interaction. Priya's review time alone was costing AcmeCorp over $2,100 a month.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Debugging Time</div>
+              <div class="bp-card__body">Non-deterministic failures are the hardest to diagnose. Maya's engineering team spent hours tracing through DataPulse's probabilistic reasoning chains to find why the agent hallucinated a specific answer. One incident &mdash; a wrong inventory count for Store #47 that Sofia Torres caught &mdash; took two engineers an entire afternoon to debug.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Lost Trust</div>
+              <div class="bp-card__body">Once users lose confidence in the agent, adoption drops. Several store managers had already stopped using DataPulse and reverted to manual SQL queries through the old dashboard. The entire investment in building the system was yielding diminishing returns as people quietly went back to their old workflows.</div>
+            </div>
+          </div>
+
+          <!-- Reliability Cost Comparison -->
+          <div class="callout reveal">
+            <div class="callout__label">The 5x Rule</div>
+            <div class="callout__text">
+              A <strong>95% reliable agent is 5x cheaper than an 80% reliable agent</strong>. The math: at 80% reliability, 1 in 5 tasks fails. Each failure triggers retries (2&ndash;3x token cost), human review ($4&ndash;8 per incident), and debugging overhead. At 95% reliability, failures drop to 1 in 20 &mdash; reducing cascading costs by an order of magnitude. Reliability is not just a quality metric; it is a cost lever. When Maya calculated DataPulse's effective reliability at 82%, she finally understood why the bill was so high.
+            </div>
+          </div>
+
+          <div style="margin: var(--space-6) 0;" class="reveal">
+            <p style="font-family: var(--font-mono); font-size: var(--font-sm); color: var(--text-secondary); margin-bottom: var(--space-4);">Effective cost per 1,000 tasks by reliability level:</p>
+            <div class="comparison-bar">
+              <span class="comparison-bar__label">80% reliable</span>
+              <div class="comparison-bar__fill" style="width: 100%; background: var(--accent-error);">$2,450</div>
+            </div>
+            <div class="comparison-bar">
+              <span class="comparison-bar__label">90% reliable</span>
+              <div class="comparison-bar__fill" style="width: 55%; background: var(--accent-warning);">$1,120</div>
+            </div>
+            <div class="comparison-bar">
+              <span class="comparison-bar__label">95% reliable</span>
+              <div class="comparison-bar__fill" style="width: 22%; background: var(--accent-success);">$490</div>
+            </div>
+            <div class="comparison-bar">
+              <span class="comparison-bar__label">99% reliable</span>
+              <div class="comparison-bar__fill" style="width: 10%; background: var(--stroke-secondary);">$185</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Total Cost of Ownership -->
+        <section class="section">
+          <div class="section-label reveal">Beyond the API Bill</div>
+          <h2 class="reveal">Total Cost of Ownership</h2>
+          <p class="reveal reveal--delay-1">When Maya presented her findings to Derek, she used an iceberg diagram. "You're looking at the token line item on the invoice," she told the CFO. "But that's just the visible tip. The real TCO includes five layers of expense, and most of them are invisible until you audit them." Derek leaned forward. "Show me everything."</p>
+
+          <div class="cost-iceberg reveal reveal--delay-2">
+            <div class="cost-iceberg__visible">
+              <div style="font-family: var(--font-mono); font-size: var(--font-2xl); font-weight: 700; color: var(--stroke-primary);">Token Costs</div>
+              <div style="font-family: var(--font-mono); font-size: var(--font-sm); color: var(--text-secondary); margin-top: var(--space-2);">LLM API calls &mdash; typically 8&ndash;15% of true TCO</div>
+            </div>
+            <div class="cost-iceberg__hidden">
+              <div class="cost-iceberg__item">
+                <span>Infrastructure (compute, vector DB, caching, logging)</span>
+                <span class="cost-iceberg__pct">20&ndash;30%</span>
+              </div>
+              <div class="cost-iceberg__item">
+                <span>Human oversight (review, escalation handling, QA)</span>
+                <span class="cost-iceberg__pct">25&ndash;35%</span>
+              </div>
+              <div class="cost-iceberg__item">
+                <span>Error recovery (retries, fallbacks, incident response)</span>
+                <span class="cost-iceberg__pct">10&ndash;20%</span>
+              </div>
+              <div class="cost-iceberg__item">
+                <span>Opportunity cost (user churn, delayed decisions, workarounds)</span>
+                <span class="cost-iceberg__pct">15&ndash;25%</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="reveal">Maya mapped each layer directly to AcmeCorp's situation. Derek could see it now &mdash; the $15,247 invoice was actually the smaller problem. The real cost included Priya's review hours, the engineering time spent debugging hallucinations, the store managers who had quietly abandoned the tool, and the over-provisioned infrastructure running at full blast around the clock.</p>
+
+          <div class="card-grid card-grid--3 reveal">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Token Costs</div>
+              <div class="bp-card__body">Input and output tokens from LLM API calls. At AcmeCorp, every query averaged 4,200 input tokens and 1,800 output tokens &mdash; all routed to GPT-4. Varies wildly by model choice, context window usage, and retry volume. Often the smallest line item when you see the full picture.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Infrastructure</div>
+              <div class="bp-card__body">Vector databases for RAG, caching layers, observability tooling, compute for orchestration, network egress. AcmeCorp's PostgreSQL warehouse had 500+ tables, and DataPulse was re-indexing embeddings for the same schema documents every night. Scales with traffic and data volume.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Human Oversight</div>
+              <div class="bp-card__body">Subject matter experts reviewing flagged responses, handling escalations, auditing agent decisions. Priya Sharma spent three hours daily verifying outputs. Raj's analysts spent another two hours fielding complaints from store managers who got incorrect numbers. Often the largest hidden cost center.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">04</div>
+              <div class="bp-card__title">Error Recovery</div>
+              <div class="bp-card__body">Retry tokens, fallback model costs, incident investigation time, data correction after incorrect agent actions. DataPulse's 11% failure rate meant 352 retried queries daily, each burning 3x the original token cost. Proportional to unreliability.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">05</div>
+              <div class="bp-card__title">Opportunity Cost</div>
+              <div class="bp-card__body">Users who stop using the agent, delayed business decisions because people do not trust the output. When Sofia Torres stopped trusting DataPulse for her morning revenue reports and went back to running manual queries, the entire value proposition of the tool eroded.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- AcmeCorp Cost Breakdown -->
+        <section class="section">
+          <div class="section-label reveal">Real-World Impact</div>
+          <h2 class="reveal">AcmeCorp's $15,247: Where Every Dollar Went</h2>
+          <p class="reveal reveal--delay-1">Maya built a detailed cost breakdown for Derek's war room. The numbers told a clear story: DataPulse was not expensive because AI is inherently costly &mdash; it was expensive because nobody had engineered the costs. The agent had been deployed with default settings, no caching, no model routing, and no guardrails.</p>
+
+          <div class="case-study reveal reveal--delay-2">
+            <div class="case-study__header">AcmeCorp DataPulse &mdash; Month 1 Cost Breakdown</div>
+            <div class="case-study__body">
+              <div class="case-study__row">
+                <span>LLM inference (every query hitting GPT-4) &mdash; 62%</span>
+                <span class="case-study__before">$9,453</span>
+                <span class="case-study__after">Target: $1,100</span>
+              </div>
+              <div class="case-study__row">
+                <span>Redundant RAG retrievals (uncached schema lookups) &mdash; 18%</span>
+                <span class="case-study__before">$2,744</span>
+                <span class="case-study__after">Target: $200</span>
+              </div>
+              <div class="case-study__row">
+                <span>Failed query retries (3x retry on 11% failure rate) &mdash; 11%</span>
+                <span class="case-study__before">$1,677</span>
+                <span class="case-study__after">Target: $120</span>
+              </div>
+              <div class="case-study__row">
+                <span>Embedding re-generation (same docs re-indexed nightly) &mdash; 9%</span>
+                <span class="case-study__before">$1,373</span>
+                <span class="case-study__after">Target: $100</span>
+              </div>
+              <div class="case-study__row" style="border-top: 2px solid var(--stroke-dim); font-weight: 700;">
+                <span>Total Monthly Cost</span>
+                <span class="case-study__before">$15,247</span>
+                <span class="case-study__after">Target: &lt; $3,000</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal" style="border-color: var(--accent-error);">
+            <div class="callout__label" style="color: var(--accent-error);">Derek Kim &mdash; The Ultimatum</div>
+            <div class="callout__text">
+              Derek studied the breakdown for a long time. Then he looked at Maya and Raj. "You have two weeks," he said. "Get this under $3,000 a month, or I'm pulling the plug on DataPulse entirely. I cannot go to the CEO and defend spending $183K a year on a tool that half the store managers have already stopped using." Raj nodded. Maya was already sketching optimization strategies on the whiteboard. The two-week sprint to save DataPulse had begun.
+            </div>
+          </div>
+        </section>
+
+        <!-- What's Next -->
+        <section class="section">
+          <div class="callout reveal" style="border-color: var(--stroke-secondary);">
+            <div class="callout__label" style="color: var(--stroke-secondary);">What Comes Next</div>
+            <div class="callout__text">
+              Maya has fourteen days, a whiteboard full of ideas, and a CFO watching the clock. In the next lesson, we follow her two-week sprint through eight optimization strategies &mdash; from semantic caching to model routing to batch processing &mdash; watching AcmeCorp's DataPulse bill drop from $15,247 to $1,847. Each strategy is a tool you can apply to your own agent deployments.
+            </div>
+          </div>
+        </section>
+
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="../module-08/quiz-checkpoint.html" class="page-nav__title">Module 08 Quiz</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="02-optimization-strategies.html" class="page-nav__title">Optimization Strategies</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m09-cost-economics');</script>
+</body>
+</html>

@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multi-Agent Collaboration — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Pattern Cards --- */
+    .pattern-section {
+      margin: var(--space-12) 0;
+    }
+    .pattern-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .pattern-header__icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--stroke-primary);
+      background: var(--bg-surface);
+      flex-shrink: 0;
+    }
+    .pattern-header__icon svg { width: 24px; height: 24px; }
+    .pattern-meta {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+      margin-top: var(--space-3);
+    }
+
+    /* --- SVG Diagrams --- */
+    .pattern-diagram {
+      width: 100%;
+      max-width: 680px;
+      margin: var(--space-6) auto;
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-4);
+    }
+    .pattern-diagram svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .agent-node {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      fill: #f5f5f5;
+    }
+    .agent-sublabel {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      fill: #a0a0a0;
+    }
+    .flow-line {
+      stroke-dasharray: 8 4;
+      stroke-dashoffset: 200;
+      animation: flowDraw 2s ease forwards;
+    }
+    .flow-line.d1 { animation-delay: 0.2s; }
+    .flow-line.d2 { animation-delay: 0.5s; }
+    .flow-line.d3 { animation-delay: 0.8s; }
+    .flow-line.d4 { animation-delay: 1.1s; }
+    .flow-line.d5 { animation-delay: 1.4s; }
+    .flow-line.d6 { animation-delay: 1.7s; }
+    @keyframes flowDraw {
+      to { stroke-dashoffset: 0; }
+    }
+    @keyframes agentPulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    .pulse-node {
+      animation: agentPulse 2.5s ease-in-out infinite;
+    }
+
+    /* Arrow markers */
+    .pattern-diagram .arrow-blue { fill: none; stroke: #A100FF; stroke-width: 1; }
+    .pattern-diagram .arrow-teal { fill: none; stroke: #CC00FF; stroke-width: 1; }
+
+    /* --- Comparison Table tweaks --- */
+    .comparison-wrap {
+      overflow-x: auto;
+      margin: var(--space-8) 0;
+    }
+
+    /* --- Scenario Quiz --- */
+    .scenario-quiz {
+      margin: var(--space-8) 0;
+    }
+    .scenario-card {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      transition: border-color var(--transition-base);
+    }
+    .scenario-card.answered-correct {
+      border-color: var(--accent-success);
+      box-shadow: 0 0 12px var(--glow-success);
+    }
+    .scenario-card.answered-wrong {
+      border-color: var(--accent-error);
+    }
+    .scenario-card__text {
+      color: var(--text-secondary);
+      font-size: var(--font-sm);
+      line-height: 1.7;
+      margin-bottom: var(--space-4);
+      font-style: italic;
+    }
+    .scenario-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .scenario-btn {
+      background: var(--bg-elevated);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .scenario-btn:hover:not(:disabled) {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.08);
+    }
+    .scenario-btn:disabled {
+      cursor: default;
+      opacity: 0.5;
+    }
+    .scenario-btn.correct {
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      background: rgba(16, 185, 129, 0.12);
+      opacity: 1;
+    }
+    .scenario-btn.wrong {
+      border-color: var(--accent-error);
+      color: var(--accent-error);
+      background: rgba(239, 68, 68, 0.08);
+      animation: shake 0.4s ease;
+      opacity: 1;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    .scenario-feedback {
+      margin-top: var(--space-3);
+      font-size: var(--font-xs);
+      color: var(--accent-success);
+      opacity: 0;
+      transition: opacity var(--transition-base);
+    }
+    .scenario-feedback.show { opacity: 1; }
+
+    .quiz-score-bar {
+      margin-top: var(--space-6);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      padding: var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      display: none;
+    }
+    .quiz-score-bar.show { display: block; }
+    .quiz-score-bar.perfect {
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      box-shadow: 0 0 15px var(--glow-success);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- Top Nav -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 04</span>
+        <span class="separator">/</span>
+        <span class="current">Multi-Agent Collaboration</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <!-- Page Content -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section reveal">
+          <span class="section-label">Module 04 &mdash; Autonomy &amp; Collaboration</span>
+          <h1>Multi-Agent Collaboration</h1>
+          <p class="subtitle" style="color: var(--text-secondary); font-size: var(--font-lg); margin-top: var(--space-4); line-height: 1.7;">
+            One agent isn&rsquo;t enough. Complex enterprise tasks need teams of specialized agents working together &mdash; just like human data teams.
+          </p>
+        </section>
+
+        <!-- Blueprint SVG Diagram -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">MULTI-AGENT ARCHITECTURE</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+            <defs>
+              <filter id="ma-glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <marker id="ma-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
+              <marker id="ma-arrow-dim" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a0a0a0"/></marker>
+            </defs>
+            <pattern id="ma-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(74,158,255,0.05)" stroke-width="0.5"/></pattern>
+            <rect width="700" height="380" fill="rgba(15,23,42,0.6)" rx="8"/>
+            <rect width="700" height="380" fill="url(#ma-grid)" rx="8"/>
+            <!-- USER box -->
+            <rect x="20" y="55" width="90" height="50" rx="6" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="5 3"/>
+            <text x="65" y="77" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">USER</text>
+            <text x="65" y="93" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Query input</text>
+            <!-- Arrow USER to ORCHESTRATOR -->
+            <line x1="110" y1="72" x2="198" y2="72" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
+            <text x="155" y="65" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">request</text>
+            <!-- Arrow ORCHESTRATOR to USER -->
+            <line x1="200" y1="88" x2="110" y2="88" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ma-arrow-dim)"/>
+            <text x="155" y="100" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">response</text>
+            <!-- ORCHESTRATOR box -->
+            <rect x="200" y="40" width="300" height="80" rx="8" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="2" stroke-dasharray="8 4" filter="url(#ma-glow)"/>
+            <text x="350" y="70" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#f5f5f5">ORCHESTRATOR</text>
+            <text x="350" y="88" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#a0a0a0">Routes &amp; coordinates</text>
+            <!-- Step arrows down to workers -->
+            <line x1="255" y1="120" x2="145" y2="170" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
+            <text x="190" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">1</text>
+            <line x1="310" y1="120" x2="310" y2="170" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
+            <text x="318" y="148" text-anchor="start" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">2</text>
+            <line x1="390" y1="120" x2="455" y2="170" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
+            <text x="430" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">3</text>
+            <line x1="445" y1="120" x2="590" y2="170" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
+            <text x="530" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">4</text>
+            <!-- Worker 1: SCHEMA AGENT -->
+            <rect x="75" y="172" width="140" height="55" rx="5" fill="rgba(45,212,191,0.10)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <text x="145" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">SCHEMA AGENT</text>
+            <text x="145" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Discovers tables</text>
+            <!-- Worker 2: SQL AGENT -->
+            <rect x="230" y="172" width="140" height="55" rx="5" fill="rgba(74,158,255,0.10)" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <text x="300" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">SQL AGENT</text>
+            <text x="300" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Generates queries</text>
+            <!-- Worker 3: VALIDATION AGENT -->
+            <rect x="385" y="172" width="140" height="55" rx="5" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <text x="455" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">VALIDATION AGENT</text>
+            <text x="455" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Checks results</text>
+            <!-- Worker 4: FORMAT AGENT -->
+            <rect x="540" y="172" width="140" height="55" rx="5" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <text x="610" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">FORMAT AGENT</text>
+            <text x="610" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Builds response</text>
+            <!-- Result arrows back up -->
+            <line x1="145" y1="172" x2="265" y2="120" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
+            <text x="195" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">result</text>
+            <line x1="300" y1="172" x2="340" y2="120" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
+            <text x="328" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">result</text>
+            <line x1="455" y1="172" x2="400" y2="120" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
+            <text x="435" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">result</text>
+            <line x1="590" y1="172" x2="460" y2="120" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
+            <text x="535" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">result</text>
+            <!-- MEMORY STORE cylinder -->
+            <ellipse cx="350" cy="282" rx="120" ry="12" fill="none" stroke="#334155" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <rect x="230" y="282" width="240" height="40" fill="rgba(51,65,85,0.08)" stroke="none"/>
+            <line x1="230" y1="282" x2="230" y2="322" stroke="#334155" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <line x1="470" y1="282" x2="470" y2="322" stroke="#334155" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <ellipse cx="350" cy="322" rx="120" ry="12" fill="none" stroke="#334155" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <text x="350" y="306" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#a0a0a0">MEMORY STORE</text>
+            <!-- Dashed lines from workers to memory -->
+            <line x1="145" y1="227" x2="280" y2="275" stroke="#334155" stroke-width="0.8" stroke-dasharray="3 3"/>
+            <line x1="300" y1="227" x2="330" y2="275" stroke="#334155" stroke-width="0.8" stroke-dasharray="3 3"/>
+            <line x1="455" y1="227" x2="380" y2="275" stroke="#334155" stroke-width="0.8" stroke-dasharray="3 3"/>
+            <line x1="610" y1="227" x2="430" y2="275" stroke="#334155" stroke-width="0.8" stroke-dasharray="3 3"/>
+            <!-- Label -->
+            <text x="350" y="362" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#334155">DataPulse Multi-Agent System</text>
+          </svg>
+        </div>
+
+        <!-- 1. The Scene -->
+        <section class="section reveal">
+          <div class="callout">
+            <span class="callout__label">AcmeCorp Scenario</span>
+            <p class="callout__text">
+              AcmeCorp&rsquo;s Q4 analysis needs aren&rsquo;t getting done fast enough with a single agent. They need a team of agents working together &mdash; just like their human data team. By 2026, 72% of enterprise AI projects use multi-agent architectures.
+            </p>
+          </div>
+        </section>
+
+        <!-- 2. Four Collaboration Patterns -->
+
+        <!-- Pattern A: Sequential Handoff -->
+        <section class="section pattern-section">
+          <div class="pattern-header reveal">
+            <div class="pattern-header__icon" style="border-color: var(--stroke-primary);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#A100FF" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+            <div>
+              <h2 style="margin: 0;">Sequential Handoff</h2>
+              <div class="pattern-meta">
+                <span class="badge badge--blue" data-tip="Agents pass work in a chain — each completes before the next begins, like relay runners">Relay Race</span>
+                <span class="badge" data-tip="Simple linear flow with minimal coordination overhead">Low Complexity</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="reveal" style="color: var(--text-secondary); line-height: 1.7; margin-bottom: var(--space-4);">
+            Agents pass work forward in a chain. Each agent completes its task before handing off to the next, like runners in a relay race.
+          </p>
+
+          <div class="pattern-diagram reveal">
+            <svg viewBox="0 0 640 120" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="seqGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#2a2a2a" stroke-width="0.4"/>
+                </pattern>
+                <filter id="gB1"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <marker id="aSeq" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1"/>
+                </marker>
+              </defs>
+              <rect width="640" height="120" fill="url(#seqGrid)"/>
+
+              <!-- Request -->
+              <rect x="10" y="35" width="80" height="50" rx="4" fill="#0d0d0d" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="4 2"/>
+              <text x="50" y="57" text-anchor="middle" class="agent-node" style="fill:#a0a0a0">Request</text>
+              <text x="50" y="72" text-anchor="middle" class="agent-sublabel">Order</text>
+
+              <!-- Arrow 1 -->
+              <line x1="95" y1="60" x2="155" y2="60" stroke="#A100FF" stroke-width="1.5" class="flow-line d1" marker-end="url(#aSeq)" filter="url(#gB1)"/>
+
+              <!-- Agent A -->
+              <rect x="160" y="35" width="120" height="50" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="220" y="55" text-anchor="middle" class="agent-node">Inventory Agent</text>
+              <text x="220" y="70" text-anchor="middle" class="agent-sublabel">Check stock</text>
+
+              <!-- Arrow 2 -->
+              <line x1="285" y1="60" x2="345" y2="60" stroke="#A100FF" stroke-width="1.5" class="flow-line d2" marker-end="url(#aSeq)" filter="url(#gB1)"/>
+
+              <!-- Agent B -->
+              <rect x="350" y="35" width="120" height="50" rx="4" fill="#0d0d0d" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="410" y="55" text-anchor="middle" class="agent-node" style="fill:#CC00FF">Pricing Agent</text>
+              <text x="410" y="70" text-anchor="middle" class="agent-sublabel">Apply discounts</text>
+
+              <!-- Arrow 3 -->
+              <line x1="475" y1="60" x2="535" y2="60" stroke="#A100FF" stroke-width="1.5" class="flow-line d3" marker-end="url(#aSeq)" filter="url(#gB1)"/>
+
+              <!-- Agent C -->
+              <rect x="540" y="35" width="90" height="50" rx="4" fill="#0d0d0d" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="585" y="55" text-anchor="middle" class="agent-node" style="fill:#f59e0b">Fulfillment</text>
+              <text x="585" y="70" text-anchor="middle" class="agent-sublabel">Ship label</text>
+            </svg>
+          </div>
+
+          <div class="callout reveal">
+            <span class="callout__label">AcmeCorp</span>
+            <p class="callout__text">Order fulfillment: Inventory Agent checks stock &rarr; Pricing Agent applies discounts &rarr; Fulfillment Agent generates shipping label.</p>
+          </div>
+          <p class="reveal" style="color: var(--text-secondary); font-size: var(--font-sm); margin-top: var(--space-3);">
+            <strong style="color: var(--text-accent);">Best for:</strong> Document review, data processing pipelines, any workflow with strict ordering.
+          </p>
+        </section>
+
+        <!-- Pattern B: Parallel Execution -->
+        <section class="section pattern-section">
+          <div class="pattern-header reveal">
+            <div class="pattern-header__icon" style="border-color: var(--stroke-secondary);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#CC00FF" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="8"/><line x1="4" y1="14" x2="4" y2="22"/><line x1="12" y1="14" x2="12" y2="22"/><line x1="20" y1="14" x2="20" y2="22"/><line x1="12" y1="8" x2="4" y2="14"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="12" y1="8" x2="20" y2="14"/></svg>
+            </div>
+            <div>
+              <h2 style="margin: 0;">Parallel Execution</h2>
+              <div class="pattern-meta">
+                <span class="badge badge--teal" data-tip="Multiple agents work simultaneously on independent sub-tasks, then merge results">Potluck Dinner</span>
+                <span class="badge" data-tip="Requires fan-out/fan-in coordination and result aggregation">Medium Complexity</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="reveal" style="color: var(--text-secondary); line-height: 1.7; margin-bottom: var(--space-4);">
+            A request fans out to multiple agents simultaneously. Each works on its piece independently, then results merge back together.
+          </p>
+
+          <div class="pattern-diagram reveal">
+            <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="parGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#2a2a2a" stroke-width="0.4"/>
+                </pattern>
+                <filter id="gB2"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <marker id="aPar" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#CC00FF" stroke-width="1"/>
+                </marker>
+                <marker id="aParB" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1"/>
+                </marker>
+              </defs>
+              <rect width="640" height="200" fill="url(#parGrid)"/>
+
+              <!-- Request -->
+              <rect x="20" y="75" width="100" height="50" rx="4" fill="#0d0d0d" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="4 2"/>
+              <text x="70" y="97" text-anchor="middle" class="agent-node" style="fill:#a0a0a0">Q4 Request</text>
+              <text x="70" y="112" text-anchor="middle" class="agent-sublabel">Fan out</text>
+
+              <!-- Fan-out arrows -->
+              <line x1="125" y1="88" x2="210" y2="38" stroke="#CC00FF" stroke-width="1.5" class="flow-line d1" marker-end="url(#aPar)" filter="url(#gB2)"/>
+              <line x1="125" y1="100" x2="210" y2="100" stroke="#CC00FF" stroke-width="1.5" class="flow-line d1" marker-end="url(#aPar)" filter="url(#gB2)"/>
+              <line x1="125" y1="112" x2="210" y2="162" stroke="#CC00FF" stroke-width="1.5" class="flow-line d1" marker-end="url(#aPar)" filter="url(#gB2)"/>
+
+              <!-- Agent A -->
+              <rect x="215" y="15" width="130" height="46" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="280" y="35" text-anchor="middle" class="agent-node">Sales Agent</text>
+              <text x="280" y="49" text-anchor="middle" class="agent-sublabel">Revenue analysis</text>
+
+              <!-- Agent B -->
+              <rect x="215" y="77" width="130" height="46" rx="4" fill="#0d0d0d" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="280" y="97" text-anchor="middle" class="agent-node" style="fill:#CC00FF">Inventory Agent</text>
+              <text x="280" y="111" text-anchor="middle" class="agent-sublabel">Stock analysis</text>
+
+              <!-- Agent C -->
+              <rect x="215" y="139" width="130" height="46" rx="4" fill="#0d0d0d" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="280" y="159" text-anchor="middle" class="agent-node" style="fill:#f59e0b">Customer Agent</text>
+              <text x="280" y="173" text-anchor="middle" class="agent-sublabel">Satisfaction data</text>
+
+              <!-- PARALLEL label -->
+              <rect x="190" y="87" width="16" height="30" rx="2" fill="rgba(45,212,191,0.15)" stroke="#CC00FF" stroke-width="0.5"/>
+              <text x="198" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="6" fill="#CC00FF" transform="rotate(90 198 96)">PARALLEL</text>
+
+              <!-- Merge arrows -->
+              <line x1="350" y1="38" x2="440" y2="88" stroke="#A100FF" stroke-width="1.5" class="flow-line d3" marker-end="url(#aParB)" filter="url(#gB2)"/>
+              <line x1="350" y1="100" x2="440" y2="100" stroke="#A100FF" stroke-width="1.5" class="flow-line d3" marker-end="url(#aParB)" filter="url(#gB2)"/>
+              <line x1="350" y1="162" x2="440" y2="112" stroke="#A100FF" stroke-width="1.5" class="flow-line d3" marker-end="url(#aParB)" filter="url(#gB2)"/>
+
+              <!-- Merge Node -->
+              <rect x="445" y="75" width="100" height="50" rx="4" fill="#0d0d0d" stroke="#10b981" stroke-width="2"/>
+              <text x="495" y="97" text-anchor="middle" class="agent-node" style="fill:#10b981">Merge</text>
+              <text x="495" y="112" text-anchor="middle" class="agent-sublabel">Combine results</text>
+
+              <!-- Output arrow -->
+              <line x1="550" y1="100" x2="580" y2="100" stroke="#10b981" stroke-width="1.5" class="flow-line d5" filter="url(#gB2)"/>
+
+              <!-- Report -->
+              <rect x="585" y="80" width="45" height="40" rx="4" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="607" y="103" text-anchor="middle" class="agent-sublabel" style="fill:#10b981">Report</text>
+            </svg>
+          </div>
+
+          <div class="callout reveal">
+            <span class="callout__label">AcmeCorp</span>
+            <p class="callout__text">Quarterly analysis: Sales Agent, Inventory Agent, and Customer Agent all analyze their domains simultaneously &mdash; results merge into one comprehensive report.</p>
+          </div>
+          <p class="reveal" style="color: var(--text-secondary); font-size: var(--font-sm); margin-top: var(--space-3);">
+            <strong style="color: var(--text-teal);">Best for:</strong> Independent analyses, ensemble reasoning, any task where sub-problems don&rsquo;t depend on each other.
+          </p>
+        </section>
+
+        <!-- Pattern C: Supervisor -->
+        <section class="section pattern-section">
+          <div class="pattern-header reveal">
+            <div class="pattern-header__icon" style="border-color: var(--accent-warning);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5"><circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="12" y1="14" x2="4" y2="20"/><line x1="12" y1="14" x2="12" y2="20"/><line x1="12" y1="14" x2="20" y2="20"/></svg>
+            </div>
+            <div>
+              <h2 style="margin: 0;">Supervisor Pattern</h2>
+              <div class="pattern-meta">
+                <span class="badge badge--amber" data-tip="A supervisor agent delegates, monitors, and synthesizes work from specialist agents">General Contractor</span>
+                <span class="badge" data-tip="Dynamic task routing and progress monitoring add significant orchestration overhead">High Complexity</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="reveal" style="color: var(--text-secondary); line-height: 1.7; margin-bottom: var(--space-4);">
+            A supervisor agent decomposes the task, delegates to specialists, monitors progress, and synthesizes results. The supervisor maintains the big picture while specialists focus on details.
+          </p>
+
+          <div class="pattern-diagram reveal">
+            <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="supGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#2a2a2a" stroke-width="0.4"/>
+                </pattern>
+                <filter id="gB3"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <marker id="aSup" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#f59e0b" stroke-width="1"/>
+                </marker>
+                <marker id="aSupR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1"/>
+                </marker>
+              </defs>
+              <rect width="640" height="240" fill="url(#supGrid)"/>
+
+              <!-- Supervisor -->
+              <rect x="230" y="15" width="180" height="55" rx="4" fill="#0d0d0d" stroke="#f59e0b" stroke-width="2"/>
+              <text x="320" y="38" text-anchor="middle" class="agent-node" style="fill:#f59e0b; font-size: 12px;">Supervisor Agent</text>
+              <text x="320" y="55" text-anchor="middle" class="agent-sublabel">Decompose &bull; Delegate &bull; Synthesize</text>
+
+              <!-- Delegate arrows down -->
+              <line x1="275" y1="73" x2="120" y2="125" stroke="#f59e0b" stroke-width="1.5" class="flow-line d1" marker-end="url(#aSup)" filter="url(#gB3)"/>
+              <line x1="320" y1="73" x2="320" y2="125" stroke="#f59e0b" stroke-width="1.5" class="flow-line d2" marker-end="url(#aSup)" filter="url(#gB3)"/>
+              <line x1="365" y1="73" x2="520" y2="125" stroke="#f59e0b" stroke-width="1.5" class="flow-line d3" marker-end="url(#aSup)" filter="url(#gB3)"/>
+
+              <!-- Labels on arrows -->
+              <text x="180" y="95" class="agent-sublabel" style="fill:#f59e0b;" transform="rotate(-25 180 95)">delegate</text>
+              <text x="330" y="103" class="agent-sublabel" style="fill:#f59e0b;">delegate</text>
+              <text x="445" y="95" class="agent-sublabel" style="fill:#f59e0b;" transform="rotate(25 445 95)">delegate</text>
+
+              <!-- SQL Agent -->
+              <rect x="50" y="130" width="140" height="50" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="120" y="152" text-anchor="middle" class="agent-node">SQL Agent</text>
+              <text x="120" y="168" text-anchor="middle" class="agent-sublabel">Query databases</text>
+
+              <!-- Chart Agent -->
+              <rect x="250" y="130" width="140" height="50" rx="4" fill="#0d0d0d" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="320" y="152" text-anchor="middle" class="agent-node" style="fill:#CC00FF;">Chart Agent</text>
+              <text x="320" y="168" text-anchor="middle" class="agent-sublabel">Generate visualizations</text>
+
+              <!-- Report Agent -->
+              <rect x="450" y="130" width="140" height="50" rx="4" fill="#0d0d0d" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="520" y="152" text-anchor="middle" class="agent-node" style="fill:#10b981;">Report Agent</text>
+              <text x="520" y="168" text-anchor="middle" class="agent-sublabel">Format narratives</text>
+
+              <!-- Return arrows up -->
+              <line x1="120" y1="182" x2="275" y2="215" stroke="#A100FF" stroke-width="1" class="flow-line d4" stroke-dasharray="4 3" filter="url(#gB3)"/>
+              <line x1="320" y1="182" x2="320" y2="215" stroke="#A100FF" stroke-width="1" class="flow-line d5" stroke-dasharray="4 3" filter="url(#gB3)"/>
+              <line x1="520" y1="182" x2="365" y2="215" stroke="#A100FF" stroke-width="1" class="flow-line d6" stroke-dasharray="4 3" filter="url(#gB3)"/>
+
+              <!-- Synthesize node -->
+              <rect x="250" y="210" width="140" height="24" rx="12" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 2"/>
+              <text x="320" y="226" text-anchor="middle" class="agent-sublabel" style="fill:#f59e0b;">Synthesize Results</text>
+            </svg>
+          </div>
+
+          <div class="callout reveal">
+            <span class="callout__label">AcmeCorp</span>
+            <p class="callout__text">AcmeCorp&rsquo;s Super Agent decomposes &ldquo;Q4 analysis&rdquo; &rarr; delegates to SQL Agent, Chart Agent, and Report Agent &rarr; synthesizes their outputs into one executive-ready deliverable.</p>
+          </div>
+          <p class="reveal" style="color: var(--text-secondary); font-size: var(--font-sm); margin-top: var(--space-3);">
+            <strong style="color: var(--accent-warning);">Best for:</strong> Complex domains with clear specialization, enterprise workflows, coordinated multi-step processes.
+          </p>
+        </section>
+
+        <!-- Pattern D: Debate -->
+        <section class="section pattern-section">
+          <div class="pattern-header reveal">
+            <div class="pattern-header__icon" style="border-color: var(--accent-success);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            </div>
+            <div>
+              <h2 style="margin: 0;">Debate Pattern</h2>
+              <div class="pattern-meta">
+                <span class="badge badge--green" data-tip="Agents argue opposing positions while an evaluator weighs evidence for a balanced conclusion">Jury Deliberation</span>
+                <span class="badge" data-tip="Multi-round argumentation and consensus-building require complex state management">High Complexity</span>
+              </div>
+            </div>
+          </div>
+
+          <p class="reveal" style="color: var(--text-secondary); line-height: 1.7; margin-bottom: var(--space-4);">
+            Two or more agents argue different positions. An evaluator agent weighs the evidence and produces a balanced conclusion. Disagreement improves decision quality.
+          </p>
+
+          <div class="pattern-diagram reveal">
+            <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="debGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#2a2a2a" stroke-width="0.4"/>
+                </pattern>
+                <filter id="gB4"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <marker id="aDeb" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#10b981" stroke-width="1"/>
+                </marker>
+              </defs>
+              <rect width="640" height="220" fill="url(#debGrid)"/>
+
+              <!-- Agent Bullish -->
+              <rect x="40" y="30" width="160" height="60" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="120" y="55" text-anchor="middle" class="agent-node">Bullish Forecaster</text>
+              <text x="120" y="72" text-anchor="middle" class="agent-sublabel">&ldquo;Q1 will grow 12%&rdquo;</text>
+
+              <!-- Agent Conservative -->
+              <rect x="40" y="120" width="160" height="60" rx="4" fill="#0d0d0d" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="120" y="145" text-anchor="middle" class="agent-node" style="fill:#f59e0b;">Conservative Forecaster</text>
+              <text x="120" y="162" text-anchor="middle" class="agent-sublabel">&ldquo;Q1 will grow 3%&rdquo;</text>
+
+              <!-- Debate arrows -->
+              <path d="M205 60 C250 60, 250 60, 250 90" stroke="#A100FF" stroke-width="1.5" fill="none" class="flow-line d1" stroke-dasharray="5 3" filter="url(#gB4)"/>
+              <path d="M205 150 C250 150, 250 150, 250 120" stroke="#f59e0b" stroke-width="1.5" fill="none" class="flow-line d2" stroke-dasharray="5 3" filter="url(#gB4)"/>
+
+              <!-- Debate bubble -->
+              <rect x="240" y="78" width="80" height="54" rx="6" fill="rgba(74,158,255,0.08)" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="280" y="97" text-anchor="middle" class="agent-sublabel" style="fill:#f5f5f5;">Evidence</text>
+              <text x="280" y="112" text-anchor="middle" class="agent-sublabel" style="fill:#f5f5f5;">Exchange</text>
+              <text x="280" y="124" text-anchor="middle" class="agent-sublabel" style="font-size:7px;">(multiple rounds)</text>
+
+              <!-- Arrow to evaluator -->
+              <line x1="325" y1="105" x2="400" y2="105" stroke="#10b981" stroke-width="1.5" class="flow-line d3" marker-end="url(#aDeb)" filter="url(#gB4)"/>
+
+              <!-- Evaluator -->
+              <rect x="405" y="70" width="140" height="70" rx="4" fill="#0d0d0d" stroke="#10b981" stroke-width="2"/>
+              <text x="475" y="97" text-anchor="middle" class="agent-node" style="fill:#10b981; font-size: 12px;">Evaluator</text>
+              <text x="475" y="115" text-anchor="middle" class="agent-sublabel">Weighs evidence</text>
+              <text x="475" y="128" text-anchor="middle" class="agent-sublabel">Resolves conflicts</text>
+
+              <!-- Decision arrow -->
+              <line x1="550" y1="105" x2="580" y2="105" stroke="#10b981" stroke-width="1.5" class="flow-line d5" marker-end="url(#aDeb)" filter="url(#gB4)"/>
+
+              <!-- Decision -->
+              <rect x="585" y="82" width="45" height="46" rx="4" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="607" y="103" text-anchor="middle" class="agent-sublabel" style="fill:#10b981;">7%</text>
+              <text x="607" y="116" text-anchor="middle" class="agent-sublabel" style="fill:#10b981;">growth</text>
+            </svg>
+          </div>
+
+          <div class="callout reveal">
+            <span class="callout__label">AcmeCorp</span>
+            <p class="callout__text">When AcmeCorp&rsquo;s forecasting agents disagree on Q1 predictions (one bullish, one conservative), a mediator agent weighs evidence and produces a balanced forecast.</p>
+          </div>
+          <p class="reveal" style="color: var(--text-secondary); font-size: var(--font-sm); margin-top: var(--space-3);">
+            <strong style="color: var(--accent-success);">Best for:</strong> Complex decisions where multiple perspectives improve quality, risk assessment, forecasting.
+          </p>
+        </section>
+
+        <!-- 3. A2A Protocol -->
+        <section class="section reveal">
+          <h2>Agent-to-Agent (A2A) Communication</h2>
+          <div class="bp-card" style="margin-top: var(--space-6);">
+            <span class="bp-card__number">A2A</span>
+            <h3 class="bp-card__title">The Protocol Layer</h3>
+            <div class="bp-card__body">
+              <p style="margin-bottom: var(--space-4);">
+                Think of A2A like diplomats from different countries using a common language to negotiate. Each agent may be built with different frameworks, run on different platforms, or specialize in different domains &mdash; but A2A gives them a shared protocol for collaboration.
+              </p>
+              <div style="display: flex; gap: var(--space-4); flex-wrap: wrap; margin-top: var(--space-4);">
+                <div style="flex: 1; min-width: 200px;">
+                  <span class="badge badge--blue" style="margin-bottom: var(--space-2); display: inline-block;" data-tip="Agent-to-Agent protocol for cross-framework discovery, negotiation, and task delegation">A2A Protocol</span>
+                  <p style="font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.6;">
+                    Focuses on <strong style="color: var(--text-accent);">agent-to-agent collaboration</strong>. How agents discover each other, negotiate capabilities, delegate tasks, and share results.
+                  </p>
+                </div>
+                <div style="flex: 1; min-width: 200px;">
+                  <span class="badge badge--teal" style="margin-bottom: var(--space-2); display: inline-block;" data-tip="Model Context Protocol — standardized interface for agents to access tools, databases, and APIs">MCP (Model Context Protocol)</span>
+                  <p style="font-size: var(--font-sm); color: var(--text-secondary); line-height: 1.6;">
+                    Focuses on <strong style="color: var(--text-teal);">tool integration</strong>. How agents connect to databases, APIs, file systems, and external services.
+                  </p>
+                </div>
+              </div>
+              <div class="callout" style="margin-top: var(--space-5);">
+                <span class="callout__label">Key Insight</span>
+                <p class="callout__text">A2A and MCP are complementary, not competing. A2A handles the conversation between agents; MCP handles how each agent accesses its tools. Together, they form the full communication stack.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Comparison Table -->
+        <section class="section reveal">
+          <h2>Pattern Comparison</h2>
+          <div class="comparison-wrap">
+            <table class="bp-table">
+              <thead>
+                <tr>
+                  <th>Pattern</th>
+                  <th>Latency</th>
+                  <th>Complexity</th>
+                  <th>Error Handling</th>
+                  <th>Best For</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="badge badge--blue" data-tip="Agents execute one after another in a fixed order — high coupling, low complexity">Sequential</span></td>
+                  <td>High</td>
+                  <td>Low</td>
+                  <td>Retry single step</td>
+                  <td>Pipelines</td>
+                </tr>
+                <tr>
+                  <td><span class="badge badge--teal" data-tip="Agents run concurrently on independent sub-tasks — low coupling, medium complexity">Parallel</span></td>
+                  <td>Low</td>
+                  <td>Medium</td>
+                  <td>Independent retry</td>
+                  <td>Analysis</td>
+                </tr>
+                <tr>
+                  <td><span class="badge badge--amber" data-tip="A central agent coordinates specialists — medium coupling, high complexity">Supervisor</span></td>
+                  <td>Medium</td>
+                  <td>High</td>
+                  <td>Delegate retry</td>
+                  <td>Complex tasks</td>
+                </tr>
+                <tr>
+                  <td><span class="badge badge--green" data-tip="Agents argue positions and reach consensus — high coupling, high complexity">Debate</span></td>
+                  <td>High</td>
+                  <td>High</td>
+                  <td>Consensus</td>
+                  <td>Decisions</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 5. Scenario Quiz -->
+        <section class="section reveal">
+          <h2>Practice: Pick the Pattern</h2>
+          <p style="color: var(--text-secondary); margin-bottom: var(--space-6); line-height: 1.7;">
+            For each AcmeCorp scenario, choose the most appropriate collaboration pattern.
+          </p>
+
+          <div class="scenario-quiz" id="scenarioQuiz">
+            <!-- Q1 -->
+            <div class="scenario-card" data-answer="parallel" id="sq-1">
+              <div class="scenario-card__text">
+                &ldquo;Three independent departments need their own quarterly reports at the same time.&rdquo;
+              </div>
+              <div class="scenario-options">
+                <button class="scenario-btn" data-value="sequential">Sequential</button>
+                <button class="scenario-btn" data-value="parallel">Parallel</button>
+                <button class="scenario-btn" data-value="supervisor">Supervisor</button>
+                <button class="scenario-btn" data-value="debate">Debate</button>
+              </div>
+              <div class="scenario-feedback" id="fb-1"></div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="scenario-card" data-answer="sequential" id="sq-2">
+              <div class="scenario-card__text">
+                &ldquo;A customer order needs inventory check &rarr; payment processing &rarr; shipping label generation, in that exact sequence.&rdquo;
+              </div>
+              <div class="scenario-options">
+                <button class="scenario-btn" data-value="sequential">Sequential</button>
+                <button class="scenario-btn" data-value="parallel">Parallel</button>
+                <button class="scenario-btn" data-value="supervisor">Supervisor</button>
+                <button class="scenario-btn" data-value="debate">Debate</button>
+              </div>
+              <div class="scenario-feedback" id="fb-2"></div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="scenario-card" data-answer="supervisor" id="sq-3">
+              <div class="scenario-card__text">
+                &ldquo;The CEO wants a comprehensive market analysis coordinated by a lead agent that delegates to specialist agents for data, charts, and narrative.&rdquo;
+              </div>
+              <div class="scenario-options">
+                <button class="scenario-btn" data-value="sequential">Sequential</button>
+                <button class="scenario-btn" data-value="parallel">Parallel</button>
+                <button class="scenario-btn" data-value="supervisor">Supervisor</button>
+                <button class="scenario-btn" data-value="debate">Debate</button>
+              </div>
+              <div class="scenario-feedback" id="fb-3"></div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="scenario-card" data-answer="debate" id="sq-4">
+              <div class="scenario-card__text">
+                &ldquo;Two forecasting models give conflicting holiday sales predictions &mdash; one expects a boom, the other a downturn. We need a balanced assessment.&rdquo;
+              </div>
+              <div class="scenario-options">
+                <button class="scenario-btn" data-value="sequential">Sequential</button>
+                <button class="scenario-btn" data-value="parallel">Parallel</button>
+                <button class="scenario-btn" data-value="supervisor">Supervisor</button>
+                <button class="scenario-btn" data-value="debate">Debate</button>
+              </div>
+              <div class="scenario-feedback" id="fb-4"></div>
+            </div>
+
+            <div class="quiz-score-bar" id="quizScoreBar"></div>
+          </div>
+        </section>
+
+      </div><!-- /content-container -->
+    </main>
+
+    <!-- Page Nav -->
+    <footer class="page-nav">
+      <a class="page-nav__prev" href="01-goal-decomposition.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Goal Decomposition
+      </a>
+      <a class="page-nav__next" href="03-memory-systems.html">
+        Memory Systems
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </footer>
+
+  </div><!-- /page-wrapper -->
+
+  <!-- Scenario Quiz Script -->
+  <script>
+  (function() {
+    var quiz = document.getElementById('scenarioQuiz');
+    var scoreBar = document.getElementById('quizScoreBar');
+    var answered = 0;
+    var correct = 0;
+    var total = 4;
+
+    var feedbackMap = {
+      parallel: 'Parallel — independent tasks with no dependencies run simultaneously for lowest latency.',
+      sequential: 'Sequential — strict ordering ensures each step completes before the next begins.',
+      supervisor: 'Supervisor — a lead agent coordinates specialists and synthesizes their outputs.',
+      debate: 'Debate — conflicting perspectives are resolved through structured argumentation.'
+    };
+
+    quiz.addEventListener('click', function(e) {
+      var btn = e.target.closest('.scenario-btn');
+      if (!btn) return;
+      var card = btn.closest('.scenario-card');
+      if (card.classList.contains('answered-correct') || card.classList.contains('answered-wrong')) return;
+
+      var answer = card.getAttribute('data-answer');
+      var value = btn.getAttribute('data-value');
+      var qNum = card.id.split('-')[1];
+      var fb = document.getElementById('fb-' + qNum);
+
+      if (value === answer) {
+        btn.classList.add('correct');
+        card.classList.add('answered-correct');
+        fb.textContent = feedbackMap[answer];
+        fb.style.color = 'var(--accent-success)';
+        fb.classList.add('show');
+        correct++;
+        // Disable other buttons
+        card.querySelectorAll('.scenario-btn').forEach(function(b) { b.disabled = true; });
+      } else {
+        btn.classList.add('wrong');
+        btn.disabled = true;
+        fb.textContent = 'Not quite. Try again!';
+        fb.style.color = 'var(--accent-error)';
+        fb.classList.add('show');
+        return; // Don't count as answered, let them retry
+      }
+
+      answered++;
+      if (answered === total) {
+        scoreBar.classList.add('show');
+        scoreBar.textContent = correct + '/' + total + ' correct — ' + (correct === total ? 'Perfect score! You understand all four collaboration patterns.' : 'Good effort! Review the patterns above to strengthen your understanding.');
+        if (correct === total) scoreBar.classList.add('perfect');
+      }
+    });
+  })();
+  </script>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m04-multi-agent');</script>
+</body>
+</html>

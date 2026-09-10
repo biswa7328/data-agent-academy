@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReAct Loop — Module 02 — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- ReAct Timeline --- */
+    .react-timeline {
+      position: relative;
+      padding-left: var(--space-10);
+      margin: var(--space-8) 0;
+    }
+    .react-timeline::before {
+      content: '';
+      position: absolute;
+      left: 18px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--stroke-primary), var(--stroke-secondary), var(--accent-warning), var(--stroke-primary));
+      opacity: 0.4;
+    }
+
+    .react-iteration {
+      position: relative;
+      margin-bottom: var(--space-8);
+    }
+    .react-iteration__number {
+      position: absolute;
+      left: calc(-1 * var(--space-10) + 2px);
+      top: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-primary);
+      border: 2px solid var(--stroke-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      font-weight: 600;
+      z-index: 2;
+      box-shadow: 0 0 12px var(--glow-blue);
+    }
+    .react-iteration__number.final {
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      box-shadow: 0 0 12px var(--glow-success);
+    }
+
+    .react-step {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-2);
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      transition: border-color var(--transition-base), box-shadow var(--transition-base);
+    }
+    .react-step:hover {
+      border-color: var(--stroke-primary);
+      box-shadow: 0 0 10px var(--glow-blue);
+    }
+
+    .react-badge {
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      font-weight: 600;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--border-radius);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      min-width: 64px;
+      text-align: center;
+    }
+    .react-badge--think {
+      background: rgba(161, 0, 255, 0.15);
+      color: var(--stroke-primary);
+      border: 1px solid var(--stroke-primary);
+    }
+    .react-badge--act {
+      background: rgba(204, 0, 255, 0.15);
+      color: var(--stroke-secondary);
+      border: 1px solid var(--stroke-secondary);
+    }
+    .react-badge--observe {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-warning);
+      border: 1px solid var(--accent-warning);
+    }
+
+    .react-step__content {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .react-step__content code {
+      color: var(--text-teal);
+      font-size: var(--font-xs);
+      background: rgba(204, 0, 255, 0.08);
+      padding: 1px 4px;
+      border-radius: 2px;
+    }
+
+    .react-final {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1.5px solid var(--accent-success);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-4) var(--space-6);
+      margin-top: var(--space-2);
+      color: var(--accent-success);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+    }
+
+    /* --- Side-by-Side Comparison --- */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin: var(--space-6) 0;
+    }
+    @media (max-width: 700px) {
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+    .compare-panel {
+      background: var(--bg-surface);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-6);
+      position: relative;
+      overflow: hidden;
+    }
+    .compare-panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .compare-panel--bad {
+      border: 1px dashed var(--accent-error);
+    }
+    .compare-panel--bad::before {
+      background: var(--accent-error);
+    }
+    .compare-panel--good {
+      border: 1px dashed var(--accent-success);
+    }
+    .compare-panel--good::before {
+      background: var(--accent-success);
+    }
+    .compare-panel__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-4);
+    }
+    .compare-panel--bad .compare-panel__title { color: var(--accent-error); }
+    .compare-panel--good .compare-panel__title { color: var(--accent-success); }
+
+    .compare-step {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      padding: var(--space-2) 0;
+      border-bottom: 1px dashed var(--grid-line);
+      line-height: 1.6;
+    }
+    .compare-step:last-child { border-bottom: none; }
+    .compare-result {
+      margin-top: var(--space-4);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--border-radius);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+    }
+    .compare-result--bad {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid var(--accent-error);
+      color: var(--accent-error);
+    }
+    .compare-result--good {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid var(--accent-success);
+      color: var(--accent-success);
+    }
+
+    /* --- "You Are the Agent" Simulation --- */
+    .agent-sim {
+      margin: var(--space-8) 0;
+    }
+    .agent-sim__step {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-4);
+      display: none;
+    }
+    .agent-sim__step.active { display: block; }
+    .agent-sim__step.completed {
+      display: block;
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .agent-sim__step-header {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-3);
+    }
+    .agent-sim__prompt {
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+      line-height: 1.6;
+    }
+    .agent-sim__choices {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+    .agent-sim__choice {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      background: transparent;
+      text-align: left;
+      width: 100%;
+      font-family: inherit;
+    }
+    .agent-sim__choice:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.05);
+    }
+    .agent-sim__choice.chosen-good {
+      border-color: var(--accent-success);
+      border-style: solid;
+      background: rgba(16, 185, 129, 0.08);
+      color: var(--accent-success);
+    }
+    .agent-sim__choice.chosen-ok {
+      border-color: var(--accent-warning);
+      border-style: solid;
+      background: rgba(245, 158, 11, 0.08);
+      color: var(--accent-warning);
+    }
+    .agent-sim__choice.chosen-bad {
+      border-color: var(--accent-error);
+      border-style: solid;
+      background: rgba(239, 68, 68, 0.08);
+      color: var(--accent-error);
+    }
+    .agent-sim__choice-marker {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border: 1.5px solid currentColor;
+      border-radius: 50%;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      flex-shrink: 0;
+    }
+    .agent-sim__observation {
+      margin-top: var(--space-4);
+      padding: var(--space-3) var(--space-4);
+      background: rgba(245, 158, 11, 0.06);
+      border-left: 3px solid var(--accent-warning);
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      display: none;
+    }
+    .agent-sim__observation.show { display: block; }
+    .agent-sim__feedback {
+      margin-top: var(--space-3);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      display: none;
+    }
+    .agent-sim__feedback.show { display: block; }
+    .agent-sim__summary {
+      display: none;
+      margin-top: var(--space-6);
+    }
+    .agent-sim__summary.show { display: block; }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 02</span>
+        <span class="separator">/</span>
+        <span class="current">ReAct Loop</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Evolving Diagram -->
+        <div class="evolving-diagram reveal" id="evolvingDiagram" style="margin-top: var(--space-8);"></div>
+
+        <!-- ===== SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Scene</span></div>
+          <h1 style="margin-bottom: var(--space-4);">The ReAct Loop</h1>
+          <p style="font-size: var(--font-lg);">
+            An AcmeCorp regional manager types: <strong style="color: var(--stroke-secondary);">"Show me Q3 revenue by region."</strong>
+            Watch the agent think, act, observe, and iterate until it delivers the answer.
+          </p>
+        </section>
+
+        <!-- ===== REACT EXPLANATION ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Core Concept</span></div>
+          <h2 style="margin-bottom: var(--space-4);">THINK &rarr; ACT &rarr; OBSERVE &rarr; Repeat</h2>
+          <p style="margin-bottom: var(--space-6);">
+            ReAct (Reasoning + Acting) is the fundamental loop behind every capable agent.
+            Instead of trying to answer in one shot, the agent breaks the problem into steps and iterates.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal stagger-children">
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="react-badge react-badge--think">Think</span>
+              </div>
+              <div class="bp-card__body">
+                The agent reasons about what it knows, what it still needs, and what to do next. This is the LLM's internal chain-of-thought.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="react-badge react-badge--act">Act</span>
+              </div>
+              <div class="bp-card__body">
+                The agent calls a tool &mdash; runs a query, fetches a schema, or transforms data. This is where reasoning meets the real world.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="react-badge react-badge--observe">Observe</span>
+              </div>
+              <div class="bp-card__body">
+                The agent examines the tool's output. Did it get what it needed? Is there an error? The observation feeds back into the next THINK step.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== ANIMATED TIMELINE ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Trace Walkthrough</span></div>
+          <h2 class="reveal" style="margin-bottom: var(--space-2);">Watching the Agent Work</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">
+            Query: <strong style="color: var(--stroke-secondary);">"Show me Q3 revenue by region"</strong> &mdash; follow each iteration as the agent converges on the answer.
+          </p>
+
+          <div class="react-timeline">
+            <!-- Iteration 1 -->
+            <div class="react-iteration reveal">
+              <div class="react-iteration__number">1</div>
+              <div class="react-step">
+                <span class="react-badge react-badge--think">Think</span>
+                <div class="react-step__content">"I need to find which tables contain revenue data. Let me discover the schema first."</div>
+              </div>
+              <div class="react-step">
+                <span class="react-badge react-badge--act">Act</span>
+                <div class="react-step__content">Call <code>schema_discovery()</code> &mdash; list all tables and columns in the data warehouse.</div>
+              </div>
+              <div class="react-step">
+                <span class="react-badge react-badge--observe">Observe</span>
+                <div class="react-step__content">Found tables: <code>transactions</code>, <code>sales_summary</code>, <code>regions</code>, <code>stores</code>. The <code>sales_summary</code> table has columns: <code>revenue</code>, <code>quarter</code>, <code>region_id</code>.</div>
+              </div>
+            </div>
+
+            <!-- Iteration 2 -->
+            <div class="react-iteration reveal">
+              <div class="react-iteration__number">2</div>
+              <div class="react-step">
+                <span class="react-badge react-badge--think">Think</span>
+                <div class="react-step__content">"Good. I can join <code>sales_summary</code> to <code>regions</code> on <code>region_id</code>. Let me write the SQL."</div>
+              </div>
+              <div class="react-step">
+                <span class="react-badge react-badge--act">Act</span>
+                <div class="react-step__content">Call <code>query_execute(SELECT r.name, SUM(s.revenue) FROM sales_summary s JOIN regions r ON s.region_id = r.id GROUP BY r.name)</code></div>
+              </div>
+              <div class="react-step">
+                <span class="react-badge react-badge--observe">Observe</span>
+                <div class="react-step__content">Got results &mdash; but this includes all quarters, not just Q3. Need to add a WHERE filter.</div>
+              </div>
+            </div>
+
+            <!-- Iteration 3 -->
+            <div class="react-iteration reveal">
+              <div class="react-iteration__number">3</div>
+              <div class="react-step">
+                <span class="react-badge react-badge--think">Think</span>
+                <div class="react-step__content">"I forgot to filter by Q3. Let me add <code>WHERE quarter = 'Q3'</code> and re-run."</div>
+              </div>
+              <div class="react-step">
+                <span class="react-badge react-badge--act">Act</span>
+                <div class="react-step__content">Call <code>query_execute(SELECT r.name, SUM(s.revenue) FROM sales_summary s JOIN regions r ON s.region_id = r.id WHERE s.quarter = 'Q3' GROUP BY r.name ORDER BY SUM(s.revenue) DESC)</code></div>
+              </div>
+              <div class="react-step">
+                <span class="react-badge react-badge--observe">Observe</span>
+                <div class="react-step__content">Q3 revenue by region: West $4.2M, East $3.8M, Central $2.9M, South $2.1M. Data looks correct and complete.</div>
+              </div>
+            </div>
+
+            <!-- Iteration 4 (Final) -->
+            <div class="react-iteration reveal">
+              <div class="react-iteration__number final">4</div>
+              <div class="react-step">
+                <span class="react-badge react-badge--think">Think</span>
+                <div class="react-step__content">"I have the Q3 data grouped by region. Time to format a clear response for the user."</div>
+              </div>
+              <div class="react-step">
+                <span class="react-badge react-badge--act">Act</span>
+                <div class="react-step__content">Return formatted response to the user.</div>
+              </div>
+              <div class="react-final">
+                "Here's your Q3 revenue by region: West leads at $4.2M, followed by East ($3.8M), Central ($2.9M), and South ($2.1M). Total Q3 revenue: $13.0M."
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== COMPARISON: WITH vs WITHOUT ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Why It Matters</span></div>
+          <h2 style="margin-bottom: var(--space-6);">Single-Shot vs. ReAct</h2>
+
+          <div class="compare-grid">
+            <!-- Without ReAct -->
+            <div class="compare-panel compare-panel--bad reveal reveal--fade-left">
+              <div class="compare-panel__title">Without ReAct (Single-Shot)</div>
+              <div class="compare-step">1. Receive query: "Q3 revenue by region"</div>
+              <div class="compare-step">2. Guess the table name and column structure</div>
+              <div class="compare-step">3. Generate SQL in one attempt</div>
+              <div class="compare-step">4. Hope it works</div>
+              <div class="compare-result compare-result--bad">
+                Result: SQL error &mdash; wrong table name. User sees "An error occurred." No recovery path.
+              </div>
+            </div>
+
+            <!-- With ReAct -->
+            <div class="compare-panel compare-panel--good reveal reveal--fade-right">
+              <div class="compare-panel__title">With ReAct (Iterative)</div>
+              <div class="compare-step">1. THINK: what tables exist? ACT: discover schema</div>
+              <div class="compare-step">2. THINK: write query. ACT: execute. OBSERVE: missing filter</div>
+              <div class="compare-step">3. THINK: add Q3 filter. ACT: re-execute. OBSERVE: correct data</div>
+              <div class="compare-step">4. THINK: format response. ACT: return answer</div>
+              <div class="compare-result compare-result--good">
+                Result: Accurate Q3 revenue breakdown. Self-corrected mid-flight. User sees clean data.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== KEY INSIGHT ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Key Insight</span></div>
+          <div class="callout callout--warning">
+            <div class="callout__label">Production Reality</div>
+            <div class="callout__text">
+              Prompt-only ReAct agents can't handle production complexity. The THINK/ACT/OBSERVE loop must be externalized into a proper state machine.
+              <strong>LangGraph externalizes state management</strong> &mdash; persisting the agent's reasoning trace, tool outputs, and retry counts outside the LLM's context window. This makes the loop debuggable, resumable, and auditable.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== INTERACTIVE: "YOU ARE THE AGENT" ===== -->
+        <section class="section reveal">
+          <div class="section-label"><span>Interactive Simulation</span></div>
+          <h2 style="margin-bottom: var(--space-2);">You Are the Agent</h2>
+          <p style="margin-bottom: var(--space-4);">
+            A user asks: <strong style="color: var(--stroke-secondary);">"What's the most popular product category in stores with revenue &gt; $1M?"</strong>
+            Walk through 3 ReAct iterations. Make the right choices at each step.
+          </p>
+
+          <div class="agent-sim" id="agentSim">
+            <!-- Iteration 1: THINK -->
+            <div class="agent-sim__step active" id="sim-step-0">
+              <div class="agent-sim__step-header">Iteration 1 &mdash; THINK</div>
+              <div class="agent-sim__prompt">
+                You need to find the most popular product category in high-revenue stores. What should you think about first?
+              </div>
+              <div class="agent-sim__choices">
+                <button class="agent-sim__choice" onclick="AgentSim.choose(0, 0)">
+                  <span class="agent-sim__choice-marker">A</span>
+                  <span>"I should immediately write a SQL query that joins all tables together. I can probably guess the schema."</span>
+                </button>
+                <button class="agent-sim__choice" onclick="AgentSim.choose(0, 1)">
+                  <span class="agent-sim__choice-marker">B</span>
+                  <span>"I need to discover which tables hold store revenue and product category data before writing any SQL."</span>
+                </button>
+                <button class="agent-sim__choice" onclick="AgentSim.choose(0, 2)">
+                  <span class="agent-sim__choice-marker">C</span>
+                  <span>"I should ask the user to clarify what they mean by 'popular' before doing anything."</span>
+                </button>
+              </div>
+              <div class="agent-sim__feedback" id="sim-fb-0"></div>
+              <div class="agent-sim__observation" id="sim-obs-0">
+                <strong style="color: var(--accent-warning);">OBSERVE:</strong> Schema discovery returns: <code>stores</code> (id, name, annual_revenue), <code>transactions</code> (store_id, product_id, amount, date), <code>products</code> (id, name, category). Now you know the structure.
+              </div>
+            </div>
+
+            <!-- Iteration 1: ACT -->
+            <div class="agent-sim__step" id="sim-step-1">
+              <div class="agent-sim__step-header">Iteration 1 &mdash; ACT</div>
+              <div class="agent-sim__prompt">
+                Based on your thinking, which tool should you call first?
+              </div>
+              <div class="agent-sim__choices">
+                <button class="agent-sim__choice" onclick="AgentSim.choose(1, 0)">
+                  <span class="agent-sim__choice-marker">A</span>
+                  <span><code>schema_discovery()</code> &mdash; List tables and columns in the warehouse</span>
+                </button>
+                <button class="agent-sim__choice" onclick="AgentSim.choose(1, 1)">
+                  <span class="agent-sim__choice-marker">B</span>
+                  <span><code>query_execute("SELECT * FROM products LIMIT 100")</code> &mdash; Sample some product data</span>
+                </button>
+                <button class="agent-sim__choice" onclick="AgentSim.choose(1, 2)">
+                  <span class="agent-sim__choice-marker">C</span>
+                  <span><code>query_execute("SELECT category, COUNT(*) FROM products GROUP BY category")</code> &mdash; Jump straight to counting</span>
+                </button>
+              </div>
+              <div class="agent-sim__feedback" id="sim-fb-1"></div>
+              <div class="agent-sim__observation" id="sim-obs-1">
+                <strong style="color: var(--accent-warning);">OBSERVE:</strong> Now you know the tables. Time to write the actual query.
+              </div>
+            </div>
+
+            <!-- Iteration 2: THINK -->
+            <div class="agent-sim__step" id="sim-step-2">
+              <div class="agent-sim__step-header">Iteration 2 &mdash; THINK</div>
+              <div class="agent-sim__prompt">
+                You now know the schema. How should you approach the SQL query?
+              </div>
+              <div class="agent-sim__choices">
+                <button class="agent-sim__choice" onclick="AgentSim.choose(2, 0)">
+                  <span class="agent-sim__choice-marker">A</span>
+                  <span>"Join stores to transactions to products. Filter stores by revenue > $1M, group by category, count transactions, order descending."</span>
+                </button>
+                <button class="agent-sim__choice" onclick="AgentSim.choose(2, 1)">
+                  <span class="agent-sim__choice-marker">B</span>
+                  <span>"Just query the products table and count categories. I don't need the stores table."</span>
+                </button>
+                <button class="agent-sim__choice" onclick="AgentSim.choose(2, 2)">
+                  <span class="agent-sim__choice-marker">C</span>
+                  <span>"I should first get ALL transactions, then filter in Python. SQL is too limiting for this."</span>
+                </button>
+              </div>
+              <div class="agent-sim__feedback" id="sim-fb-2"></div>
+              <div class="agent-sim__observation" id="sim-obs-2">
+                <strong style="color: var(--accent-warning);">OBSERVE:</strong> Query executed successfully. Results: Electronics (12,847 transactions), Clothing (9,423), Home &amp; Garden (7,891). Electronics is the top category in high-revenue stores.
+              </div>
+            </div>
+
+            <!-- Iteration 3: ACT (final) -->
+            <div class="agent-sim__step" id="sim-step-3">
+              <div class="agent-sim__step-header">Iteration 3 &mdash; ACT</div>
+              <div class="agent-sim__prompt">
+                You have the result. What should the agent do now?
+              </div>
+              <div class="agent-sim__choices">
+                <button class="agent-sim__choice" onclick="AgentSim.choose(3, 0)">
+                  <span class="agent-sim__choice-marker">A</span>
+                  <span>Return the raw SQL result set directly to the user with no explanation.</span>
+                </button>
+                <button class="agent-sim__choice" onclick="AgentSim.choose(3, 1)">
+                  <span class="agent-sim__choice-marker">B</span>
+                  <span>Format a natural-language answer with the key finding, supporting numbers, and the methodology used.</span>
+                </button>
+                <button class="agent-sim__choice" onclick="AgentSim.choose(3, 2)">
+                  <span class="agent-sim__choice-marker">C</span>
+                  <span>Run 5 more queries to double-check every aspect before responding.</span>
+                </button>
+              </div>
+              <div class="agent-sim__feedback" id="sim-fb-3"></div>
+            </div>
+          </div>
+
+          <!-- Summary (shown after completion) -->
+          <div class="agent-sim__summary" id="simSummary">
+            <div class="score-card">
+              <div class="score-card__value" id="simScoreVal">0/4</div>
+              <div class="score-card__label">Optimal Agent Decisions</div>
+            </div>
+            <div class="react-final" style="margin-top: var(--space-6);">
+              "In stores with annual revenue over $1M, <strong>Electronics</strong> is the most popular product category with 12,847 transactions, followed by Clothing (9,423) and Home &amp; Garden (7,891)."
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV FOOTER ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="03-langgraph-patterns.html" class="page-nav__title">LangGraph Patterns</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="quiz-checkpoint.html" class="page-nav__title">Module 02 Quiz</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+
+  <script>
+    // --- Evolving Diagram ---
+    document.addEventListener('DOMContentLoaded', () => {
+      EvolvingDiagram.renderForPage('evolvingDiagram', 'react-loop');
+    });
+
+    // --- Initialize Nav ---
+    Nav.init('m02-react-loop');
+
+    // --- "You Are the Agent" Simulation ---
+    const AgentSim = {
+      // For each step: correctIndex, quality array for each choice, feedback text
+      steps: [
+        {
+          correct: 1,
+          quality: ['bad', 'good', 'ok'],
+          feedback: [
+            'Guessing the schema is exactly how single-shot agents fail. Always discover first.',
+            'Correct! Schema discovery is always the first step. You need to know what data is available before writing queries.',
+            'Reasonable, but "popular" most likely means "most transactions." The agent should proceed and clarify only if the data is ambiguous.'
+          ]
+        },
+        {
+          correct: 0,
+          quality: ['good', 'ok', 'bad'],
+          feedback: [
+            'Correct! schema_discovery() gives you the full picture of tables and columns before you commit to any query.',
+            'Sampling data can help, but you don\'t yet know the table structure. Schema discovery should come first.',
+            'You\'re skipping discovery entirely. This query ignores the store revenue filter and might hit the wrong tables.'
+          ]
+        },
+        {
+          correct: 0,
+          quality: ['good', 'bad', 'bad'],
+          feedback: [
+            'Correct! A proper 3-table join with the revenue filter, grouped by category. This is the optimal approach.',
+            'This ignores the "stores with revenue > $1M" requirement entirely. The user asked for a filtered subset.',
+            'Pulling all transactions into Python is wasteful and slow. Let the database do the filtering and aggregation.'
+          ]
+        },
+        {
+          correct: 1,
+          quality: ['ok', 'good', 'bad'],
+          feedback: [
+            'Raw results are hard to interpret. A good agent formats the answer for the user.',
+            'Correct! A clear natural-language answer with supporting data is what makes an agent useful. The user asked a question, not for a data dump.',
+            'Over-verifying wastes time and tokens. The data is correct and the query was sound. Time to respond.'
+          ]
+        }
+      ],
+      currentStep: 0,
+      score: 0,
+      locked: {},
+
+      choose(stepIdx, choiceIdx) {
+        if (this.locked[stepIdx]) return;
+        this.locked[stepIdx] = true;
+
+        const step = this.steps[stepIdx];
+        const quality = step.quality[choiceIdx];
+        const isOptimal = (choiceIdx === step.correct);
+        if (isOptimal) this.score++;
+
+        // Style the chosen button
+        const stepEl = document.getElementById('sim-step-' + stepIdx);
+        const buttons = stepEl.querySelectorAll('.agent-sim__choice');
+        buttons.forEach((b, i) => {
+          b.style.pointerEvents = 'none';
+          if (i === choiceIdx) {
+            b.classList.add('chosen-' + quality);
+          }
+        });
+
+        // Show feedback
+        const fb = document.getElementById('sim-fb-' + stepIdx);
+        fb.textContent = (isOptimal ? '\u2713 ' : '\u2717 ') + step.feedback[choiceIdx];
+        fb.style.color = isOptimal ? 'var(--accent-success)' : (quality === 'ok' ? 'var(--accent-warning)' : 'var(--accent-error)');
+        fb.classList.add('show');
+
+        // Show observation if exists
+        const obs = document.getElementById('sim-obs-' + stepIdx);
+        if (obs) {
+          setTimeout(() => { obs.classList.add('show'); }, 400);
+        }
+
+        // Advance to next step after delay
+        this.currentStep = stepIdx + 1;
+        if (this.currentStep < 4) {
+          setTimeout(() => {
+            stepEl.classList.remove('active');
+            stepEl.classList.add('completed');
+            const nextStep = document.getElementById('sim-step-' + this.currentStep);
+            nextStep.classList.add('active');
+            nextStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 1500);
+        } else {
+          // Simulation complete
+          setTimeout(() => {
+            stepEl.classList.remove('active');
+            stepEl.classList.add('completed');
+            document.getElementById('simScoreVal').textContent = this.score + '/4';
+            const summary = document.getElementById('simSummary');
+            summary.classList.add('show');
+            summary.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Save progress
+            Progress.saveQuizScore('m02-react-sim', this.score, 4);
+          }, 1500);
+        }
+      }
+    };
+  </script>
+</body>
+</html>

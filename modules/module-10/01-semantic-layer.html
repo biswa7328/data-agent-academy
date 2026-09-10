@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semantic Layer for Data Agents &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Translation Chain --- */
+    .chain-flow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+      margin: var(--space-8) 0;
+    }
+    .chain-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      min-width: 130px;
+      text-align: center;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .chain-step:hover {
+      border-color: var(--stroke-primary);
+      transform: translateY(-2px);
+    }
+    .chain-step__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .chain-step__value {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    .chain-arrow {
+      font-size: var(--font-xl);
+      color: var(--stroke-secondary);
+      flex-shrink: 0;
+    }
+    /* --- Metric Card --- */
+    .metric-def {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      margin: var(--space-4) 0;
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      line-height: 1.8;
+    }
+    .metric-def__key {
+      color: var(--stroke-secondary);
+      display: inline-block;
+      min-width: 120px;
+    }
+    .metric-def__val {
+      color: var(--text-primary);
+    }
+    /* --- Before/After --- */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+    .compare-card {
+      padding: var(--space-5);
+      border-radius: var(--border-radius);
+      border: 1px dashed var(--stroke-dim);
+    }
+    .compare-card--before { background: rgba(239, 68, 68, 0.06); border-color: var(--accent-error); }
+    .compare-card--after  { background: rgba(204, 0, 255, 0.06); border-color: var(--accent-success); }
+    .compare-card__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-3);
+    }
+    .compare-card--before .compare-card__label { color: var(--accent-error); }
+    .compare-card--after  .compare-card__label { color: var(--accent-success); }
+    @media (max-width: 640px) {
+      .compare-grid { grid-template-columns: 1fr; }
+      .chain-flow { flex-direction: column; }
+      .chain-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a><span class="separator">/</span>
+        <span>Module 10</span><span class="separator">/</span>
+        <span class="current">Semantic Layer</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- ===== HEADER ===== -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 10 &mdash; Lesson 01</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Semantic Layer for Data Agents</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            The abstraction layer that ensures every question gets a consistent, trusted answer &mdash; regardless of who asks.
+          </p>
+        </header>
+
+        <!-- ===== BLUEPRINT DIAGRAM ===== -->
+        <div class="evolving-diagram reveal reveal--scale"><div class="evolving-diagram__label">SEMANTIC LAYER — SINGLE SOURCE OF TRUTH</div>
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;font-family:'JetBrains Mono',monospace;">
+          <defs>
+            <filter id="sl-glow"><feGaussianBlur stdDeviation="3" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <marker id="sl-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
+            <marker id="sl-arrow-up" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto"><path d="M8,0 L0,3 L8,6" fill="#10b981"/></marker>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="380" rx="8" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+
+          <!-- TOP LAYER: Users -->
+          <text x="350" y="24" text-anchor="middle" fill="#a0a0a0" font-size="9" letter-spacing="0.1em">CONSUMERS</text>
+          <!-- CEO -->
+          <rect x="30" y="34" width="180" height="52" rx="6" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="120" y="52" text-anchor="middle" fill="#f5f5f5" font-size="11" font-weight="600">CEO</text>
+          <text x="120" y="72" text-anchor="middle" fill="#a0a0a0" font-size="9">"Q3 revenue?"</text>
+          <!-- Sofia -->
+          <rect x="260" y="34" width="180" height="52" rx="6" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="350" y="52" text-anchor="middle" fill="#f5f5f5" font-size="11" font-weight="600">Sofia (Store #47)</text>
+          <text x="350" y="72" text-anchor="middle" fill="#a0a0a0" font-size="9">"My store's revenue?"</text>
+          <!-- Derek -->
+          <rect x="490" y="34" width="180" height="52" rx="6" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="580" y="52" text-anchor="middle" fill="#f5f5f5" font-size="11" font-weight="600">Derek (CFO)</text>
+          <text x="580" y="72" text-anchor="middle" fill="#a0a0a0" font-size="9">"Net revenue?"</text>
+
+          <!-- Arrows down: Users → Semantic Layer -->
+          <line x1="120" y1="86" x2="120" y2="120" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
+          <line x1="350" y1="86" x2="350" y2="120" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
+          <line x1="580" y1="86" x2="580" y2="120" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
+
+          <!-- MIDDLE LAYER: Semantic Layer -->
+          <rect x="40" y="120" width="620" height="110" rx="8" fill="rgba(45,212,191,0.06)" stroke="#CC00FF" stroke-width="2" stroke-dasharray="6,3" filter="url(#sl-glow)"/>
+          <text x="350" y="140" text-anchor="middle" fill="#CC00FF" font-size="13" font-weight="700" letter-spacing="0.08em">SEMANTIC LAYER</text>
+          <!-- Metric definition card -->
+          <rect x="70" y="150" width="400" height="34" rx="4" fill="rgba(45,212,191,0.1)" stroke="#334155" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="80" y="171" fill="#CC00FF" font-size="10" font-weight="600">revenue</text>
+          <text x="140" y="171" fill="#a0a0a0" font-size="10">= SUM(total_amount) WHERE status='completed'</text>
+          <!-- Dimension labels -->
+          <text x="70" y="204" fill="#a0a0a0" font-size="9">Dimensions: region, store, quarter</text>
+          <text x="70" y="218" fill="#a0a0a0" font-size="9">Fiscal Q3 = Jul - Sep</text>
+          <!-- Side annotation -->
+          <rect x="500" y="155" width="140" height="50" rx="4" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="570" y="175" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600">SINGLE ANSWER</text>
+          <text x="570" y="193" text-anchor="middle" fill="#f5f5f5" font-size="14" font-weight="700">$43.8M</text>
+
+          <!-- Arrows down: Semantic Layer → Database -->
+          <line x1="350" y1="230" x2="350" y2="268" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
+
+          <!-- BOTTOM LAYER: Database -->
+          <!-- Cylinder shape -->
+          <ellipse cx="350" cy="278" rx="130" ry="14" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+          <rect x="220" y="278" width="260" height="50" fill="rgba(74,158,255,0.08)" stroke="none"/>
+          <line x1="220" y1="278" x2="220" y2="328" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="480" y1="278" x2="480" y2="328" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+          <ellipse cx="350" cy="328" rx="130" ry="14" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="350" y="300" text-anchor="middle" fill="#A100FF" font-size="11" font-weight="600">PostgreSQL</text>
+          <text x="290" y="318" text-anchor="middle" fill="#a0a0a0" font-size="8">fact_sales</text>
+          <text x="350" y="318" text-anchor="middle" fill="#a0a0a0" font-size="8">dim_stores</text>
+          <text x="410" y="318" text-anchor="middle" fill="#a0a0a0" font-size="8">dim_dates</text>
+
+          <!-- Return arrows (up) -->
+          <line x1="140" y1="120" x2="140" y2="90" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#sl-arrow-up)"/>
+          <line x1="370" y1="120" x2="370" y2="90" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#sl-arrow-up)"/>
+          <line x1="600" y1="120" x2="600" y2="90" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#sl-arrow-up)"/>
+
+          <!-- Side label -->
+          <rect x="560" y="350" width="130" height="22" rx="4" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="625" y="365" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600">Eliminated $3.4M gap</text>
+        </svg>
+        </div>
+
+        <!-- ===== SECTION 1: The Meeting That Almost Killed DataPulse ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>The Incident</span></div>
+          <h2 class="reveal">The Executive Meeting That Almost Killed DataPulse</h2>
+
+          <p class="reveal reveal--delay-1">
+            It was the quarterly executive review at AcmeCorp. The CEO opened with a simple question: "What was our Q3 revenue?" Raj Patel, VP of Analytics, pulled up DataPulse and read the answer aloud: <strong>$47.2M</strong>. Derek Kim, the CFO, looked up from his laptop. His finance team's Excel model showed <strong>$43.8M</strong>. A $3.4M gap. The room went silent.
+          </p>
+
+          <p class="reveal reveal--delay-2">
+            The CEO turned to Raj: "If your AI agent can't even agree with finance on revenue, why are we using it?" Raj had no good answer. He called Maya Chen, Lead Data Engineer, from the hallway during the break. Maya started digging into DataPulse's query logs immediately. Within thirty minutes, she found the root cause: DataPulse was computing revenue as <code>SUM(total_amount)</code> from the <code>fact_sales</code> table &mdash; with no filter on order status. It was including canceled orders and pending returns. Derek's finance team excludes both. Neither calculation was wrong. They just defined "revenue" differently.
+          </p>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">The Core Problem</div>
+            <div class="callout__text">
+              DataPulse was going directly from natural language to SQL, inferring what "revenue" meant from column names alone. Without an authoritative definition, it guessed &mdash; and guessed differently depending on how the question was phrased. Raj brought the finding back to the CEO and committed to a fix. That fix would come from Priya Sharma, AcmeCorp's Data Steward.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: What Is a Semantic Layer? ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Concept</span></div>
+          <h2 class="reveal">What Is a Semantic Layer?</h2>
+
+          <p class="reveal reveal--delay-1">
+            A semantic layer sits between raw data (tables, columns, joins) and the business questions people actually ask. Instead of the agent needing to understand that <code>orders.total_amount</code> combined with a specific <code>WHERE</code> clause equals "revenue," the semantic layer provides a pre-defined, human-readable mapping: <strong>revenue = SUM(total_amount) WHERE status = 'completed'</strong>.
+          </p>
+
+          <p class="reveal reveal--delay-2">
+            Think of it as a glossary the agent consults before writing SQL. Without it, the agent must infer meaning from column names alone &mdash; a fragile and error-prone approach, exactly the trap DataPulse fell into during the executive meeting. With it, the agent looks up the canonical definition and generates the correct query every time. Priya described it to Raj as "a contract between the business and the machine &mdash; we define what words mean, and the agent's job is to use those definitions, not invent its own."
+          </p>
+
+          <div class="bp-card reveal reveal--delay-3">
+            <div class="bp-card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>
+              </svg>
+              Core Principle
+            </div>
+            <div class="bp-card__body">
+              <p>The semantic layer answers one critical question: <strong>"When someone says X, what do we actually mean in terms of data?"</strong> It eliminates ambiguity by centralizing metric definitions so every consumer &mdash; human or agent &mdash; uses the same logic. At AcmeCorp, this meant Raj's DataPulse and Derek's finance team would finally produce the same number.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: Why Agents Need It ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Motivation</span></div>
+          <h2 class="reveal">Why Data Agents Need a Semantic Layer</h2>
+
+          <p class="reveal reveal--delay-1">
+            The $3.4M discrepancy at AcmeCorp illustrates a universal problem. Consider the word "revenue" at any mid-size retailer with 200 stores and a PostgreSQL warehouse with 500+ tables. The CFO means net revenue (after returns and discounts). A store manager like Sofia Torres at Store #47 means gross sales at her location. Marketing means attributed revenue from campaigns. Without a semantic layer, the agent must guess which definition to apply &mdash; and it will guess differently depending on the phrasing of the question, just as DataPulse did.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Consistency</div>
+              <div class="bp-card__body">
+                <p>Every query for "revenue" produces the same number. No more conflicting reports from the same data warehouse &mdash; no more $3.4M gaps between the analytics team and finance.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Guardrails</div>
+              <div class="bp-card__body">
+                <p>The agent cannot invent its own metric logic. It must use the approved definition, reducing hallucinated calculations. Priya reviews and approves every metric before it goes live.</p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Governance</div>
+              <div class="bp-card__body">
+                <p>Definitions are versioned, reviewed, and owned by data stewards like Priya. Changes go through approval workflows. Marcus Webb from Security ensures access controls are enforced per metric.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="compare-grid reveal reveal--delay-3">
+            <div class="compare-card compare-card--before">
+              <div class="compare-card__label">Without Semantic Layer (The $3.4M Incident)</div>
+              <p>DataPulse generates: <code>SELECT SUM(amount) FROM orders</code></p>
+              <p style="margin-top: var(--space-2); color: var(--text-secondary); font-size: var(--font-sm);">Includes canceled orders, pending orders, and returns. Different users get different numbers. The CEO loses trust.</p>
+            </div>
+            <div class="compare-card compare-card--after">
+              <div class="compare-card__label">With Priya's Semantic Layer</div>
+              <p>DataPulse looks up <strong>revenue</strong> metric, generates: <code>SELECT SUM(total_amount) FROM fact_sales WHERE status='completed'</code></p>
+              <p style="margin-top: var(--space-2); color: var(--text-secondary); font-size: var(--font-sm);">Consistent, auditable, matches Derek's finance team's definition exactly. The CEO gets one number.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: Semantic Layer Tools ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Tooling</span></div>
+          <h2 class="reveal">Semantic Layer Tools &amp; Platforms</h2>
+
+          <p class="reveal reveal--delay-1">
+            After the executive meeting, Maya and Priya evaluated several tools for building AcmeCorp's semantic layer. The right choice depends on your existing stack and the level of abstraction you need. AcmeCorp ultimately chose a dbt-based approach because their PostgreSQL warehouse already used dbt for transformations, but every option below is viable.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__title">dbt Semantic Layer</div>
+              <div class="bp-card__body">
+                <p>Defines metrics in YAML alongside your dbt models. Metrics are version-controlled in Git and compiled into SQL at query time. Integrates natively with the dbt ecosystem. This is what Maya recommended for AcmeCorp's PostgreSQL warehouse.</p>
+                <div class="tag-row" style="margin-top: var(--space-3);">
+                  <span class="badge badge--blue" data-tip="Metrics are defined in YAML files alongside dbt models, making configuration declarative and readable.">YAML Config</span>
+                  <span class="badge badge--blue" data-tip="Metric definitions live in Git repositories, enabling version control, code review, and rollback.">Git-native</span>
+                </div>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Cube.js</div>
+              <div class="bp-card__body">
+                <p>A headless BI engine with a data modeling layer. Defines metrics, dimensions, and joins in JavaScript schema files. Provides a REST/GraphQL API that agents can call directly.</p>
+                <div class="tag-row" style="margin-top: var(--space-3);">
+                  <span class="badge badge--teal" data-tip="Cube.js exposes metrics via REST and GraphQL APIs that agents can call directly.">API-first</span>
+                  <span class="badge badge--teal" data-tip="Built-in pre-aggregation and caching layer speeds up repeated queries.">Caching</span>
+                </div>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">LookML (Looker)</div>
+              <div class="bp-card__body">
+                <p>Looker's modeling language defines relationships, metrics, and access controls. Agents can query through the Looker API, inheriting all governance rules automatically.</p>
+                <div class="tag-row" style="margin-top: var(--space-3);">
+                  <span class="badge badge--amber" data-tip="Looker is a Google Cloud enterprise BI platform with deep governance features.">Enterprise</span>
+                  <span class="badge badge--amber" data-tip="LookML enforces row-level and column-level access controls that agents inherit automatically.">Access Control</span>
+                </div>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Custom Metric Definitions</div>
+              <div class="bp-card__body">
+                <p>For teams without a dedicated tool: maintain a metrics catalog in JSON/YAML, loaded into the agent's context at query time. Simple, but requires discipline to keep updated.</p>
+                <div class="tag-row" style="margin-top: var(--space-3);">
+                  <span class="badge badge--green" data-tip="No dedicated tool required — just a JSON or YAML catalog loaded into agent context.">Lightweight</span>
+                  <span class="badge badge--green" data-tip="Works with any stack since definitions are plain config files you maintain yourself.">Flexible</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: Translation Chain ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Architecture</span></div>
+          <h2 class="reveal">Natural Language &rarr; Metric &rarr; SQL</h2>
+
+          <p class="reveal reveal--delay-1">
+            Priya's redesign of DataPulse introduced a three-stage translation chain. Before the semantic layer, DataPulse went directly from the CEO's question to SQL &mdash; which is how it ended up including canceled orders. Now, every question passes through the semantic layer as an intermediary. The agent never goes directly from English to SQL. Here is how the CEO's original question would flow through the new architecture:
+          </p>
+
+          <div class="chain-flow reveal reveal--delay-2">
+            <div class="chain-step">
+              <div class="chain-step__label">Step 1</div>
+              <div class="chain-step__value">User Question</div>
+              <div style="font-size: var(--font-xs); color: var(--text-secondary); margin-top: var(--space-1);">"What was Q3 revenue?"</div>
+            </div>
+            <div class="chain-arrow">&rarr;</div>
+            <div class="chain-step" style="border-color: var(--stroke-secondary);">
+              <div class="chain-step__label">Step 2</div>
+              <div class="chain-step__value">Metric Lookup</div>
+              <div style="font-size: var(--font-xs); color: var(--text-secondary); margin-top: var(--space-1);">revenue: SUM(total_amount) WHERE status='completed'</div>
+            </div>
+            <div class="chain-arrow">&rarr;</div>
+            <div class="chain-step">
+              <div class="chain-step__label">Step 3</div>
+              <div class="chain-step__value">SQL Generation</div>
+              <div style="font-size: var(--font-xs); color: var(--text-secondary); margin-top: var(--space-1);">SELECT SUM(total_amount) FROM fact_sales WHERE status='completed' AND date BETWEEN '2025-07-01' AND '2025-09-30'</div>
+            </div>
+            <div class="chain-arrow">&rarr;</div>
+            <div class="chain-step">
+              <div class="chain-step__label">Step 4</div>
+              <div class="chain-step__value">Answer</div>
+              <div style="font-size: var(--font-xs); color: var(--text-secondary); margin-top: var(--space-1);">$43.8M</div>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">Key Insight</div>
+            <div class="callout__text">
+              Notice the answer is now <strong>$43.8M</strong> &mdash; the same number Derek's finance team reported. The semantic layer acts as a <strong>contract</strong> between the business and the agent. Priya defines what metrics mean; DataPulse's job is only to map user intent to the right metric and apply the correct time/dimension filters. When Raj showed this to the CEO, the response was immediate: "Now I trust it." Priya also configured DataPulse to recognize that "Q3" at AcmeCorp means fiscal Q3 (July&ndash;September), not calendar Q3.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 6: Metric Definition Patterns ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Patterns</span></div>
+          <h2 class="reveal">Metric Definition Patterns</h2>
+
+          <p class="reveal reveal--delay-1">
+            A well-defined metric includes five components. Priya built AcmeCorp's metric catalog with these fields for every business term DataPulse needs to understand. The agent uses these fields to generate correct, filterable SQL against AcmeCorp's star schema (<code>fact_sales</code>, <code>dim_products</code>, <code>dim_stores</code>, <code>dim_dates</code>).
+          </p>
+
+          <div class="metric-def reveal reveal--delay-2">
+            <div><span class="metric-def__key">name:</span> <span class="metric-def__val">revenue</span></div>
+            <div><span class="metric-def__key">description:</span> <span class="metric-def__val">Total revenue from completed orders, excluding returns</span></div>
+            <div><span class="metric-def__key">calculation:</span> <span class="metric-def__val">SUM(fact_sales.total_amount) WHERE fact_sales.status = 'completed'</span></div>
+            <div><span class="metric-def__key">dimensions:</span> <span class="metric-def__val">[store_id, region, category, date]</span></div>
+            <div><span class="metric-def__key">filters:</span> <span class="metric-def__val">[date_range, store, region, category]</span></div>
+            <div><span class="metric-def__key">owner:</span> <span class="metric-def__val">Priya Sharma (Data Steward)</span></div>
+          </div>
+
+          <div class="metric-def reveal reveal--delay-3">
+            <div><span class="metric-def__key">name:</span> <span class="metric-def__val">active_customer</span></div>
+            <div><span class="metric-def__key">description:</span> <span class="metric-def__val">Customer with at least one completed order in the trailing 90 days</span></div>
+            <div><span class="metric-def__key">calculation:</span> <span class="metric-def__val">COUNT(DISTINCT customer_id) FROM fact_sales WHERE status = 'completed' AND order_date >= CURRENT_DATE - 90</span></div>
+            <div><span class="metric-def__key">dimensions:</span> <span class="metric-def__val">[store_id, region, channel]</span></div>
+            <div><span class="metric-def__key">filters:</span> <span class="metric-def__val">[date_range, store, region]</span></div>
+            <div><span class="metric-def__key">owner:</span> <span class="metric-def__val">Priya Sharma (Data Steward)</span></div>
+          </div>
+
+          <div class="metric-def reveal reveal--delay-3">
+            <div><span class="metric-def__key">name:</span> <span class="metric-def__val">inventory_turnover</span></div>
+            <div><span class="metric-def__key">description:</span> <span class="metric-def__val">Cost of goods sold divided by average inventory value over the period</span></div>
+            <div><span class="metric-def__key">calculation:</span> <span class="metric-def__val">SUM(fact_sales.cogs) / AVG(dim_products.inventory_value)</span></div>
+            <div><span class="metric-def__key">dimensions:</span> <span class="metric-def__val">[store_id, category, date]</span></div>
+            <div><span class="metric-def__key">filters:</span> <span class="metric-def__val">[date_range, store, category]</span></div>
+            <div><span class="metric-def__key">owner:</span> <span class="metric-def__val">Priya Sharma (Data Steward)</span></div>
+          </div>
+
+          <div class="collapsible reveal reveal--delay-4">
+            <div class="collapsible__header">
+              <span>Additional Metric Fields for Production Systems</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <ul>
+                  <li><strong>owner:</strong> The team or person responsible for maintaining the metric definition. At AcmeCorp, Priya owns all core metrics, while Derek's finance team co-owns revenue-related definitions.</li>
+                  <li><strong>data_source:</strong> Which table(s) or model(s) feed into this metric. For AcmeCorp: <code>fact_sales</code>, <code>dim_products</code>, <code>dim_stores</code>, <code>dim_dates</code>.</li>
+                  <li><strong>refresh_frequency:</strong> How often the underlying data updates (hourly, daily, real-time). AcmeCorp's warehouse refreshes nightly at 6 AM.</li>
+                  <li><strong>access_level:</strong> Who can query this metric (all users, managers only, finance team). Marcus Webb enforces these via DataPulse's access control layer.</li>
+                  <li><strong>version:</strong> Semantic versioning for tracking definition changes over time. When Priya changed "active customer" from 60-day to 90-day window, the version bumped from 1.0 to 2.0.</li>
+                  <li><strong>deprecated:</strong> Boolean flag to phase out old metrics without breaking existing queries.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 7: AcmeCorp — Priya Builds the Semantic Layer ===== -->
+        <section class="section">
+          <div class="section-label reveal"><span>Case Study</span></div>
+          <h2 class="reveal">AcmeCorp: Priya Builds One Definition, One Truth</h2>
+
+          <div class="bp-card reveal reveal--delay-1">
+            <div class="bp-card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>
+              </svg>
+              Priya's Approach
+            </div>
+            <div class="bp-card__body">
+              <p>After the $3.4M incident, Priya scheduled a series of meetings with every stakeholder who consumed revenue data. She sat with Derek Kim to understand finance's definition. She called Sofia Torres at Store #47 to understand what store managers meant by "my sales." She met with the marketing team to define attributed revenue. For each term, she documented the exact formula, the source tables in AcmeCorp's star schema, the filters, and the dimensions. Then she encoded them into dbt YAML files, version-controlled in Git alongside Maya's data models.</p>
+            </div>
+          </div>
+
+          <div class="bp-card reveal reveal--delay-2" style="margin-top: var(--space-4);">
+            <div class="bp-card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-success)" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              The Solution in Action
+            </div>
+            <div class="bp-card__body">
+              <p>AcmeCorp now defines <strong>revenue</strong> in the semantic layer as <code>SUM(total_amount) WHERE status = 'completed'</code>. Whether Sofia at Store #47 or the CEO asks, DataPulse uses the same definition. The only difference is the dimensional filter: Sofia's query is automatically scoped to her store, while the CEO sees the company-wide aggregate across all 200 stores.</p>
+              <p style="margin-top: var(--space-3);">Priya also defined <strong>gross_sales</strong>, <strong>net_revenue</strong>, <strong>active_customer</strong>, and <strong>inventory_turnover</strong> as separate metrics. If someone asks for "gross sales," DataPulse knows to use a different calculation than "revenue." When Derek asks about "net revenue," the agent applies returns and discounts. No more ambiguity, no more conflicting numbers, no more awkward silences in executive meetings.</p>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-3">
+            <div class="callout__label">Result</div>
+            <div class="callout__text">
+              After deploying Priya's semantic layer, AcmeCorp saw a <strong>92% reduction</strong> in data discrepancy tickets from store managers. Derek's finance team stopped receiving "your numbers don't match mine" complaints. The CEO ran the Q3 revenue question again &mdash; DataPulse returned <strong>$43.8M</strong>, matching finance to the penny. Raj told the team: "Priya's semantic layer didn't just fix a number. It saved DataPulse." The agent became a trusted, single source of truth across all 200 stores, running at $1,847/month with 91% accuracy and sub-3-second response times.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="../module-09/quiz-checkpoint.html" class="page-nav__title">Module 09 Quiz</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="02-agent-ux.html" class="page-nav__title">Agent UX &amp; Conversation Design</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Semantic Layer &amp; Agent UX Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m10-semantic-layer');</script>
+</body>
+</html>

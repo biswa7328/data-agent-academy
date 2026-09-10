@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glossary &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    /* --- Glossary Layout --- */
+    .glossary-search {
+      position: relative;
+      max-width: 480px;
+      margin-bottom: var(--space-8);
+    }
+    .glossary-search__input {
+      width: 100%;
+      padding: var(--space-3) var(--space-4) var(--space-3) var(--space-10);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .glossary-search__input:focus {
+      border-color: var(--stroke-primary);
+    }
+    .glossary-search__input::placeholder {
+      color: var(--text-secondary);
+    }
+    .glossary-search__icon {
+      position: absolute;
+      left: var(--space-3);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      pointer-events: none;
+    }
+    .glossary-group {
+      margin-bottom: var(--space-8);
+    }
+    .glossary-group__letter {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 2px dashed var(--stroke-dim);
+    }
+    .glossary-item {
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--space-3);
+      transition: border-color 0.3s;
+    }
+    .glossary-item:hover {
+      border-color: var(--stroke-primary);
+    }
+    .glossary-item__term {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+    .glossary-item__def {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: var(--space-2);
+    }
+    .glossary-item__module {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-secondary);
+    }
+    .glossary-count {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-6);
+    }
+    .no-results {
+      text-align: center;
+      padding: var(--space-12);
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="separator">/</span>
+        <span class="current">Glossary</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Reference</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Glossary of Terms</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Every acronym, pattern, and concept covered across all 10 modules of the Data Agent Academy, organized alphabetically for quick reference.
+          </p>
+        </header>
+
+        <!-- Search -->
+        <div class="glossary-search reveal reveal--delay-2">
+          <svg class="glossary-search__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" class="glossary-search__input" id="glossarySearch" placeholder="Search terms..." autocomplete="off">
+        </div>
+
+        <div class="glossary-count reveal reveal--delay-2" id="glossaryCount">43 terms</div>
+        <div class="no-results" id="noResults">No matching terms found.</div>
+
+        <div id="glossaryContainer">
+
+          <!-- ===== A ===== -->
+          <div class="collapsible open glossary-group reveal" data-group="a-e">
+            <div class="collapsible__header">
+              <span style="font-family: var(--font-mono); font-size: var(--font-lg); font-weight: 700;">A &ndash; E</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+
+                <div class="glossary-item" data-term="a2a">
+                  <div class="glossary-item__term">A2A (Agent-to-Agent Protocol)</div>
+                  <div class="glossary-item__def">Google's open protocol for communication between AI agents across different platforms and vendors. Defines how agents discover each other's capabilities, negotiate tasks, and exchange results through standardized Agent Cards.</div>
+                  <div class="glossary-item__module">Module 04 &mdash; Autonomy &amp; Collaboration</div>
+                </div>
+
+                <div class="glossary-item" data-term="aaif">
+                  <div class="glossary-item__term">AAIF (Anthropic Agent Interoperability Framework)</div>
+                  <div class="glossary-item__def">A framework for building interoperable AI agents that can communicate and collaborate across organizational boundaries, with emphasis on safety and controllability.</div>
+                  <div class="glossary-item__module">Module 04 &mdash; Autonomy &amp; Collaboration</div>
+                </div>
+
+                <div class="glossary-item" data-term="abac">
+                  <div class="glossary-item__term">ABAC (Attribute-Based Access Control)</div>
+                  <div class="glossary-item__def">An access control model that evaluates attributes (user role, department, time of day, data sensitivity) to determine permissions. More flexible than RBAC for complex data agent scenarios where access depends on multiple contextual factors.</div>
+                  <div class="glossary-item__module">Module 08 &mdash; Agent Security</div>
+                </div>
+
+                <div class="glossary-item" data-term="acp">
+                  <div class="glossary-item__term">ACP (Agent Communication Protocol)</div>
+                  <div class="glossary-item__def">A protocol defining how agents exchange structured messages, including task requests, status updates, and results. Ensures interoperability between agents built on different frameworks.</div>
+                  <div class="glossary-item__module">Module 04 &mdash; Autonomy &amp; Collaboration</div>
+                </div>
+
+                <div class="glossary-item" data-term="agent card">
+                  <div class="glossary-item__term">Agent Card</div>
+                  <div class="glossary-item__def">A machine-readable JSON document that describes an agent's capabilities, supported input/output formats, and authentication requirements. Used in the A2A protocol for agent discovery and task routing.</div>
+                  <div class="glossary-item__module">Module 04 &mdash; Autonomy &amp; Collaboration</div>
+                </div>
+
+                <div class="glossary-item" data-term="agentops">
+                  <div class="glossary-item__term">AgentOps</div>
+                  <div class="glossary-item__def">The discipline of operating AI agents in production, encompassing observability, CI/CD pipelines, evaluation gates, deployment strategies, and versioning. The agent equivalent of MLOps and DevOps.</div>
+                  <div class="glossary-item__module">Module 05 &mdash; AgentOps</div>
+                </div>
+
+                <div class="glossary-item" data-term="agentic rag">
+                  <div class="glossary-item__term">Agentic RAG</div>
+                  <div class="glossary-item__def">An advanced retrieval pattern where the agent autonomously decides when to retrieve, what to retrieve, and how to combine multiple retrieval results. Unlike basic RAG, the agent can reformulate queries, chain retrievals, and validate relevance before generating answers.</div>
+                  <div class="glossary-item__module">Module 07 &mdash; RAG &amp; Retrieval</div>
+                </div>
+
+                <div class="glossary-item" data-term="anp">
+                  <div class="glossary-item__term">ANP (Agent Network Protocol)</div>
+                  <div class="glossary-item__def">A protocol for organizing agents into discoverable networks where they can advertise services and be found by other agents needing those capabilities.</div>
+                  <div class="glossary-item__module">Module 04 &mdash; Autonomy &amp; Collaboration</div>
+                </div>
+
+                <div class="glossary-item" data-term="bm25">
+                  <div class="glossary-item__term">BM25</div>
+                  <div class="glossary-item__def">A keyword-based ranking function used in information retrieval. Scores documents by term frequency and inverse document frequency. Often combined with vector search in hybrid retrieval approaches for RAG systems.</div>
+                  <div class="glossary-item__module">Module 07 &mdash; RAG &amp; Retrieval</div>
+                </div>
+
+                <div class="glossary-item" data-term="canary deployment">
+                  <div class="glossary-item__term">Canary Deployment</div>
+                  <div class="glossary-item__def">A deployment strategy that routes a small percentage of traffic (e.g., one region's stores) to the new agent version while the majority stays on the current version. If metrics degrade, the canary is rolled back without affecting most users.</div>
+                  <div class="glossary-item__module">Module 05 &mdash; AgentOps</div>
+                </div>
+
+                <div class="glossary-item" data-term="circuit breaker">
+                  <div class="glossary-item__term">Circuit Breaker</div>
+                  <div class="glossary-item__def">A fault-tolerance pattern that stops an agent from repeatedly calling a failing service. After a threshold of failures, the circuit "opens" and returns a fallback response instead of attempting more calls, preventing cascading failures.</div>
+                  <div class="glossary-item__module">Module 04 &mdash; Autonomy &amp; Collaboration</div>
+                </div>
+
+                <div class="glossary-item" data-term="context cliff">
+                  <div class="glossary-item__term">Context Cliff</div>
+                  <div class="glossary-item__def">The sharp drop in LLM performance that occurs when the context window is nearly full. Unlike gradual degradation, the model's accuracy can fall off suddenly as token usage approaches the limit, causing missed instructions and hallucinations.</div>
+                  <div class="glossary-item__module">Module 06 &mdash; Context Engineering</div>
+                </div>
+
+                <div class="glossary-item" data-term="context engineering">
+                  <div class="glossary-item__term">Context Engineering</div>
+                  <div class="glossary-item__def">The practice of strategically managing what information goes into an LLM's context window. Includes token budgeting, prompt caching, semantic caching, and prioritizing high-value context (schema, instructions, relevant history) over low-value content.</div>
+                  <div class="glossary-item__module">Module 06 &mdash; Context Engineering</div>
+                </div>
+
+                <div class="glossary-item" data-term="dag">
+                  <div class="glossary-item__term">DAG (Directed Acyclic Graph)</div>
+                  <div class="glossary-item__def">A graph structure with directed edges and no cycles. Used in agent orchestration (LangGraph) to define execution flows where tasks depend on previous task outputs, and in data pipelines (Airflow) to model ETL dependencies.</div>
+                  <div class="glossary-item__module">Module 01 &mdash; Architecture Foundation</div>
+                </div>
+
+                <div class="glossary-item" data-term="dvc">
+                  <div class="glossary-item__term">DVC (Data Version Control)</div>
+                  <div class="glossary-item__def">A version control system for data and ML models that works alongside Git. Tracks large datasets, model files, and pipeline stages so that agent training data and evaluation sets can be versioned alongside code.</div>
+                  <div class="glossary-item__module">Module 05 &mdash; AgentOps</div>
+                </div>
+
+                <div class="glossary-item" data-term="embedding drift">
+                  <div class="glossary-item__term">Embedding Drift</div>
+                  <div class="glossary-item__def">A gradual degradation in retrieval quality that occurs when the embedding model used to encode documents differs from the model used at query time, or when the underlying data distribution shifts over time, causing previously relevant results to rank lower.</div>
+                  <div class="glossary-item__module">Module 07 &mdash; RAG &amp; Retrieval</div>
+                </div>
+
+                <div class="glossary-item" data-term="etl">
+                  <div class="glossary-item__term">ETL (Extract, Transform, Load)</div>
+                  <div class="glossary-item__def">A data pipeline pattern that extracts data from source systems, transforms it (cleaning, joining, aggregating), and loads it into a target data warehouse. The data backbone that feeds the tables agents query against.</div>
+                  <div class="glossary-item__module">Module 03 &mdash; Persona Design</div>
+                </div>
+
+                <div class="glossary-item" data-term="evaluation gate">
+                  <div class="glossary-item__term">Evaluation Gate</div>
+                  <div class="glossary-item__def">An automated checkpoint in the CI/CD pipeline that runs a golden dataset against the agent and blocks deployment if accuracy, safety, or performance metrics fall below defined thresholds. The agent equivalent of a test suite that must pass before merge.</div>
+                  <div class="glossary-item__module">Module 05 &mdash; AgentOps</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== F - L ===== -->
+          <div class="collapsible open glossary-group reveal reveal--delay-1" data-group="f-l">
+            <div class="collapsible__header">
+              <span style="font-family: var(--font-mono); font-size: var(--font-lg); font-weight: 700;">F &ndash; L</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+
+                <div class="glossary-item" data-term="golden dataset">
+                  <div class="glossary-item__term">Golden Dataset</div>
+                  <div class="glossary-item__def">A curated set of test queries with known correct answers, covering happy paths, edge cases, and failure scenarios. Used in evaluation gates to measure agent accuracy before deployment. Typically includes 50+ representative queries spanning all supported metric types.</div>
+                  <div class="glossary-item__module">Module 05 &mdash; AgentOps</div>
+                </div>
+
+                <div class="glossary-item" data-term="guardrails">
+                  <div class="glossary-item__term">Guardrails</div>
+                  <div class="glossary-item__def">Programmatic constraints that limit what an agent can do. Types include scope checking (environment boundaries), PII masking (redacting sensitive data), rate limiting (preventing runaway queries), output filtering (blocking harmful content), and authorization (role-based access).</div>
+                  <div class="glossary-item__module">Module 03 &mdash; Persona Design</div>
+                </div>
+
+                <div class="glossary-item" data-term="hitl">
+                  <div class="glossary-item__term">HITL (Human-in-the-Loop)</div>
+                  <div class="glossary-item__def">A design pattern where a human reviews and approves agent actions before they execute, particularly for high-stakes operations like modifying production data, sending reports to executives, or making financial decisions.</div>
+                  <div class="glossary-item__module">Module 03 &mdash; Persona Design</div>
+                </div>
+
+                <div class="glossary-item" data-term="llm">
+                  <div class="glossary-item__term">LLM (Large Language Model)</div>
+                  <div class="glossary-item__def">The foundational AI model that powers an agent's reasoning, natural language understanding, and text generation. In a data agent, the LLM interprets user questions, selects tools, generates SQL, and formats responses. Common examples include GPT-4, Claude, and Gemini.</div>
+                  <div class="glossary-item__module">Module 01 &mdash; Architecture Foundation</div>
+                </div>
+
+                <div class="glossary-item" data-term="llm-as-judge">
+                  <div class="glossary-item__term">LLM-as-Judge</div>
+                  <div class="glossary-item__def">An evaluation technique where a separate LLM scores the quality of an agent's responses against reference answers. Used in evaluation gates when human review is too slow, but less reliable than deterministic checks for factual accuracy.</div>
+                  <div class="glossary-item__module">Module 05 &mdash; AgentOps</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== M - R ===== -->
+          <div class="collapsible open glossary-group reveal reveal--delay-2" data-group="m-r">
+            <div class="collapsible__header">
+              <span style="font-family: var(--font-mono); font-size: var(--font-lg); font-weight: 700;">M &ndash; R</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+
+                <div class="glossary-item" data-term="mcp">
+                  <div class="glossary-item__term">MCP (Model Context Protocol)</div>
+                  <div class="glossary-item__def">Anthropic's open protocol that standardizes how LLMs connect to external data sources and tools. Provides a universal interface so agents can access databases, APIs, and file systems through a consistent connector pattern.</div>
+                  <div class="glossary-item__module">Module 04 &mdash; Autonomy &amp; Collaboration</div>
+                </div>
+
+                <div class="glossary-item" data-term="mlops">
+                  <div class="glossary-item__term">MLOps</div>
+                  <div class="glossary-item__def">The practice of deploying and maintaining machine learning models in production. AgentOps extends MLOps concepts (versioning, monitoring, CI/CD) to the unique challenges of autonomous agents, including prompt versioning and tool behavior tracking.</div>
+                  <div class="glossary-item__module">Module 05 &mdash; AgentOps</div>
+                </div>
+
+                <div class="glossary-item" data-term="model cascading">
+                  <div class="glossary-item__term">Model Cascading</div>
+                  <div class="glossary-item__def">A cost optimization pattern that routes simple queries to smaller, cheaper models and only escalates to larger, more expensive models for complex questions. Reduces average cost per query while maintaining quality on hard tasks.</div>
+                  <div class="glossary-item__module">Module 09 &mdash; Cost &amp; Economics</div>
+                </div>
+
+                <div class="glossary-item" data-term="nps">
+                  <div class="glossary-item__term">NPS (Net Promoter Score)</div>
+                  <div class="glossary-item__def">A user satisfaction metric measuring how likely users are to recommend the data agent to colleagues. Tracked as part of agent governance to quantify the business value and user adoption of the deployed agent.</div>
+                  <div class="glossary-item__module">Module 10 &mdash; Semantic Layer &amp; Agent UX</div>
+                </div>
+
+                <div class="glossary-item" data-term="opa">
+                  <div class="glossary-item__term">OPA (Open Policy Agent)</div>
+                  <div class="glossary-item__def">A general-purpose policy engine that externalizes authorization decisions from application code. In agent systems, OPA evaluates whether a given agent action is permitted based on declarative policies written in Rego.</div>
+                  <div class="glossary-item__module">Module 08 &mdash; Agent Security</div>
+                </div>
+
+                <div class="glossary-item" data-term="pii">
+                  <div class="glossary-item__term">PII (Personally Identifiable Information)</div>
+                  <div class="glossary-item__def">Data that can identify an individual: names, emails, phone numbers, SSNs, addresses. Data agents must mask or redact PII before including it in responses, especially when the requesting user lacks authorization to view individual records.</div>
+                  <div class="glossary-item__module">Module 03 &mdash; Persona Design</div>
+                </div>
+
+                <div class="glossary-item" data-term="prompt caching">
+                  <div class="glossary-item__term">Prompt Caching</div>
+                  <div class="glossary-item__def">An optimization where the LLM provider caches the tokenized prefix of a prompt (system instructions, schema definitions) so repeated calls with the same prefix only pay for new tokens. Reduces latency and cost for agents with large static context.</div>
+                  <div class="glossary-item__module">Module 06 &mdash; Context Engineering</div>
+                </div>
+
+                <div class="glossary-item" data-term="prompt injection">
+                  <div class="glossary-item__term">Prompt Injection</div>
+                  <div class="glossary-item__def">A security attack where malicious input is crafted to override an agent's system prompt or instructions. For data agents, this could mean tricking the agent into revealing unauthorized data, executing harmful queries, or bypassing guardrails.</div>
+                  <div class="glossary-item__module">Module 08 &mdash; Agent Security</div>
+                </div>
+
+                <div class="glossary-item" data-term="rag">
+                  <div class="glossary-item__term">RAG (Retrieval-Augmented Generation)</div>
+                  <div class="glossary-item__def">A pattern that enhances LLM responses by retrieving relevant context from external data sources before generating an answer. For data agents, RAG retrieves schema documentation, metric definitions, and example queries to improve SQL generation accuracy.</div>
+                  <div class="glossary-item__module">Module 07 &mdash; RAG &amp; Retrieval</div>
+                </div>
+
+                <div class="glossary-item" data-term="rbac">
+                  <div class="glossary-item__term">RBAC (Role-Based Access Control)</div>
+                  <div class="glossary-item__def">An access control model that assigns permissions to roles (store manager, analyst, admin) rather than individual users. Each agent persona inherits the permissions of its assigned role, limiting what data and actions it can access.</div>
+                  <div class="glossary-item__module">Module 03 &mdash; Persona Design</div>
+                </div>
+
+                <div class="glossary-item" data-term="react">
+                  <div class="glossary-item__term">ReAct (Reasoning + Acting)</div>
+                  <div class="glossary-item__def">An agent reasoning pattern that interleaves thinking (reasoning about the problem) with acting (calling tools). The agent thinks about what to do, acts, observes the result, then reasons about the next step. The core loop powering most LLM-based agents.</div>
+                  <div class="glossary-item__module">Module 01 &mdash; Architecture Foundation</div>
+                </div>
+
+                <div class="glossary-item" data-term="roc">
+                  <div class="glossary-item__term">ROC (Receiver Operating Characteristic)</div>
+                  <div class="glossary-item__def">A diagnostic curve plotting true positive rate against false positive rate at various thresholds. Used in agent evaluation to measure how well the agent distinguishes between queries it can answer correctly and queries it should escalate or decline.</div>
+                  <div class="glossary-item__module">Module 05 &mdash; AgentOps</div>
+                </div>
+
+                <div class="glossary-item" data-term="rrf">
+                  <div class="glossary-item__term">RRF (Reciprocal Rank Fusion)</div>
+                  <div class="glossary-item__def">A technique for combining results from multiple retrieval methods (e.g., keyword search and vector search) into a single ranked list. Assigns scores based on rank position in each list, producing better results than either method alone.</div>
+                  <div class="glossary-item__module">Module 07 &mdash; RAG &amp; Retrieval</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- ===== S - Z ===== -->
+          <div class="collapsible open glossary-group reveal reveal--delay-3" data-group="s-z">
+            <div class="collapsible__header">
+              <span style="font-family: var(--font-mono); font-size: var(--font-lg); font-weight: 700;">S &ndash; Z</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+
+                <div class="glossary-item" data-term="sso">
+                  <div class="glossary-item__term">SSO (Single Sign-On)</div>
+                  <div class="glossary-item__def">An authentication mechanism that allows users to log in once and access multiple applications without re-entering credentials. Data agents inherit user identity from SSO to enforce role-based access without requiring a separate login.</div>
+                  <div class="glossary-item__module">Module 08 &mdash; Agent Security</div>
+                </div>
+
+                <div class="glossary-item" data-term="semantic caching">
+                  <div class="glossary-item__term">Semantic Caching</div>
+                  <div class="glossary-item__def">A caching strategy that stores agent responses keyed by the semantic meaning of the query rather than exact text. Questions like "Q3 revenue" and "third quarter sales" hit the same cache entry, reducing redundant LLM calls and database queries.</div>
+                  <div class="glossary-item__module">Module 06 &mdash; Context Engineering</div>
+                </div>
+
+                <div class="glossary-item" data-term="semantic layer">
+                  <div class="glossary-item__term">Semantic Layer</div>
+                  <div class="glossary-item__def">An abstraction between raw database tables and business questions that provides canonical metric definitions. Maps business terms ("revenue") to precise calculations (SUM(total_amount) WHERE status='completed'), ensuring consistent answers across all users and agents.</div>
+                  <div class="glossary-item__module">Module 10 &mdash; Semantic Layer &amp; Agent UX</div>
+                </div>
+
+                <div class="glossary-item" data-term="shadow mode">
+                  <div class="glossary-item__term">Shadow Mode</div>
+                  <div class="glossary-item__def">A deployment pattern where the new agent version processes real queries in parallel with the current version, but only the current version's answers are delivered to users. Shadow results are logged for comparison, allowing risk-free evaluation on production traffic.</div>
+                  <div class="glossary-item__module">Module 05 &mdash; AgentOps</div>
+                </div>
+
+                <div class="glossary-item" data-term="token budgeting">
+                  <div class="glossary-item__term">Token Budgeting</div>
+                  <div class="glossary-item__def">The practice of allocating a fixed token budget to each section of the agent's context window (system prompt, schema, conversation history, RAG context, reasoning space). Prevents any single section from consuming the entire context and triggering a context cliff.</div>
+                  <div class="glossary-item__module">Module 06 &mdash; Context Engineering</div>
+                </div>
+
+                <div class="glossary-item" data-term="tot">
+                  <div class="glossary-item__term">ToT (Tree of Thoughts)</div>
+                  <div class="glossary-item__def">An advanced reasoning pattern where the agent explores multiple reasoning paths simultaneously, evaluates each branch, and selects the most promising one. More thorough than linear ReAct but more expensive in tokens and latency.</div>
+                  <div class="glossary-item__module">Module 01 &mdash; Architecture Foundation</div>
+                </div>
+
+                <div class="glossary-item" data-term="zero trust">
+                  <div class="glossary-item__term">Zero Trust</div>
+                  <div class="glossary-item__def">A security model that assumes no implicit trust for any user, agent, or system. Every request is authenticated and authorized regardless of origin. For data agents, this means validating permissions on every query, not just at session start.</div>
+                  <div class="glossary-item__module">Module 08 &mdash; Agent Security</div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /glossaryContainer -->
+
+        <!-- Back to Home -->
+        <div style="text-align: center; padding: var(--space-8) 0;">
+          <a href="index.html" class="btn btn--primary btn--large">&larr; Back to Academy Home</a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Glossary
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="js/progress.js"></script>
+  <script src="js/nav.js"></script>
+  <script>
+    Nav.init(null);
+
+    // --- Glossary Search ---
+    (function() {
+      const searchInput = document.getElementById('glossarySearch');
+      const container = document.getElementById('glossaryContainer');
+      const countEl = document.getElementById('glossaryCount');
+      const noResults = document.getElementById('noResults');
+      const allItems = container.querySelectorAll('.glossary-item');
+      const totalCount = allItems.length;
+
+      searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+        let visibleCount = 0;
+
+        allItems.forEach(item => {
+          const term = item.querySelector('.glossary-item__term').textContent.toLowerCase();
+          const def = item.querySelector('.glossary-item__def').textContent.toLowerCase();
+          const mod = item.querySelector('.glossary-item__module').textContent.toLowerCase();
+          const match = !query || term.includes(query) || def.includes(query) || mod.includes(query);
+          item.style.display = match ? '' : 'none';
+          if (match) visibleCount++;
+        });
+
+        // Show/hide group headers based on visible children
+        container.querySelectorAll('.glossary-group').forEach(group => {
+          const visibleChildren = group.querySelectorAll('.glossary-item:not([style*="display: none"])');
+          group.style.display = visibleChildren.length > 0 ? '' : 'none';
+        });
+
+        countEl.textContent = visibleCount + ' of ' + totalCount + ' terms';
+        noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+      });
+    })();
+  </script>
+</body>
+</html>

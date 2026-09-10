@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 08 Quiz Checkpoint &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .celebration {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      margin-top: var(--space-8);
+      background: var(--bg-surface);
+      border: 2px solid var(--stroke-secondary);
+      border-radius: var(--border-radius-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .celebration::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary), var(--accent-success));
+    }
+    .celebration__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--stroke-secondary);
+      margin-bottom: var(--space-6);
+      font-size: var(--font-4xl);
+      box-shadow: 0 0 30px var(--glow-teal);
+    }
+    .celebration__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+    }
+    .celebration__subtitle {
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .celebration__next {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-8);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      background: var(--bg-primary);
+      margin-top: var(--space-4);
+    }
+    .celebration__next-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .celebration__next-title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--stroke-dim);
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+    }
+    .stat-box__value {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-2);
+    }
+    .stat-box__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    @media (max-width: 640px) {
+      .stats-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 08</span>
+        <span class="separator">/</span>
+        <span class="current">Quiz Checkpoint</span>
+      </div>
+    </nav>
+
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- ===== HEADER ===== -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Module 08 &mdash; Final Assessment</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Security, Privacy &amp; Compliance Checkpoint</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            Marcus Webb's security hardening sprint transformed DataPulse from a pen-test nightmare to an enterprise-grade system. From the 7 AM phone call that revealed prompt injection vulnerabilities to the Board demo that earned executive approval, AcmeCorp's journey through security, privacy, and compliance is now yours to test. Prove you can protect 200 stores and their customers' data.
+          </p>
+
+          <div class="stats-row reveal">
+            <div class="stat-box">
+              <div class="stat-box__value">5</div>
+              <div class="stat-box__label">Threat Types</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">6</div>
+              <div class="stat-box__label">Security Layers</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">4</div>
+              <div class="stat-box__label">Regulations</div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">How It Works</div>
+            <div class="callout__text">
+              Select one answer per question. Each question is drawn from a real challenge Marcus, Maya, and Priya faced while hardening DataPulse at AcmeCorp. Once all 10 are answered, click "Check Answers" to see your score with detailed explanations. Aim for 80% (8/10) for an excellent rating.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== QUIZ ===== -->
+        <section class="section">
+          <div id="quiz-container"></div>
+        </section>
+
+        <!-- ===== CELEBRATION ===== -->
+        <div id="celebration-section" class="reveal" style="display: none;">
+          <div class="celebration">
+            <div class="celebration__badge">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="celebration__title">Module 08 Complete</div>
+            <p class="celebration__subtitle">
+              You have mastered the security architecture that Marcus Webb built for AcmeCorp's DataPulse. From Zero Trust foundations to CCPA-compliant deletion workflows, your agents are now built for production-grade trust and compliance across all 200 stores.
+            </p>
+            <a href="../module-09/01-cost-economics.html" class="btn btn--primary btn--large">
+              Start Module 09 &rarr;
+            </a>
+            <div class="celebration__next">
+              <div>
+                <div class="celebration__next-label">Up Next</div>
+                <div class="celebration__next-title">Module 09 &mdash; Cost Optimization</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="03-security-implementation.html" class="page-nav__title">Security Implementation</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../module-09/01-cost-economics.html" class="page-nav__title">Cost Optimization</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Security, Privacy &amp; Compliance
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    QuizEngine.init('quiz-container', [
+      {
+        question: 'When AcmeCorp\'s pen testers embedded malicious instructions in a product description and DataPulse obeyed, which threat category did this represent?',
+        options: [
+          'Data Exfiltration',
+          'Tool Misuse',
+          'Indirect Prompt Injection',
+          'Identity Compromise'
+        ],
+        correct: 2,
+        explanation: 'Indirect prompt injection occurs when malicious instructions are embedded in data sources the agent reads, such as database records, documents, or web content. The pen testers planted attack text in AcmeCorp\'s Shopify product catalog, and DataPulse treated the retrieved data as instructions, executing the attacker\'s commands.'
+      },
+      {
+        question: 'What is the core principle of Zero Trust that Marcus Webb applied to DataPulse\'s security architecture?',
+        options: [
+          'Trust agents deployed on internal networks',
+          'No agent is trusted by default; every action must be verified',
+          'Grant full access and monitor for abuse',
+          'Trust agents after they pass an initial security scan'
+        ],
+        correct: 1,
+        explanation: 'Zero Trust requires that no agent is trusted by default, regardless of network location or deployment context. Marcus configured DataPulse so that every request is independently authenticated and authorized, even though it runs on AcmeCorp\'s own infrastructure.'
+      },
+      {
+        question: 'What defense technique did Marcus embed in DataPulse\'s system prompt to detect if the prompt was leaked?',
+        options: [
+          'Input sanitization',
+          'LLM-based classifiers',
+          'Canary tokens',
+          'Instruction/data separation'
+        ],
+        correct: 2,
+        explanation: 'Canary tokens are unique, secret strings placed in the system prompt. If a DataPulse response ever contains a canary token, it proves the system prompt was exposed &mdash; triggering an immediate alert to Marcus\'s security dashboard and automatic session termination.'
+      },
+      {
+        question: 'Which PII masking approach did Marcus choose for DataPulse\'s output pipeline, replacing real values with opaque tokens recoverable via a secure vault?',
+        options: [
+          'Redaction',
+          'Replacement',
+          'Tokenization',
+          'Encryption'
+        ],
+        correct: 2,
+        explanation: 'Tokenization replaces PII with opaque tokens (e.g., "[EMAIL_TOKEN_7f3a]") while storing the original value in a secure vault. This allows DataPulse to work without seeing real PII from AcmeCorp\'s customer records, while the original can be recovered when authorized.'
+      },
+      {
+        question: 'Under the EU AI Act, what is the maximum fine for violations involving prohibited AI practices?',
+        options: [
+          '2% of global annual revenue',
+          '4% of global annual revenue',
+          '7% of global annual revenue or EUR 35 million',
+          '10% of global annual revenue or EUR 50 million'
+        ],
+        correct: 2,
+        explanation: 'The EU AI Act imposes fines up to 7% of global annual revenue or EUR 35 million (whichever is greater) for the most serious violations involving prohibited AI practices. Marcus and Raj classified DataPulse as high-risk because it processes customer data across AcmeCorp\'s 200 stores.'
+      },
+      {
+        question: 'When AcmeCorp received a CCPA deletion request, Maya discovered that deleting source data did not remove PII from which system?',
+        options: [
+          'PostgreSQL warehouse',
+          'Salesforce CRM',
+          'RAG vector embeddings',
+          'Shopify order history'
+        ],
+        correct: 2,
+        explanation: 'Maya discovered that DataPulse\'s RAG system had embedded customer transaction summaries (including names and emails) into vector representations. Deleting the source data from the PostgreSQL warehouse does not delete these embeddings &mdash; requiring a full re-embedding and index rebuild for affected vectors.'
+      },
+      {
+        question: 'In AcmeCorp\'s RBAC matrix, where did Marcus enforce permissions for DataPulse &mdash; and why not at the prompt level?',
+        options: [
+          'In the LLM system prompt only',
+          'At the tool layer via a policy engine',
+          'In the user interface before the request is sent',
+          'In the vector database during retrieval'
+        ],
+        correct: 1,
+        explanation: 'Permissions are enforced at the tool layer via a deterministic policy engine. Marcus learned from the pen test that relying on LLM prompt-level instructions for access control is unreliable &mdash; the pen testers bypassed DataPulse\'s prompt-level access instructions in under 10 minutes.'
+      },
+      {
+        question: 'Which security layer caught 47 instances of customer email addresses in DataPulse responses before they reached AcmeCorp\'s end users?',
+        options: [
+          'Input Layer',
+          'Authorization Layer',
+          'Tool Layer',
+          'Output Layer'
+        ],
+        correct: 3,
+        explanation: 'The Output Layer scans all agent responses before they reach the end user. Priya Sharma\'s PII masking pipeline caught 47 instances of customer emails in DataPulse\'s staging environment during the first month, replacing them with masked tokens before any user saw them.'
+      },
+      {
+        question: 'What are the four essential fields that every audit trail entry should capture in AcmeCorp\'s logging system?',
+        options: [
+          'Name, Date, Query, Cost',
+          'Who, What, When, Why',
+          'Input, Output, Model, Tokens',
+          'User, Role, Permission, Result'
+        ],
+        correct: 1,
+        explanation: 'Every audit trail entry captures Who (user identity and role), What (tool called and data accessed), When (timestamp and duration), and Why (original query, reasoning trace, and policy decision). Marcus writes these to S3 with Object Lock for immutability.'
+      },
+      {
+        question: 'During the Board demo on Day 14 of the Security Sprint, what happened when Marcus ran the same prompt injection attack that originally compromised DataPulse?',
+        options: [
+          'DataPulse still obeyed the injected instruction',
+          'The input sanitization classifier flagged it, the output filter caught it, and the audit log recorded the blocked attack',
+          'The system crashed and required a restart',
+          'The attack was only blocked by the output filter'
+        ],
+        correct: 1,
+        explanation: 'During the live Board demo, Marcus ran the exact same product description injection. This time, the input sanitization classifier flagged it before it reached the LLM, the output filter caught the attempt in the response, and the audit log recorded the blocked attack &mdash; all in under 300 milliseconds. Multiple layers worked together as defense in depth.'
+      }
+    ]);
+
+    // Show celebration after quiz submission
+    const quizContainer = document.getElementById('quiz-container');
+    if (quizContainer) {
+      const observer = new MutationObserver(function(mutations) {
+        const scoreCard = quizContainer.querySelector('.score-card');
+        if (scoreCard) {
+          const celebration = document.getElementById('celebration-section');
+          if (celebration) {
+            celebration.style.display = 'block';
+            setTimeout(function() {
+              celebration.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+          }
+          observer.disconnect();
+        }
+      });
+      observer.observe(quizContainer, { childList: true, subtree: true });
+    }
+
+    Nav.init('m08-quiz-final');
+  </script>
+</body>
+</html>

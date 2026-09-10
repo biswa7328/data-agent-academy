@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Context Engineering &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .budget-bar {
+      display: flex;
+      width: 100%;
+      height: 40px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      margin: var(--space-4) 0 var(--space-2);
+      border: 1px dashed var(--stroke-dim);
+    }
+    .budget-bar__segment {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      font-weight: 600;
+      color: var(--bg-primary);
+      transition: width 0.6s ease;
+    }
+    .budget-bar__segment--system { background: #A100FF; }
+    .budget-bar__segment--schema { background: #CC00FF; }
+    .budget-bar__segment--history { background: #f59e0b; }
+    .budget-bar__segment--rag { background: #a78bfa; }
+    .budget-bar__segment--reasoning { background: #fb7185; }
+    .budget-bar__segment--output { background: #34d399; }
+    .budget-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-top: var(--space-2);
+    }
+    .budget-legend__item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+    }
+    .budget-legend__dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .cliff-chart {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      margin: var(--space-6) 0;
+      border-left: 2px solid var(--stroke-dim);
+      border-bottom: 2px solid var(--stroke-dim);
+    }
+    .cliff-chart__line {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .cliff-chart__label {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+    }
+    .cliff-chart__label--y { left: -40px; }
+    .cliff-chart__label--x { bottom: -24px; }
+    .cliff-chart__zone {
+      position: absolute;
+      bottom: 0;
+      height: 100%;
+      border-right: 2px dashed var(--accent-warning);
+    }
+    .cliff-chart__zone-label {
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--accent-warning);
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 06</span>
+        <span class="separator">/</span>
+        <span class="current">Context Engineering</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 06 &mdash; Lesson 01</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Context Engineering</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Tuesday morning, Maya Chen stared at DataPulse's logs and felt her stomach drop. AcmeCorp's data agent was loading all 500 table schemas into every single prompt &mdash; burning 80K tokens before it even started reasoning. The problem was never the model. It was what they were feeding it.
+          </p>
+        </header>
+
+        <!-- Blueprint SVG Diagram: Context Window Budget -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">DATAPULSE &mdash; CONTEXT WINDOW BUDGET</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+            <defs>
+              <filter id="glow1" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="2" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+              <style>
+                .svg-label { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 9px; }
+                .svg-label-sm { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; font-size: 7.5px; }
+                .svg-title { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 11px; font-weight: 600; }
+                .svg-dim { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; font-size: 8px; }
+                .svg-accent { font-family: 'JetBrains Mono', monospace; fill: #A100FF; font-size: 9px; font-weight: 600; }
+              </style>
+            </defs>
+
+            <!-- Dimension markers: 128K Context Window -->
+            <line x1="60" y1="30" x2="60" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="640" y1="30" x2="640" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+            <line x1="60" y1="35" x2="640" y2="35" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
+            <!-- Corner brackets -->
+            <polyline points="60,45 60,35 70,35" fill="none" stroke="#A100FF" stroke-width="1.5"/>
+            <polyline points="630,35 640,35 640,45" fill="none" stroke="#A100FF" stroke-width="1.5"/>
+            <text x="350" y="30" text-anchor="middle" class="svg-dim">128K CONTEXT WINDOW</text>
+
+            <!-- Optimized budget bar (top) -->
+            <text x="60" y="58" class="svg-title">OPTIMIZED BUDGET</text>
+            <!-- System Prompt 10% -->
+            <rect x="60" y="65" width="58" height="30" rx="2" fill="rgba(74,158,255,0.2)" stroke="#A100FF" stroke-width="1.5"/>
+            <text x="89" y="84" text-anchor="middle" class="svg-label-sm">System</text>
+            <text x="89" y="93" text-anchor="middle" class="svg-label-sm">10%</text>
+            <!-- Schema Context 20% -->
+            <rect x="120" y="65" width="116" height="30" rx="2" fill="rgba(45,212,191,0.2)" stroke="#CC00FF" stroke-width="1.5"/>
+            <text x="178" y="84" text-anchor="middle" class="svg-label-sm">Schema Ctx</text>
+            <text x="178" y="93" text-anchor="middle" class="svg-label-sm">20%</text>
+            <!-- Conversation History 15% -->
+            <rect x="238" y="65" width="87" height="30" rx="2" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="1.5"/>
+            <text x="281" y="84" text-anchor="middle" class="svg-label-sm">History</text>
+            <text x="281" y="93" text-anchor="middle" class="svg-label-sm">15%</text>
+            <!-- RAG Results 20% -->
+            <rect x="327" y="65" width="116" height="30" rx="2" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="1.5"/>
+            <text x="385" y="84" text-anchor="middle" class="svg-label-sm">RAG</text>
+            <text x="385" y="93" text-anchor="middle" class="svg-label-sm">20%</text>
+            <!-- Reasoning Space 25% -->
+            <rect x="445" y="65" width="145" height="30" rx="2" fill="rgba(251,113,133,0.2)" stroke="#fb7185" stroke-width="1.5"/>
+            <text x="517" y="84" text-anchor="middle" class="svg-label-sm">Reasoning</text>
+            <text x="517" y="93" text-anchor="middle" class="svg-label-sm">25%</text>
+            <!-- Output 10% -->
+            <rect x="592" y="65" width="48" height="30" rx="2" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1.5"/>
+            <text x="616" y="84" text-anchor="middle" class="svg-label-sm">Out</text>
+            <text x="616" y="93" text-anchor="middle" class="svg-label-sm">10%</text>
+
+            <!-- Divider -->
+            <line x1="60" y1="130" x2="640" y2="130" stroke="#334155" stroke-width="1" stroke-dasharray="6,4"/>
+            <text x="350" y="148" text-anchor="middle" class="svg-dim">BEFORE vs AFTER</text>
+
+            <!-- BEFORE: left side -->
+            <text x="180" y="175" text-anchor="middle" class="svg-title">BEFORE</text>
+            <!-- Giant schema block -->
+            <rect x="60" y="185" width="240" height="60" rx="3" fill="rgba(239,68,68,0.12)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,3"/>
+            <text x="180" y="210" text-anchor="middle" class="svg-label" style="fill:#ef4444;">Schema: 80K tokens</text>
+            <text x="180" y="225" text-anchor="middle" class="svg-label-sm">(everything else squeezed)</text>
+            <!-- Red X -->
+            <line x1="310" y1="200" x2="330" y2="220" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+            <line x1="330" y1="200" x2="310" y2="220" stroke="#ef4444" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- AFTER: right side -->
+            <text x="510" y="175" text-anchor="middle" class="svg-title">AFTER</text>
+            <!-- Mini budget bar -->
+            <rect x="380" y="185" width="26" height="60" rx="2" fill="rgba(74,158,255,0.2)" stroke="#A100FF" stroke-width="1"/>
+            <rect x="408" y="185" width="52" height="60" rx="2" fill="rgba(45,212,191,0.2)" stroke="#CC00FF" stroke-width="1"/>
+            <rect x="462" y="185" width="38" height="60" rx="2" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="1"/>
+            <rect x="502" y="185" width="52" height="60" rx="2" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="1"/>
+            <rect x="556" y="185" width="54" height="60" rx="2" fill="rgba(251,113,133,0.2)" stroke="#fb7185" stroke-width="1"/>
+            <rect x="612" y="185" width="28" height="60" rx="2" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="1"/>
+            <!-- Green check -->
+            <polyline points="508,255 514,263 526,247" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+            <!-- Accuracy comparison -->
+            <rect x="100" y="290" width="200" height="36" rx="4" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="200" y="313" text-anchor="middle" class="svg-label" style="fill:#ef4444;">42% accuracy</text>
+
+            <!-- Arrow -->
+            <line x1="320" y1="308" x2="380" y2="308" stroke="#a0a0a0" stroke-width="1.5" marker-end="url(#arrowDim1)"/>
+            <defs><marker id="arrowDim1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a0a0a0"/></marker></defs>
+
+            <rect x="400" y="290" width="200" height="36" rx="4" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="500" y="313" text-anchor="middle" class="svg-label" style="fill:#10b981;">89% accuracy</text>
+
+            <!-- Bottom label -->
+            <text x="350" y="365" text-anchor="middle" class="svg-accent" filter="url(#glow1)">TOKEN BUDGET ALLOCATION DRIVES ACCURACY</text>
+          </svg>
+        </div>
+
+        <div class="hero-line"></div>
+
+        <!-- Section 1: Beyond Prompt Engineering -->
+        <section class="section">
+          <div class="section-label reveal">The Paradigm Shift</div>
+          <h2 class="reveal">Why Prompt Engineering Is No Longer Enough</h2>
+          <p class="reveal reveal--delay-1">
+            Raj Patel, AcmeCorp's VP of Analytics, pulled Maya aside after the Tuesday standup. "DataPulse answered the Southwest revenue question with 42% accuracy yesterday. Sofia Torres &mdash; Store #47 &mdash; called me directly. She said the numbers were so wrong she went back to spreadsheets." Maya had spent weeks perfecting the system prompt, hand-tuning every instruction. But prompt engineering focuses on crafting the right instructions. Context engineering goes further &mdash; it is the discipline of building dynamic systems that populate the entire context window with exactly the right information at exactly the right time. For production AI agents, the challenge is not just what you ask the model, but what the model can see when it reasons.
+          </p>
+
+          <p class="reveal reveal--delay-1">
+            Maya realized that no amount of prompt polish would help if DataPulse was drowning in 80K tokens of schema data before it could think about Sofia's question. The model did not need better instructions &mdash; it needed a smarter context pipeline. That insight shifted her team's entire approach, and it should shift yours too.
+          </p>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Prompt Engineering</div>
+              <div class="bp-card__body">Static instructions written by a human. Works for single-turn, simple tasks. Breaks down with complex agents &mdash; as Maya discovered when DataPulse's carefully crafted prompts still produced wrong answers because the context was bloated.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Context Engineering</div>
+              <div class="bp-card__body">Dynamic system that assembles the full context &mdash; instructions, data, history, retrieved knowledge &mdash; at runtime for each turn. This is what Maya needed to build: a pipeline that feeds DataPulse only what it needs, when it needs it.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Production Reality</div>
+              <div class="bp-card__body">A data agent must juggle schemas, conversation history, retrieved docs, reasoning space, and output tokens &mdash; all within a fixed window. AcmeCorp's 500+ table PostgreSQL warehouse made this especially brutal.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Six Principles -->
+        <section class="section">
+          <div class="section-label reveal">Core Framework</div>
+          <h2 class="reveal">6 Principles of Context Engineering</h2>
+          <p class="reveal">
+            Over the next two weeks, Maya and her team rebuilt DataPulse's context pipeline from scratch. Each principle below maps to a specific failure they encountered and fixed at AcmeCorp. Lena Park, the product manager, tracked each change against their accuracy benchmarks.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-1">
+            <div class="bp-card">
+              <div class="bp-card__number">P1</div>
+              <div class="bp-card__title">JIT Context Loading</div>
+              <div class="bp-card__body">Load context just-in-time rather than upfront. Instead of stuffing all 500 table schemas from AcmeCorp's PostgreSQL warehouse into every prompt, retrieve only the 3&ndash;5 schemas relevant to the current query. When Sofia asks about Store #47's revenue, DataPulse now loads <code>fact_sales</code>, <code>dim_stores</code>, and <code>dim_dates</code> &mdash; not the entire catalog.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">P2</div>
+              <div class="bp-card__title">Context Window Budgeting</div>
+              <div class="bp-card__body">Allocate your token budget like a financial budget. Derek Kim, AcmeCorp's CFO, understood this analogy immediately when Maya presented it at the project review: every token spent on schema descriptions is a token not available for reasoning. Set hard limits per category and monitor utilization.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">P3</div>
+              <div class="bp-card__title">Summarization Checkpoints</div>
+              <div class="bp-card__body">In long conversations, periodically summarize earlier turns into compact state. Raj noticed that DataPulse's accuracy cratered after turn 5 of multi-step analyses. The fix: replace 20 turns of dialogue with a structured summary that captures key decisions, resolved ambiguities, and current task state.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">P4</div>
+              <div class="bp-card__title">Context Isolation via Sub-Agents</div>
+              <div class="bp-card__body">Delegate specialized tasks to sub-agents with their own focused context windows. Maya split DataPulse into specialized workers: a schema-lookup agent does not need conversation history; a SQL-generation agent does not need the business glossary. Each sub-agent stays lean.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">P5</div>
+              <div class="bp-card__title">Scratchpads &amp; External State</div>
+              <div class="bp-card__body">Offload intermediate reasoning to external storage. Write partial results, plans, and working memory to a scratchpad outside the context window. Bring results back in only when needed. This was critical for AcmeCorp's complex cross-regional comparisons that required multiple intermediate calculations.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">P6</div>
+              <div class="bp-card__title">Token-Efficient Tool Design</div>
+              <div class="bp-card__body">Design tool inputs and outputs to minimize token consumption. Return structured, compact results rather than verbose descriptions. Maya redesigned DataPulse's schema tool to return column-name abbreviations and omit null fields, cutting schema tokens by 40%.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: Context Window Budget -->
+        <section class="section">
+          <div class="section-label reveal">Token Allocation</div>
+          <h2 class="reveal">Context Window Budget for a 128K Agent</h2>
+          <p class="reveal reveal--delay-1">
+            A 128K context window sounds enormous, but production agents fill it faster than you expect. When Maya presented AcmeCorp's token budget to the team, Derek Kim asked the pointed question: "So we were spending 62% of our budget on schema data and leaving 8% for the model to actually think?" That was exactly the problem. Here is the recommended allocation Maya arrived at for DataPulse:
+          </p>
+
+          <div class="reveal reveal--delay-2">
+            <div class="budget-bar">
+              <div class="budget-bar__segment budget-bar__segment--system" style="width: 10%;">10%</div>
+              <div class="budget-bar__segment budget-bar__segment--schema" style="width: 20%;">20%</div>
+              <div class="budget-bar__segment budget-bar__segment--history" style="width: 15%;">15%</div>
+              <div class="budget-bar__segment budget-bar__segment--rag" style="width: 20%;">20%</div>
+              <div class="budget-bar__segment budget-bar__segment--reasoning" style="width: 25%;">25%</div>
+              <div class="budget-bar__segment budget-bar__segment--output" style="width: 10%;">10%</div>
+            </div>
+            <div class="budget-legend">
+              <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #A100FF;"></div>System Prompt (10% &asymp; 12.8K)</div>
+              <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #CC00FF;"></div>Schema Context (20% &asymp; 25.6K)</div>
+              <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #f59e0b;"></div>Conversation History (15% &asymp; 19.2K)</div>
+              <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #a78bfa;"></div>RAG / Retrieved Docs (20% &asymp; 25.6K)</div>
+              <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #fb7185;"></div>Reasoning Space (25% &asymp; 32K)</div>
+              <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #34d399;"></div>Output Tokens (10% &asymp; 12.8K)</div>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-3" style="margin-top: var(--space-6);">
+            <div class="callout__label">Key Insight</div>
+            <div class="callout__text">
+              The <strong>reasoning space</strong> (25%) is the most overlooked allocation. Models need room to think &mdash; chain-of-thought, planning, self-correction. Maya's original DataPulse build filled 90% of the window with schema context, leaving the model's reasoning quality to collapse. When she protected 25% for reasoning, accuracy on Sofia Torres's store-level queries jumped from 42% to 78% overnight &mdash; before any RAG improvements.
+            </div>
+          </div>
+
+          <div class="collapsible reveal" style="margin-top: var(--space-6);">
+            <button class="collapsible__header" onclick="this.parentElement.classList.toggle('is-open')">
+              <span>Token Budget Math: AcmeCorp Breakdown</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>Maya mapped DataPulse's 128K window to concrete allocations. Priya Sharma, the data steward, validated each category against real query patterns from AcmeCorp's first month of production usage.</p>
+                <table style="width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--font-sm);">
+                  <thead>
+                    <tr style="border-bottom: 1px dashed var(--stroke-dim);">
+                      <th style="text-align: left; padding: var(--space-3);">Category</th>
+                      <th style="text-align: right; padding: var(--space-3);">Tokens</th>
+                      <th style="text-align: left; padding: var(--space-3);">What It Holds at AcmeCorp</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr style="border-bottom: 1px dashed var(--stroke-dim);">
+                      <td style="padding: var(--space-3);">System Prompt</td>
+                      <td style="text-align: right; padding: var(--space-3);">~12,800</td>
+                      <td style="padding: var(--space-3);">DataPulse persona, SQL guardrails, star-schema rules, tool definitions</td>
+                    </tr>
+                    <tr style="border-bottom: 1px dashed var(--stroke-dim);">
+                      <td style="padding: var(--space-3);">Schema Context</td>
+                      <td style="text-align: right; padding: var(--space-3);">~25,600</td>
+                      <td style="padding: var(--space-3);">JIT-loaded table/column definitions (5&ndash;8 tables from 500+, including fact_sales, dim_products, dim_stores, dim_dates)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px dashed var(--stroke-dim);">
+                      <td style="padding: var(--space-3);">Conversation</td>
+                      <td style="text-align: right; padding: var(--space-3);">~19,200</td>
+                      <td style="padding: var(--space-3);">Last 8&ndash;12 turns + summarized earlier context from multi-step analyses</td>
+                    </tr>
+                    <tr style="border-bottom: 1px dashed var(--stroke-dim);">
+                      <td style="padding: var(--space-3);">RAG Results</td>
+                      <td style="text-align: right; padding: var(--space-3);">~25,600</td>
+                      <td style="padding: var(--space-3);">Retrieved business glossary entries (e.g., "revenue" = SUM(total_amount) WHERE status='completed'), documentation chunks</td>
+                    </tr>
+                    <tr style="border-bottom: 1px dashed var(--stroke-dim);">
+                      <td style="padding: var(--space-3);">Reasoning</td>
+                      <td style="text-align: right; padding: var(--space-3);">~32,000</td>
+                      <td style="padding: var(--space-3);">Chain-of-thought, query planning, self-checks against AcmeCorp's fiscal calendar (Q3 = July-September)</td>
+                    </tr>
+                    <tr>
+                      <td style="padding: var(--space-3);">Output</td>
+                      <td style="text-align: right; padding: var(--space-3);">~12,800</td>
+                      <td style="padding: var(--space-3);">Final response, SQL queries, formatted results for the 200-store network</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: The Context Cliff -->
+        <section class="section">
+          <div class="section-label reveal">Performance Threshold</div>
+          <h2 class="reveal">The Context Cliff</h2>
+          <p class="reveal reveal--delay-1">
+            Research shows that model performance degrades sharply once retrieved context exceeds approximately <strong>2,500 tokens</strong>. This is the "context cliff" &mdash; the point where adding more retrieved information actually hurts accuracy instead of helping it. Maya discovered this the hard way: after switching to JIT loading, she initially retrieved 15 schema chunks per query, thinking more was better. Priya Sharma's accuracy audit showed the numbers getting <em>worse</em>. When Maya trimmed retrieval to the top 5 chunks (staying under 2,500 tokens), accuracy climbed back up.
+          </p>
+
+          <div class="reveal reveal--delay-2" style="margin: var(--space-8) 0;">
+            <svg viewBox="0 0 600 220" style="width: 100%; max-width: 600px;" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Axes -->
+              <line x1="60" y1="180" x2="580" y2="180" stroke="var(--stroke-dim)" stroke-width="1"/>
+              <line x1="60" y1="20" x2="60" y2="180" stroke="var(--stroke-dim)" stroke-width="1"/>
+              <!-- Y labels -->
+              <text x="50" y="35" fill="var(--text-secondary)" font-family="monospace" font-size="10" text-anchor="end">95%</text>
+              <text x="50" y="100" fill="var(--text-secondary)" font-family="monospace" font-size="10" text-anchor="end">70%</text>
+              <text x="50" y="178" fill="var(--text-secondary)" font-family="monospace" font-size="10" text-anchor="end">40%</text>
+              <!-- X labels -->
+              <text x="60" y="198" fill="var(--text-secondary)" font-family="monospace" font-size="10" text-anchor="middle">0</text>
+              <text x="200" y="198" fill="var(--text-secondary)" font-family="monospace" font-size="10" text-anchor="middle">1K</text>
+              <text x="300" y="198" fill="var(--text-secondary)" font-family="monospace" font-size="10" text-anchor="middle">2.5K</text>
+              <text x="440" y="198" fill="var(--text-secondary)" font-family="monospace" font-size="10" text-anchor="middle">5K</text>
+              <text x="560" y="198" fill="var(--text-secondary)" font-family="monospace" font-size="10" text-anchor="middle">10K</text>
+              <!-- Cliff zone -->
+              <line x1="300" y1="20" x2="300" y2="180" stroke="var(--accent-warning)" stroke-width="1.5" stroke-dasharray="6 4"/>
+              <text x="310" y="34" fill="var(--accent-warning)" font-family="monospace" font-size="10">Context Cliff</text>
+              <!-- Performance curve -->
+              <path d="M 60 30 Q 120 28 200 32 Q 250 34 290 38 Q 310 55 340 85 Q 400 130 480 155 Q 540 165 580 170" stroke="#A100FF" stroke-width="2.5" fill="none"/>
+              <!-- Axis titles -->
+              <text x="320" y="215" fill="var(--text-secondary)" font-family="monospace" font-size="11" text-anchor="middle">Retrieved Context (tokens)</text>
+              <text x="15" y="100" fill="var(--text-secondary)" font-family="monospace" font-size="11" text-anchor="middle" transform="rotate(-90, 15, 100)">Accuracy</text>
+            </svg>
+          </div>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-3">
+            <div class="bp-card">
+              <div class="bp-card__title">Below the Cliff (&lt; 2,500 tokens)</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);">
+                  <span class="badge badge--green" data-tip="Context stays under the ~2,500-token cliff where model attention is strongest">Optimal Zone</span>
+                </div>
+                Model can attend to all retrieved context effectively. Accuracy remains high (90%+). Each additional relevant chunk genuinely helps. This is where DataPulse operates now &mdash; loading 5&ndash;8 lean schema definitions that stay within budget.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Above the Cliff (&gt; 2,500 tokens)</div>
+              <div class="bp-card__body">
+                <div class="tag-row" style="margin-bottom: var(--space-2);">
+                  <span class="badge badge--amber" data-tip="Exceeding the context cliff causes the model to ignore or hallucinate key facts">Danger Zone</span>
+                </div>
+                Relevant information gets lost in noise. Model starts hallucinating or ignoring key facts. More context = worse results. This was DataPulse v1 &mdash; dumping AcmeCorp's full 500-table catalog and wondering why Sofia Torres got wrong numbers.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 5: Context Rot -->
+        <section class="section">
+          <div class="section-label reveal">The Silent Killer</div>
+          <h2 class="reveal">Context Rot: When Good Context Goes Bad</h2>
+          <p class="reveal reveal--delay-1">
+            Three weeks after Maya's context overhaul, something strange started happening. DataPulse's accuracy &mdash; stable at 89% &mdash; began slipping. Not dramatically, not all at once. Priya Sharma caught it first during her Friday audit: accuracy had drifted to 83%. The following Friday, 79%. By the fourth week, 71%. "Nothing changed in the code," Maya insisted. But Priya had a different theory: "The code didn't change. The <em>world</em> did."
+          </p>
+
+          <p class="reveal reveal--delay-1">
+            This is <strong>context rot</strong> &mdash; the gradual degradation of context quality over time, even when the context engineering pipeline itself is working perfectly. Unlike the context cliff (too much context at once), context rot is insidious. The context window looks healthy. The token budget is balanced. But the information inside has silently become stale, contradictory, or misleading.
+          </p>
+
+          <div class="callout reveal reveal--delay-2">
+            <div class="callout__label">AcmeCorp Reality Check</div>
+            <div class="callout__text">
+              Priya traced the accuracy drop to three distinct rot sources that had accumulated over four weeks. Each one was invisible in isolation but devastating in combination. Maya realized that context engineering isn't a one-time build &mdash; it requires continuous maintenance, like tending a garden that's constantly growing weeds.
+            </div>
+          </div>
+
+          <h3 class="reveal" style="margin-top: var(--space-8);">The Three Types of Context Rot</h3>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-1" style="margin-top: var(--space-4);">
+            <div class="bp-card">
+              <div class="bp-card__number" style="color: var(--accent-error);">R1</div>
+              <div class="bp-card__title">Schema Drift Rot</div>
+              <div class="bp-card__body">
+                The underlying data schema changes but the agent's cached knowledge doesn't update. At AcmeCorp, the data team renamed <code>customer_email</code> to <code>contact_email</code> during a Q2 migration. DataPulse's RAG embeddings still referenced the old column name. Queries didn't fail &mdash; they returned empty results, and the model confidently reported "no customer email data found" for two weeks before anyone noticed.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number" style="color: var(--accent-error);">R2</div>
+              <div class="bp-card__title">Glossary Drift Rot</div>
+              <div class="bp-card__body">
+                Business definitions evolve but the semantic layer's embedded definitions don't. AcmeCorp's finance team quietly changed the revenue definition to exclude "pending returns" after a quarterly audit. The RAG system still served the old definition. DataPulse was calculating revenue correctly &mdash; by an outdated standard. Derek Kim caught the $340K discrepancy during a board prep review.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number" style="color: var(--accent-error);">R3</div>
+              <div class="bp-card__title">Embedding Staleness Rot</div>
+              <div class="bp-card__body">
+                The vector embeddings used for retrieval gradually lose alignment with the actual data. New tables, new columns, and new query patterns emerge, but the embedding index reflects a snapshot from weeks ago. When AcmeCorp launched a loyalty program with a new <code>loyalty_members</code> table, DataPulse couldn't find it because it wasn't in the embedding index &mdash; leading to hallucinated table names.
+              </div>
+            </div>
+          </div>
+
+          <h3 class="reveal" style="margin-top: var(--space-8);">Detecting Context Rot</h3>
+          <p class="reveal reveal--delay-1">
+            Priya built a "context health dashboard" that became Maya's first check every Monday morning. The key insight: you can't prevent context rot, but you can detect it early and remediate before it compounds.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2" style="margin-top: var(--space-4);">
+            <div class="bp-card">
+              <div class="bp-card__title">Freshness Signals</div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: var(--space-3);">Track the age of every context source fed to the agent:</p>
+                <div class="tag-row">
+                  <span class="badge badge--green" data-tip="How recently the schema vector index was rebuilt from the data warehouse">Schema index age</span>
+                  <span class="badge badge--green" data-tip="Timestamp of the last business glossary sync into the RAG index">Glossary last-updated</span>
+                  <span class="badge badge--green" data-tip="Date the current vector embeddings were generated; stale embeddings miss new tables">Embedding generation date</span>
+                  <span class="badge badge--green" data-tip="Last successful run of the ETL pipeline that feeds data into the agent's context">ETL pipeline last-run</span>
+                </div>
+                <p style="margin-top: var(--space-3); font-size: var(--font-sm); color: var(--text-secondary);">
+                  At AcmeCorp, Priya set a rule: any context source older than 48 hours triggers a warning. Older than 7 days triggers a hard block &mdash; the agent admits "my knowledge of this table may be outdated" rather than serving stale data.
+                </p>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">Accuracy Drift Detection</div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: var(--space-3);">Compare agent outputs against known-good answers on a rolling basis:</p>
+                <div class="tag-row">
+                  <span class="badge badge--amber" data-tip="Run known-good queries weekly and compare outputs against expected answers">Weekly golden-query audit</span>
+                  <span class="badge badge--amber" data-tip="Track confidence scores over time to detect gradual degradation in retrieval quality">Confidence score trending</span>
+                  <span class="badge badge--amber" data-tip="Sudden increase in queries returning no results signals schema drift or missing embeddings">Empty-result rate spike</span>
+                  <span class="badge badge--amber" data-tip="How often users manually correct the agent's answers, indicating context staleness">User correction frequency</span>
+                </div>
+                <p style="margin-top: var(--space-3); font-size: var(--font-sm); color: var(--text-secondary);">
+                  Priya runs 50 "golden queries" with known correct answers every Friday. When accuracy drops more than 5% week-over-week, she investigates. The empty-result spike was what first tipped her off to the <code>customer_email</code> rename.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="reveal" style="margin-top: var(--space-8);">The Context Rot Remediation Pipeline</h3>
+          <p class="reveal reveal--delay-1">
+            After the four-week accuracy slide, Maya and Priya built an automated remediation pipeline that runs nightly. It became one of AcmeCorp's most critical pieces of infrastructure &mdash; Raj calls it "the immune system for DataPulse."
+          </p>
+
+          <div class="reveal reveal--delay-2" style="margin-top: var(--space-4);">
+            <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-4);">
+                <div style="min-width: 48px; height: 48px; border: 2px dashed var(--stroke-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: var(--font-sm); color: var(--stroke-primary);">1</div>
+                <div>
+                  <strong style="color: var(--text-primary);">Schema Diff Check</strong>
+                  <p style="font-size: var(--font-sm); color: var(--text-secondary); margin: 0;">Compare current PostgreSQL schema against last-indexed version. Flag any added, renamed, or dropped columns. At AcmeCorp, this catches 3&ndash;5 schema changes per week from the data engineering team's regular migrations.</p>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: var(--space-4);">
+                <div style="min-width: 48px; height: 48px; border: 2px dashed var(--stroke-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: var(--font-sm); color: var(--stroke-secondary);">2</div>
+                <div>
+                  <strong style="color: var(--text-primary);">Glossary Sync</strong>
+                  <p style="font-size: var(--font-sm); color: var(--text-secondary); margin: 0;">Pull the latest metric definitions from AcmeCorp's semantic layer and compare against embedded versions. Re-embed any definitions that changed. This caught the revenue definition update before it could cause another discrepancy.</p>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: var(--space-4);">
+                <div style="min-width: 48px; height: 48px; border: 2px dashed var(--accent-warning); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: var(--font-sm); color: var(--accent-warning);">3</div>
+                <div>
+                  <strong style="color: var(--text-primary);">Incremental Re-Embedding</strong>
+                  <p style="font-size: var(--font-sm); color: var(--text-secondary); margin: 0;">Only re-embed changed or new content rather than regenerating the entire vector index. Maya designed this to run in under 90 seconds for AcmeCorp's typical nightly change volume (10&ndash;20 modified entries out of 2,000+).</p>
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: var(--space-4);">
+                <div style="min-width: 48px; height: 48px; border: 2px dashed var(--accent-success); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: var(--font-sm); color: var(--accent-success);">4</div>
+                <div>
+                  <strong style="color: var(--text-primary);">Golden Query Regression</strong>
+                  <p style="font-size: var(--font-sm); color: var(--text-secondary); margin: 0;">Run 50 golden queries post-remediation and compare results against known-good answers. If accuracy drops below 85%, the pipeline blocks deployment and pages Maya. This has fired twice in three months &mdash; both times catching issues before users saw them.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal" style="margin-top: var(--space-8);">
+            <div class="callout__label">AcmeCorp Results</div>
+            <div class="callout__text">
+              Since implementing the remediation pipeline, DataPulse's accuracy has held steady between 88&ndash;92% with no multi-week drift. Priya's Friday audits went from "putting out fires" to "confirming everything's green." The pipeline catches schema changes within 24 hours instead of weeks. Maya's key lesson: <strong>"Context engineering is not a build-once activity. It's an ongoing discipline. The context cliff will kill you on day one. Context rot will kill you on day thirty."</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: AcmeCorp Scenario -->
+        <section class="section">
+          <div class="section-label reveal">Case Study</div>
+          <h2 class="reveal">AcmeCorp: From 42% to 89% &mdash; Maya's Context Overhaul</h2>
+
+          <div class="callout reveal reveal--delay-1">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              Week one of DataPulse's deployment was a disaster. The agent had access to AcmeCorp's entire PostgreSQL warehouse &mdash; <strong>500+ table schemas</strong>, a business glossary with 2,000+ terms, and store managers across 200 locations holding multi-turn conversations asking complex analytical questions. With a 128K context window, Maya's team initially tried loading everything upfront. By conversation turn 5, the context window was full. Accuracy had collapsed to 42%. Sofia Torres started a spreadsheet revolt in the Southwest region. Raj Patel's phone would not stop ringing.
+            </div>
+          </div>
+
+          <p class="reveal reveal--delay-2">
+            Maya spent the following two weeks rebuilding DataPulse's context pipeline, applying every principle above. Lena Park tracked accuracy daily, sharing results in Slack. The transformation was dramatic:
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-3">
+            <div class="bp-card">
+              <div class="bp-card__title">Before: Naive Loading (Week 1)</div>
+              <div class="bp-card__body">
+                All 500 schemas loaded upfront (80K tokens consumed before reasoning). By turn 5, conversation history + schemas exceeded the window. Reasoning space collapsed to under 8%. Accuracy dropped to 42%. Sofia Torres reported getting Southwest region totals that were off by millions. Derek Kim flagged the compute costs &mdash; every query was burning maximum tokens for minimum accuracy.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">After: Context Engineering (Week 3)</div>
+              <div class="bp-card__body">
+                JIT schema loading (5&ndash;8 relevant tables per turn, pulled from the star schema). Summarization checkpoints every 6 turns. Schema sub-agent with isolated context. RAG capped at 2K tokens. Accuracy stable at 89% through turn 20+. Sofia Torres went from spreadsheet fallback to running her weekly store reviews entirely through DataPulse. Marcus Webb from Security even approved it for Shopify inventory queries.
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal" style="margin-top: var(--space-6);">
+            <button class="collapsible__header" onclick="this.parentElement.classList.toggle('is-open')">
+              <span>Deep Dive: AcmeCorp's JIT Schema Loading Strategy</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>Maya implemented a three-tier schema loading system, designed around AcmeCorp's actual query patterns from the first month of deployment. Priya Sharma analyzed 2,400 queries to determine which tables appeared most frequently.</p>
+                <p><strong>Tier 1 &mdash; Always Loaded (3 tables):</strong> The core star-schema fact and dimension tables (<code>fact_sales</code>, <code>dim_stores</code>, <code>dim_dates</code>) that appear in 78% of queries. These consume ~3K tokens and are always in context. Sofia Torres's store-level questions almost always hit these three.</p>
+                <p><strong>Tier 2 &mdash; JIT Retrieved (2&ndash;5 tables):</strong> Retrieved based on the current query via semantic search over table descriptions. Examples: <code>dim_products</code>, <code>dim_customers</code>, <code>promotion_calendar</code>. Each adds ~500&ndash;800 tokens. When a regional manager asks about product mix, DataPulse pulls <code>dim_products</code> on the fly.</p>
+                <p><strong>Tier 3 &mdash; On-Demand (remaining 490+ tables):</strong> Only loaded when the schema sub-agent explicitly identifies them as needed. These are rare-use tables like <code>vendor_contracts</code>, <code>warehouse_transfers</code>, or the <code>loyalty_members</code> table added in Q2. The sub-agent runs in its own context window, evaluates if the table is relevant, and returns only the needed columns.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Page Navigation -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="../../index.html" class="page-nav__title">Home</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="02-rag-architecture.html" class="page-nav__title">RAG Architecture</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m06-context-engineering');</script>
+</body>
+</html>

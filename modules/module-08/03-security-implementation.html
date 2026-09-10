@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Practical Security Implementation &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .code-block {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-4) var(--space-5);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      line-height: 1.7;
+      overflow-x: auto;
+      margin: var(--space-4) 0;
+      color: var(--text-secondary);
+    }
+    .code-block .keyword { color: var(--stroke-primary); }
+    .code-block .string { color: var(--stroke-secondary); }
+    .code-block .comment { color: var(--text-secondary); opacity: 0.5; }
+    .rbac-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--space-6) 0;
+      font-size: var(--font-sm);
+    }
+    .rbac-table th,
+    .rbac-table td {
+      padding: var(--space-3) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      text-align: center;
+      vertical-align: middle;
+    }
+    .rbac-table th {
+      background: var(--bg-surface);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-secondary);
+    }
+    .rbac-table td:first-child {
+      text-align: left;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--stroke-primary);
+    }
+    .rbac-allow { color: var(--accent-success); font-weight: 700; }
+    .rbac-deny { color: #ef4444; font-weight: 700; }
+    .rbac-approval { color: #f59e0b; font-weight: 700; }
+    .ir-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-3);
+      margin: var(--space-6) 0;
+    }
+    .ir-step {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-4);
+      text-align: center;
+      position: relative;
+    }
+    .ir-step__number {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      margin-bottom: var(--space-2);
+    }
+    .ir-step__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .ir-step__body {
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .audit-fields {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+    }
+    .audit-field {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      text-align: center;
+    }
+    .audit-field__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      color: var(--stroke-primary);
+      margin-bottom: var(--space-2);
+    }
+    .audit-field__desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    @media (max-width: 768px) {
+      .ir-steps { grid-template-columns: 1fr; }
+      .audit-fields { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 08</span>
+        <span class="separator">/</span>
+        <span class="current">Security Implementation</span>
+      </div>
+    </nav>
+
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- ===== HEADER ===== -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 08 &mdash; Lesson 03</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Practical Security Implementation</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Marcus Webb has the threat model and the compliance requirements. Now he needs to build the actual security infrastructure. He creates a "Security Sprint" &mdash; two weeks to harden DataPulse before the Board's quarterly review. The clock is ticking.
+          </p>
+        </header>
+
+        <!-- ===== INLINE SVG DIAGRAM: SECURITY SPRINT TIMELINE ===== -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">MARCUS'S SECURITY SPRINT — 14 DAYS</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+            <defs>
+              <filter id="sp-glow-green">
+                <feGaussianBlur stdDeviation="5" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="700" height="380" rx="8" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
+
+            <!-- Title -->
+            <text x="350" y="35" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10" font-weight="700" text-anchor="middle">SECURITY SPRINT TIMELINE</text>
+
+            <!-- Main timeline line -->
+            <line x1="55" y1="160" x2="645" y2="160" stroke="#334155" stroke-width="2" stroke-dasharray="6,3"/>
+
+            <!-- Day tick marks -->
+            <line x1="55" y1="150" x2="55" y2="170" stroke="#334155" stroke-width="1"/>
+            <line x1="645" y1="150" x2="645" y2="170" stroke="#334155" stroke-width="1"/>
+
+            <!-- NODE 1: ZERO TRUST (Day 1-2, blue) -->
+            <circle cx="90" cy="160" r="18" fill="rgba(74,158,255,0.15)" stroke="#A100FF" stroke-width="2"/>
+            <text x="90" y="164" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">ZT</text>
+            <text x="90" y="195" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="7" font-weight="600" text-anchor="middle">ZERO TRUST</text>
+            <text x="90" y="208" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Day 1-2</text>
+            <!-- Dashed connector -->
+            <line x1="108" y1="160" x2="152" y2="160" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <!-- NODE 2: INPUT DEFENSE (Day 3-4, teal) -->
+            <circle cx="170" cy="160" r="18" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-width="2"/>
+            <text x="170" y="164" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">ID</text>
+            <text x="170" y="120" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="7" font-weight="600" text-anchor="middle">INPUT</text>
+            <text x="170" y="131" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="7" font-weight="600" text-anchor="middle">DEFENSE</text>
+            <text x="170" y="144" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Day 3-4</text>
+            <line x1="188" y1="160" x2="232" y2="160" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <!-- NODE 3: PII MASKING (Day 5-6, amber) -->
+            <circle cx="250" cy="160" r="18" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="2"/>
+            <text x="250" y="164" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">PM</text>
+            <text x="250" y="195" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="7" font-weight="600" text-anchor="middle">PII MASKING</text>
+            <text x="250" y="208" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Day 5-6</text>
+            <line x1="268" y1="160" x2="312" y2="160" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <!-- NODE 4: AUDIT LOGS (Day 7-8, blue) -->
+            <circle cx="330" cy="160" r="18" fill="rgba(74,158,255,0.15)" stroke="#A100FF" stroke-width="2"/>
+            <text x="330" y="164" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">AL</text>
+            <text x="330" y="120" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="7" font-weight="600" text-anchor="middle">AUDIT LOGS</text>
+            <text x="330" y="133" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Day 7-8</text>
+            <line x1="348" y1="160" x2="392" y2="160" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <!-- NODE 5: RBAC (Day 9-10, teal) -->
+            <circle cx="410" cy="160" r="18" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-width="2"/>
+            <text x="410" y="164" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">RB</text>
+            <text x="410" y="195" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="7" font-weight="600" text-anchor="middle">RBAC</text>
+            <text x="410" y="208" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Day 9-10</text>
+            <line x1="428" y1="160" x2="472" y2="160" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <!-- NODE 6: INCIDENT RESPONSE (Day 11-12, amber) -->
+            <circle cx="490" cy="160" r="18" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="2"/>
+            <text x="490" y="164" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">IR</text>
+            <text x="490" y="120" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="7" font-weight="600" text-anchor="middle">INCIDENT</text>
+            <text x="490" y="131" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="7" font-weight="600" text-anchor="middle">RESPONSE</text>
+            <text x="490" y="144" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Day 11-12</text>
+            <line x1="508" y1="160" x2="547" y2="160" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <!-- NODE 7: TESTING (Day 13, green) -->
+            <circle cx="565" cy="160" r="18" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="2"/>
+            <text x="565" y="164" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">TS</text>
+            <text x="565" y="195" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="7" font-weight="600" text-anchor="middle">TESTING</text>
+            <text x="565" y="208" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Day 13</text>
+            <line x1="583" y1="160" x2="622" y2="160" stroke="#10b981" stroke-width="1" stroke-dasharray="4,3"/>
+
+            <!-- NODE 8: BOARD DEMO (Day 14, green, glowing, larger) -->
+            <circle cx="645" cy="160" r="24" fill="rgba(16,185,129,0.2)" stroke="#10b981" stroke-width="2.5" filter="url(#sp-glow-green)"/>
+            <text x="645" y="156" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">BOARD</text>
+            <text x="645" y="168" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">DEMO</text>
+            <text x="645" y="120" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="7" font-weight="600" text-anchor="middle">Day 14</text>
+
+            <!-- Progress bar background -->
+            <rect x="55" y="260" width="590" height="18" rx="4" fill="rgba(51,65,85,0.4)" stroke="#334155" stroke-width="1"/>
+
+            <!-- Progress bar gradient fill (red to green) -->
+            <defs>
+              <linearGradient id="sp-progress-grad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#ef4444"/>
+                <stop offset="30%" stop-color="#f59e0b"/>
+                <stop offset="60%" stop-color="#f59e0b"/>
+                <stop offset="85%" stop-color="#10b981"/>
+                <stop offset="100%" stop-color="#10b981"/>
+              </linearGradient>
+            </defs>
+            <rect x="57" y="262" width="586" height="14" rx="3" fill="url(#sp-progress-grad)" opacity="0.7"/>
+
+            <!-- Progress bar labels -->
+            <text x="100" y="273" fill="#0f172a" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">CRITICAL</text>
+            <text x="350" y="273" fill="#0f172a" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">HARDENING</text>
+            <text x="590" y="273" fill="#0f172a" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">SECURE</text>
+
+            <!-- Day markers below progress bar -->
+            <text x="55" y="300" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="start">DAY 1</text>
+            <text x="350" y="300" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">DAY 7</text>
+            <text x="645" y="300" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="end">DAY 14</text>
+
+            <!-- Bottom border line -->
+            <line x1="55" y1="330" x2="645" y2="330" stroke="#334155" stroke-width="0.5" stroke-dasharray="3,3"/>
+            <text x="350" y="350" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="9" text-anchor="middle" opacity="0.7">SECURITY SPRINT TIMELINE</text>
+          </svg>
+        </div>
+
+        <!-- ===== SPRINT TIMELINE CALLOUT ===== -->
+        <section class="section">
+          <div class="callout reveal">
+            <div class="callout__label">AcmeCorp &mdash; The Security Sprint Timeline</div>
+            <div class="callout__text">
+              <p style="margin-bottom: var(--space-3);">
+                Marcus posts a two-week sprint plan on AcmeCorp's engineering channel. Maya Chen assigns Priya Sharma full-time to the effort. The milestones: <strong>Day 1</strong> &mdash; Zero Trust architecture and credential rotation. <strong>Day 3</strong> &mdash; Input sanitization pipeline. <strong>Day 5</strong> &mdash; Output filtering for PII. <strong>Day 8</strong> &mdash; Audit logging infrastructure. <strong>Day 10</strong> &mdash; RBAC policy engine. <strong>Day 12</strong> &mdash; Incident response playbook. <strong>Day 14</strong> &mdash; The Board demo.
+              </p>
+              <p>
+                "We do not have the luxury of doing this in phases," Marcus tells the team. "Derek Kim is presenting DataPulse to the Board in two weeks. If we cannot demonstrate enterprise-grade security, the project gets shelved." Every pattern in this lesson maps directly to a day in Marcus's sprint.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 1: PII DETECTION AND MASKING ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 01 &mdash; Sprint Day 5</div>
+          <h2 class="reveal">PII Detection &amp; Masking</h2>
+          <p class="reveal reveal--delay-1">
+            PII masking operates at two points in the agent pipeline: <strong>pre-LLM</strong> (masking sensitive data before it enters the context window) and <strong>post-LLM</strong> (scanning responses before they reach the user). Both are essential. On Day 5 of the Security Sprint, Priya Sharma builds AcmeCorp's PII detection system using a dual approach &mdash; regex patterns for structured data and ML-based NER for everything else.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__number">R</div>
+              <div class="bp-card__title">Regex-Based Detection</div>
+              <div class="bp-card__body">
+                <p>Fast, deterministic pattern matching for structured PII formats. Priya configures these patterns to catch the most common PII in AcmeCorp's PostgreSQL warehouse:</p>
+                <ul style="padding-left: var(--space-5); margin-top: var(--space-3);">
+                  <li>SSN: <code>\d{3}-\d{2}-\d{4}</code></li>
+                  <li>Email: <code>[\w.+-]+@[\w-]+\.[\w.]+</code></li>
+                  <li>Credit Card: <code>\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}</code></li>
+                  <li>Phone: <code>\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}</code></li>
+                </ul>
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">M</div>
+              <div class="bp-card__title">ML-Based Detection</div>
+              <div class="bp-card__body">
+                <p>Named Entity Recognition (NER) models that catch what regex misses. This is critical for AcmeCorp because customer names in the Salesforce CRM include diverse formats:</p>
+                <ul style="padding-left: var(--space-5); margin-top: var(--space-3);">
+                  <li>Person names (including non-Western formats)</li>
+                  <li>Street addresses and postal codes</li>
+                  <li>Medical record numbers</li>
+                  <li>Context-dependent identifiers (employee IDs, account numbers)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal">
+            <div class="collapsible__header">
+              <span>Masking Strategy: Replace vs. Tokenize vs. Redact</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p><strong>Replace:</strong> Substitute real values with realistic but fake data (e.g., "John Smith" becomes "Alex Johnson"). Preserves data structure for downstream processing but requires a reversible mapping if the original is needed.</p>
+                <p style="margin-top: var(--space-3);"><strong>Tokenize:</strong> Replace values with opaque tokens (e.g., "john@acme.com" becomes "[EMAIL_TOKEN_7f3a]"). Best for pipelines where the original value must be recoverable via a secure vault, but the LLM never sees real PII. This is the approach Marcus chooses for DataPulse's output pipeline.</p>
+                <p style="margin-top: var(--space-3);"><strong>Redact:</strong> Remove entirely (e.g., "[REDACTED]"). Simplest approach but destroys context. Use for high-sensitivity fields like SSNs where even the format pattern is unnecessary.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">AcmeCorp &mdash; Day 5 Results</div>
+            <div class="callout__text">
+              <p>
+                Priya runs the PII masking pipeline against a sample of 10,000 DataPulse responses from AcmeCorp's staging environment. The results: <strong>47 instances</strong> of customer email addresses that would have reached end users unmasked. 12 instances of phone numbers embedded in natural language responses. 3 instances where DataPulse combined a customer's store location with purchase date and product category &mdash; enough to re-identify the individual even without a name. Marcus flags the inference attacks as the most dangerous category: "Regex will never catch these. The NER model plus contextual analysis is the only way."
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: PROMPT INJECTION DEFENSE ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 02 &mdash; Sprint Day 3</div>
+          <h2 class="reveal">Prompt Injection Defense</h2>
+          <p class="reveal reveal--delay-1">
+            Prompt injection is the most dangerous threat to AI agents because it subverts the agent's reasoning at its core. This is the vulnerability that started AcmeCorp's entire security journey &mdash; the pen testers' product description attack. Defense requires multiple overlapping techniques &mdash; no single method is sufficient. On Day 3 of the sprint, Marcus and Maya build four layers of injection defense for DataPulse.
+          </p>
+
+          <div class="card-grid card-grid--2 reveal reveal--delay-2">
+            <div class="bp-card">
+              <div class="bp-card__number">01</div>
+              <div class="bp-card__title">Input Sanitization</div>
+              <div class="bp-card__body">Strip or escape control characters, instruction-like patterns, and known injection payloads from user input before it reaches the LLM. Priya Sharma maintains a continuously updated blocklist of known attack patterns, seeded with every payload the pen testers used against DataPulse.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">02</div>
+              <div class="bp-card__title">Instruction / Data Separation</div>
+              <div class="bp-card__body">Place system instructions in a privileged prompt section and wrap all user-provided or retrieved data in explicit delimiters. DataPulse's system prompt is now isolated so that product descriptions from Shopify, CRM notes from Salesforce, and Google Sheets data are all treated as data, never as instructions.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">03</div>
+              <div class="bp-card__title">Canary Tokens</div>
+              <div class="bp-card__body">Embed unique, secret tokens in the system prompt. If any DataPulse response contains a canary token, it indicates the system prompt has been leaked &mdash; triggering an immediate alert to Marcus's security dashboard and automatic session termination.</div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__number">04</div>
+              <div class="bp-card__title">LLM-Based Classifiers</div>
+              <div class="bp-card__body">Use a separate, smaller LLM as a security gateway. It classifies each input as benign or potentially malicious before DataPulse processes it. This adds latency (~200ms at AcmeCorp's scale) but catches sophisticated attacks that pattern matching misses.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: RBAC ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 03 &mdash; Sprint Day 10</div>
+          <h2 class="reveal">Role-Based Access Control for Agents</h2>
+          <p class="reveal reveal--delay-1">
+            RBAC maps user roles to specific permissions and tools. The agent checks the caller's role before every action and restricts its capabilities accordingly. On Day 10, Marcus deploys AcmeCorp's permission matrix for DataPulse &mdash; defining exactly what each role can see, query, and export across the 200-store network.
+          </p>
+
+          <table class="rbac-table reveal reveal--delay-2">
+            <thead>
+              <tr>
+                <th>Role</th>
+                <th>SELECT queries</th>
+                <th>Aggregations</th>
+                <th>Cross-store data</th>
+                <th>PII access</th>
+                <th>Schema changes</th>
+                <th>Export data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Store Manager (Sofia Torres)</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-deny">Deny</td>
+                <td class="rbac-deny">Deny</td>
+                <td class="rbac-deny">Deny</td>
+                <td class="rbac-approval">Approval</td>
+              </tr>
+              <tr>
+                <td>Regional Director</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-deny">Deny</td>
+                <td class="rbac-deny">Deny</td>
+                <td class="rbac-allow">Allow</td>
+              </tr>
+              <tr>
+                <td>Data Analyst</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-approval">Masked</td>
+                <td class="rbac-deny">Deny</td>
+                <td class="rbac-allow">Allow</td>
+              </tr>
+              <tr>
+                <td>Data Engineer (Maya Chen)</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-approval">Masked</td>
+                <td class="rbac-approval">Approval</td>
+                <td class="rbac-allow">Allow</td>
+              </tr>
+              <tr>
+                <td>Admin (Marcus Webb)</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+                <td class="rbac-allow">Allow</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="collapsible reveal">
+            <div class="collapsible__header">
+              <span>Implementation Detail: Permission Enforcement</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>Permissions are enforced at the <strong>tool layer</strong>, not at the LLM prompt level. Each tool call passes through a policy engine that checks the caller's role and the requested operation. If the policy denies the action, the tool returns a structured error and the LLM never executes the operation.</p>
+                <p style="margin-top: var(--space-3);">This is critical: relying on the LLM to self-enforce access control is unreliable. Prompt-level instructions can be bypassed. Tool-level enforcement is deterministic and auditable. Marcus learned this lesson from the pen test &mdash; the testers bypassed DataPulse's prompt-level access instructions in under 10 minutes.</p>
+                <p style="margin-top: var(--space-3);"><strong>"Approval"</strong> entries in the matrix require human-in-the-loop confirmation before the tool executes. For example, when Sofia Torres at Store #47 requests a data export, DataPulse presents the intended action and waits for explicit approval from her regional director via a separate authenticated channel.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: AUDIT TRAILS ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 04 &mdash; Sprint Day 8</div>
+          <h2 class="reveal">Audit Trail Design</h2>
+          <p class="reveal reveal--delay-1">
+            Every agent action must be recorded in an immutable, append-only log. Audit trails serve three purposes: regulatory compliance (CCPA and SOX for AcmeCorp), security forensics, and operational debugging. On Day 8, Marcus deploys AcmeCorp's audit logging infrastructure, writing every DataPulse action to S3 with Object Lock enabled.
+          </p>
+
+          <div class="audit-fields reveal reveal--delay-2">
+            <div class="audit-field">
+              <div class="audit-field__label">Who</div>
+              <div class="audit-field__desc">User identity, role, session ID, and IP address</div>
+            </div>
+            <div class="audit-field">
+              <div class="audit-field__label">What</div>
+              <div class="audit-field__desc">Tool called, parameters, data accessed, response generated</div>
+            </div>
+            <div class="audit-field">
+              <div class="audit-field__label">When</div>
+              <div class="audit-field__desc">UTC timestamp, duration, sequence number within session</div>
+            </div>
+            <div class="audit-field">
+              <div class="audit-field__label">Why</div>
+              <div class="audit-field__desc">User query, agent reasoning trace, policy decision</div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal">
+            <div class="collapsible__header">
+              <span>Retention Policies and Storage</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p><strong>Hot storage (0-30 days):</strong> Full detail, immediately queryable. Used for active monitoring and incident investigation. Marcus configures real-time alerts for anomalous patterns &mdash; any DataPulse session that accesses more than 50 customer records triggers an immediate notification.</p>
+                <p style="margin-top: var(--space-3);"><strong>Warm storage (30-365 days):</strong> Compressed, queryable with latency. Used for compliance audits and trend analysis. Derek Kim's finance team queries this tier for SOX audit evidence.</p>
+                <p style="margin-top: var(--space-3);"><strong>Cold storage (1-7 years):</strong> Archived, retrieval within hours. Used for regulatory retention requirements (GDPR requires audit evidence for the duration of processing activities, and SOX requires 7-year retention for financial records).</p>
+                <p style="margin-top: var(--space-3);"><strong>Immutability:</strong> AcmeCorp uses S3 Object Lock in compliance mode for all DataPulse audit logs. Log entries are cryptographically chained so tampering is detectable. Even Marcus cannot delete or modify a log entry once written.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: INCIDENT RESPONSE ===== -->
+        <section class="section">
+          <div class="section-label reveal">Pattern 05 &mdash; Sprint Day 12</div>
+          <h2 class="reveal">Incident Response for Agents</h2>
+          <p class="reveal reveal--delay-1">
+            When an agent security incident occurs, the response must be swift and structured. On Day 12 of the Security Sprint, Marcus writes AcmeCorp's incident response playbook for DataPulse. The following five phases ensure that damage is contained and lessons are captured. He models the playbook on what the team <em>should</em> have done when the pen test results arrived.
+          </p>
+
+          <div class="ir-steps reveal reveal--delay-2">
+            <div class="ir-step">
+              <div class="ir-step__number">01</div>
+              <div class="ir-step__title">Detect</div>
+              <div class="ir-step__body">Automated alerts on anomalous patterns: unusual tool calls, PII in outputs, spike in token usage, failed auth attempts. ComplianceGuard monitors DataPulse in real time.</div>
+            </div>
+            <div class="ir-step">
+              <div class="ir-step__number">02</div>
+              <div class="ir-step__title">Contain</div>
+              <div class="ir-step__body">Immediately revoke the agent's credentials, suspend the affected session, and isolate the agent instance from AcmeCorp's production data across all 200 stores.</div>
+            </div>
+            <div class="ir-step">
+              <div class="ir-step__number">03</div>
+              <div class="ir-step__title">Investigate</div>
+              <div class="ir-step__body">Analyze audit logs and reasoning traces to identify the attack vector, scope of data exposure, and timeline of compromise. Priya Sharma leads forensic analysis.</div>
+            </div>
+            <div class="ir-step">
+              <div class="ir-step__number">04</div>
+              <div class="ir-step__title">Remediate</div>
+              <div class="ir-step__body">Patch the vulnerability, rotate all affected credentials in the PostgreSQL warehouse and S3 data lake, update detection rules, and redeploy with strengthened defenses.</div>
+            </div>
+            <div class="ir-step">
+              <div class="ir-step__number">05</div>
+              <div class="ir-step__title">Post-Mortem</div>
+              <div class="ir-step__body">Document root cause, impact, response timeline, and preventive measures. Marcus updates the threat model and red-team playbook for the next quarterly assessment.</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 6: THE BOARD DEMO ===== -->
+        <section class="section">
+          <div class="callout reveal">
+            <div class="callout__label">AcmeCorp &mdash; Day 14: The Board Demo</div>
+            <div class="callout__text">
+              <p style="margin-bottom: var(--space-3);">
+                <strong>The Presentation:</strong> Marcus walks the Board through a live demonstration of DataPulse's security hardening. Derek Kim introduces the session by framing the business case: "Two weeks ago, a pen test showed that a single poisoned product description could expose customer data from all 200 stores. Today, I want to show you what we built."
+              </p>
+              <p style="margin-bottom: var(--space-3);">
+                <strong>Live Test:</strong> Marcus runs the exact same attack the pen testers used &mdash; a product description containing injection instructions. This time, the input sanitization classifier flags it before it reaches the LLM. The output filter catches the attempt in the response. The audit log records the blocked attack. The Board watches in real time as the system catches, blocks, and logs the attack in under 300 milliseconds.
+              </p>
+              <p style="margin-bottom: var(--space-3);">
+                <strong>RBAC Demo:</strong> Sofia Torres (joining remotely from Store #47) asks DataPulse for her store's Q3 sales data &mdash; allowed. Then she asks for cross-store comparison data &mdash; denied with a clear explanation. The tool-layer policy engine enforces the restriction without revealing what data exists in other stores.
+              </p>
+              <p>
+                <strong>The Outcome:</strong> The Board approves DataPulse for continued production deployment. The CEO asks Marcus to present the security architecture at the next all-hands meeting. Raj Patel later tells Maya: "The pen test was the best thing that happened to this project. We would have launched without any of this."
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="02-data-privacy.html" class="page-nav__title">Data Privacy &amp; Compliance</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="quiz-checkpoint.html" class="page-nav__title">Module 08 Quiz</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Security, Privacy &amp; Compliance
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m08-security-implementation');</script>
+</body>
+</html>

@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>State Transitions &amp; Failure Handling &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- State Machine Diagram --- */
+    .state-machine-svg {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto var(--space-6);
+      display: block;
+    }
+    .state-machine-svg .state-node {
+      fill: none;
+      stroke: var(--stroke-dim);
+      stroke-width: 1.5;
+      stroke-dasharray: 6 4;
+      rx: 12;
+      transition: all 0.5s ease;
+    }
+    .state-machine-svg .state-node.active {
+      stroke: #A100FF;
+      stroke-width: 2.5;
+      stroke-dasharray: none;
+      filter: drop-shadow(0 0 10px rgba(161, 0, 255, 0.5));
+    }
+    .state-machine-svg .state-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      fill: var(--text-secondary);
+      text-anchor: middle;
+      transition: fill 0.5s ease;
+    }
+    .state-machine-svg .state-label.active {
+      fill: #A100FF;
+    }
+    .state-machine-svg .state-icon {
+      font-size: 18px;
+      text-anchor: middle;
+      dominant-baseline: central;
+      opacity: 0.3;
+      transition: opacity 0.5s ease;
+    }
+    .state-machine-svg .state-icon.active {
+      opacity: 1;
+    }
+    .state-machine-svg .transition-arrow {
+      stroke: var(--stroke-dim);
+      stroke-width: 1.5;
+      stroke-dasharray: 8 5;
+      fill: none;
+      transition: all 0.5s ease;
+    }
+    .state-machine-svg .transition-arrow.active {
+      stroke: #A100FF;
+      stroke-width: 2.5;
+      stroke-dasharray: none;
+      filter: drop-shadow(0 0 4px rgba(161, 0, 255, 0.5));
+    }
+
+    /* --- State Controls --- */
+    .state-controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+    }
+    .state-btn {
+      padding: var(--space-2) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .state-btn:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.05);
+    }
+    .state-btn.active {
+      border-color: #A100FF;
+      border-style: solid;
+      color: #A100FF;
+      background: rgba(161, 0, 255, 0.1);
+    }
+
+    /* --- State Detail Box --- */
+    .state-detail {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      margin-bottom: var(--space-6);
+      min-height: 100px;
+      transition: all var(--transition-base);
+    }
+    .state-detail__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: #A100FF;
+      margin-bottom: var(--space-2);
+    }
+    .state-detail__desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: var(--space-3);
+    }
+    .state-detail__acme {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      border-left: 2px solid #CC00FF;
+      padding-left: var(--space-4);
+      font-style: italic;
+    }
+
+    /* --- Cascade SVG --- */
+    .cascade-svg {
+      width: 100%;
+      max-width: 740px;
+      margin: 0 auto var(--space-8);
+      display: block;
+    }
+    .cascade-svg .cascade-node {
+      fill: none;
+      stroke-width: 1.5;
+      stroke-dasharray: 6 4;
+      rx: 8;
+    }
+    .cascade-svg .cascade-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      text-anchor: middle;
+    }
+    .cascade-svg .cascade-arrow {
+      stroke-width: 1.5;
+      stroke-dasharray: 6 4;
+      fill: none;
+    }
+    @keyframes cascadeDash {
+      to { stroke-dashoffset: -20; }
+    }
+    .cascade-svg .cascade-arrow {
+      animation: cascadeDash 1.5s linear infinite;
+    }
+    .cascade-svg .cascade-desc {
+      font-family: var(--font-body);
+      font-size: 9px;
+      text-anchor: middle;
+    }
+
+    /* --- Failure Recovery Classifier --- */
+    .failure-classifier { margin: var(--space-8) 0; }
+    .failure-item {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      transition: all var(--transition-base);
+    }
+    .failure-item__question {
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+      line-height: 1.6;
+    }
+    .failure-item__options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .failure-btn {
+      padding: var(--space-2) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .failure-btn:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.05);
+    }
+    .failure-btn.correct {
+      border-color: var(--accent-success);
+      border-style: solid;
+      color: var(--accent-success);
+      background: rgba(16, 185, 129, 0.1);
+      pointer-events: none;
+    }
+    .failure-btn.wrong {
+      border-color: var(--accent-error);
+      border-style: solid;
+      color: var(--accent-error);
+      background: rgba(239, 68, 68, 0.1);
+      animation: shake 0.5s ease-in-out;
+    }
+    .failure-item.solved {
+      border-color: var(--accent-success);
+      border-style: solid;
+    }
+    .failure-item.solved .failure-btn:not(.correct) {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .failure-score {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      padding: var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin-top: var(--space-4);
+      display: none;
+    }
+    .failure-score.show { display: block; }
+    .failure-score.perfect {
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      box-shadow: 0 0 15px var(--glow-success);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    @media (max-width: 640px) {
+      .state-controls { flex-direction: column; align-items: center; }
+      .failure-item__options { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 04</span>
+        <span class="separator">/</span>
+        <span class="current">State Transitions &amp; Failure Handling</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Page Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 04 &mdash; Lesson 04</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">State Transitions &amp;<br>Failure Handling</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Agents operate in different modes and must recover gracefully when things go wrong. Let&rsquo;s explore both.
+          </p>
+        </header>
+
+        <!-- Blueprint SVG Diagram -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">AGENT STATE MACHINE</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+            <defs>
+              <filter id="sm-glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <marker id="sm-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
+              <marker id="sm-arrow-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="sm-arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#10b981"/></marker>
+              <marker id="sm-arrow-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#ef4444"/></marker>
+              <marker id="sm-arrow-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker>
+              <marker id="sm-arrow-dim" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a0a0a0"/></marker>
+            </defs>
+            <pattern id="sm-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(74,158,255,0.05)" stroke-width="0.5"/></pattern>
+            <rect width="700" height="380" fill="rgba(15,23,42,0.6)" rx="8"/>
+            <rect width="700" height="380" fill="url(#sm-grid)" rx="8"/>
+            <!-- IDLE state -->
+            <rect x="40" y="145" width="110" height="60" rx="30" fill="rgba(51,65,85,0.10)" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 4"/>
+            <text x="95" y="172" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#a0a0a0">IDLE</text>
+            <text x="95" y="188" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#334155">Waiting</text>
+            <!-- REASONING state -->
+            <rect x="215" y="50" width="130" height="60" rx="30" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 4" filter="url(#sm-glow)"/>
+            <text x="280" y="77" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#f5f5f5">REASONING</text>
+            <text x="280" y="93" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Thinking</text>
+            <!-- EXECUTING state -->
+            <rect x="420" y="50" width="130" height="60" rx="30" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6 4"/>
+            <text x="485" y="77" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#f5f5f5">EXECUTING</text>
+            <text x="485" y="93" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Running tools</text>
+            <!-- RECOVERING state -->
+            <rect x="420" y="210" width="130" height="60" rx="30" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 4"/>
+            <text x="485" y="237" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#f5f5f5">RECOVERING</text>
+            <text x="485" y="253" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Handling errors</text>
+            <!-- RESPONDING state -->
+            <rect x="215" y="300" width="130" height="60" rx="30" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6 4"/>
+            <text x="280" y="327" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#10b981">RESPONDING</text>
+            <text x="280" y="343" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Delivering results</text>
+            <!-- IDLE -> REASONING -->
+            <path d="M150,155 C180,135 195,115 215,95" fill="none" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#sm-arrow)"/>
+            <text x="155" y="118" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">user query</text>
+            <!-- REASONING -> EXECUTING -->
+            <line x1="345" y1="80" x2="420" y2="80" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#sm-arrow-teal)"/>
+            <text x="382" y="72" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#CC00FF">plan ready</text>
+            <!-- EXECUTING -> RESPONDING (success) — routed far right, clear of RECOVERING -->
+            <path d="M550,80 C655,80 655,340 345,330" fill="none" stroke="#10b981" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#sm-arrow-green)"/>
+            <text x="640" y="200" font-family="JetBrains Mono,monospace" font-size="8" fill="#10b981">success</text>
+            <!-- EXECUTING -> RECOVERING (error) — offset right to avoid retry line -->
+            <path d="M520,110 L520,210" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#sm-arrow-red)"/>
+            <text x="538" y="165" font-family="JetBrains Mono,monospace" font-size="8" fill="#ef4444">error</text>
+            <!-- RECOVERING -> REASONING (retry) — curved left to avoid error line -->
+            <path d="M420,225 C360,215 340,160 310,110" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#sm-arrow-amber)"/>
+            <text x="345" y="185" font-family="JetBrains Mono,monospace" font-size="8" fill="#f59e0b">retry</text>
+            <!-- RECOVERING -> RESPONDING (graceful fail) — curved below to avoid success path -->
+            <path d="M420,260 C400,285 375,300 345,315" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#sm-arrow-amber)"/>
+            <text x="405" y="300" font-family="JetBrains Mono,monospace" font-size="8" fill="#f59e0b">graceful fail</text>
+            <!-- RESPONDING -> IDLE -->
+            <path d="M215,340 C170,330 140,290 120,205" fill="none" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#sm-arrow-dim)"/>
+            <text x="145" y="295" font-family="JetBrains Mono,monospace" font-size="8" fill="#a0a0a0">complete</text>
+            <!-- Label -->
+            <text x="350" y="370" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#334155">DataPulse State Transitions</text>
+          </svg>
+        </div>
+
+        <!-- ===== SECTION 1: THE SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Scene</div>
+          <h2 style="margin-bottom: var(--space-4);">More Than Request-Response</h2>
+          <p>
+            AcmeCorp&rsquo;s agent doesn&rsquo;t just sit and wait for questions. It operates in different modes &mdash; sometimes reactive, sometimes proactive. And when things go wrong, it needs to recover gracefully. A production-grade agent must handle both transitions and failures with intention.
+          </p>
+        </section>
+
+        <!-- ===== SECTION 2: STATE TRANSITIONS ===== -->
+        <section class="section">
+          <div class="section-label reveal">Agent States</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-6);">The Five Operating States</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">Click each state to see how the agent behaves and how it transitions between modes.</p>
+
+          <!-- State Control Buttons -->
+          <div class="state-controls reveal">
+            <button class="state-btn active" data-state="reactive" onclick="showState('reactive')">Reactive</button>
+            <button class="state-btn" data-state="reasoning" onclick="showState('reasoning')">Reasoning</button>
+            <button class="state-btn" data-state="planning" onclick="showState('planning')">Planning</button>
+            <button class="state-btn" data-state="executing" onclick="showState('executing')">Executing</button>
+            <button class="state-btn" data-state="proactive" onclick="showState('proactive')">Proactive</button>
+          </div>
+
+          <!-- Single clean state machine SVG -->
+          <svg class="state-machine-svg reveal reveal--scale" id="fullStateMachine" viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="smArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <path d="M0,0 L10,3.5 L0,7" fill="#A100FF" stroke="none"/>
+              </marker>
+              <marker id="smArrowDim" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <path d="M0,0 L10,3.5 L0,7" fill="#5a0090" stroke="none"/>
+              </marker>
+              <filter id="nodeGlow">
+                <feGaussianBlur stdDeviation="4" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+
+            <!--
+              Node layout (pentagon):
+              Reactive:  (130, 75)   center — top-left
+              Reasoning: (380, 55)   center — top-center
+              Planning:  (580, 145)  center — right
+              Executing: (480, 300)  center — bottom-right
+              Proactive: (160, 280)  center — bottom-left
+
+              Each node is 140×64. Arrows connect edge-to-edge with clean curves.
+            -->
+
+            <!-- ===== TRANSITION ARROWS (drawn first, behind nodes) ===== -->
+
+            <!-- 1. Reactive → Reasoning -->
+            <path class="transition-arrow" id="ta-1"
+                  d="M200,82 C240,55 290,45 310,55"
+                  marker-end="url(#smArrowDim)"/>
+            <!-- Arrow label -->
+            <text x="255" y="48" font-family="var(--font-mono)" font-size="8" fill="#a0a0a0" text-anchor="middle">query received</text>
+
+            <!-- 2. Reasoning → Planning -->
+            <path class="transition-arrow" id="ta-2"
+                  d="M450,68 C480,65 500,80 510,113"
+                  marker-end="url(#smArrowDim)"/>
+            <text x="495" y="75" font-family="var(--font-mono)" font-size="8" fill="#a0a0a0" text-anchor="middle">approach chosen</text>
+
+            <!-- 3. Planning → Executing -->
+            <path class="transition-arrow" id="ta-3"
+                  d="M620,177 C630,220 590,260 550,275"
+                  marker-end="url(#smArrowDim)"/>
+            <text x="610" y="230" font-family="var(--font-mono)" font-size="8" fill="#a0a0a0" text-anchor="middle">plan ready</text>
+
+            <!-- 4. Executing → Proactive -->
+            <path class="transition-arrow" id="ta-4"
+                  d="M410,305 C340,320 280,310 230,295"
+                  marker-end="url(#smArrowDim)"/>
+            <text x="320" y="325" font-family="var(--font-mono)" font-size="8" fill="#a0a0a0" text-anchor="middle">task complete</text>
+
+            <!-- 5. Proactive → Reactive (loop back) -->
+            <path class="transition-arrow" id="ta-5"
+                  d="M145,248 C110,200 80,140 100,107"
+                  marker-end="url(#smArrowDim)"/>
+            <text x="78" y="180" font-family="var(--font-mono)" font-size="8" fill="#a0a0a0" text-anchor="middle">idle / alert sent</text>
+
+            <!-- 6. Executing → Reasoning (retry/error loop — dashed differently) -->
+            <path id="ta-retry"
+                  d="M440,270 C350,220 320,150 330,87"
+                  stroke="#f59e0b" stroke-width="1" stroke-dasharray="3 4" fill="none"
+                  marker-end="url(#smArrowDim)" opacity="0.4"/>
+            <text x="350" y="195" font-family="var(--font-mono)" font-size="7" fill="#f59e0b" text-anchor="middle" opacity="0.6">error / retry</text>
+
+            <!-- ===== STATE NODES ===== -->
+
+            <!-- State 1: Reactive (top-left) -->
+            <rect class="state-node active" id="sm-reactive" x="60" y="43" width="140" height="64" rx="10"/>
+            <text class="state-icon active" id="si-reactive" x="130" y="67">&#9203;</text>
+            <text class="state-label active" id="sl-reactive" x="130" y="95">Reactive</text>
+
+            <!-- State 2: Reasoning (top-center) -->
+            <rect class="state-node" id="sm-reasoning" x="310" y="23" width="140" height="64" rx="10"/>
+            <text class="state-icon" id="si-reasoning" x="380" y="47">&#128300;</text>
+            <text class="state-label" id="sl-reasoning" x="380" y="75">Reasoning</text>
+
+            <!-- State 3: Planning (right) -->
+            <rect class="state-node" id="sm-planning" x="510" y="113" width="140" height="64" rx="10"/>
+            <text class="state-icon" id="si-planning" x="580" y="137">&#9635;</text>
+            <text class="state-label" id="sl-planning" x="580" y="165">Planning</text>
+
+            <!-- State 4: Executing (bottom-right) -->
+            <rect class="state-node" id="sm-executing" x="410" y="268" width="140" height="64" rx="10"/>
+            <text class="state-icon" id="si-executing" x="480" y="292">&#9889;</text>
+            <text class="state-label" id="sl-executing" x="480" y="320">Executing</text>
+
+            <!-- State 5: Proactive (bottom-left) -->
+            <rect class="state-node" id="sm-proactive" x="90" y="248" width="140" height="64" rx="10"/>
+            <text class="state-icon" id="si-proactive" x="160" y="272">&#128161;</text>
+            <text class="state-label" id="sl-proactive" x="160" y="300">Proactive</text>
+          </svg>
+
+          <!-- State Detail Box -->
+          <div class="state-detail reveal" id="stateDetail">
+            <div class="state-detail__title" id="stateDetailTitle">Reactive</div>
+            <div class="state-detail__desc" id="stateDetailDesc">Waiting for input. The agent is idle, listening for user queries or system events. It responds to what it receives.</div>
+            <div class="state-detail__acme" id="stateDetailAcme">Agent sits idle until the VP asks a question.</div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: SELF-DRIVING CAR ANALOGY ===== -->
+        <section class="section reveal">
+          <div class="callout">
+            <div class="callout__label">Analogy: The Self-Driving Car</div>
+            <div class="callout__text">
+              A self-driving car cycles through the same states: <strong>reactive</strong> (stopped at a light), <strong>reasoning</strong> (reading signs and sensor data), <strong>planning</strong> (calculating the optimal route), <strong>executing</strong> (driving the planned route), and <strong>proactive</strong> (rerouting around traffic it detected ahead). Your data agent follows the same pattern.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 4: FAILURE HANDLING ===== -->
+        <section class="section">
+          <div class="section-label reveal">Failure Handling</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-6);">When Things Go Wrong</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">Production agents encounter failures constantly &mdash; timeouts, service outages, rate limits, context overflow. The question isn&rsquo;t whether failures happen but how the agent recovers.</p>
+
+          <!-- Strategy 1: Retry -->
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="bp-card__number">1</span>
+              Retry with Backoff
+            </div>
+            <div class="bp-card__body">
+              <p>Try again with increasing delay between attempts. Most transient failures (timeouts, rate limits, network blips) resolve themselves if you wait.</p>
+              <div class="badge badge--blue" style="margin: var(--space-3) 0;" data-tip="Temporary issues like timeouts and rate limits that resolve with retry and exponential backoff">Transient Failures</div>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp in Action</div>
+                <div class="callout__text">
+                  Database timeout &rarr; wait 1s &rarr; retry &rarr; wait 2s &rarr; retry &rarr; succeed. The exponential backoff prevents hammering an already-struggling service.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Strategy 2: Fallback -->
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="bp-card__number">2</span>
+              Fallback to Alternative
+            </div>
+            <div class="bp-card__body">
+              <p>When the primary approach fails repeatedly, switch to a different data source, tool, or method. A different path may succeed where the first one failed.</p>
+              <div class="badge badge--teal" style="margin: var(--space-3) 0;" data-tip="Recurring failures requiring a fallback — switch to an alternative data source, tool, or method">Persistent Failures</div>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp in Action</div>
+                <div class="callout__text">
+                  Primary Snowflake warehouse down &rarr; fallback to read replica &rarr; partial data is better than no data. The agent transparently notes the fallback source.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Strategy 3: Graceful Degradation -->
+          <div class="bp-card reveal" style="margin-bottom: var(--space-6);">
+            <div class="bp-card__title">
+              <span class="bp-card__number">3</span>
+              Graceful Degradation
+            </div>
+            <div class="bp-card__body">
+              <p>Return what you have, even if it&rsquo;s incomplete. A partial answer with context is always more valuable than a blank error screen.</p>
+              <div class="badge badge--amber" style="margin: var(--space-3) 0;" data-tip="Graceful degradation — return incomplete results with context rather than failing entirely">Partial Capability</div>
+              <div class="callout" style="margin-top: var(--space-4);">
+                <div class="callout__label">AcmeCorp in Action</div>
+                <div class="callout__text">
+                  Can&rsquo;t generate chart &rarr; return the data table with a note: &ldquo;Chart generation unavailable, here&rsquo;s the raw data.&rdquo; The VP still gets value.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GPS Analogy -->
+          <div class="collapsible reveal" id="gps-collapsible">
+            <button class="collapsible__header">
+              <span>Analogy: GPS Signal Loss</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>
+                  If your GPS loses signal, it doesn&rsquo;t give up. It uses last known position, estimates based on speed and direction, and recalculates when the signal returns. Your data agent should behave the same way &mdash; use cached data, estimate with what it has, and recover when services come back online.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: FAILURE CASCADE PREVENTION ===== -->
+        <section class="section reveal">
+          <div class="section-label">Cascade Prevention</div>
+          <h2 style="margin-bottom: var(--space-6);">Circuit Breakers &amp; Handoffs</h2>
+          <p style="margin-bottom: var(--space-6);">When one agent fails, the system must prevent the failure from cascading. Circuit breakers detect repeated failures and trigger handoffs before the whole system goes down.</p>
+
+          <svg class="cascade-svg" viewBox="0 0 740 180" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="cascadeArrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1"/>
+              </marker>
+              <marker id="cascadeArrowRed" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6" fill="none" stroke="#ef4444" stroke-width="1"/>
+              </marker>
+              <marker id="cascadeArrowGreen" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <path d="M0,0 L8,3 L0,6" fill="none" stroke="#10b981" stroke-width="1"/>
+              </marker>
+            </defs>
+
+            <!-- Node 1: Agent A Fails -->
+            <rect class="cascade-node" x="20" y="50" width="120" height="60" style="stroke: #ef4444;"/>
+            <text class="cascade-label" x="80" y="75" style="fill: #ef4444;">Agent A</text>
+            <text class="cascade-desc" x="80" y="92" style="fill: #ef4444;">FAILS</text>
+
+            <!-- Arrow 1 -->
+            <path class="cascade-arrow" d="M145,80 L175,80" style="stroke: #ef4444;" marker-end="url(#cascadeArrowRed)"/>
+
+            <!-- Node 2: Circuit Breaker -->
+            <rect class="cascade-node" x="185" y="50" width="130" height="60" style="stroke: #f59e0b;"/>
+            <text class="cascade-label" x="250" y="75" style="fill: #f59e0b;">Circuit Breaker</text>
+            <text class="cascade-desc" x="250" y="92" style="fill: #f59e0b;">TRIPS</text>
+
+            <!-- Arrow 2 -->
+            <path class="cascade-arrow" d="M320,80 L355,80" style="stroke: #A100FF;" marker-end="url(#cascadeArrow)"/>
+
+            <!-- Node 3: Agent B Notified -->
+            <rect class="cascade-node" x="365" y="50" width="130" height="60" style="stroke: #A100FF;"/>
+            <text class="cascade-label" x="430" y="75" style="fill: #A100FF;">Agent B</text>
+            <text class="cascade-desc" x="430" y="92" style="fill: #A100FF;">NOTIFIED</text>
+
+            <!-- Arrow 3 -->
+            <path class="cascade-arrow" d="M500,80 L535,80" style="stroke: #10b981;" marker-end="url(#cascadeArrowGreen)"/>
+
+            <!-- Node 4: Agent B Takes Over -->
+            <rect class="cascade-node" x="545" y="50" width="120" height="60" style="stroke: #10b981;"/>
+            <text class="cascade-label" x="605" y="75" style="fill: #10b981;">Takeover</text>
+            <text class="cascade-desc" x="605" y="92" style="fill: #10b981;">CONTINUES</text>
+
+            <!-- Bottom label -->
+            <text class="cascade-desc" x="370" y="145" style="fill: var(--text-secondary); font-size: 10px;">Failure is contained &mdash; the system keeps running</text>
+          </svg>
+        </section>
+
+        <!-- ===== SECTION 6: MINI INTERACTION ===== -->
+        <section class="section reveal">
+          <div class="section-label">Knowledge Check</div>
+          <h2 style="margin-bottom: var(--space-4);">Pick the Recovery Strategy</h2>
+          <p style="margin-bottom: var(--space-6);">For each failure scenario, choose the best recovery approach.</p>
+
+          <div class="failure-classifier" id="failureClassifier">
+
+            <div class="failure-item" data-answer="retry" id="fail-1">
+              <div class="failure-item__question">
+                AcmeCorp&rsquo;s Snowflake warehouse returns a timeout on a complex query.
+              </div>
+              <div class="failure-item__options">
+                <button class="failure-btn" data-choice="retry">Retry with Backoff</button>
+                <button class="failure-btn" data-choice="fallback">Fallback to Alternative</button>
+                <button class="failure-btn" data-choice="degrade">Graceful Degradation</button>
+              </div>
+            </div>
+
+            <div class="failure-item" data-answer="degrade" id="fail-2">
+              <div class="failure-item__question">
+                The chart rendering service is completely down.
+              </div>
+              <div class="failure-item__options">
+                <button class="failure-btn" data-choice="retry">Retry with Backoff</button>
+                <button class="failure-btn" data-choice="fallback">Fallback to Alternative</button>
+                <button class="failure-btn" data-choice="degrade">Graceful Degradation</button>
+              </div>
+            </div>
+
+            <div class="failure-item" data-answer="fallback" id="fail-3">
+              <div class="failure-item__question">
+                The primary API endpoint returns 503 for the third time.
+              </div>
+              <div class="failure-item__options">
+                <button class="failure-btn" data-choice="retry">Retry with Backoff</button>
+                <button class="failure-btn" data-choice="fallback">Fallback to Alternative</button>
+                <button class="failure-btn" data-choice="degrade">Graceful Degradation</button>
+              </div>
+            </div>
+
+            <div class="failure-item" data-answer="degrade" id="fail-4">
+              <div class="failure-item__question">
+                An agent&rsquo;s context window is full and can&rsquo;t process more data.
+              </div>
+              <div class="failure-item__options">
+                <button class="failure-btn" data-choice="retry">Retry with Backoff</button>
+                <button class="failure-btn" data-choice="fallback">Fallback to Alternative</button>
+                <button class="failure-btn" data-choice="degrade">Graceful Degradation</button>
+              </div>
+            </div>
+
+            <div class="failure-score" id="failureScore"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAVIGATION ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="03-memory-systems.html" class="page-nav__title">Memory Systems</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="../../simulations/module-04/multi-agent-orchestration.html" class="page-nav__title">Simulation: Multi-Agent Orchestration</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    Nav.init('m04-state-failure');
+
+    // ===== STATE MACHINE INTERACTIVITY =====
+    var stateData = {
+      reactive: {
+        title: 'Reactive',
+        desc: 'Waiting for input. The agent is idle, listening for user queries or system events. It responds to what it receives.',
+        acme: 'Agent sits idle until the VP asks a question.'
+      },
+      reasoning: {
+        title: 'Reasoning',
+        desc: 'Analyzing the request and determining the best approach. The agent examines the query, identifies what data is needed, and considers constraints.',
+        acme: 'Agent thinks: "Q4 analysis needs sales data, inventory data, and YoY comparison."'
+      },
+      planning: {
+        title: 'Planning',
+        desc: 'Breaking the task down into steps and building an execution plan. The agent creates a task graph with dependencies and ordering.',
+        acme: 'Agent creates task graph: fetch data \u2192 analyze \u2192 compare \u2192 report.'
+      },
+      executing: {
+        title: 'Executing',
+        desc: 'Running tools, making API calls, and processing data. The agent is actively carrying out the plan it built in the previous phase.',
+        acme: 'Agent runs SQL queries, calls APIs, generates charts.'
+      },
+      proactive: {
+        title: 'Proactive',
+        desc: 'Monitoring, alerting, and suggesting without being asked. The agent detects patterns and surfaces insights before the user even thinks to ask.',
+        acme: 'Agent notices sales dropped 15% in the Northeast region and proactively alerts the VP.'
+      }
+    };
+
+    var stateOrder = ['reactive', 'reasoning', 'planning', 'executing', 'proactive'];
+
+    // Map: which arrow leads INTO each state
+    var incomingArrow = {
+      reactive:  'ta-5',   // Proactive → Reactive
+      reasoning: 'ta-1',   // Reactive → Reasoning
+      planning:  'ta-2',   // Reasoning → Planning
+      executing: 'ta-3',   // Planning → Executing
+      proactive: 'ta-4'    // Executing → Proactive
+    };
+
+    function showState(stateId) {
+      var data = stateData[stateId];
+      if (!data) return;
+
+      // Update detail box
+      document.getElementById('stateDetailTitle').textContent = data.title;
+      document.getElementById('stateDetailDesc').textContent = data.desc;
+      document.getElementById('stateDetailAcme').textContent = data.acme;
+
+      // Update control buttons
+      document.querySelectorAll('.state-btn').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-state') === stateId);
+      });
+
+      // Update SVG nodes
+      stateOrder.forEach(function(sid) {
+        var node = document.getElementById('sm-' + sid);
+        var icon = document.getElementById('si-' + sid);
+        var label = document.getElementById('sl-' + sid);
+        if (node) node.classList.toggle('active', sid === stateId);
+        if (icon) icon.classList.toggle('active', sid === stateId);
+        if (label) label.classList.toggle('active', sid === stateId);
+      });
+
+      // Highlight the arrow leading into the active state
+      ['ta-1', 'ta-2', 'ta-3', 'ta-4', 'ta-5'].forEach(function(arrowId) {
+        var arrow = document.getElementById(arrowId);
+        if (!arrow) return;
+        var isActive = arrowId === incomingArrow[stateId];
+        arrow.classList.toggle('active', isActive);
+        arrow.setAttribute('marker-end', isActive ? 'url(#smArrow)' : 'url(#smArrowDim)');
+      });
+    }
+
+    // ===== FAILURE CLASSIFIER ENGINE =====
+    (function() {
+      var solved = 0;
+      var total = 4;
+      var container = document.getElementById('failureClassifier');
+      var scoreEl = document.getElementById('failureScore');
+
+      container.addEventListener('click', function(e) {
+        var btn = e.target.closest('.failure-btn');
+        if (!btn) return;
+
+        var item = btn.closest('.failure-item');
+        if (item.classList.contains('solved')) return;
+
+        var answer = item.getAttribute('data-answer');
+        var choice = btn.getAttribute('data-choice');
+
+        if (choice === answer) {
+          btn.classList.add('correct');
+          item.classList.add('solved');
+          solved++;
+
+          if (solved === total) {
+            scoreEl.textContent = 'Perfect! All ' + total + ' recovery strategies correctly identified!';
+            scoreEl.classList.add('show', 'perfect');
+          }
+        } else {
+          btn.classList.add('wrong');
+          setTimeout(function() { btn.classList.remove('wrong'); }, 600);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

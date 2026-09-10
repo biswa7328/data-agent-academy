@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulation: Cost Optimization &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 09</span>
+        <span class="separator">/</span>
+        <span class="current">Simulation: Cost Optimization</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Interactive Simulation</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Cost Optimization</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            AcmeCorp's Data Agent costs have ballooned to $45,000/month — three times the approved budget. The CFO has given you 30 days to cut costs significantly without degrading agent quality. Navigate 5 optimization decisions.
+          </p>
+
+          <div class="callout reveal">
+            <div class="callout__label">Mission Brief</div>
+            <div class="callout__text">
+              Current spend: $45K/month across 200 stores, ~50,000 queries/month. Target: reduce to under $15K/month (67% reduction) while maintaining 85%+ user satisfaction. You have 5 levers to pull — model selection, caching, context compression, routing, and financial guardrails. Aim for 5/5.
+            </div>
+          </div>
+        </section>
+
+        <!-- Simulation Container -->
+        <section class="section">
+          <div id="sim-container"></div>
+        </section>
+
+        <!-- Reset Button -->
+        <div class="reveal" style="text-align: center; margin-bottom: var(--space-8);">
+          <button class="btn btn--teal" onclick="SimulationEngine.reset()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+            </svg>
+            Restart Simulation
+          </button>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../../modules/module-09/03-financial-guardrails.html" class="page-nav__title">Financial Guardrails</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../../modules/module-09/quiz-checkpoint.html" class="page-nav__title">Quiz Checkpoint</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Cost Optimization Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Simulation Config: Cost Optimization ---
+    SimulationEngine.init('sim-container', {
+      title: 'Cost Optimization',
+      intro: 'You are AcmeCorp\'s AI Economics lead. The Data Agent is useful — but at $45K/month, it\'s three times over budget. You have five optimization decisions to make. Each correct choice brings costs down while preserving quality.',
+      nodes: {
+
+        // ===== DECISION 1: Model Selection =====
+        'start': {
+          type: 'decision',
+          title: 'Decision 1: Model Selection Strategy',
+          description: 'Analysis shows 68% of queries are simple: "What were yesterday\'s sales for Store 12?" These single-table lookups don\'t need a frontier model. The remaining 32% are complex multi-table analyses. Currently, all 50,000 queries/month use the most expensive frontier model. What do you change?',
+          choices: [
+            {
+              label: 'Route simple queries to a smaller, cheaper model — use the frontier model only for complex queries',
+              hint: 'Tiered model routing based on query complexity classification',
+              next: 'c1-tiered',
+              isGood: true
+            },
+            {
+              label: 'Switch all queries to the cheapest available model to maximize cost reduction',
+              hint: 'Maximum cost savings by eliminating the expensive model entirely',
+              next: 'c1-cheapest',
+              isGood: false
+            },
+            {
+              label: 'Keep the current model but reduce the maximum output token length',
+              hint: 'Limiting output tokens reduces cost per query',
+              next: 'c1-tokens',
+              isGood: false
+            }
+          ]
+        },
+        'c1-tiered': {
+          type: 'consequence',
+          title: 'Correct: Tiered Routing Matches Cost to Complexity',
+          description: 'You implement a complexity classifier. Simple queries (68% of volume) route to a 10x cheaper small model — cost drops from $0.60/query to $0.06/query for that tier. Complex queries still use the frontier model. Blended cost falls from $0.60 to $0.21/query. Monthly spend: $10,500. Budget met.',
+          consequence: 'Tiered model routing is one of the highest-leverage optimization strategies. Not every query needs the most capable model. A small model handles "SELECT sales WHERE store_id = 12 AND date = yesterday" perfectly well. Frontier models should be reserved for reasoning-intensive, multi-step, ambiguous queries. Match model cost to task complexity.',
+          isGood: true,
+          next: 'decision-2'
+        },
+        'c1-cheapest': {
+          type: 'consequence',
+          title: 'Quality Collapse: Cheap Models Fail on Complex Queries',
+          description: 'Cost drops dramatically — but complex multi-table analyses start failing. The cheap model can\'t handle 4-way JOINs with business logic. User satisfaction falls from 91% to 61%. Store managers stop using the agent. The CFO observes: "We saved money by making it useless."',
+          consequence: 'Cost optimization must preserve quality thresholds. Replacing all model usage with the cheapest option is false economy — if users abandon the agent, the ROI collapses entirely. The "Unreliability Tax" (cost of rebuilding trust after quality failures) exceeds the savings. Optimize cost, not capability.',
+          isGood: false,
+          next: 'decision-2'
+        },
+        'c1-tokens': {
+          type: 'consequence',
+          title: 'Marginal: Output Limiting Saves Little, Breaks Outputs',
+          description: 'You cap output at 500 tokens. Simple queries are fine. But complex analysis responses get truncated mid-sentence. Users receive incomplete reports. The token reduction saves only 8% because most cost is in input tokens and model calls, not output length.',
+          consequence: 'Output token limits save money proportional to output volume. For data agents, most responses are concise (SQL + results summary) — so output limits have limited impact on cost. Meanwhile, truncated responses damage quality. Focus optimization on model selection and input efficiency, where the real costs are.',
+          isGood: false,
+          next: 'decision-2'
+        },
+
+        // ===== DECISION 2: Caching Strategy =====
+        'decision-2': {
+          type: 'decision',
+          title: 'Decision 2: Caching Strategy',
+          description: 'Query log analysis reveals: 34% of all queries are near-identical variations of the same 20 questions. "What are total sales this week?" is asked ~400 times/month across stores, each generating a fresh LLM call. How do you handle this?',
+          choices: [
+            {
+              label: 'Implement semantic caching — embed incoming queries, match against cached query embeddings within a similarity threshold',
+              hint: 'Similar queries (not just identical) hit the cache',
+              next: 'c2-semantic',
+              isGood: true
+            },
+            {
+              label: 'Implement exact-match caching — cache responses to identical query strings',
+              hint: 'Simple key-value store: same query string = same cached response',
+              next: 'c2-exact',
+              isGood: false
+            },
+            {
+              label: 'Pre-compute responses to common queries daily and serve them statically',
+              hint: 'Batch compute popular answers each morning',
+              next: 'c2-precompute',
+              isGood: false
+            }
+          ]
+        },
+        'c2-semantic': {
+          type: 'consequence',
+          title: 'Correct: Semantic Caching Catches Paraphrase Variants',
+          description: '"What are total sales this week?", "Show me this week\'s sales total", and "Week-to-date revenue?" all embed to similar vectors. They hit the same cache entry. Cache hit rate: 38% of queries. At $0.21/query, that\'s $4,000/month saved without any quality loss.',
+          consequence: 'Semantic caching is far more effective than exact-match for natural language queries. Users rephrase the same question in dozens of ways. Embedding-based similarity matching catches all paraphrase variants. A similarity threshold (e.g., 0.92 cosine similarity) balances cache hits against false positives.',
+          isGood: true,
+          next: 'decision-3'
+        },
+        'c2-exact': {
+          type: 'consequence',
+          title: 'Low Hit Rate: Exact Matching Misses Paraphrases',
+          description: '"What are total sales this week?" and "Show me this week\'s sales total" are different strings — they don\'t match. Cache hit rate: 4%. You save $400/month instead of $4,000. The 34% of near-duplicate queries continue generating LLM calls because they\'re not literally identical.',
+          consequence: 'Exact-match caching has near-zero effectiveness for natural language queries. Real users naturally rephrase the same question. Exact matching only catches literal duplicate submissions (e.g., double-clicking submit). Semantic caching is required to capture the actual redundancy in natural language query patterns.',
+          isGood: false,
+          next: 'decision-3'
+        },
+        'c2-precompute': {
+          type: 'consequence',
+          title: 'Stale: Pre-Computed Answers Go Out of Date',
+          description: 'You pre-compute "this week\'s sales" every morning. By 3pm, a store has processed 200 afternoon transactions — but users get the 8am figure. Five stores report "the agent told me the wrong sales number." Support tickets spike and trust erodes.',
+          consequence: 'Pre-computation trades freshness for cost savings. For time-sensitive data like "this week\'s sales," stale answers are worse than no answer. Semantic caching with appropriate TTLs (time-to-live) handles freshness: cache a "this week" query for 15 minutes, not 24 hours. Match cache duration to data volatility.',
+          isGood: false,
+          next: 'decision-3'
+        },
+
+        // ===== DECISION 3: Context Compression =====
+        'decision-3': {
+          type: 'decision',
+          title: 'Decision 3: Context Compression',
+          description: 'The system prompt for every query includes the full AcmeCorp schema (all 9 tables with every column description) — 4,200 tokens. This alone costs $0.084/query at current rates. Most queries only use 2-3 tables. What do you do?',
+          choices: [
+            {
+              label: 'Dynamic schema injection — classify the query, then inject only the relevant table schemas for that query',
+              hint: 'A "SELECT queries" table classification step before schema injection',
+              next: 'c3-dynamic',
+              isGood: true
+            },
+            {
+              label: 'Compress the full schema into a condensed 800-token summary and use it for all queries',
+              hint: 'A shorter but complete schema description reduces token count',
+              next: 'c3-compress',
+              isGood: false
+            },
+            {
+              label: 'Remove the schema from the context entirely — the LLM should know SQL without it',
+              hint: 'Frontier models have broad SQL knowledge built in',
+              next: 'c3-remove',
+              isGood: false
+            }
+          ]
+        },
+        'c3-dynamic': {
+          type: 'consequence',
+          title: 'Correct: Dynamic Injection Minimizes Schema Tokens',
+          description: 'A lightweight query classifier determines which tables are needed. "Total sales for Store 12" needs only the sales and stores tables (600 tokens). The 4,200-token full schema becomes 600 tokens for 70% of queries. Context cost drops by 73% for those queries. Monthly savings: ~$3,200.',
+          consequence: 'Dynamic context injection is one of the most impactful context engineering optimizations. Most queries don\'t need the full schema — only the relevant subset. A classifier adds ~50 tokens of overhead but saves thousands. This is the Context Engineering principle of "selective inclusion": only inject what the specific query needs.',
+          isGood: true,
+          next: 'decision-4'
+        },
+        'c3-compress': {
+          type: 'consequence',
+          title: 'Partial: Compressed Schemas Lose Critical Detail',
+          description: 'You compress the schema to 800 tokens. The summarized schema omits column data types, foreign key relationships, and business rules. The agent starts generating SQL with type mismatches and broken JOINs. Error rate increases 15%. The token savings are real but the quality cost is higher.',
+          consequence: 'Compressing schema context trades accuracy for token savings. SQL generation requires precise column names, data types, and relationships — not summaries of them. Lossy compression of structured data like schemas degrades downstream tool calls. Dynamic injection preserves full fidelity while reducing volume.',
+          isGood: false,
+          next: 'decision-4'
+        },
+        'c3-remove': {
+          type: 'consequence',
+          title: 'Fails: LLMs Don\'t Know AcmeCorp\'s Schema',
+          description: 'Without the schema, the agent hallucinates table names. It queries "employee_records" instead of "employees", references a "sales_transactions" table that doesn\'t exist, and uses wrong column names. 65% of queries produce SQL errors. Users stop trusting the agent entirely.',
+          consequence: 'LLMs have general SQL knowledge but not knowledge of your specific database schema. Column names, table relationships, business rules, and PII flags are all specific to AcmeCorp\'s warehouse. Without schema context, the agent is guessing. Context reduction must be selective, not total.',
+          isGood: false,
+          next: 'decision-4'
+        },
+
+        // ===== DECISION 4: Financial Guardrails =====
+        'decision-4': {
+          type: 'decision',
+          title: 'Decision 4: Financial Guardrails',
+          description: 'After optimizations, average cost is $0.08/query. But last Tuesday, a bug in a report automation script submitted 8,000 queries in 6 hours — spending $640 unintentionally. How do you prevent future cost spikes?',
+          choices: [
+            {
+              label: 'Implement per-session budget caps ($5 max) and a daily organizational quota ($500) with hard stops and alerts',
+              hint: 'Multi-layer financial guardrails at session and organization levels',
+              next: 'c4-guardrails',
+              isGood: true
+            },
+            {
+              label: 'Set a monthly budget alert — notify the team when 80% of budget is consumed',
+              hint: 'Early warning gives humans time to intervene before overage',
+              next: 'c4-alert-only',
+              isGood: false
+            },
+            {
+              label: 'Require manual approval for any query batch exceeding 100 queries',
+              hint: 'Human approval gates prevent runaway automated processes',
+              next: 'c4-manual',
+              isGood: false
+            }
+          ]
+        },
+        'c4-guardrails': {
+          type: 'consequence',
+          title: 'Correct: Layered Hard Stops Prevent Runaway Spending',
+          description: 'You implement session caps ($5 = 62 queries per session) and a daily org quota ($500). The next automation bug triggers at 63 queries — the session hard stop fires. The script is blocked, an alert fires to the engineering team, and total unintended spend is $5 instead of $640.',
+          consequence: 'Financial guardrails must include hard stops, not just alerts. Alerts notify humans — but if nobody is watching at 2am when an automation bug fires, the alert does nothing. Hard stops at both session and organizational levels create a multi-layer budget defense. Alerts notify; hard stops enforce.',
+          isGood: true,
+          next: 'decision-5'
+        },
+        'c4-alert-only': {
+          type: 'consequence',
+          title: 'Reactive: Alerts Notify But Don\'t Prevent',
+          description: 'The 80% alert fires on Tuesday afternoon. Nobody is available to act. By morning, the runaway script has consumed 115% of the monthly budget. The alert was correct but the response was too slow. Alerts require humans to be available; hard stops are always available.',
+          consequence: 'Budget alerts are necessary but not sufficient. An alert at 80% still allows 20%+ overage before anyone acts — and automated processes don\'t stop themselves because a human received an email. Hard budget caps that stop execution are the reliable control; alerts are the notification layer on top.',
+          isGood: false,
+          next: 'decision-5'
+        },
+        'c4-manual': {
+          type: 'consequence',
+          title: 'Blocks Legitimate Use: Manual Gates Create Bottlenecks',
+          description: 'The approval gate stops the runaway script — but it also blocks the monthly store analytics reports (automatically generated, 200+ queries each). Every report now requires manual approval. The analytics team spends 3 hours/week on approvals and starts bypassing the agent entirely.',
+          consequence: 'Manual approval gates are too coarse-grained for automated workflows. They stop both malicious and legitimate large query batches indiscriminately. Budget caps by session cost (not query count) are more precise: they stop cost overruns while allowing high-value batch jobs that stay within cost bounds.',
+          isGood: false,
+          next: 'decision-5'
+        },
+
+        // ===== DECISION 5: Cost-Performance Tradeoff =====
+        'decision-5': {
+          type: 'decision',
+          title: 'Decision 5: The Cost-Performance Matrix',
+          description: 'After all optimizations, monthly cost is $12,800 — under budget. The CFO asks: "Can we cut another 30% by degrading response time from 2s to 8s for non-urgent queries?" The operations team says 35% of queries are non-urgent batch reports. What do you recommend?',
+          choices: [
+            {
+              label: 'Implement a query priority system: real-time queries run immediately, batch queries queue for off-peak processing at lower cost',
+              hint: 'Asynchronous batch processing reduces peak compute costs without degrading interactive UX',
+              next: 'c5-priority',
+              isGood: true
+            },
+            {
+              label: 'Degrade all query response times to 8s — 30% cost savings justifies slower responses for everyone',
+              hint: 'Uniform latency increase across all users to cut costs',
+              next: 'c5-degrade-all',
+              isGood: false
+            },
+            {
+              label: 'Decline the CFO\'s suggestion — $12,800 is already under budget, don\'t optimize further',
+              hint: 'We\'re under budget, no further changes needed',
+              next: 'c5-decline',
+              isGood: false
+            }
+          ]
+        },
+        'c5-priority': {
+          type: 'consequence',
+          title: 'Correct: Priority Queues Optimize Cost Without Hurting UX',
+          description: 'You implement two lanes: interactive (real-time, full cost) and batch (queued for off-peak, 40% cheaper compute). Store managers\' live queries stay at 2s. The 35% batch reports run overnight at reduced cost. Total monthly spend: $9,800. CFO is satisfied; store managers notice no change.',
+          consequence: 'Query prioritization is a sophisticated cost lever: not all queries need the same SLA. Interactive queries require immediate response — users are waiting. Batch reports don\'t — they\'re consumed hours later. Asynchronous batch processing shifts load to off-peak windows where compute is cheaper without impacting real-time user experience.',
+          isGood: true,
+          next: 'result'
+        },
+        'c5-degrade-all': {
+          type: 'consequence',
+          title: 'User Experience Damage: Uniform Degradation Frustrates Everyone',
+          description: 'Response times go to 8s for all queries. Store managers waiting 8 seconds for yesterday\'s sales figures start finding the agent "annoying." Usage drops 28%. The CFO\'s cost goal is met but the ROI on the entire program decreases because utilization fell.',
+          consequence: 'Blanket latency increases punish all users, including those making time-sensitive interactive queries. Cost optimization that degrades user experience often leads to lower adoption, which reduces ROI faster than the cost savings accrue. Segment by use case: interactive vs. batch have different SLA tolerances.',
+          isGood: false,
+          next: 'result'
+        },
+        'c5-decline': {
+          type: 'consequence',
+          title: 'Missed Opportunity: Under Budget Doesn\'t Mean Optimized',
+          description: 'You decline. The next quarter, a new product line doubles query volume — spending jumps to $25,600/month. You scramble to implement optimizations under pressure. The priority queue system you could have built proactively now takes 3 weeks to implement reactively.',
+          consequence: 'Being under budget is a good position to build optimization infrastructure proactively. Cost optimization is ongoing, not one-time. The priority queue system would have provided elastic cost scaling for future volume growth. Technical debt in cost infrastructure compounds just like other technical debt.',
+          isGood: false,
+          next: 'result'
+        },
+
+        // ===== FINAL RESULT =====
+        'result': {
+          type: 'result',
+          title: 'Optimization Complete',
+          description: 'You\'ve navigated all 5 cost optimization decisions for AcmeCorp\'s Data Agent. Your choices reduced monthly spend from $45,000 to $9,800 — a 78% reduction — while maintaining 91% user satisfaction.',
+          score: '5/5',
+          scoreLabel: 'Decisions Made',
+          summary: 'Key strategies applied: Tiered model routing matches model capability to query complexity. Semantic caching captures paraphrase variants that exact-match misses. Dynamic schema injection reduces context tokens without losing accuracy. Multi-layer financial guardrails (session caps + org quotas) prevent runaway spending. Priority queues separate interactive and batch workloads for cost-appropriate processing. Cost optimization is an ongoing engineering practice, not a one-time exercise.'
+        }
+      }
+    });
+
+    Nav.init('m09-sim-cost-optimization');
+  </script>
+</body>
+</html>

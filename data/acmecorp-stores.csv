@@ -1,0 +1,21 @@
+store_id,store_name,region_id,city,state,zip_code,opened_date,square_footage,store_type
+1,AcmeCorp Flagship Manhattan,1,New York,NY,10001,2018-03-15,45000,flagship
+2,AcmeCorp Boston,1,Boston,MA,02101,2019-06-20,18000,standard
+3,AcmeCorp Philadelphia,1,Philadelphia,PA,19103,2020-01-10,16500,standard
+4,AcmeCorp Express Hartford,1,Hartford,CT,06103,2022-09-01,5500,express
+5,AcmeCorp Atlanta,2,Atlanta,GA,30303,2019-04-12,20000,standard
+6,AcmeCorp Miami,2,Miami,FL,33101,2020-08-05,19000,standard
+7,AcmeCorp Charlotte,2,Charlotte,NC,28202,2021-02-18,17500,standard
+8,AcmeCorp Nashville,2,Nashville,TN,37201,2021-11-30,16000,standard
+9,AcmeCorp Chicago,3,Chicago,IL,60601,2018-11-01,22000,standard
+10,AcmeCorp Detroit,3,Detroit,MI,48201,2020-05-22,15000,standard
+11,AcmeCorp Minneapolis,3,Minneapolis,MN,55401,2021-03-14,17000,standard
+12,AcmeCorp Express Columbus,3,Columbus,OH,43215,2023-01-09,6000,express
+13,AcmeCorp Flagship LA,4,Los Angeles,CA,90012,2018-06-01,42000,flagship
+14,AcmeCorp San Francisco,4,San Francisco,CA,94102,2019-09-15,19500,standard
+15,AcmeCorp Seattle,4,Seattle,WA,98101,2020-04-20,18500,standard
+16,AcmeCorp Portland,4,Portland,OR,97201,2021-07-08,16000,standard
+17,AcmeCorp Dallas,5,Dallas,TX,75201,2019-02-28,21000,standard
+18,AcmeCorp Houston,5,Houston,TX,77001,2020-10-15,19000,standard
+19,AcmeCorp Phoenix,5,Phoenix,AZ,85001,2021-05-03,17500,standard
+20,AcmeCorp Express Denver,5,Denver,CO,80201,2023-04-17,5800,express

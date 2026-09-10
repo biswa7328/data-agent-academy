@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goal Decomposition — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Dependency Graph --- */
+    .dep-graph {
+      width: 100%;
+      max-width: 800px;
+      margin: var(--space-8) auto;
+    }
+    .dep-graph svg {
+      width: 100%;
+      height: auto;
+    }
+    .dep-graph .task-node {
+      transition: filter 0.3s ease;
+    }
+    .dep-graph .task-node:hover {
+      filter: drop-shadow(0 0 12px rgba(161, 0, 255, 0.6));
+    }
+    .dep-graph .task-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      fill: #f5f5f5;
+    }
+    .dep-graph .task-sublabel {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      fill: #a0a0a0;
+    }
+    .dep-graph .dep-line {
+      stroke-dasharray: 6 4;
+      stroke-dashoffset: 200;
+      animation: drawDepLine 2s ease forwards;
+    }
+    .dep-graph .dep-line.delay-1 { animation-delay: 0.3s; }
+    .dep-graph .dep-line.delay-2 { animation-delay: 0.6s; }
+    .dep-graph .dep-line.delay-3 { animation-delay: 0.9s; }
+    .dep-graph .dep-line.delay-4 { animation-delay: 1.2s; }
+    .dep-graph .dep-line.delay-5 { animation-delay: 1.5s; }
+    .dep-graph .dep-line.delay-6 { animation-delay: 1.8s; }
+    .dep-graph .dep-line.delay-7 { animation-delay: 2.1s; }
+
+    @keyframes drawDepLine {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes nodeAppear {
+      from { opacity: 0; transform: scale(0.7); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .dep-graph .task-node { opacity: 0; animation: nodeAppear 0.5s ease forwards; }
+    .dep-graph .task-node.n-a { animation-delay: 0.1s; }
+    .dep-graph .task-node.n-b { animation-delay: 0.2s; }
+    .dep-graph .task-node.n-c { animation-delay: 0.7s; }
+    .dep-graph .task-node.n-d { animation-delay: 0.8s; }
+    .dep-graph .task-node.n-e { animation-delay: 0.9s; }
+    .dep-graph .task-node.n-f { animation-delay: 1.4s; }
+    .dep-graph .task-node.n-g { animation-delay: 1.9s; }
+
+    /* parallel indicator */
+    .parallel-badge {
+      fill: #CC00FF;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    /* --- Planning Levels --- */
+    .planning-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+      margin: var(--space-8) 0;
+    }
+    @media (min-width: 640px) {
+      .planning-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .planning-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .planning-card .level-tag {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-3);
+      display: inline-block;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--border-radius);
+    }
+    .level-strategic .level-tag { background: rgba(161, 0, 255, 0.15); color: var(--text-accent); }
+    .level-tactical .level-tag  { background: rgba(204, 0, 255, 0.15); color: var(--text-teal); }
+    .level-operational .level-tag { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); }
+
+    /* --- Benefits Grid --- */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    @media (max-width: 600px) {
+      .benefits-grid { grid-template-columns: 1fr; }
+    }
+    .benefit-item {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      transition: border-color var(--transition-base), box-shadow var(--transition-base);
+    }
+    .benefit-item:hover {
+      border-color: var(--stroke-primary);
+      box-shadow: 0 0 15px var(--glow-blue);
+    }
+    .benefit-item__icon {
+      font-size: var(--font-2xl);
+      margin-bottom: var(--space-3);
+    }
+    .benefit-item__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-accent);
+      margin-bottom: var(--space-2);
+    }
+    .benefit-item__text {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* --- Sorting Exercise --- */
+    .sort-exercise {
+      margin: var(--space-8) 0;
+    }
+    .sort-exercise__prompt {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-secondary);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      margin-bottom: var(--space-6);
+    }
+    .sort-exercise__prompt p {
+      font-style: italic;
+      color: var(--text-secondary);
+      font-size: var(--font-sm);
+      line-height: 1.6;
+    }
+    .sort-exercise__prompt strong {
+      color: var(--text-teal);
+    }
+    .sort-zones {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+    @media (min-width: 640px) {
+      .sort-zones { grid-template-columns: repeat(3, 1fr); }
+    }
+    .sort-zone {
+      background: var(--bg-surface);
+      border: 2px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-4);
+      min-height: 120px;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .sort-zone.highlight {
+      border-color: var(--stroke-primary);
+      box-shadow: 0 0 15px var(--glow-blue);
+    }
+    .sort-zone.correct {
+      border-color: var(--accent-success);
+      box-shadow: 0 0 15px var(--glow-success);
+    }
+    .sort-zone__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-3);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px dashed var(--stroke-dim);
+    }
+    .sort-zone__label.strategic { color: var(--text-accent); }
+    .sort-zone__label.tactical  { color: var(--text-teal); }
+    .sort-zone__label.operational { color: var(--accent-warning); }
+
+    .sort-item {
+      background: var(--bg-elevated);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-2) var(--space-3);
+      margin-bottom: var(--space-2);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      cursor: grab;
+      transition: all var(--transition-fast);
+      user-select: none;
+    }
+    .sort-item:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.08);
+    }
+    .sort-item.dragging {
+      opacity: 0.5;
+      border-color: var(--stroke-primary);
+    }
+    .sort-item.placed {
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      cursor: default;
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .sort-item.wrong-place {
+      border-color: var(--accent-error);
+      animation: shake 0.4s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+    .sort-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+      padding: var(--space-4);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      min-height: 56px;
+    }
+    .sort-result {
+      margin-top: var(--space-4);
+      text-align: center;
+      font-family: var(--font-mono);
+      color: var(--accent-success);
+      font-size: var(--font-sm);
+      opacity: 0;
+      transition: opacity var(--transition-base);
+    }
+    .sort-result.show { opacity: 1; }
+
+    /* --- Road Trip Arrow --- */
+    .road-trip-flow {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      margin: var(--space-4) 0;
+    }
+    .road-trip-flow .step {
+      background: var(--bg-elevated);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--font-xs);
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+    .road-trip-flow .arrow {
+      color: var(--stroke-primary);
+      font-size: var(--font-lg);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- Top Nav -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 04</span>
+        <span class="separator">/</span>
+        <span class="current">Goal Decomposition</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <!-- Page Content -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section reveal">
+          <span class="section-label">Module 04 &mdash; Autonomy &amp; Collaboration</span>
+          <h1>Goal Decomposition</h1>
+          <p class="subtitle" style="color: var(--text-secondary); font-size: var(--font-lg); margin-top: var(--space-4); line-height: 1.7;">
+            Complex requests require systematic breakdown. A single agent can&rsquo;t solve everything in one step &mdash; it needs a plan.
+          </p>
+        </section>
+
+        <!-- Blueprint SVG Diagram -->
+        <div class="evolving-diagram reveal reveal--scale">
+          <div class="evolving-diagram__label">GOAL DECOMPOSITION &mdash; TASK DAG</div>
+          <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+            <defs>
+              <filter id="gd-glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+              <marker id="gd-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
+              <marker id="gd-arrow-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="gd-arrow-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#10b981"/></marker>
+            </defs>
+            <pattern id="gd-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(74,158,255,0.05)" stroke-width="0.5"/></pattern>
+            <rect width="700" height="380" fill="rgba(15,23,42,0.6)" rx="8"/>
+            <rect width="700" height="380" fill="url(#gd-grid)" rx="8"/>
+            <!-- Root node -->
+            <rect x="175" y="18" width="350" height="44" rx="6" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3" filter="url(#gd-glow)"/>
+            <text x="350" y="36" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">Show Q3 revenue by region vs last year</text>
+            <text x="350" y="52" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">USER QUERY — ROOT GOAL</text>
+            <!-- Arrows root to sub-tasks -->
+            <line x1="270" y1="62" x2="145" y2="100" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#gd-arrow)"/>
+            <line x1="350" y1="62" x2="350" y2="100" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#gd-arrow)"/>
+            <line x1="430" y1="62" x2="555" y2="100" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#gd-arrow)"/>
+            <!-- Sub-task A: Fetch Q3 current -->
+            <rect x="50" y="102" width="190" height="38" rx="5" fill="rgba(45,212,191,0.10)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <text x="145" y="120" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">Fetch Q3 Current Year</text>
+            <text x="145" y="133" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">SUB-TASK A</text>
+            <!-- Sub-task B: Fetch Q3 prior -->
+            <rect x="255" y="102" width="190" height="38" rx="5" fill="rgba(45,212,191,0.10)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <text x="350" y="120" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">Fetch Q3 Prior Year</text>
+            <text x="350" y="133" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">SUB-TASK B</text>
+            <!-- Sub-task C: Compare & Format -->
+            <rect x="460" y="102" width="190" height="38" rx="5" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <text x="555" y="120" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">Compare &amp; Format</text>
+            <text x="555" y="133" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">SUB-TASK C</text>
+            <!-- Arrows sub-task A to leaves -->
+            <line x1="105" y1="140" x2="80" y2="178" stroke="#CC00FF" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#gd-arrow-teal)"/>
+            <line x1="185" y1="140" x2="210" y2="178" stroke="#CC00FF" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#gd-arrow-teal)"/>
+            <!-- Leaves A -->
+            <rect x="18" y="180" width="125" height="34" rx="4" fill="rgba(45,212,191,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="80" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Query fact_sales</text>
+            <rect x="155" y="180" width="115" height="34" rx="4" fill="rgba(45,212,191,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="212" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Filter Jul–Sep</text>
+            <!-- Arrows sub-task B to leaves -->
+            <line x1="310" y1="140" x2="315" y2="178" stroke="#CC00FF" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#gd-arrow-teal)"/>
+            <line x1="390" y1="140" x2="425" y2="178" stroke="#CC00FF" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#gd-arrow-teal)"/>
+            <!-- Leaves B -->
+            <rect x="260" y="180" width="125" height="34" rx="4" fill="rgba(45,212,191,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="322" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Query fact_sales</text>
+            <rect x="397" y="180" width="115" height="34" rx="4" fill="rgba(45,212,191,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="454" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Filter prior year</text>
+            <!-- Arrows sub-task C to leaves -->
+            <line x1="525" y1="140" x2="535" y2="178" stroke="#f59e0b" stroke-width="1" stroke-dasharray="5 3"/>
+            <line x1="585" y1="140" x2="620" y2="178" stroke="#f59e0b" stroke-width="1" stroke-dasharray="5 3"/>
+            <!-- Leaves C -->
+            <rect x="500" y="180" width="115" height="34" rx="4" fill="rgba(245,158,11,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="557" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Calculate delta</text>
+            <rect x="625" y="180" width="60" height="34" rx="4" fill="rgba(245,158,11,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="655" y="200" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Build table</text>
+            <!-- Parallel indicator -->
+            <rect x="158" y="150" width="80" height="18" rx="3" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-width="0.8" stroke-dasharray="3 2"/>
+            <text x="198" y="162" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#CC00FF">PARALLEL</text>
+            <!-- Dependency dashed line between A and B -->
+            <line x1="240" y1="121" x2="255" y2="121" stroke="#334155" stroke-width="1" stroke-dasharray="3 2"/>
+            <!-- Convergence lines to merge node -->
+            <line x1="145" y1="214" x2="350" y2="258" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+            <line x1="350" y1="214" x2="350" y2="258" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+            <line x1="555" y1="214" x2="350" y2="258" stroke="#334155" stroke-width="1" stroke-dasharray="4 3"/>
+            <!-- Merge node -->
+            <circle cx="350" cy="265" r="8" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="350" y="268" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#10b981">M</text>
+            <!-- Arrow merge to final -->
+            <line x1="350" y1="273" x2="350" y2="290" stroke="#10b981" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#gd-arrow-green)"/>
+            <!-- Final node -->
+            <rect x="235" y="292" width="230" height="40" rx="6" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6 3" filter="url(#gd-glow)"/>
+            <text x="350" y="310" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#10b981">Formatted Response</text>
+            <text x="350" y="324" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">AGGREGATED OUTPUT</text>
+            <!-- Label -->
+            <text x="350" y="362" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#334155">AcmeCorp: Complex Query Decomposition</text>
+          </svg>
+        </div>
+
+        <!-- 1. The Scene -->
+        <section class="section reveal">
+          <div class="callout">
+            <span class="callout__label">AcmeCorp Scenario</span>
+            <p class="callout__text">
+              AcmeCorp&rsquo;s VP of Operations asks: <em>&ldquo;Give me a complete Q4 performance analysis with year-over-year comparisons, regional breakdowns, product category trends, and recommendations for Q1.&rdquo;</em>
+            </p>
+            <p class="callout__text" style="margin-top: var(--space-3);">
+              One agent can&rsquo;t handle this in a single step. The request spans multiple data sources, analysis dimensions, and output formats. Time to decompose.
+            </p>
+          </div>
+        </section>
+
+        <!-- 2. Three Planning Levels -->
+        <section class="section">
+          <h2 class="reveal">Three Planning Levels</h2>
+          <p class="reveal" style="color: var(--text-secondary); margin-bottom: var(--space-6); line-height: 1.7;">
+            Just like a military operation or a software project, agent planning happens at three levels of abstraction.
+          </p>
+
+          <div class="planning-grid">
+            <!-- Strategic -->
+            <div class="bp-card planning-card level-strategic reveal reveal--delay-1">
+              <span class="bp-card__number">01</span>
+              <span class="level-tag">Strategic</span>
+              <h3 class="bp-card__title">What to Achieve</h3>
+              <div class="bp-card__body">
+                <p>The high-level business objective. What does success look like?</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <span class="callout__label">AcmeCorp</span>
+                  <p class="callout__text">&ldquo;Understand Q4 sales performance comprehensively&rdquo;</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tactical -->
+            <div class="bp-card planning-card level-tactical reveal reveal--delay-2">
+              <span class="bp-card__number">02</span>
+              <span class="level-tag">Tactical</span>
+              <h3 class="bp-card__title">How to Get There</h3>
+              <div class="bp-card__body">
+                <p>Concrete approach &mdash; what steps and in what order?</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <span class="callout__label">AcmeCorp</span>
+                  <p class="callout__text">Pull sales data &rarr; Compare to targets &rarr; Analyze by region &rarr; Analyze by product &rarr; Generate recommendations</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Operational -->
+            <div class="bp-card planning-card level-operational reveal reveal--delay-3">
+              <span class="bp-card__number">03</span>
+              <span class="level-tag">Operational</span>
+              <h3 class="bp-card__title">Do It</h3>
+              <div class="bp-card__body">
+                <p>Specific executable actions the agent performs.</p>
+                <div class="callout" style="margin-top: var(--space-4);">
+                  <span class="callout__label">AcmeCorp</span>
+                  <p class="callout__text">Run <code>SELECT region, SUM(revenue)...</code> &rarr; Calculate YoY% &rarr; Build bar chart &rarr; Write summary</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. Animated Dependency Graph -->
+        <section class="section reveal">
+          <h2>Task Dependency Graph</h2>
+          <p style="color: var(--text-secondary); margin-bottom: var(--space-4); line-height: 1.7;">
+            The Q4 analysis decomposes into seven tasks. Some can run in parallel (A &amp; B), while others must wait for dependencies.
+          </p>
+
+          <div class="dep-graph">
+            <svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+              <!-- Background grid -->
+              <defs>
+                <pattern id="depGrid" width="30" height="30" patternUnits="userSpaceOnUse">
+                  <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#2a2a2a" stroke-width="0.5"/>
+                </pattern>
+                <filter id="glowBlue">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <filter id="glowTeal">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+                <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1"/>
+                </marker>
+              </defs>
+              <rect width="760" height="420" fill="url(#depGrid)"/>
+
+              <!-- Parallel indicator -->
+              <rect x="20" y="55" width="90" height="24" rx="4" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="65" y="71" text-anchor="middle" class="parallel-badge">PARALLEL</text>
+
+              <!-- Dependency lines (animated) -->
+              <!-- A -> C -->
+              <line x1="220" y1="50" x2="340" y2="170" stroke="#A100FF" stroke-width="1.5" class="dep-line delay-1" marker-end="url(#arrowBlue)" filter="url(#glowBlue)"/>
+              <!-- A -> D -->
+              <line x1="220" y1="50" x2="340" y2="240" stroke="#A100FF" stroke-width="1.5" class="dep-line delay-2" marker-end="url(#arrowBlue)" filter="url(#glowBlue)"/>
+              <!-- A -> E -->
+              <line x1="220" y1="50" x2="460" y2="170" stroke="#A100FF" stroke-width="1.5" class="dep-line delay-3" marker-end="url(#arrowBlue)" filter="url(#glowBlue)"/>
+              <!-- B -> E -->
+              <line x1="220" y1="110" x2="460" y2="170" stroke="#CC00FF" stroke-width="1.5" class="dep-line delay-3" marker-end="url(#arrowBlue)" filter="url(#glowTeal)"/>
+              <!-- C -> F -->
+              <line x1="440" y1="170" x2="540" y2="290" stroke="#A100FF" stroke-width="1.5" class="dep-line delay-4" marker-end="url(#arrowBlue)" filter="url(#glowBlue)"/>
+              <!-- D -> F -->
+              <line x1="440" y1="240" x2="540" y2="290" stroke="#A100FF" stroke-width="1.5" class="dep-line delay-5" marker-end="url(#arrowBlue)" filter="url(#glowBlue)"/>
+              <!-- E -> F -->
+              <line x1="560" y1="180" x2="580" y2="280" stroke="#A100FF" stroke-width="1.5" class="dep-line delay-5" marker-end="url(#arrowBlue)" filter="url(#glowBlue)"/>
+              <!-- F -> G -->
+              <line x1="620" y1="300" x2="640" y2="370" stroke="#A100FF" stroke-width="1.5" class="dep-line delay-7" marker-end="url(#arrowBlue)" filter="url(#glowBlue)"/>
+
+              <!-- Task Nodes -->
+              <!-- Task A -->
+              <g class="task-node n-a" filter="url(#glowBlue)">
+                <rect x="120" y="25" width="200" height="50" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+                <text x="135" y="47" class="task-label">A: Pull Q4 Sales Data</text>
+                <text x="135" y="63" class="task-sublabel">No dependency</text>
+              </g>
+
+              <!-- Task B -->
+              <g class="task-node n-b" filter="url(#glowTeal)">
+                <rect x="120" y="90" width="200" height="50" rx="4" fill="#0d0d0d" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+                <text x="135" y="112" class="task-label">B: Pull Q3 Data (YoY)</text>
+                <text x="135" y="128" class="task-sublabel">No dependency &mdash; parallel with A</text>
+              </g>
+
+              <!-- Task C -->
+              <g class="task-node n-c" filter="url(#glowBlue)">
+                <rect x="340" y="150" width="200" height="46" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+                <text x="355" y="170" class="task-label">C: Regional Breakdown</text>
+                <text x="355" y="184" class="task-sublabel">Depends on A</text>
+              </g>
+
+              <!-- Task D -->
+              <g class="task-node n-d" filter="url(#glowBlue)">
+                <rect x="340" y="216" width="200" height="46" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+                <text x="355" y="236" class="task-label">D: Product Analysis</text>
+                <text x="355" y="250" class="task-sublabel">Depends on A</text>
+              </g>
+
+              <!-- Task E -->
+              <g class="task-node n-e" filter="url(#glowBlue)">
+                <rect x="460" y="150" width="200" height="46" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+                <text x="475" y="170" class="task-label">E: YoY Comparison</text>
+                <text x="475" y="184" class="task-sublabel">Depends on A + B</text>
+              </g>
+
+              <!-- Task F -->
+              <g class="task-node n-f" filter="url(#glowBlue)">
+                <rect x="480" y="272" width="220" height="46" rx="4" fill="#0d0d0d" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 3"/>
+                <text x="495" y="292" class="task-label">F: Gen Recommendations</text>
+                <text x="495" y="306" class="task-sublabel">Depends on C + D + E</text>
+              </g>
+
+              <!-- Task G -->
+              <g class="task-node n-g" filter="url(#glowBlue)">
+                <rect x="530" y="350" width="210" height="46" rx="4" fill="#0d0d0d" stroke="#10b981" stroke-width="2"/>
+                <text x="545" y="370" class="task-label" style="fill:#10b981">G: Format Final Report</text>
+                <text x="545" y="384" class="task-sublabel">Depends on F &mdash; DONE</text>
+              </g>
+            </svg>
+          </div>
+        </section>
+
+        <!-- 4. Road Trip Analogy (collapsible) -->
+        <section class="section reveal">
+          <div class="collapsible" id="roadTripCollapsible">
+            <button class="collapsible__header">
+              <span>Analogy: Planning a Cross-Country Road Trip</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p style="color: var(--text-secondary); line-height: 1.7; margin-bottom: var(--space-4);">
+                  Goal decomposition works just like planning a road trip. Each level of planning gets more concrete:
+                </p>
+
+                <div style="margin-bottom: var(--space-4);">
+                  <span class="badge badge--blue" data-tip="High-level goal definition — the 'what' and 'why' without implementation details">Strategic</span>
+                  <p style="color: var(--text-secondary); margin-top: var(--space-2);">&ldquo;Get from New York to Los Angeles&rdquo;</p>
+                </div>
+
+                <div style="margin-bottom: var(--space-4);">
+                  <span class="badge badge--teal" data-tip="Mid-level planning — breaking goals into ordered steps with dependencies">Tactical</span>
+                  <p style="color: var(--text-secondary); margin-top: var(--space-2);">&ldquo;Route through Chicago, Denver, and Vegas + book hotels at each stop&rdquo;</p>
+                  <div class="road-trip-flow" style="margin-top: var(--space-3);">
+                    <span class="step">NYC</span><span class="arrow">&rarr;</span>
+                    <span class="step">Chicago</span><span class="arrow">&rarr;</span>
+                    <span class="step">Denver</span><span class="arrow">&rarr;</span>
+                    <span class="step">Vegas</span><span class="arrow">&rarr;</span>
+                    <span class="step">LA</span>
+                  </div>
+                </div>
+
+                <div>
+                  <span class="badge badge--amber" data-tip="Concrete executable actions — specific tool calls and API requests the agent performs">Operational</span>
+                  <p style="color: var(--text-secondary); margin-top: var(--space-2);">&ldquo;Start car, merge onto I-80 West, drive 4 hours, stop for gas at exit 142, refuel at Shell station&hellip;&rdquo;</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. Why Decomposition Matters -->
+        <section class="section">
+          <h2 class="reveal">Why Decomposition Matters</h2>
+          <div class="benefits-grid">
+            <div class="benefit-item reveal reveal--delay-1">
+              <div class="benefit-item__icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#A100FF" stroke-width="1.5"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="2" y1="9" x2="22" y2="9"/><line x1="12" y1="9" x2="12" y2="21"/></svg>
+              </div>
+              <div class="benefit-item__title">Exceeds Context Windows</div>
+              <div class="benefit-item__text">
+                A complete Q4 analysis may need millions of tokens of data. Decomposition lets each sub-task operate within context limits.
+              </div>
+            </div>
+
+            <div class="benefit-item reveal reveal--delay-2">
+              <div class="benefit-item__icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#CC00FF" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div class="benefit-item__title">Better Error Handling</div>
+              <div class="benefit-item__text">
+                If the regional breakdown fails, retry just that sub-task. No need to re-run the entire analysis from scratch.
+              </div>
+            </div>
+
+            <div class="benefit-item reveal reveal--delay-3">
+              <div class="benefit-item__icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/><circle cx="8" cy="6" r="2" fill="#f59e0b"/><circle cx="16" cy="12" r="2" fill="#f59e0b"/><circle cx="10" cy="18" r="2" fill="#f59e0b"/></svg>
+              </div>
+              <div class="benefit-item__title">Enables Parallelism</div>
+              <div class="benefit-item__text">
+                Tasks A and B have no dependencies &mdash; run them simultaneously. Total time drops from 7 sequential steps to ~4 critical-path steps.
+              </div>
+            </div>
+
+            <div class="benefit-item reveal reveal--delay-4">
+              <div class="benefit-item__icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <div class="benefit-item__title">Traceable Reasoning</div>
+              <div class="benefit-item__text">
+                Every recommendation traces back through a clear chain: recommendation &larr; analysis &larr; data query. Auditable and explainable.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Sorting Exercise -->
+        <section class="section reveal">
+          <h2>Practice: Classify the Planning Levels</h2>
+          <div class="sort-exercise">
+            <div class="sort-exercise__prompt">
+              <p><strong>CEO Request:</strong> &ldquo;I want to know which product categories to invest in for next year.&rdquo;</p>
+              <p style="margin-top: var(--space-2); font-size: var(--font-xs); color: var(--text-secondary);">
+                Drag each task description to the correct planning level, or click a task then click its target zone.
+              </p>
+            </div>
+
+            <!-- Item bank -->
+            <div class="sort-bank" id="sortBank">
+              <div class="sort-item" data-level="operational" draggable="true" id="si-1">Run SQL queries &rarr; Calculate growth rates &rarr; Compare margins &rarr; Generate ranking &rarr; Present recommendations</div>
+              <div class="sort-item" data-level="strategic" draggable="true" id="si-2">Identify highest-growth product categories for investment</div>
+              <div class="sort-item" data-level="tactical" draggable="true" id="si-3">Analyze sales trends, profit margins, market share, and growth rates by category</div>
+            </div>
+
+            <!-- Drop zones -->
+            <div class="sort-zones">
+              <div class="sort-zone" data-level="strategic" id="zone-strategic">
+                <div class="sort-zone__label strategic">Strategic</div>
+              </div>
+              <div class="sort-zone" data-level="tactical" id="zone-tactical">
+                <div class="sort-zone__label tactical">Tactical</div>
+              </div>
+              <div class="sort-zone" data-level="operational" id="zone-operational">
+                <div class="sort-zone__label operational">Operational</div>
+              </div>
+            </div>
+
+            <div class="sort-result" id="sortResult">All tasks correctly classified! Strategic &rarr; Tactical &rarr; Operational — the full decomposition chain.</div>
+          </div>
+        </section>
+
+      </div><!-- /content-container -->
+    </main>
+
+    <!-- Page Nav -->
+    <footer class="page-nav">
+      <a class="page-nav__prev" href="../module-03/quiz-checkpoint.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Module 03 Quiz
+      </a>
+      <a class="page-nav__next" href="02-multi-agent.html">
+        Multi-Agent Collaboration
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
+    </footer>
+
+  </div><!-- /page-wrapper -->
+
+  <!-- Sorting Exercise Script -->
+  <script>
+  (function() {
+    const bank = document.getElementById('sortBank');
+    const zones = document.querySelectorAll('.sort-zone');
+    const result = document.getElementById('sortResult');
+    let selectedItem = null;
+    let correctCount = 0;
+    const totalItems = 3;
+
+    // Drag and drop
+    bank.addEventListener('dragstart', function(e) {
+      if (e.target.classList.contains('sort-item') && !e.target.classList.contains('placed')) {
+        e.dataTransfer.setData('text/plain', e.target.id);
+        e.target.classList.add('dragging');
+      }
+    });
+    bank.addEventListener('dragend', function(e) {
+      e.target.classList.remove('dragging');
+    });
+
+    zones.forEach(function(zone) {
+      zone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        zone.classList.add('highlight');
+      });
+      zone.addEventListener('dragleave', function() {
+        zone.classList.remove('highlight');
+      });
+      zone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        zone.classList.remove('highlight');
+        var id = e.dataTransfer.getData('text/plain');
+        var item = document.getElementById(id);
+        if (!item || item.classList.contains('placed')) return;
+        checkPlacement(item, zone);
+      });
+      // Click-to-place
+      zone.addEventListener('click', function() {
+        if (selectedItem && !selectedItem.classList.contains('placed')) {
+          checkPlacement(selectedItem, zone);
+          selectedItem = null;
+        }
+      });
+    });
+
+    // Click to select
+    bank.addEventListener('click', function(e) {
+      var item = e.target.closest('.sort-item');
+      if (!item || item.classList.contains('placed')) return;
+      // Deselect previous
+      document.querySelectorAll('.sort-item').forEach(function(si) { si.style.boxShadow = ''; });
+      selectedItem = item;
+      item.style.boxShadow = '0 0 12px rgba(74,158,255,0.5)';
+    });
+
+    function checkPlacement(item, zone) {
+      var itemLevel = item.getAttribute('data-level');
+      var zoneLevel = zone.getAttribute('data-level');
+      if (itemLevel === zoneLevel) {
+        item.classList.add('placed');
+        item.classList.remove('dragging');
+        item.draggable = false;
+        item.style.boxShadow = '';
+        zone.appendChild(item);
+        zone.classList.add('correct');
+        correctCount++;
+        if (correctCount === totalItems) {
+          result.classList.add('show');
+        }
+      } else {
+        item.classList.add('wrong-place');
+        setTimeout(function() { item.classList.remove('wrong-place'); }, 500);
+      }
+    }
+  })();
+  </script>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>Nav.init('m04-goal-decomposition');</script>
+</body>
+</html>

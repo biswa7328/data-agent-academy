@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 09 Quiz &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    .celebration {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      margin-top: var(--space-8);
+      background: var(--bg-surface);
+      border: 2px solid var(--stroke-secondary);
+      border-radius: var(--border-radius-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .celebration::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary), var(--accent-success));
+    }
+    .celebration__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--stroke-secondary);
+      margin-bottom: var(--space-6);
+      font-size: var(--font-4xl);
+      box-shadow: 0 0 30px var(--glow-teal);
+    }
+    .celebration__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+    }
+    .celebration__subtitle {
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .celebration__next {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-8);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      background: var(--bg-primary);
+      margin-top: var(--space-4);
+    }
+    .celebration__next-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .celebration__next-title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--stroke-dim);
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+    }
+    .stat-box__value {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-2);
+    }
+    .stat-box__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    @media (max-width: 640px) {
+      .stats-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a><span class="separator">/</span>
+        <span>Module 09</span><span class="separator">/</span>
+        <span class="current">Quiz Checkpoint</span>
+      </div>
+    </nav>
+    <div class="progress-bar"><div class="progress-bar__fill"></div></div>
+
+    <main class="page-content">
+      <div class="content-container">
+
+        <section class="section">
+          <div class="section-label reveal">Module 09 &mdash; Assessment</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Cost Optimization Knowledge Check</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            Derek Kim's two-week ultimatum forced Maya Chen's team to cut DataPulse costs from $15,247 to $1,847/month &mdash; an 88% reduction. Test your understanding of the cost engineering strategies that saved the project and the financial guardrails that keep AcmeCorp's agent sustainable.
+          </p>
+
+          <div class="stats-row reveal">
+            <div class="stat-box">
+              <div class="stat-box__value">88%</div>
+              <div class="stat-box__label">Cost Reduction</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">8</div>
+              <div class="stat-box__label">Strategies Deployed</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">8</div>
+              <div class="stat-box__label">Questions Ahead</div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">How It Works</div>
+            <div class="callout__text">
+              Select one answer per question. Once all 8 are answered, click "Check Answers" to see your score with detailed explanations. You need 80% (7/8) for an excellent rating. Each question is drawn from the challenges Derek, Maya, and the AcmeCorp team faced during their cost optimization sprint.
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div id="quiz-container"></div>
+        </section>
+
+        <!-- Celebration -->
+        <div id="celebration-section" class="reveal" style="display: none;">
+          <div class="celebration">
+            <div class="celebration__badge">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="celebration__title">Module 09 Complete</div>
+            <p class="celebration__subtitle">
+              You have mastered the economics of agentic AI &mdash; from understanding the hidden costs that blindsided Derek Kim, to implementing Maya's optimization stack, to building the financial guardrails that keep DataPulse running at $1,847/month across AcmeCorp's 200 stores.
+            </p>
+            <a href="../module-10/01-semantic-layer.html" class="btn btn--primary btn--large">
+              Continue to Module 10 &rarr;
+            </a>
+            <div class="celebration__next">
+              <div>
+                <div class="celebration__next-label">Up Next</div>
+                <div class="celebration__next-title">Module 10 &mdash; Semantic Layer &amp; Agent UX</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="03-financial-guardrails.html" class="page-nav__title">Financial Guardrails</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="../module-10/01-semantic-layer.html" class="page-nav__title">Semantic Layer &amp; Agent UX</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    const questions = [
+      {
+        question: 'When Derek Kim opened AcmeCorp\'s first DataPulse invoice at $15,247, Maya Chen identified four categories of waste. What was the largest cost category at 62% of the bill?',
+        options: [
+          'Redundant RAG retrievals from uncached schema lookups',
+          'LLM inference costs from every query hitting GPT-4',
+          'Failed query retries consuming 3x token cost each',
+          'Embedding re-generation for the same documents nightly'
+        ],
+        correct: 1,
+        explanation: 'LLM inference was the largest category at 62% ($9,453) of AcmeCorp\'s $15,247 bill. Every single query — from simple price lookups to complex analyses — was routed to GPT-4 with no model tiering. Maya\'s model routing optimization addressed this by sending 65% of simple queries to a cheaper model.'
+      },
+      {
+        question: 'By what factor is a 95% reliable agent cheaper than an 80% reliable agent, according to the 5x Rule?',
+        options: [
+          '2x cheaper',
+          '3x cheaper',
+          '5x cheaper',
+          '10x cheaper'
+        ],
+        correct: 2,
+        explanation: 'A 95% reliable agent is approximately 5x cheaper than an 80% reliable agent. At 80% reliability, 1 in 5 tasks fails, triggering retries (2-3x token cost), human review ($4-8 per incident), and debugging overhead. DataPulse\'s initial 82% reliability was a major contributor to its inflated costs. Priya Sharma spent three hours daily on review alone.'
+      },
+      {
+        question: 'Maya Chen prioritized semantic caching as her first optimization. Why did she target this strategy first?',
+        options: [
+          'It had the highest theoretical cost reduction at 90%',
+          'Store managers like Sofia Torres asked nearly identical queries daily across 200 stores, making cache hit rates high',
+          'It was the easiest to implement with no code changes required',
+          'Derek Kim specifically requested it in his ultimatum'
+        ],
+        correct: 1,
+        explanation: 'Maya prioritized semantic caching because AcmeCorp\'s query logs showed massive redundancy — Sofia Torres and dozens of other store managers asked semantically identical questions daily. Across 200 stores, the cache hit potential was enormous. By Day 3, semantic caching alone cut the bill from $15,247 to $10,800.'
+      },
+      {
+        question: 'In model cascading, what routing approach did Maya implement for AcmeCorp\'s DataPulse queries?',
+        options: [
+          'All queries routed to GPT-4 to ensure maximum quality',
+          'All queries routed to GPT-3.5 to minimize cost',
+          'Simple lookups to GPT-3.5, complex reasoning to GPT-4, with escalation on low confidence',
+          'Random distribution across all available models'
+        ],
+        correct: 2,
+        explanation: 'Maya built a classifier that routed simple lookups (65% of queries) to GPT-3.5 and reserved GPT-4 for complex multi-step reasoning. The key innovation was the escalation pattern: if the cheaper model\'s confidence fell below a threshold, the query was automatically re-routed to GPT-4. This dropped DataPulse costs from $10,800 to $6,200 by Day 5.'
+      },
+      {
+        question: 'Which financial guardrail prevents a single runaway session from exceeding its budget?',
+        options: [
+          'Per-user monthly cap',
+          'Per-session token budget',
+          'Real-time cost attribution',
+          'Automated alerts at 80%'
+        ],
+        correct: 1,
+        explanation: 'Per-session token budgets assign a specific token allowance to each agent session based on query complexity. Derek and Maya designed this as the innermost ring of protection: simple lookups like Sofia\'s get 5K tokens, complex analyses like Raj\'s get 25K. When the budget is exhausted, DataPulse synthesizes a best-effort response rather than continuing unbounded.'
+      },
+      {
+        question: 'Which optimization strategy carries ZERO quality risk according to the trade-off matrix Maya used?',
+        options: [
+          'Model Cascading',
+          'Context Compression',
+          'Semantic Caching',
+          'Prompt Caching'
+        ],
+        correct: 3,
+        explanation: 'Prompt caching has zero quality risk because it serves the exact same content — the only difference is that repeated static prefixes (system prompts, tool schemas) are served from cache at a reduced cost. The model receives identical input regardless of whether caching is active. Request batching and off-peak processing also carry zero quality risk. Maya learned about quality risk the hard way when over-aggressive context compression gave Lena Park incorrect vendor data on Day 6.'
+      },
+      {
+        question: 'What is the recommended order for implementing cost optimizations, based on Maya\'s sprint at AcmeCorp?',
+        options: [
+          'Start with the highest-risk strategies for maximum impact',
+          'Implement all strategies simultaneously for fastest results',
+          'Start with zero-risk strategies (prompt caching, batching), then layer in medium-risk ones with A/B testing',
+          'Focus only on model cascading since it has the highest single-strategy impact'
+        ],
+        correct: 2,
+        explanation: 'The Golden Rule says: optimize reliability first, cost second. Maya started with zero-quality-risk strategies and layered in medium-risk ones with 48-hour A/B tests. She measured each layer\'s impact before adding the next, which let her prove to Derek and Raj exactly how much each optimization contributed. The first two optimizations delivered 60% of total savings.'
+      },
+      {
+        question: 'What should a kill switch do when triggered at the $100/day department threshold, as Derek Kim designed for AcmeCorp?',
+        options: [
+          'Send an email to the CFO and continue operating',
+          'Gradually reduce agent capabilities over the next hour',
+          'Immediately halt all agent operations for that department and alert the operations team',
+          'Switch all queries to the cheapest model regardless of complexity'
+        ],
+        correct: 2,
+        explanation: 'Derek was adamant: the kill switch must be immediate and decisive. When a department exceeds its $100/day threshold, DataPulse halts all operations for that department instantly. The ops team and Marcus Webb on Security & Compliance receive immediate Slack alerts. In AcmeCorp\'s first 30 days, the kill switch triggered twice — both from Marketing running batch trend analyses, which Maya resolved by moving those workloads to the off-peak queue.'
+      }
+    ];
+
+    Nav.init('m09-quiz-final');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      QuizEngine.init('quiz-container', questions);
+
+      const originalSubmit = QuizEngine.submit.bind(QuizEngine);
+      QuizEngine.submit = function(containerId) {
+        originalSubmit(containerId);
+        const state = this.activeQuizzes[containerId];
+        if (state && state.submitted) {
+          const celebSection = document.getElementById('celebration-section');
+          if (celebSection) {
+            celebSection.style.display = 'block';
+            requestAnimationFrame(() => {
+              celebSection.classList.add('visible');
+              celebSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            });
+          }
+        }
+      };
+    });
+  </script>
+</body>
+</html>

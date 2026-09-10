@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tool Definitions — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Tool Category Icon --- */
+    .tool-icon {
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--stroke-primary);
+      border-radius: var(--border-radius);
+      flex-shrink: 0;
+    }
+    .tool-icon--teal   { border-color: var(--stroke-secondary); }
+    .tool-icon--amber  { border-color: var(--accent-warning); }
+    .tool-icon--green  { border-color: var(--accent-success); }
+    .tool-icon--purple { border-color: #a78bfa; }
+
+    .tool-tag {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      padding: var(--space-1) var(--space-2);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      color: var(--text-secondary);
+      margin-right: var(--space-1);
+      margin-bottom: var(--space-1);
+    }
+
+    /* --- JSON Syntax Colors --- */
+    .json-key    { color: #A100FF; }
+    .json-string { color: #10b981; }
+    .json-number { color: #f59e0b; }
+    .json-bool   { color: #a78bfa; }
+    .json-null   { color: #a0a0a0; }
+    .json-brace  { color: #f5f5f5; }
+    .json-comment{ color: #555; font-style: italic; }
+
+    /* --- Good vs Bad comparison --- */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin: var(--space-6) 0;
+    }
+    .compare-card {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      position: relative;
+    }
+    .compare-card--bad {
+      border-left: 3px solid var(--accent-error);
+    }
+    .compare-card--good {
+      border-left: 3px solid var(--accent-success);
+    }
+    .compare-card__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-3);
+    }
+    .compare-card--bad .compare-card__label  { color: var(--accent-error); }
+    .compare-card--good .compare-card__label { color: var(--accent-success); }
+
+    /* --- Tool Picker Interaction --- */
+    .tool-picker { margin: var(--space-8) 0; }
+    .tool-picker__question {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      padding: var(--space-4) var(--space-6);
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-secondary);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--space-6);
+      line-height: 1.6;
+    }
+    .tool-picker__question em {
+      color: var(--stroke-secondary);
+      font-style: normal;
+      font-weight: 600;
+    }
+    .tool-picker__options {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+    }
+    .tool-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      background: var(--bg-surface);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      user-select: none;
+    }
+    .tool-btn:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.05);
+    }
+    .tool-btn.selected {
+      border-color: var(--stroke-primary);
+      border-style: solid;
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.1);
+      box-shadow: 0 0 10px var(--glow-blue);
+    }
+    .tool-btn.selected .tool-btn__order {
+      display: inline-flex;
+    }
+    .tool-btn__order {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--stroke-primary);
+      color: var(--bg-primary);
+      font-size: var(--font-xs);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+    .tool-btn__icon {
+      width: 16px;
+      height: 16px;
+      opacity: 0.6;
+    }
+    .tool-picker__actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-top: var(--space-4);
+    }
+    .tool-picker__feedback {
+      padding: var(--space-4) var(--space-6);
+      border-radius: var(--border-radius);
+      font-size: var(--font-base);
+      display: none;
+      margin-top: var(--space-4);
+      line-height: 1.6;
+    }
+    .tool-picker__feedback.show { display: block; }
+    .tool-picker__feedback--correct {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--accent-success);
+      color: var(--accent-success);
+    }
+    .tool-picker__feedback--incorrect {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--accent-error);
+      color: var(--accent-error);
+    }
+
+    /* --- Trace flow --- */
+    .trace-flow {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+      margin: var(--space-4) 0;
+    }
+    .trace-step {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      padding: var(--space-1) var(--space-3);
+      border: 1px solid var(--stroke-dim);
+      border-radius: var(--border-radius);
+      color: var(--text-secondary);
+    }
+    .trace-step--active {
+      border-color: var(--stroke-primary);
+      color: var(--stroke-primary);
+      box-shadow: 0 0 8px var(--glow-blue);
+    }
+    .trace-arrow {
+      color: var(--stroke-dim);
+      font-size: var(--font-sm);
+    }
+
+    @media (max-width: 640px) {
+      .compare-grid { grid-template-columns: 1fr; }
+      .tool-picker__options { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 01</span>
+        <span class="separator">/</span>
+        <span class="current">Tool Definitions</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Page Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 01 &mdash; Lesson 02</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Tool Definitions</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            How to give a Data Agent hands &mdash; the anatomy of well-defined, composable tools
+            that turn LLM reasoning into real-world actions.
+          </p>
+        </header>
+
+        <!-- ===== EVOLVING DIAGRAM ===== -->
+        <div class="evolving-diagram reveal reveal--scale" id="evolving-diagram"></div>
+
+        <!-- ===== SECTION 1: THE SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Scene</div>
+          <h2 style="margin-bottom: var(--space-4);">Tracing a Real Question</h2>
+          <p>
+            An AcmeCorp analyst opens the Data Agent and types:
+          </p>
+          <div style="font-family: var(--font-mono); font-size: var(--font-lg); color: var(--stroke-secondary); padding: var(--space-4) 0; border-bottom: 1px dashed var(--stroke-dim); margin-bottom: var(--space-6);">
+            "What were our top 10 products last quarter?"
+          </div>
+          <p>
+            Before the agent can answer, it needs to figure out what to <em>do</em>. That means
+            identifying the right sequence of tools to call. Let us trace the flow:
+          </p>
+
+          <div class="trace-flow reveal reveal--delay-1">
+            <span class="trace-step trace-step--active">schema_discovery</span>
+            <span class="trace-arrow">&rarr;</span>
+            <span class="trace-step trace-step--active">query_execute</span>
+            <span class="trace-arrow">&rarr;</span>
+            <span class="trace-step trace-step--active">aggregate</span>
+            <span class="trace-arrow">&rarr;</span>
+            <span class="trace-step trace-step--active">calculate</span>
+            <span class="trace-arrow">&rarr;</span>
+            <span class="trace-step trace-step--active">export_csv</span>
+          </div>
+
+          <div class="callout reveal reveal--delay-2" style="margin-top: var(--space-6);">
+            <div class="callout__label">AcmeCorp Trace</div>
+            <div class="callout__text">
+              First, the agent discovers which tables exist (<code>products</code>, <code>sales</code>,
+              <code>stores</code>). Then it builds and executes a SQL query joining sales to products.
+              It aggregates by <code>product_name</code>, calculates each product's share of total
+              revenue, and finally exports the result as CSV for the analyst.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: FIVE TOOL CATEGORIES ===== -->
+        <section class="section reveal">
+          <div class="section-label">Tool Categories</div>
+          <h2 style="margin-bottom: var(--space-2);">Five Types of Tools</h2>
+          <p>Every Data Agent tool falls into one of five categories. Each category has a distinct purpose.</p>
+
+          <div class="card-grid card-grid--2" style="margin-top: var(--space-8);">
+
+            <!-- Category 1: Data Access -->
+            <div class="bp-card reveal reveal--delay-1">
+              <div class="bp-card__title">
+                <div class="tool-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-primary)" stroke-width="2">
+                    <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                  </svg>
+                </div>
+                Data Access
+              </div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: var(--space-3);">Read from and discover data sources. These are the foundational tools for any data agent.</p>
+                <div>
+                  <span class="tool-tag">schema_discovery</span>
+                  <span class="tool-tag">query_execute</span>
+                  <span class="tool-tag">table_metadata</span>
+                </div>
+              </div>
+              <div class="callout" style="margin-bottom: 0;">
+                <div class="callout__label">AcmeCorp</div>
+                <div class="callout__text">Finds the <code>products</code>, <code>sales</code>, and <code>stores</code> tables and reads their column types.</div>
+              </div>
+            </div>
+
+            <!-- Category 2: Transformation -->
+            <div class="bp-card reveal reveal--delay-2">
+              <div class="bp-card__title">
+                <div class="tool-icon tool-icon--teal">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                    <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M4 4l17 17"/>
+                  </svg>
+                </div>
+                Transformation
+              </div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: var(--space-3);">Reshape, combine, and restructure data after retrieval. The glue between raw rows and useful answers.</p>
+                <div>
+                  <span class="tool-tag">filter</span>
+                  <span class="tool-tag">aggregate</span>
+                  <span class="tool-tag">join</span>
+                  <span class="tool-tag">pivot</span>
+                </div>
+              </div>
+              <div class="callout" style="margin-bottom: 0;">
+                <div class="callout__label">AcmeCorp</div>
+                <div class="callout__text">Joins <code>sales</code> to <code>products</code>, aggregates by <code>product_name</code>, and sorts descending.</div>
+              </div>
+            </div>
+
+            <!-- Category 3: External APIs -->
+            <div class="bp-card reveal reveal--delay-3">
+              <div class="bp-card__title">
+                <div class="tool-icon tool-icon--amber">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-warning)" stroke-width="2">
+                    <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+                  </svg>
+                </div>
+                External APIs
+              </div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: var(--space-3);">Reach beyond the warehouse to third-party systems for live data, notifications, and integrations.</p>
+                <div>
+                  <span class="tool-tag">slack_notify</span>
+                  <span class="tool-tag">jira_create</span>
+                  <span class="tool-tag">api_fetch</span>
+                </div>
+              </div>
+              <div class="callout" style="margin-bottom: 0;">
+                <div class="callout__label">AcmeCorp</div>
+                <div class="callout__text">Pulls current inventory counts from the Shopify API to cross-reference with sales data.</div>
+              </div>
+            </div>
+
+            <!-- Category 4: Computation -->
+            <div class="bp-card reveal reveal--delay-4">
+              <div class="bp-card__title">
+                <div class="tool-icon tool-icon--green">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-success)" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9l6 6M15 9l-6 6"/>
+                  </svg>
+                </div>
+                Computation
+              </div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: var(--space-3);">Perform math, validation, and comparisons that the LLM should not attempt itself.</p>
+                <div>
+                  <span class="tool-tag">calculate</span>
+                  <span class="tool-tag">validate</span>
+                  <span class="tool-tag">compare</span>
+                </div>
+              </div>
+              <div class="callout" style="margin-bottom: 0;">
+                <div class="callout__label">AcmeCorp</div>
+                <div class="callout__text">Calculates each product's percentage of total revenue. LLMs are bad at precise arithmetic &mdash; tools are not.</div>
+              </div>
+            </div>
+
+            <!-- Category 5: File Operations -->
+            <div class="bp-card reveal reveal--delay-5">
+              <div class="bp-card__title">
+                <div class="tool-icon tool-icon--purple">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <polyline points="14,2 14,8 20,8"/>
+                  </svg>
+                </div>
+                File Operations
+              </div>
+              <div class="bp-card__body">
+                <p style="margin-bottom: var(--space-3);">Read from and write to files &mdash; ingest uploaded data and export formatted results.</p>
+                <div>
+                  <span class="tool-tag">read_csv</span>
+                  <span class="tool-tag">write_json</span>
+                  <span class="tool-tag">export_pdf</span>
+                </div>
+              </div>
+              <div class="callout" style="margin-bottom: 0;">
+                <div class="callout__label">AcmeCorp</div>
+                <div class="callout__text">Exports the final top-10 products result as a CSV file that the analyst can download.</div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: TOOL ANATOMY ===== -->
+        <section class="section reveal">
+          <div class="section-label">Anatomy of a Tool</div>
+          <h2 style="margin-bottom: var(--space-2);">The JSON Contract</h2>
+          <p>
+            Every tool is defined by a strict JSON schema that the LLM reads to understand what the tool does,
+            what inputs it needs, and what it returns. This is the contract between the brain and the hands.
+          </p>
+
+          <div class="terminal reveal reveal--delay-1">
+            <div class="terminal__header">
+              <span class="terminal__dot terminal__dot--red"></span>
+              <span class="terminal__dot terminal__dot--yellow"></span>
+              <span class="terminal__dot terminal__dot--green"></span>
+              <span class="terminal__title">tool_definition.json</span>
+            </div>
+            <div class="terminal__body"><span class="json-brace">{</span>
+  <span class="json-key">"name"</span>: <span class="json-string">"query_execute"</span>,
+  <span class="json-key">"description"</span>: <span class="json-string">"Execute a read-only SQL query against the data warehouse and return results as JSON rows."</span>,
+  <span class="json-key">"parameters"</span>: <span class="json-brace">{</span>
+    <span class="json-key">"type"</span>: <span class="json-string">"object"</span>,
+    <span class="json-key">"properties"</span>: <span class="json-brace">{</span>
+      <span class="json-key">"sql"</span>: <span class="json-brace">{</span>
+        <span class="json-key">"type"</span>: <span class="json-string">"string"</span>,
+        <span class="json-key">"description"</span>: <span class="json-string">"The SQL SELECT statement to execute"</span>
+      <span class="json-brace">}</span>,
+      <span class="json-key">"timeout_ms"</span>: <span class="json-brace">{</span>
+        <span class="json-key">"type"</span>: <span class="json-string">"integer"</span>,
+        <span class="json-key">"default"</span>: <span class="json-number">5000</span>,
+        <span class="json-key">"description"</span>: <span class="json-string">"Max execution time in milliseconds"</span>
+      <span class="json-brace">}</span>,
+      <span class="json-key">"max_rows"</span>: <span class="json-brace">{</span>
+        <span class="json-key">"type"</span>: <span class="json-string">"integer"</span>,
+        <span class="json-key">"default"</span>: <span class="json-number">1000</span>,
+        <span class="json-key">"description"</span>: <span class="json-string">"Maximum rows to return"</span>
+      <span class="json-brace">}</span>
+    <span class="json-brace">}</span>,
+    <span class="json-key">"required"</span>: [<span class="json-string">"sql"</span>]
+  <span class="json-brace">}</span>,
+  <span class="json-key">"returns"</span>: <span class="json-brace">{</span>
+    <span class="json-key">"type"</span>: <span class="json-string">"object"</span>,
+    <span class="json-key">"properties"</span>: <span class="json-brace">{</span>
+      <span class="json-key">"rows"</span>: <span class="json-brace">{</span> <span class="json-key">"type"</span>: <span class="json-string">"array"</span> <span class="json-brace">}</span>,
+      <span class="json-key">"row_count"</span>: <span class="json-brace">{</span> <span class="json-key">"type"</span>: <span class="json-string">"integer"</span> <span class="json-brace">}</span>,
+      <span class="json-key">"execution_ms"</span>: <span class="json-brace">{</span> <span class="json-key">"type"</span>: <span class="json-string">"integer"</span> <span class="json-brace">}</span>
+    <span class="json-brace">}</span>
+  <span class="json-brace">}</span>
+<span class="json-brace">}</span></div>
+          </div>
+
+          <p style="margin-top: var(--space-4);">
+            Notice the four key parts: <strong>name</strong> (unique identifier),
+            <strong>description</strong> (what the LLM reads to decide when to use it),
+            <strong>parameters</strong> (JSON Schema for inputs), and
+            <strong>returns</strong> (what the caller gets back).
+          </p>
+        </section>
+
+        <!-- ===== SECTION 4: GOOD VS BAD ===== -->
+        <section class="section reveal">
+          <div class="section-label">Design Principle</div>
+          <h2 style="margin-bottom: var(--space-2);">Narrow Tools Beat God Tools</h2>
+          <p>
+            The single biggest tool design mistake is building one monolithic
+            <code>do_everything()</code> function. Narrow, composable tools give the LLM more
+            flexibility and produce fewer errors.
+          </p>
+
+          <div class="compare-grid reveal reveal--delay-1">
+            <div class="compare-card compare-card--bad">
+              <div class="compare-card__label">Bad: God Tool</div>
+              <div class="terminal" style="margin: var(--space-3) 0 var(--space-4);">
+                <div class="terminal__header">
+                  <span class="terminal__dot terminal__dot--red"></span>
+                  <span class="terminal__dot terminal__dot--yellow"></span>
+                  <span class="terminal__dot terminal__dot--green"></span>
+                  <span class="terminal__title">anti-pattern.json</span>
+                </div>
+                <div class="terminal__body"><span class="json-brace">{</span>
+  <span class="json-key">"name"</span>: <span class="json-string">"do_everything"</span>,
+  <span class="json-key">"description"</span>: <span class="json-string">"Answer any data question"</span>,
+  <span class="json-key">"parameters"</span>: <span class="json-brace">{</span>
+    <span class="json-key">"query"</span>: <span class="json-string">"string"</span>
+  <span class="json-brace">}</span>
+<span class="json-brace">}</span></div>
+              </div>
+              <p style="color: var(--accent-error); font-size: var(--font-sm);">
+                Hides all complexity inside one function. The LLM cannot reason about intermediate
+                steps, retry partial failures, or compose with other tools.
+              </p>
+            </div>
+
+            <div class="compare-card compare-card--good">
+              <div class="compare-card__label">Good: Composable Tools</div>
+              <div class="terminal" style="margin: var(--space-3) 0 var(--space-4);">
+                <div class="terminal__header">
+                  <span class="terminal__dot terminal__dot--red"></span>
+                  <span class="terminal__dot terminal__dot--yellow"></span>
+                  <span class="terminal__dot terminal__dot--green"></span>
+                  <span class="terminal__title">composable-tools.json</span>
+                </div>
+                <div class="terminal__body"><span class="json-comment">// 5 narrow, focused tools</span>
+<span class="json-string">"schema_discovery"</span>  <span class="json-comment">// find tables</span>
+<span class="json-string">"query_execute"</span>     <span class="json-comment">// run SQL</span>
+<span class="json-string">"aggregate"</span>         <span class="json-comment">// group &amp; sum</span>
+<span class="json-string">"calculate"</span>         <span class="json-comment">// math ops</span>
+<span class="json-string">"export_csv"</span>        <span class="json-comment">// output file</span></div>
+              </div>
+              <p style="color: var(--accent-success); font-size: var(--font-sm);">
+                Each tool does one thing. The LLM can chain them, retry individually,
+                and the system is debuggable and testable.
+              </p>
+            </div>
+          </div>
+
+          <div class="callout callout--warning reveal reveal--delay-2">
+            <div class="callout__label">Design Rule</div>
+            <div class="callout__text">
+              If a tool description needs the word "and" more than once, it is doing too much.
+              Split it. An agent with 20 narrow tools outperforms one with 3 broad tools every time.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 5: MINI INTERACTION ===== -->
+        <section class="section reveal">
+          <div class="section-label">Hands-On Exercise</div>
+          <h2 style="margin-bottom: var(--space-2);">Pick the Right Tools</h2>
+          <p>
+            A user asks the AcmeCorp Data Agent a question. Your job: select the <strong>three correct tools</strong>
+            in the right execution order. Click tools in sequence.
+          </p>
+
+          <div class="tool-picker" id="toolPicker">
+            <div class="tool-picker__question">
+              User: <em>"What is the average order value by store region for Q3?"</em>
+            </div>
+
+            <div class="tool-picker__options">
+              <div class="tool-btn" data-tool="schema_discovery">
+                <svg class="tool-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                </svg>
+                schema_discovery
+                <span class="tool-btn__order"></span>
+              </div>
+              <div class="tool-btn" data-tool="slack_notify">
+                <svg class="tool-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14.5 10c-.83 0-1.5-.67-1.5-1.5v-5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5v5c0 .83-.67 1.5-1.5 1.5z"/>
+                </svg>
+                slack_notify
+                <span class="tool-btn__order"></span>
+              </div>
+              <div class="tool-btn" data-tool="query_execute">
+                <svg class="tool-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="4,17 10,11 4,5"/><line x1="12" y1="19" x2="20" y2="19"/>
+                </svg>
+                query_execute
+                <span class="tool-btn__order"></span>
+              </div>
+              <div class="tool-btn" data-tool="export_pdf">
+                <svg class="tool-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/>
+                </svg>
+                export_pdf
+                <span class="tool-btn__order"></span>
+              </div>
+              <div class="tool-btn" data-tool="aggregate">
+                <svg class="tool-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+                </svg>
+                aggregate
+                <span class="tool-btn__order"></span>
+              </div>
+              <div class="tool-btn" data-tool="jira_create">
+                <svg class="tool-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/>
+                </svg>
+                jira_create
+                <span class="tool-btn__order"></span>
+              </div>
+            </div>
+
+            <div class="tool-picker__actions">
+              <button class="btn" id="checkTools" disabled>Check Answer</button>
+              <button class="btn" id="resetTools" style="border-color: var(--stroke-dim); color: var(--text-secondary);">Reset</button>
+            </div>
+
+            <div class="tool-picker__feedback" id="toolFeedback"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAVIGATION ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="01-five-layer-arch.html" class="page-nav__title">Five-Layer Architecture</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="03-error-handling.html" class="page-nav__title">Error Handling</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // Initialize navigation, scroll reveal, collapsibles, progress
+    Nav.init('m1-tool-definitions');
+
+    // Render evolving diagram
+    document.addEventListener('DOMContentLoaded', () => {
+      EvolvingDiagram.renderForPage('evolving-diagram', 'tool-definitions');
+    });
+
+    // ===== TOOL PICKER INTERACTION =====
+    (function() {
+      const correctOrder = ['schema_discovery', 'query_execute', 'aggregate'];
+      let selected = [];
+      const maxSelections = 3;
+
+      const buttons = document.querySelectorAll('.tool-btn');
+      const checkBtn = document.getElementById('checkTools');
+      const resetBtn = document.getElementById('resetTools');
+      const feedback = document.getElementById('toolFeedback');
+
+      function updateButtons() {
+        buttons.forEach(btn => {
+          const tool = btn.dataset.tool;
+          const idx = selected.indexOf(tool);
+          if (idx !== -1) {
+            btn.classList.add('selected');
+            btn.querySelector('.tool-btn__order').textContent = idx + 1;
+          } else {
+            btn.classList.remove('selected');
+            btn.querySelector('.tool-btn__order').textContent = '';
+          }
+        });
+        checkBtn.disabled = selected.length !== maxSelections;
+        checkBtn.classList.toggle('btn--disabled', selected.length !== maxSelections);
+      }
+
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tool = btn.dataset.tool;
+          const idx = selected.indexOf(tool);
+
+          if (idx !== -1) {
+            // Deselect
+            selected.splice(idx, 1);
+          } else if (selected.length < maxSelections) {
+            selected.push(tool);
+          }
+          updateButtons();
+        });
+      });
+
+      checkBtn.addEventListener('click', () => {
+        const isCorrect = selected.length === correctOrder.length &&
+          selected.every((tool, i) => tool === correctOrder[i]);
+
+        feedback.classList.add('show');
+        feedback.classList.remove('tool-picker__feedback--correct', 'tool-picker__feedback--incorrect');
+
+        if (isCorrect) {
+          feedback.classList.add('tool-picker__feedback--correct');
+          feedback.innerHTML = '<strong>Correct!</strong> First discover the schema to find the right tables, ' +
+            'then execute the SQL query to get raw data, then aggregate by store region to compute averages. ' +
+            'That is the composable tool chain in action.';
+          Progress.markCompleted('m1-tool-definitions');
+          Progress.updateProgressBar();
+        } else {
+          feedback.classList.add('tool-picker__feedback--incorrect');
+          let hint = '<strong>Not quite.</strong> ';
+          if (!selected.includes('schema_discovery')) {
+            hint += 'The agent needs to discover the schema first before it can write SQL. ';
+          } else if (selected[0] !== 'schema_discovery') {
+            hint += 'Schema discovery should come first &mdash; the agent needs to know what tables exist. ';
+          }
+          if (!selected.includes('query_execute')) {
+            hint += 'You need query_execute to actually fetch data from the warehouse. ';
+          }
+          if (!selected.includes('aggregate')) {
+            hint += 'Aggregation is needed to compute the average by region. ';
+          }
+          if (selected.includes('slack_notify') || selected.includes('jira_create') || selected.includes('export_pdf')) {
+            hint += 'The user asked for data, not a notification, ticket, or PDF export. ';
+          }
+          hint += 'Try again!';
+          feedback.innerHTML = hint;
+        }
+      });
+
+      resetBtn.addEventListener('click', () => {
+        selected = [];
+        feedback.classList.remove('show');
+        updateButtons();
+      });
+    })();
+  </script>
+</body>
+</html>

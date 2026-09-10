@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Five-Layer Architecture — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Inline Quiz Styles --- */
+    .match-quiz { margin: var(--space-8) 0; }
+    .match-quiz__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    .match-quiz__col-title {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px dashed var(--stroke-dim);
+    }
+    .match-item {
+      padding: var(--space-3) var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--space-2);
+      cursor: pointer;
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      transition: all var(--transition-fast);
+      user-select: none;
+      font-family: var(--font-mono);
+    }
+    .match-item:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.05);
+    }
+    .match-item.active {
+      border-color: var(--stroke-primary);
+      border-style: solid;
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.1);
+      box-shadow: 0 0 10px var(--glow-blue);
+    }
+    .match-item.matched {
+      border-color: var(--accent-success);
+      border-style: solid;
+      color: var(--accent-success);
+      background: rgba(16, 185, 129, 0.1);
+      cursor: default;
+      pointer-events: none;
+    }
+    .match-item.wrong {
+      border-color: var(--accent-error);
+      border-style: solid;
+      background: rgba(239, 68, 68, 0.1);
+      animation: shake 0.5s ease-in-out;
+    }
+    .match-quiz__score {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      padding: var(--space-4);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      display: none;
+    }
+    .match-quiz__score.show {
+      display: block;
+    }
+    .match-quiz__score.perfect {
+      border-color: var(--accent-success);
+      color: var(--accent-success);
+      box-shadow: 0 0 15px var(--glow-success);
+    }
+
+    /* Layer highlight card */
+    .layer-card {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      margin: var(--space-6) 0;
+      position: relative;
+      transition: border-color var(--transition-base), box-shadow var(--transition-base);
+    }
+    .layer-card:hover {
+      border-color: var(--stroke-primary);
+      box-shadow: 0 0 20px var(--glow-blue);
+    }
+    .layer-card::before,
+    .layer-card::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-color: var(--stroke-primary);
+      border-style: solid;
+      transition: border-color var(--transition-base);
+    }
+    .layer-card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .layer-card::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+    .layer-card__num {
+      font-family: var(--font-mono);
+      font-size: var(--font-4xl);
+      color: var(--stroke-primary);
+      opacity: 0.2;
+      font-weight: 700;
+      line-height: 1;
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-4);
+    }
+    .layer-card__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .layer-card__subtitle {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--stroke-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-3);
+    }
+    .layer-card--teal { border-left: 3px solid var(--stroke-secondary); }
+    .layer-card--teal .layer-card__num { color: var(--stroke-secondary); }
+    .layer-card--teal:hover { border-color: var(--stroke-secondary); box-shadow: 0 0 20px var(--glow-teal); }
+    .layer-card--warning { border-left: 3px solid var(--accent-warning); }
+    .layer-card--warning .layer-card__num { color: var(--accent-warning); }
+    .layer-card--warning:hover { border-color: var(--accent-warning); box-shadow: 0 0 20px var(--glow-warning); }
+    .layer-card--success { border-left: 3px solid var(--accent-success); }
+    .layer-card--success .layer-card__num { color: var(--accent-success); }
+    .layer-card--success:hover { border-color: var(--accent-success); box-shadow: 0 0 20px var(--glow-success); }
+
+    /* Inline tag list */
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+
+    @media (max-width: 640px) {
+      .match-quiz__grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 01</span>
+        <span class="separator">/</span>
+        <span class="current">Five-Layer Architecture</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Page Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 01 &mdash; Lesson 01</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">The Five-Layer<br>Architecture</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            Why a chatbot wrapper is not enough &mdash; and the layered blueprint that makes
+            a Data Agent production-ready.
+          </p>
+        </header>
+
+        <!-- ===== EVOLVING DIAGRAM ===== -->
+        <div class="evolving-diagram reveal reveal--scale" id="evolving-diagram"></div>
+
+        <!-- ===== SECTION 1: THE PROBLEM ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Problem</div>
+          <h2 style="margin-bottom: var(--space-4);">Why Not Just Wrap a Chatbot?</h2>
+          <p>
+            AcmeCorp's CEO walks into the all-hands: <em>"We're paying for an LLM already.
+            Why can't we just plug ChatGPT into our database and let people ask questions?"</em>
+          </p>
+          <p>It sounds reasonable. But here is what breaks in the first week:</p>
+
+          <div class="card-grid card-grid--3 reveal reveal--delay-1" style="margin-top: var(--space-6);">
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">1</span>
+                Hallucinated SQL
+              </div>
+              <div class="bp-card__body">
+                The LLM invents column names that do not exist. <code>sales.revenue</code> looks
+                plausible but the actual column is <code>sales.total_amount</code>.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">2</span>
+                No Access Control
+              </div>
+              <div class="bp-card__body">
+                A store manager asks about payroll and gets the full company payroll.
+                There is no concept of who can see what.
+              </div>
+            </div>
+            <div class="bp-card">
+              <div class="bp-card__title">
+                <span class="bp-card__number">3</span>
+                Untracked Quality
+              </div>
+              <div class="bp-card__body">
+                Nobody knows if the answers are right. The agent gives confident wrong answers
+                that go into board decks unchecked.
+              </div>
+            </div>
+          </div>
+
+          <div class="callout" style="margin-top: var(--space-8);">
+            <div class="callout__label">AcmeCorp Reality Check</div>
+            <div class="callout__text">
+              Week one: a regional manager asks "show me revenue for the Southwest region"
+              and gets data for all regions because there is no guardrail enforcing their scope.
+              The CEO is not happy.
+            </div>
+          </div>
+
+          <p style="margin-top: var(--space-6);">
+            A real Data Agent needs <strong>five distinct layers</strong> working together.
+            Strip any one of them out and the system fails in production. Let us walk through each.
+          </p>
+        </section>
+
+        <!-- ===== LAYER 1: AGENT RUNTIME ===== -->
+        <section class="section reveal">
+          <div class="layer-card">
+            <div class="layer-card__num">L1</div>
+            <div class="layer-card__subtitle">Layer 1</div>
+            <div class="layer-card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-primary)" stroke-width="2">
+                <path d="M12 2a9 9 0 0 1 9 9c0 3.9-3 7.2-7 8.7V22h-4v-2.3C6 18.2 3 14.9 3 11a9 9 0 0 1 9-9z"/>
+                <path d="M9 22h6M10 15h4"/>
+              </svg>
+              Agent Runtime
+            </div>
+            <p>
+              The runtime is the brain of the agent. It receives the user's natural language question,
+              decides what steps to take, maintains conversation state, and orchestrates calls to every
+              other layer.
+            </p>
+            <p>
+              Think of it as the project manager: it never touches the database directly but knows
+              exactly who to call and in what order.
+            </p>
+            <div class="tag-row">
+              <span class="badge badge--blue" data-tip="The large language model that interprets natural language, reasons about intent, and generates responses. It is the cognitive engine behind every decision the agent makes.">LLM Core</span>
+              <span class="badge badge--blue" data-tip="Tracks conversation history, intermediate results, and multi-step progress. Ensures the agent remembers what it has already done within a single session.">State Manager</span>
+              <span class="badge badge--blue" data-tip="Stores past interactions and learned preferences across sessions. Enables the agent to recall context from previous conversations and improve over time.">Memory</span>
+              <span class="badge badge--blue" data-tip="Coordinates calls between all layers in the correct sequence. Decides which tool to invoke next, handles retries, and assembles the final answer.">Orchestrator</span>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-1">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              A product manager types: "Show me Q3 revenue by region." The Agent Runtime receives this,
+              recognizes it as a data query, plans the steps (discover schema, build SQL, execute, format),
+              and orchestrates everything that follows.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== LAYER 2: TOOL LAYER ===== -->
+        <section class="section reveal">
+          <div class="layer-card">
+            <div class="layer-card__num">L2</div>
+            <div class="layer-card__subtitle">Layer 2</div>
+            <div class="layer-card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-primary)" stroke-width="2">
+                <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+              </svg>
+              Tool Layer
+            </div>
+            <p>
+              Tools are the actions the agent can actually perform: execute a SQL query, call an API,
+              read a file, or perform a calculation. Each tool has a strict interface &mdash; a name,
+              description, parameters, and return type.
+            </p>
+            <p>
+              Without well-designed tools, the LLM is just a brain with no hands.
+            </p>
+            <div class="tag-row">
+              <span class="badge badge--blue" data-tip="Runs validated SQL against the data warehouse and returns structured results. Includes timeout limits and row-count caps to prevent runaway queries.">query_execute</span>
+              <span class="badge badge--blue" data-tip="Inspects database metadata — tables, columns, types, and relationships — so the agent can build accurate SQL without hallucinating column names.">schema_discovery</span>
+              <span class="badge badge--blue" data-tip="Calls external REST or GraphQL APIs (e.g., Shopify, Salesforce) to pull live data that is not in the warehouse.">api_fetch</span>
+              <span class="badge badge--blue" data-tip="Performs math operations — aggregations, percentages, year-over-year comparisons — when the LLM needs deterministic arithmetic rather than estimation.">calculate</span>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-1">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              The agent connects to AcmeCorp's PostgreSQL warehouse, Shopify API for live inventory,
+              and shared Excel files for manual adjustments. Each connection is a discrete, well-defined tool.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== LAYER 3: DATA & CONTEXT ===== -->
+        <section class="section reveal">
+          <div class="layer-card layer-card--teal">
+            <div class="layer-card__num">L3</div>
+            <div class="layer-card__subtitle">Layer 3</div>
+            <div class="layer-card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+              </svg>
+              Data &amp; Context (RAG)
+            </div>
+            <p>
+              This layer gives the agent semantic understanding of your data. Through retrieval-augmented
+              generation (RAG), the agent knows your schema, your business glossary, and the meaning
+              behind column names.
+            </p>
+            <p>
+              It is the difference between an agent that guesses column names and one that knows them.
+            </p>
+            <div class="tag-row">
+              <span class="badge badge--teal" data-tip="Vector representations of table and column descriptions. Enables semantic search so the agent finds the right columns even when the user's wording differs from the schema.">Schema Embeddings</span>
+              <span class="badge badge--teal" data-tip="A curated dictionary mapping business terms to technical definitions. For example, 'revenue' → sales.total_amount, 'churn' → customers with no purchase in 90 days.">Business Glossary</span>
+              <span class="badge badge--teal" data-tip="A library of known-good SQL queries paired with natural language questions. Acts as few-shot examples so the agent learns your organisation's query patterns.">Query Examples</span>
+              <span class="badge badge--teal" data-tip="Descriptions of data freshness, update frequency, row counts, and known data-quality caveats. Helps the agent warn users when data may be stale or incomplete.">Metadata</span>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-1">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              When someone says "revenue," the RAG layer knows this means <code>sales.total_amount</code>,
+              not <code>sales.gross_amount</code>. It also knows that "region" maps to <code>stores.sales_region</code>
+              and that Q3 means July through September for AcmeCorp's fiscal calendar.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== LAYER 4: GUARDRAILS ===== -->
+        <section class="section reveal">
+          <div class="layer-card layer-card--warning">
+            <div class="layer-card__num">L4</div>
+            <div class="layer-card__subtitle">Layer 4</div>
+            <div class="layer-card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-warning)" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              Guardrails
+            </div>
+            <p>
+              Guardrails enforce who can see what, what queries are allowed, and what data is redacted.
+              This includes role-based access control (RBAC), PII masking, query complexity limits,
+              and approval workflows for sensitive operations.
+            </p>
+            <p>
+              This is the layer that turns a fun demo into an enterprise-grade tool.
+            </p>
+            <div class="tag-row">
+              <span class="badge badge--amber" data-tip="Role-Based Access Control restricts data visibility by user role. Store managers see only their store; regional managers see their region; HQ admins see everything.">RBAC</span>
+              <span class="badge badge--amber" data-tip="Automatically detects and redacts personally identifiable information — emails, phone numbers, salary figures — before results are shown to unauthorised users.">PII Masking</span>
+              <span class="badge badge--amber" data-tip="Caps the number of queries per user per hour and limits result-set sizes. Prevents abuse, runaway costs, and accidental denial-of-service on the data warehouse.">Rate Limits</span>
+              <span class="badge badge--amber" data-tip="Requires human sign-off for high-risk operations — DELETE queries, bulk exports, or access to restricted tables like employee salaries.">Approval Flows</span>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-1">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              Store managers can only see data for their own store. Regional managers see their region.
+              Nobody sees raw PII like customer emails or credit card numbers &mdash; those are
+              automatically masked before results reach the user.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== LAYER 5: EVALUATION ===== -->
+        <section class="section reveal">
+          <div class="layer-card layer-card--success">
+            <div class="layer-card__num">L5</div>
+            <div class="layer-card__subtitle">Layer 5</div>
+            <div class="layer-card__title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-success)" stroke-width="2">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+              </svg>
+              Evaluation
+            </div>
+            <p>
+              How do you know the agent is working correctly? The evaluation layer tracks accuracy,
+              response time, LLM token cost, user satisfaction, and error rates. It is the feedback
+              loop that drives continuous improvement.
+            </p>
+            <p>
+              Without evaluation, you are flying blind &mdash; confident that everything works until a
+              board presentation goes wrong.
+            </p>
+            <div class="tag-row">
+              <span class="badge badge--green" data-tip="Measures how often the agent's SQL and final answer match a set of validated 'golden' queries. The primary signal for whether the agent can be trusted.">Accuracy Score</span>
+              <span class="badge badge--green" data-tip="The 95th-percentile response time — the slowest 5% of queries. AcmeCorp targets under 5 seconds to keep the experience conversational.">Latency P95</span>
+              <span class="badge badge--green" data-tip="Tracks LLM input/output tokens and their dollar cost per query. Enables per-department charge-back and early detection of prompt-bloat or retry loops.">Token Cost</span>
+              <span class="badge badge--green" data-tip="Captures thumbs-up/down ratings and free-text comments from end users. Surfaces blind spots that automated metrics miss — like correct but confusing answers.">User Feedback</span>
+            </div>
+          </div>
+
+          <div class="callout reveal reveal--delay-1">
+            <div class="callout__label">AcmeCorp Scenario</div>
+            <div class="callout__text">
+              AcmeCorp tracks three key metrics: Is the data correct? (validated against known queries),
+              How fast is the response? (target under 5 seconds), and What does it cost? (LLM spend per
+              query averaged across departments).
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== REAL-WORLD PARALLELS ===== -->
+        <section class="section reveal">
+          <div class="section-label">Real-World Parallels</div>
+          <h2 style="margin-bottom: var(--space-4);">You Have Seen This Pattern Before</h2>
+          <p>The five-layer architecture is not unique to Data Agents. Every serious platform separates concerns the same way.</p>
+
+          <div class="collapsible reveal reveal--delay-1" style="margin-top: var(--space-6);">
+            <div class="collapsible__header">
+              <span>Netflix: From Monolith to Layered Microservices</span>
+              <span class="collapsible__icon">&#9654;</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>
+                  Netflix started as a monolithic application. As they scaled, they split into layers:
+                  an <strong>API Gateway</strong> (like the runtime), <strong>microservices</strong> (like tools),
+                  a <strong>data platform</strong> (like the context layer), <strong>access policies</strong>
+                  (like guardrails), and a <strong>chaos engineering suite</strong> (like evaluation).
+                </p>
+                <p style="margin-bottom: 0;">
+                  The lesson: when you strip a layer away, the whole system becomes fragile. Netflix
+                  learned this by intentionally breaking things. You can learn it here without the
+                  production incidents.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="collapsible reveal reveal--delay-2">
+            <div class="collapsible__header">
+              <span>Uber: Orchestration Under Extreme Load</span>
+              <span class="collapsible__icon">&#9654;</span>
+            </div>
+            <div class="collapsible__content">
+              <div class="collapsible__body">
+                <p>
+                  Uber's architecture separates the <strong>dispatch brain</strong> (runtime) from
+                  <strong>maps, pricing, and ETA services</strong> (tools), a <strong>geospatial
+                  context layer</strong>, <strong>fraud and safety guardrails</strong>, and a
+                  <strong>real-time analytics evaluation layer</strong>.
+                </p>
+                <p style="margin-bottom: 0;">
+                  AcmeCorp's Data Agent follows the same pattern at a smaller scale.
+                  The runtime orchestrates, tools execute, context informs, guardrails protect,
+                  and evaluation measures.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== MINI QUIZ: MATCHING ===== -->
+        <section class="section reveal">
+          <div class="section-label">Knowledge Check</div>
+          <h2 style="margin-bottom: var(--space-2);">Match the Layer</h2>
+          <p>Click a layer name on the left, then click its matching description on the right. Match all five to complete the exercise.</p>
+
+          <div class="match-quiz" id="matchQuiz">
+            <div class="match-quiz__grid">
+              <!-- Left column: Layer names -->
+              <div>
+                <div class="match-quiz__col-title">Layers</div>
+                <div class="match-item" data-layer="runtime" id="layer-runtime">L1: Agent Runtime</div>
+                <div class="match-item" data-layer="tools" id="layer-tools">L2: Tool Layer</div>
+                <div class="match-item" data-layer="context" id="layer-context">L3: Data &amp; Context</div>
+                <div class="match-item" data-layer="guardrails" id="layer-guardrails">L4: Guardrails</div>
+                <div class="match-item" data-layer="evaluation" id="layer-evaluation">L5: Evaluation</div>
+              </div>
+              <!-- Right column: Descriptions (shuffled) -->
+              <div>
+                <div class="match-quiz__col-title">Descriptions</div>
+                <div class="match-item" data-answer="guardrails" id="desc-guardrails">Enforces who can see what data and masks PII</div>
+                <div class="match-item" data-answer="context" id="desc-context">Knows that "revenue" means sales.total_amount</div>
+                <div class="match-item" data-answer="evaluation" id="desc-evaluation">Tracks accuracy, latency, and LLM cost per query</div>
+                <div class="match-item" data-answer="runtime" id="desc-runtime">Receives the question and orchestrates all steps</div>
+                <div class="match-item" data-answer="tools" id="desc-tools">Executes SQL, calls APIs, reads files</div>
+              </div>
+            </div>
+            <div class="match-quiz__score" id="matchScore"></div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAVIGATION ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="../../index.html" class="page-nav__title">Home</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="02-tool-definitions.html" class="page-nav__title">Tool Definitions</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // Initialize navigation, scroll reveal, collapsibles, progress
+    Nav.init('m1-five-layer-arch');
+
+    // Render evolving diagram when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      EvolvingDiagram.renderForPage('evolving-diagram', 'five-layer-arch');
+    });
+
+    // ===== MATCHING QUIZ ENGINE =====
+    (function() {
+      let selectedLayer = null;
+      let matchedCount = 0;
+      const totalPairs = 5;
+
+      const layers = document.querySelectorAll('.match-item[data-layer]');
+      const descriptions = document.querySelectorAll('.match-item[data-answer]');
+      const scoreEl = document.getElementById('matchScore');
+
+      function clearSelection() {
+        layers.forEach(l => l.classList.remove('active'));
+        descriptions.forEach(d => d.classList.remove('active'));
+        selectedLayer = null;
+      }
+
+      layers.forEach(item => {
+        item.addEventListener('click', () => {
+          if (item.classList.contains('matched')) return;
+          clearSelection();
+          selectedLayer = item.dataset.layer;
+          item.classList.add('active');
+        });
+      });
+
+      descriptions.forEach(item => {
+        item.addEventListener('click', () => {
+          if (item.classList.contains('matched')) return;
+          if (!selectedLayer) return;
+
+          if (item.dataset.answer === selectedLayer) {
+            // Correct match
+            item.classList.add('matched');
+            const layerEl = document.querySelector(`.match-item[data-layer="${selectedLayer}"]`);
+            if (layerEl) layerEl.classList.add('matched');
+            matchedCount++;
+
+            if (matchedCount === totalPairs) {
+              scoreEl.textContent = 'All 5 layers matched correctly. Well done!';
+              scoreEl.classList.add('show', 'perfect');
+              Progress.markCompleted('m1-five-layer-arch');
+              Progress.updateProgressBar();
+            }
+            clearSelection();
+          } else {
+            // Wrong match
+            item.classList.add('wrong');
+            setTimeout(() => item.classList.remove('wrong'), 600);
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

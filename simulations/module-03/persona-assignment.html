@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulation: Assign the Right Persona — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 03</span>
+        <span class="separator">/</span>
+        <span class="current">Simulation: Assign the Right Persona</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Interactive Simulation</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Assign the Right Persona</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            AcmeCorp faces 5 real-world situations across their 200-store retail operation. Your job: deploy the right persona (agent type) for each crisis, request, or project.
+          </p>
+
+          <div class="callout reveal">
+            <div class="callout__label">Mission Brief</div>
+            <div class="callout__text">
+              Each scenario presents a situation and three candidate personas. Pick the right one &mdash; correct assignments earn a point, wrong ones show you why the mismatch causes problems. Aim for 5/5.
+            </div>
+          </div>
+        </section>
+
+        <!-- Simulation Container -->
+        <section class="section">
+          <div id="sim-container"></div>
+        </section>
+
+        <!-- Reset Button -->
+        <div class="reveal" style="text-align: center; margin-bottom: var(--space-8);">
+          <button class="btn btn--teal" onclick="SimulationEngine.reset()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 4v6h6M23 20v-6h-6"/>
+              <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/>
+            </svg>
+            Restart Simulation
+          </button>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="../../modules/module-03/02-guardrails-personas.html" class="page-nav__title">Guardrails &amp; Personas</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../../modules/module-03/quiz-checkpoint.html" class="page-nav__title">Quiz Checkpoint</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Persona Design Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Simulation Config: Assign the Right Persona ---
+    SimulationEngine.init('sim-container', {
+      title: 'Assign the Right Persona',
+      intro: 'AcmeCorp needs you to match the right Data Agent persona to each situation. Choose wisely &mdash; deploying the wrong persona wastes time and creates risk.',
+      nodes: {
+
+        // ===== SCENARIO 1: Broken Shopify Pipeline =====
+        'start': {
+          type: 'decision',
+          title: 'Scenario 1: Pipeline Emergency',
+          description: 'AcmeCorp\'s Shopify integration breaks overnight. Data stops flowing into the warehouse &mdash; inventory counts are stale and order data is missing. Who do you deploy?',
+          choices: [
+            {
+              label: 'Data Engineer',
+              hint: 'Builds and maintains data pipelines',
+              next: 'c1-engineer',
+              isGood: true
+            },
+            {
+              label: 'Data Steward',
+              hint: 'Manages data governance and compliance',
+              next: 'c1-steward',
+              isGood: false
+            },
+            {
+              label: 'Product Owner',
+              hint: 'Translates business needs into data requirements',
+              next: 'c1-po',
+              isGood: false
+            }
+          ]
+        },
+        'c1-engineer': {
+          type: 'consequence',
+          title: 'Correct: Data Engineer Deployed',
+          description: 'The Data Engineer agent diagnoses the broken Shopify connector, fixes the authentication token, and restarts the pipeline. Data flows resume within the hour.',
+          consequence: 'The Data Engineer owns pipeline infrastructure. They have the tools and permissions to inspect connectors, debug ingestion failures, and restore data flow &mdash; exactly what this situation demands.',
+          isGood: true,
+          next: 'decision-2'
+        },
+        'c1-steward': {
+          type: 'consequence',
+          title: 'Mismatch: Data Steward Can\'t Fix Pipelines',
+          description: 'The Data Steward agent can see the pipeline is broken but has no permissions to modify connectors or restart ingestion jobs. They file a report, but data remains stale.',
+          consequence: 'Data Stewards monitor compliance and access controls &mdash; they don\'t have write access to pipeline infrastructure. This wastes critical hours during an outage.',
+          isGood: false,
+          next: 'decision-2'
+        },
+        'c1-po': {
+          type: 'consequence',
+          title: 'Mismatch: Product Owner Wrong Skill Set',
+          description: 'The Product Owner agent understands that inventory data is critical for the business, but has zero capability to debug Shopify API connections or restart ETL jobs.',
+          consequence: 'Product Owners define what data is needed and why &mdash; they don\'t operate at the infrastructure layer. This is like asking a product manager to fix a server.',
+          isGood: false,
+          next: 'decision-2'
+        },
+
+        // ===== SCENARIO 2: New Schema Design =====
+        'decision-2': {
+          type: 'decision',
+          title: 'Scenario 2: Schema Design Request',
+          description: 'Marketing wants a new "customer_segments" table designed for their upcoming campaign analytics. It needs proper relationships to the orders and customers tables, with the right indexes for query performance. Who leads this?',
+          choices: [
+            {
+              label: 'Data Architect',
+              hint: 'Designs schemas, relationships, and data models',
+              next: 'c2-architect',
+              isGood: true
+            },
+            {
+              label: 'Data Engineer',
+              hint: 'Builds and maintains data pipelines',
+              next: 'c2-engineer',
+              isGood: false
+            },
+            {
+              label: 'Quality Analyst',
+              hint: 'Validates data accuracy and consistency',
+              next: 'c2-qa',
+              isGood: false
+            }
+          ]
+        },
+        'c2-architect': {
+          type: 'consequence',
+          title: 'Correct: Data Architect Takes the Lead',
+          description: 'The Data Architect agent designs a normalized schema with proper foreign keys to customers and orders, creates composite indexes for campaign query patterns, and documents the data lineage.',
+          consequence: 'Data Architects own the logical and physical data model. They understand normalization, indexing strategies, and how new tables fit into the broader warehouse topology.',
+          isGood: true,
+          next: 'decision-3'
+        },
+        'c2-engineer': {
+          type: 'consequence',
+          title: 'Mismatch: Engineer Builds Without Design Review',
+          description: 'The Data Engineer creates the table quickly but uses a flat denormalized structure. It works initially but causes data duplication issues and slow queries as the campaign scales.',
+          consequence: 'Engineers execute &mdash; they build what\'s designed. Without an architecture review, the schema may work short-term but create technical debt and performance problems.',
+          isGood: false,
+          next: 'decision-3'
+        },
+        'c2-qa': {
+          type: 'consequence',
+          title: 'Mismatch: Quality Analyst Doesn\'t Design Schemas',
+          description: 'The Quality Analyst can validate existing data quality but has no tools or permissions to create database objects or design table structures.',
+          consequence: 'Quality Analysts validate data after it exists. They run profiling, detect anomalies, and check constraints &mdash; but schema design is outside their domain entirely.',
+          isGood: false,
+          next: 'decision-3'
+        },
+
+        // ===== SCENARIO 3: Dashboard Discrepancy =====
+        'decision-3': {
+          type: 'decision',
+          title: 'Scenario 3: Revenue Numbers Don\'t Match',
+          description: 'The CFO notices revenue numbers in the executive dashboard don\'t match the finance team\'s dashboard. The difference is $2.3M. This needs to be investigated and resolved before the quarterly board meeting. Who investigates?',
+          choices: [
+            {
+              label: 'Quality Analyst',
+              hint: 'Validates data accuracy and traces discrepancies',
+              next: 'c3-qa',
+              isGood: true
+            },
+            {
+              label: 'Product Owner',
+              hint: 'Translates business needs into data requirements',
+              next: 'c3-po',
+              isGood: false
+            },
+            {
+              label: 'Data Steward',
+              hint: 'Manages data governance and compliance',
+              next: 'c3-steward',
+              isGood: false
+            }
+          ]
+        },
+        'c3-qa': {
+          type: 'consequence',
+          title: 'Correct: Quality Analyst Traces the Issue',
+          description: 'The Quality Analyst agent runs validation queries across both dashboards\' source tables, discovers the executive dashboard includes returns while finance excludes them, and documents the discrepancy with a clear lineage trace.',
+          consequence: 'Quality Analysts specialize in data accuracy investigations. They have read access to compare datasets, run profiling queries, and trace data lineage to find where numbers diverge.',
+          isGood: true,
+          next: 'decision-4'
+        },
+        'c3-po': {
+          type: 'consequence',
+          title: 'Mismatch: Product Owner Can\'t Investigate Data',
+          description: 'The Product Owner understands the business impact of the discrepancy and escalates it urgently, but cannot run SQL queries or trace data lineage to find the root cause.',
+          consequence: 'Product Owners report problems from a business perspective. They\'re valuable for defining what "revenue" should mean, but they can\'t dig into the data layer to find where calculations diverge.',
+          isGood: false,
+          next: 'decision-4'
+        },
+        'c3-steward': {
+          type: 'consequence',
+          title: 'Mismatch: Data Steward Monitors Compliance, Not Accuracy',
+          description: 'The Data Steward checks access logs and confirms both dashboards are pulling from authorized sources, but doesn\'t have the analytical tools to compare aggregate calculations or trace metric definitions.',
+          consequence: 'Stewards ensure data governance &mdash; who accessed what, whether PII is protected, compliance with policies. Data accuracy investigations require different tools and a different skill set.',
+          isGood: false,
+          next: 'decision-4'
+        },
+
+        // ===== SCENARIO 4: GDPR Compliance =====
+        'decision-4': {
+          type: 'decision',
+          title: 'Scenario 4: GDPR Right-to-Be-Forgotten',
+          description: 'EU customers invoke their GDPR right-to-be-forgotten. AcmeCorp needs to audit where their personal data lives across all systems, verify deletion, and produce compliance documentation. Who handles this?',
+          choices: [
+            {
+              label: 'Data Steward',
+              hint: 'Manages data governance, compliance, and audit trails',
+              next: 'c4-steward',
+              isGood: true
+            },
+            {
+              label: 'Data Engineer',
+              hint: 'Builds and maintains data pipelines',
+              next: 'c4-engineer',
+              isGood: false
+            },
+            {
+              label: 'Data Architect',
+              hint: 'Designs schemas and data models',
+              next: 'c4-architect',
+              isGood: false
+            }
+          ]
+        },
+        'c4-steward': {
+          type: 'consequence',
+          title: 'Correct: Data Steward Leads Compliance',
+          description: 'The Data Steward agent maps all locations where the customer\'s PII exists, triggers deletion workflows across systems, verifies completion, and generates the GDPR compliance audit trail documentation.',
+          consequence: 'Data Stewards own governance operations &mdash; access controls, compliance audits, PII tracking, and regulatory reporting. GDPR right-to-be-forgotten is squarely in their domain.',
+          isGood: true,
+          next: 'decision-5'
+        },
+        'c4-engineer': {
+          type: 'consequence',
+          title: 'Mismatch: Engineer Can Delete But Shouldn\'t Lead Compliance',
+          description: 'The Data Engineer can technically run DELETE queries, but doesn\'t know all the locations where PII exists, can\'t produce proper audit documentation, and might miss replicas or backup systems.',
+          consequence: 'Engineers might assist with the technical deletion, but compliance requires knowing every location PII resides, maintaining audit trails, and producing regulatory documentation &mdash; that\'s governance work.',
+          isGood: false,
+          next: 'decision-5'
+        },
+        'c4-architect': {
+          type: 'consequence',
+          title: 'Mismatch: Architect Designs, Doesn\'t Operate',
+          description: 'The Data Architect knows the data model and could identify where PII fields exist in the schema, but doesn\'t have operational tools for deletion workflows or compliance reporting.',
+          consequence: 'Architects design systems for compliance (e.g., PII tagging in the schema), but the operational work of processing GDPR requests is a governance function, not a design function.',
+          isGood: false,
+          next: 'decision-5'
+        },
+
+        // ===== SCENARIO 5: Board Meeting Metric =====
+        'decision-5': {
+          type: 'decision',
+          title: 'Scenario 5: Urgent Board Metric',
+          description: 'The VP of Sales needs "same-store sales growth excluding new locations opened in the last 12 months" calculated for the board meeting tomorrow. This requires knowing which stores qualify as "same-store" and the correct revenue comparison period. Who do you deploy?',
+          choices: [
+            {
+              label: 'Product Owner',
+              hint: 'Translates business metrics into data definitions',
+              next: 'c5-po',
+              isGood: true
+            },
+            {
+              label: 'Quality Analyst',
+              hint: 'Validates data accuracy and consistency',
+              next: 'c5-qa',
+              isGood: false
+            },
+            {
+              label: 'Data Engineer',
+              hint: 'Builds and maintains data pipelines',
+              next: 'c5-engineer',
+              isGood: false
+            }
+          ]
+        },
+        'c5-po': {
+          type: 'consequence',
+          title: 'Correct: Product Owner Defines the Metric',
+          description: 'The Product Owner agent knows AcmeCorp\'s business definitions &mdash; "same-store" means open 12+ months, "growth" means YoY revenue comparison excluding grand-opening promotions. They produce the board-ready number with clear methodology notes.',
+          consequence: 'Product Owners bridge business and data. They know metric definitions, business context, and what stakeholders actually need. This is a business-facing analytics task requiring domain knowledge.',
+          isGood: true,
+          next: 'result'
+        },
+        'c5-qa': {
+          type: 'consequence',
+          title: 'Mismatch: Quality Analyst Validates, Doesn\'t Define',
+          description: 'The Quality Analyst can verify data quality in the stores and revenue tables, but doesn\'t know AcmeCorp\'s business definition of "same-store" or which promotions to exclude from the calculation.',
+          consequence: 'Quality Analysts ensure data is accurate and consistent. But this task requires knowing business definitions and presenting metrics in context &mdash; that\'s the Product Owner\'s domain.',
+          isGood: false,
+          next: 'result'
+        },
+        'c5-engineer': {
+          type: 'consequence',
+          title: 'Mismatch: Engineer Builds Pipelines, Not Business Metrics',
+          description: 'The Data Engineer could write a SQL query, but without knowing the exact business definition of "same-store" or which revenue adjustments to apply, the numbers would likely be wrong or incomplete.',
+          consequence: 'Engineers are technical executors. They can build the query once someone defines the logic, but defining what "same-store sales growth" means at AcmeCorp is a business translation task.',
+          isGood: false,
+          next: 'result'
+        },
+
+        // ===== FINAL RESULT =====
+        'result': {
+          type: 'result',
+          title: 'Persona Assignment Complete',
+          description: 'You\'ve handled all 5 of AcmeCorp\'s situations. Each persona has a distinct role &mdash; deploying the right one means faster resolution, proper guardrails, and clear accountability.',
+          score: '5/5',
+          scoreLabel: 'Personas Assigned',
+          summary: 'Key takeaway: Each persona maps to specific capabilities and permissions. Data Engineers fix pipelines. Data Architects design schemas. Quality Analysts investigate discrepancies. Data Stewards handle compliance. Product Owners translate business needs. Mixing them up wastes time and creates risk.'
+        }
+      }
+    });
+
+    Nav.init('m03-sim-persona');
+  </script>
+</body>
+</html>

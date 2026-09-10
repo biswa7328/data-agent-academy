@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Agent Academy — Architecture & Design Foundations</title>
+  <script>if(!sessionStorage.getItem('seenIntro')){window.location.replace('intro.html');}</script>
+  <link rel="stylesheet" href="css/design-system.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: var(--space-16) 0;">
+      <div class="content-container" style="text-align: center;">
+
+        <!-- Blueprint corner marks -->
+        <div style="margin-bottom: var(--space-8);">
+          <div class="section-label" style="justify-content: center; margin-bottom: var(--space-4);">
+            <span>Data Agent Academy</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">
+            Data Agent Architecture &<br>Design Foundations
+          </h1>
+          <div class="hero-line" style="max-width: 400px; margin: 0 auto var(--space-6);"></div>
+          <p class="reveal reveal--delay-2" style="font-size: var(--font-lg); max-width: 600px; margin: 0 auto var(--space-8);">
+            A hands-on, interactive guide to building production-grade Data Agents.
+            Learn by designing one for <strong style="color: var(--stroke-secondary);">AcmeCorp</strong>.
+          </p>
+        </div>
+
+        <!-- AcmeCorp Brief -->
+        <div class="bp-card reveal reveal--delay-3" style="max-width: 650px; margin: 0 auto var(--space-12); text-align: left;">
+
+          <!-- Card header row -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4);">
+            <div class="bp-card__title" style="margin-bottom: 0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <rect x="2" y="3" width="20" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/>
+              </svg>
+              Your Mission Brief
+            </div>
+            <div style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--accent-warning); border: 1px solid var(--accent-warning); padding: 2px var(--space-3); border-radius: var(--border-radius); letter-spacing: 0.08em; display: flex; align-items: center; gap: var(--space-2);">
+              <span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-warning); animation: pulse-glow 1.5s ease-in-out infinite;"></span>
+              LIVE CASE STUDY
+            </div>
+          </div>
+
+          <!-- Divider -->
+          <div style="border-top: 1px dashed var(--grid-line); margin-bottom: var(--space-5);"></div>
+
+          <!-- Structured sections -->
+          <div class="bp-card__body">
+            <div style="margin-bottom: var(--space-4);">
+              <div style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--stroke-secondary); letter-spacing: 0.12em; margin-bottom: var(--space-2);">▸ SITUATION</div>
+              <p><strong>AcmeCorp</strong> is a mid-size retail company with <strong style="color: var(--stroke-primary);">200 stores</strong> nationwide.
+              Their data team is drowning — analysts spend <strong style="color: var(--accent-warning);">70% of their time</strong> writing SQL for stakeholders instead of doing actual analysis.</p>
+            </div>
+
+            <div style="margin-bottom: var(--space-4);">
+              <div style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--stroke-primary); letter-spacing: 0.12em; margin-bottom: var(--space-2);">▸ OBJECTIVE</div>
+              <p>Deploy a <strong style="color: var(--stroke-secondary);">self-service Data Agent</strong> — so any stakeholder can ask questions in plain English and get accurate, governed answers from the company's data warehouse. No SQL required.</p>
+            </div>
+
+            <div style="margin-bottom: var(--space-5);">
+              <div style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--accent-warning); letter-spacing: 0.12em; margin-bottom: var(--space-2);">▸ YOUR ROLE</div>
+              <p><strong>You've been hired to design, build, and operate it.</strong> This training follows AcmeCorp end-to-end — every architecture decision, guardrail, and trade-off is grounded in their real constraints.</p>
+            </div>
+          </div>
+
+          <!-- Stats strip -->
+          <div style="border-top: 1px dashed var(--grid-line); padding-top: var(--space-4); display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); text-align: center;">
+            <div>
+              <div style="font-family: var(--font-mono); font-size: var(--font-2xl); font-weight: 600; color: var(--stroke-primary); line-height: 1;">10</div>
+              <div style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin-top: var(--space-1);">Modules</div>
+            </div>
+            <div>
+              <div style="font-family: var(--font-mono); font-size: var(--font-2xl); font-weight: 600; color: var(--stroke-secondary); line-height: 1;">40+</div>
+              <div style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin-top: var(--space-1);">Lessons</div>
+            </div>
+            <div>
+              <div style="font-family: var(--font-mono); font-size: var(--font-2xl); font-weight: 600; color: var(--accent-warning); line-height: 1;">11</div>
+              <div style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin-top: var(--space-1);">Simulations</div>
+            </div>
+            <div>
+              <div style="font-family: var(--font-mono); font-size: var(--font-2xl); font-weight: 600; color: var(--accent-success); line-height: 1;">1</div>
+              <div style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin-top: var(--space-1);">Case Study</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Start Button -->
+        <div class="reveal reveal--delay-4">
+          <a href="modules/module-01/01-five-layer-arch.html" class="btn btn--primary btn--large" id="startBtn">
+            Begin Module 01 &rarr;
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== MODULE OVERVIEW ===== -->
+    <section class="section" style="padding-bottom: var(--space-24);">
+      <div class="content-wide">
+        <div class="section-label reveal" style="margin-bottom: var(--space-8); justify-content: center;">
+          <span>Training Modules</span>
+        </div>
+
+        <div class="card-grid card-grid--2">
+          <!-- Module 1: Active -->
+          <div class="module-card reveal reveal--delay-1" style="cursor: pointer;" onclick="window.location.href='modules/module-01/01-five-layer-arch.html'">
+            <div class="module-card__number">01</div>
+            <div class="module-card__title">Architecture Foundation</div>
+            <div class="module-card__desc">
+              The five-layer architecture, tool definitions, error handling strategies,
+              and the bridge between LLM reasoning and real execution.
+            </div>
+            <div class="module-card__topics">
+              <span class="badge badge--blue">Five Layers</span>
+              <span class="badge badge--blue">Tool Design</span>
+              <span class="badge badge--blue">Error Handling</span>
+              <span class="badge badge--blue">Tool Calling</span>
+            </div>
+            <div style="margin-top: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="flex: 1; height: 3px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden;">
+                  <div id="m1-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary)); transition: width 0.5s ease;"></div>
+                </div>
+                <span id="m1-progress-text" style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module 02: Active -->
+          <div class="module-card reveal reveal--delay-2" style="cursor: pointer;" onclick="window.location.href='modules/module-02/01-agent-anatomy.html'">
+            <div class="module-card__number">02</div>
+            <div class="module-card__title">Agent Anatomy</div>
+            <div class="module-card__desc">
+              Inside the agent: LLM core, reasoning graphs, memory systems,
+              role taxonomy, and orchestration patterns.
+            </div>
+            <div class="module-card__topics">
+              <span class="badge badge--teal">6 Components</span>
+              <span class="badge badge--teal">Agent Roles</span>
+              <span class="badge badge--teal">LangGraph</span>
+              <span class="badge badge--teal">ReAct Loop</span>
+            </div>
+            <div style="margin-top: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="flex: 1; height: 3px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden;">
+                  <div id="m02-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary)); transition: width 0.5s ease;"></div>
+                </div>
+                <span id="m02-progress-text" style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module 03: Active -->
+          <div class="module-card reveal reveal--delay-3" style="cursor: pointer;" onclick="window.location.href='modules/module-03/01-personas.html'">
+            <div class="module-card__number">03</div>
+            <div class="module-card__title">Persona Design</div>
+            <div class="module-card__desc">
+              Data-supply-chain personas, role-based guardrails,
+              and graduated autonomy patterns.
+            </div>
+            <div class="module-card__topics">
+              <span class="badge badge--teal">5 Personas</span>
+              <span class="badge badge--teal">Guardrails</span>
+              <span class="badge badge--teal">RBAC</span>
+            </div>
+            <div style="margin-top: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="flex: 1; height: 3px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden;">
+                  <div id="m03-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--stroke-secondary), var(--stroke-primary)); transition: width 0.5s ease;"></div>
+                </div>
+                <span id="m03-progress-text" style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module 04: Active -->
+          <div class="module-card reveal reveal--delay-4" style="cursor: pointer;" onclick="window.location.href='modules/module-04/01-goal-decomposition.html'">
+            <div class="module-card__number">04</div>
+            <div class="module-card__title">Autonomy & Collaboration</div>
+            <div class="module-card__desc">
+              Goal decomposition, multi-agent patterns, memory systems,
+              and failure handling at scale.
+            </div>
+            <div class="module-card__topics">
+              <span class="badge badge--amber">Multi-Agent</span>
+              <span class="badge badge--amber">A2A Protocol</span>
+              <span class="badge badge--amber">Memory</span>
+            </div>
+            <div style="margin-top: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="flex: 1; height: 3px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden;">
+                  <div id="m04-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-warning), var(--stroke-primary)); transition: width 0.5s ease;"></div>
+                </div>
+                <span id="m04-progress-text" style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module 05: AgentOps -->
+          <div class="module-card reveal reveal--delay-4" style="cursor: pointer;" onclick="window.location.href='modules/module-05/01-observability.html'">
+            <div class="module-card__number">05</div>
+            <div class="module-card__title">AgentOps: CI/CD & Eval Gates</div>
+            <div class="module-card__desc">
+              Deployment patterns, evaluation gates, versioning strategies,
+              and the CI/CD pipeline for autonomous agents.
+            </div>
+            <div class="module-card__topics">
+              <span class="badge badge--error" style="border-color: var(--accent-error); color: var(--accent-error);">Eval Gates</span>
+              <span class="badge badge--amber">CI/CD</span>
+              <span class="badge badge--blue">Versioning</span>
+              <span class="badge badge--teal">Deployment</span>
+            </div>
+            <div style="margin-top: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="flex: 1; height: 3px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden;">
+                  <div id="m05-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-error), var(--accent-warning)); transition: width 0.5s ease;"></div>
+                </div>
+                <span id="m05-progress-text" style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module 06: Context Engineering & RAG -->
+          <div class="module-card reveal reveal--delay-1" style="cursor: pointer;" onclick="window.location.href='modules/module-06/01-context-engineering.html'">
+            <div class="module-card__number">06</div>
+            <div class="module-card__title">Context Engineering & RAG</div>
+            <div class="module-card__desc">
+              Context window management, RAG architecture, chunking strategies, retrieval patterns, and agentic RAG.
+            </div>
+            <div class="module-card__topics">
+              <span class="badge badge--blue">Context Engineering</span>
+              <span class="badge badge--blue">RAG Pipeline</span>
+              <span class="badge badge--blue">Vector DBs</span>
+              <span class="badge badge--blue">Agentic RAG</span>
+            </div>
+            <div style="margin-top: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="flex: 1; height: 3px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden;">
+                  <div id="m06-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary)); transition: width 0.5s ease;"></div>
+                </div>
+                <span id="m06-progress-text" style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module 07: Interoperability Protocols -->
+          <div class="module-card reveal reveal--delay-2" style="cursor: pointer;" onclick="window.location.href='modules/module-07/01-mcp-protocol.html'">
+            <div class="module-card__number">07</div>
+            <div class="module-card__title">Interoperability Protocols</div>
+            <div class="module-card__desc">
+              MCP for agent-to-tool connectivity, A2A for agent-to-agent collaboration, and the AAIF governance framework.
+            </div>
+            <div class="module-card__topics">
+              <span class="badge badge--teal">MCP</span>
+              <span class="badge badge--teal">A2A</span>
+              <span class="badge badge--teal">AAIF</span>
+              <span class="badge badge--teal">Open Standards</span>
+            </div>
+            <div style="margin-top: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="flex: 1; height: 3px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden;">
+                  <div id="m07-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--stroke-secondary), var(--stroke-primary)); transition: width 0.5s ease;"></div>
+                </div>
+                <span id="m07-progress-text" style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module 08: Security & Compliance -->
+          <div class="module-card reveal reveal--delay-3" style="cursor: pointer;" onclick="window.location.href='modules/module-08/01-agent-security.html'">
+            <div class="module-card__number">08</div>
+            <div class="module-card__title">Security, Privacy & Compliance</div>
+            <div class="module-card__desc">
+              Zero Trust architecture, threat models, PII masking, regulatory compliance, and security implementation.
+            </div>
+            <div class="module-card__topics">
+              <span class="badge badge--amber">Zero Trust</span>
+              <span class="badge badge--amber">Threat Model</span>
+              <span class="badge badge--amber">PII Masking</span>
+              <span class="badge badge--amber">Compliance</span>
+            </div>
+            <div style="margin-top: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="flex: 1; height: 3px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden;">
+                  <div id="m08-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-warning), var(--accent-error)); transition: width 0.5s ease;"></div>
+                </div>
+                <span id="m08-progress-text" style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module 09: Cost Optimization -->
+          <div class="module-card reveal reveal--delay-4" style="cursor: pointer;" onclick="window.location.href='modules/module-09/01-cost-economics.html'">
+            <div class="module-card__number">09</div>
+            <div class="module-card__title">Cost Optimization & Economics</div>
+            <div class="module-card__desc">
+              The unreliability tax, eight optimization strategies, financial guardrails, and cost-performance trade-offs.
+            </div>
+            <div class="module-card__topics">
+              <span class="badge" style="border-color: var(--accent-success); color: var(--accent-success);">Cost Strategies</span>
+              <span class="badge" style="border-color: var(--accent-success); color: var(--accent-success);">Model Routing</span>
+              <span class="badge" style="border-color: var(--accent-success); color: var(--accent-success);">Caching</span>
+              <span class="badge" style="border-color: var(--accent-success); color: var(--accent-success);">Guardrails</span>
+            </div>
+            <div style="margin-top: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="flex: 1; height: 3px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden;">
+                  <div id="m09-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent-success), var(--stroke-secondary)); transition: width 0.5s ease;"></div>
+                </div>
+                <span id="m09-progress-text" style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Module 10: Semantic Layer & Agent UX -->
+          <div class="module-card reveal reveal--delay-1" style="cursor: pointer;" onclick="window.location.href='modules/module-10/01-semantic-layer.html'">
+            <div class="module-card__number">10</div>
+            <div class="module-card__title">Semantic Layer & Agent UX</div>
+            <div class="module-card__desc">
+              Semantic data modeling, conversation design for non-technical users, data quality, and agent governance.
+            </div>
+            <div class="module-card__topics">
+              <span class="badge badge--blue">Semantic Layer</span>
+              <span class="badge badge--blue">Agent UX</span>
+              <span class="badge badge--blue">Data Quality</span>
+              <span class="badge badge--blue">Governance</span>
+            </div>
+            <div style="margin-top: var(--space-4);">
+              <div style="display: flex; align-items: center; gap: var(--space-2);">
+                <div style="flex: 1; height: 3px; background: var(--bg-elevated); border-radius: 2px; overflow: hidden;">
+                  <div id="m10-progress-fill" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--stroke-primary), var(--accent-success)); transition: width 0.5s ease;"></div>
+                </div>
+                <span id="m10-progress-text" style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary);">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0; display: flex; align-items: center; justify-content: center; gap: var(--space-4); flex-wrap: wrap;">
+          Data Agent Academy &mdash; Architecture & Design Foundations Training
+          <a href="glossary.html" style="color: var(--stroke-primary); text-decoration: none;">Glossary</a>
+          <span style="color: var(--stroke-dim);">|</span>
+          <button id="resetProgressBtn" onclick="resetAllProgress()" style="
+            font-family: var(--font-mono);
+            font-size: var(--font-xs);
+            color: var(--accent-error);
+            background: transparent;
+            border: 1px solid var(--accent-error);
+            border-radius: var(--border-radius);
+            padding: 3px var(--space-3);
+            cursor: pointer;
+            letter-spacing: 0.06em;
+            opacity: 0.7;
+            transition: opacity var(--transition-fast), box-shadow var(--transition-fast);
+          "
+          onmouseover="this.style.opacity='1'; this.style.boxShadow='0 0 8px var(--glow-error)';"
+          onmouseout="this.style.opacity='0.7'; this.style.boxShadow='none';">
+            ↺ Reset Progress
+          </button>
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="js/progress.js"></script>
+  <script src="js/nav.js"></script>
+  <script>
+    Nav.init(null);
+
+    // Reset all progress and refresh all progress bars on the page
+    function resetAllProgress() {
+      if (!confirm('Reset all progress? This will clear completed lessons, quiz scores, and simulation data for all 10 modules.')) return;
+      Progress.reset();
+      // Reset all progress bars & text on the page
+      const ids = ['m1','m02','m03','m04','m05','m06','m07','m08','m09','m10'];
+      ids.forEach(id => {
+        const fill = document.getElementById(id + '-progress-fill');
+        const text = document.getElementById(id + '-progress-text');
+        if (fill) fill.style.width = '0%';
+        if (text) text.textContent = '0%';
+      });
+      // Flash the button to confirm
+      const btn = document.getElementById('resetProgressBtn');
+      if (btn) {
+        btn.textContent = '✓ Progress Reset';
+        btn.style.color = 'var(--accent-success)';
+        btn.style.borderColor = 'var(--accent-success)';
+        setTimeout(() => {
+          btn.textContent = '↺ Reset Progress';
+          btn.style.color = 'var(--accent-error)';
+          btn.style.borderColor = 'var(--accent-error)';
+        }, 2000);
+      }
+    }
+
+    // Update all module progress on landing page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Module 01
+      const m01 = Progress.getModule01Progress();
+      const m1Fill = document.getElementById('m1-progress-fill');
+      const m1Text = document.getElementById('m1-progress-text');
+      if (m1Fill) m1Fill.style.width = m01.percent + '%';
+      if (m1Text) m1Text.textContent = m01.percent + '%';
+
+      // Module 02
+      const m02 = Progress.getModule02Progress();
+      const m02Fill = document.getElementById('m02-progress-fill');
+      const m02Text = document.getElementById('m02-progress-text');
+      if (m02Fill) m02Fill.style.width = m02.percent + '%';
+      if (m02Text) m02Text.textContent = m02.percent + '%';
+
+      // Module 03
+      const m03 = Progress.getModule03Progress();
+      const m03Fill = document.getElementById('m03-progress-fill');
+      const m03Text = document.getElementById('m03-progress-text');
+      if (m03Fill) m03Fill.style.width = m03.percent + '%';
+      if (m03Text) m03Text.textContent = m03.percent + '%';
+
+      // Module 04
+      const m04 = Progress.getModule04Progress();
+      const m04Fill = document.getElementById('m04-progress-fill');
+      const m04Text = document.getElementById('m04-progress-text');
+      if (m04Fill) m04Fill.style.width = m04.percent + '%';
+      if (m04Text) m04Text.textContent = m04.percent + '%';
+
+      // Module 05
+      const m05 = Progress.getModule05Progress();
+      const m05Fill = document.getElementById('m05-progress-fill');
+      const m05Text = document.getElementById('m05-progress-text');
+      if (m05Fill) m05Fill.style.width = m05.percent + '%';
+      if (m05Text) m05Text.textContent = m05.percent + '%';
+
+      // Module 06
+      const m06 = Progress.getModule06Progress();
+      const m06Fill = document.getElementById('m06-progress-fill');
+      const m06Text = document.getElementById('m06-progress-text');
+      if (m06Fill) m06Fill.style.width = m06.percent + '%';
+      if (m06Text) m06Text.textContent = m06.percent + '%';
+
+      // Module 07
+      const m07 = Progress.getModule07Progress();
+      const m07Fill = document.getElementById('m07-progress-fill');
+      const m07Text = document.getElementById('m07-progress-text');
+      if (m07Fill) m07Fill.style.width = m07.percent + '%';
+      if (m07Text) m07Text.textContent = m07.percent + '%';
+
+      // Module 08
+      const m08 = Progress.getModule08Progress();
+      const m08Fill = document.getElementById('m08-progress-fill');
+      const m08Text = document.getElementById('m08-progress-text');
+      if (m08Fill) m08Fill.style.width = m08.percent + '%';
+      if (m08Text) m08Text.textContent = m08.percent + '%';
+
+      // Module 09
+      const m09 = Progress.getModule09Progress();
+      const m09Fill = document.getElementById('m09-progress-fill');
+      const m09Text = document.getElementById('m09-progress-text');
+      if (m09Fill) m09Fill.style.width = m09.percent + '%';
+      if (m09Text) m09Text.textContent = m09.percent + '%';
+
+      // Module 10
+      const m10 = Progress.getModule10Progress();
+      const m10Fill = document.getElementById('m10-progress-fill');
+      const m10Text = document.getElementById('m10-progress-text');
+      if (m10Fill) m10Fill.style.width = m10.percent + '%';
+      if (m10Text) m10Text.textContent = m10.percent + '%';
+    });
+  </script>
+</body>
+</html>

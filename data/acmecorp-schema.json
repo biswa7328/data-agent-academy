@@ -1,0 +1,131 @@
+{
+  "database": "acmecorp_warehouse",
+  "description": "AcmeCorp retail data warehouse — mid-size retailer with 200 stores nationwide",
+  "tables": [
+    {
+      "name": "stores",
+      "description": "Physical store locations",
+      "columns": [
+        {"name": "store_id", "type": "INTEGER", "primary_key": true, "description": "Unique store identifier"},
+        {"name": "store_name", "type": "VARCHAR(100)", "description": "Store display name"},
+        {"name": "region_id", "type": "INTEGER", "foreign_key": "regions.region_id", "description": "Region this store belongs to"},
+        {"name": "city", "type": "VARCHAR(50)", "description": "City location"},
+        {"name": "state", "type": "VARCHAR(2)", "description": "US state code"},
+        {"name": "zip_code", "type": "VARCHAR(10)", "description": "ZIP code"},
+        {"name": "opened_date", "type": "DATE", "description": "Date store opened"},
+        {"name": "square_footage", "type": "INTEGER", "description": "Store size in sq ft"},
+        {"name": "store_type", "type": "VARCHAR(20)", "description": "flagship, standard, express"}
+      ]
+    },
+    {
+      "name": "regions",
+      "description": "Geographic regions grouping stores",
+      "columns": [
+        {"name": "region_id", "type": "INTEGER", "primary_key": true},
+        {"name": "region_name", "type": "VARCHAR(50)", "description": "e.g., Northeast, Southeast, Midwest, West, Southwest"},
+        {"name": "regional_manager", "type": "VARCHAR(100)"},
+        {"name": "target_revenue_q", "type": "DECIMAL(12,2)", "description": "Quarterly revenue target"}
+      ]
+    },
+    {
+      "name": "products",
+      "description": "Product catalog",
+      "columns": [
+        {"name": "product_id", "type": "INTEGER", "primary_key": true},
+        {"name": "product_name", "type": "VARCHAR(200)"},
+        {"name": "category", "type": "VARCHAR(50)", "description": "Electronics, Clothing, Home, Food, Sports"},
+        {"name": "subcategory", "type": "VARCHAR(50)"},
+        {"name": "unit_price", "type": "DECIMAL(10,2)"},
+        {"name": "cost_price", "type": "DECIMAL(10,2)"},
+        {"name": "supplier_id", "type": "INTEGER", "foreign_key": "suppliers.supplier_id"},
+        {"name": "is_active", "type": "BOOLEAN", "description": "Currently sold"}
+      ]
+    },
+    {
+      "name": "sales",
+      "description": "Transaction-level sales data",
+      "columns": [
+        {"name": "sale_id", "type": "BIGINT", "primary_key": true},
+        {"name": "sale_date", "type": "DATE"},
+        {"name": "store_id", "type": "INTEGER", "foreign_key": "stores.store_id"},
+        {"name": "product_id", "type": "INTEGER", "foreign_key": "products.product_id"},
+        {"name": "customer_id", "type": "INTEGER", "foreign_key": "customers.customer_id"},
+        {"name": "quantity", "type": "INTEGER"},
+        {"name": "unit_price", "type": "DECIMAL(10,2)"},
+        {"name": "total_amount", "type": "DECIMAL(12,2)", "description": "quantity * unit_price after discounts"},
+        {"name": "discount_pct", "type": "DECIMAL(5,2)"},
+        {"name": "payment_method", "type": "VARCHAR(20)", "description": "cash, credit, debit, mobile"}
+      ]
+    },
+    {
+      "name": "customers",
+      "description": "Customer loyalty program members",
+      "columns": [
+        {"name": "customer_id", "type": "INTEGER", "primary_key": true},
+        {"name": "first_name", "type": "VARCHAR(50)"},
+        {"name": "last_name", "type": "VARCHAR(50)"},
+        {"name": "email", "type": "VARCHAR(100)", "pii": true},
+        {"name": "phone", "type": "VARCHAR(20)", "pii": true},
+        {"name": "loyalty_tier", "type": "VARCHAR(20)", "description": "bronze, silver, gold, platinum"},
+        {"name": "signup_date", "type": "DATE"},
+        {"name": "preferred_store_id", "type": "INTEGER", "foreign_key": "stores.store_id"}
+      ]
+    },
+    {
+      "name": "inventory",
+      "description": "Current inventory levels per store",
+      "columns": [
+        {"name": "store_id", "type": "INTEGER", "foreign_key": "stores.store_id", "primary_key": true},
+        {"name": "product_id", "type": "INTEGER", "foreign_key": "products.product_id", "primary_key": true},
+        {"name": "quantity_on_hand", "type": "INTEGER"},
+        {"name": "reorder_point", "type": "INTEGER"},
+        {"name": "last_restocked", "type": "DATE"}
+      ]
+    },
+    {
+      "name": "employees",
+      "description": "Store and corporate employees",
+      "columns": [
+        {"name": "employee_id", "type": "INTEGER", "primary_key": true},
+        {"name": "first_name", "type": "VARCHAR(50)", "pii": true},
+        {"name": "last_name", "type": "VARCHAR(50)", "pii": true},
+        {"name": "store_id", "type": "INTEGER", "foreign_key": "stores.store_id"},
+        {"name": "role", "type": "VARCHAR(50)", "description": "manager, associate, cashier, stocker"},
+        {"name": "hire_date", "type": "DATE"},
+        {"name": "salary", "type": "DECIMAL(10,2)", "pii": true, "restricted": true}
+      ]
+    },
+    {
+      "name": "promotions",
+      "description": "Marketing promotions and campaigns",
+      "columns": [
+        {"name": "promo_id", "type": "INTEGER", "primary_key": true},
+        {"name": "promo_name", "type": "VARCHAR(100)"},
+        {"name": "start_date", "type": "DATE"},
+        {"name": "end_date", "type": "DATE"},
+        {"name": "discount_type", "type": "VARCHAR(20)", "description": "percentage, fixed, bogo"},
+        {"name": "discount_value", "type": "DECIMAL(10,2)"},
+        {"name": "target_category", "type": "VARCHAR(50)"},
+        {"name": "min_purchase", "type": "DECIMAL(10,2)"}
+      ]
+    }
+  ],
+  "relationships": [
+    {"from": "sales.store_id", "to": "stores.store_id", "type": "many-to-one"},
+    {"from": "sales.product_id", "to": "products.product_id", "type": "many-to-one"},
+    {"from": "sales.customer_id", "to": "customers.customer_id", "type": "many-to-one"},
+    {"from": "stores.region_id", "to": "regions.region_id", "type": "many-to-one"},
+    {"from": "inventory.store_id", "to": "stores.store_id", "type": "many-to-one"},
+    {"from": "inventory.product_id", "to": "products.product_id", "type": "many-to-one"},
+    {"from": "employees.store_id", "to": "stores.store_id", "type": "many-to-one"}
+  ],
+  "notes": {
+    "pii_columns": ["customers.email", "customers.phone", "employees.first_name", "employees.last_name", "employees.salary"],
+    "restricted_tables": ["employees (salary column requires HQ admin access)"],
+    "business_rules": {
+      "revenue": "Use sales.total_amount, NOT products.unit_price * sales.quantity (discounts apply)",
+      "active_stores": "Filter stores WHERE opened_date IS NOT NULL",
+      "fiscal_quarters": "Q1=Jan-Mar, Q2=Apr-Jun, Q3=Jul-Sep, Q4=Oct-Dec"
+    }
+  }
+}

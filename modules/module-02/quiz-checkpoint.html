@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 02 Quiz Checkpoint — Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Celebration Section --- */
+    .celebration {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      margin-top: var(--space-8);
+      background: var(--bg-surface);
+      border: 2px solid var(--stroke-secondary);
+      border-radius: var(--border-radius-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .celebration::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary), var(--accent-success));
+    }
+    .celebration__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--stroke-secondary);
+      margin-bottom: var(--space-6);
+      font-size: var(--font-4xl);
+      box-shadow: 0 0 30px var(--glow-teal);
+    }
+    .celebration__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+    }
+    .celebration__subtitle {
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .celebration__next {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-8);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      background: var(--bg-primary);
+      margin-top: var(--space-4);
+    }
+    .celebration__next-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .celebration__next-title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--stroke-dim);
+    }
+
+    /* --- Stats Row --- */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+    }
+    .stat-box__value {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-2);
+    }
+    .stat-box__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 640px) {
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 02</span>
+        <span class="separator">/</span>
+        <span class="current">Quiz Checkpoint</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Module 02 &mdash; Final Assessment</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Agent Anatomy &amp; Reasoning Checkpoint</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            You've explored agent anatomy, role taxonomies, LangGraph patterns, and the ReAct loop. Time to prove your understanding with 8 targeted questions.
+          </p>
+
+          <!-- Stats -->
+          <div class="stats-row reveal">
+            <div class="stat-box">
+              <div class="stat-box__value">6</div>
+              <div class="stat-box__label">Agent Components</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">4</div>
+              <div class="stat-box__label">LangGraph Patterns</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">15</div>
+              <div class="stat-box__label">Questions Ahead</div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">How It Works</div>
+            <div class="callout__text">
+              Select one answer per question. Once all 15 are answered, click "Check Answers" to see your score with detailed explanations. You need 80% (12/15) for an excellent rating.
+            </div>
+          </div>
+        </section>
+
+        <!-- Quiz Container -->
+        <section class="section">
+          <div id="quiz-container"></div>
+        </section>
+
+        <!-- Celebration (shown via JS after quiz submission) -->
+        <div id="celebration-section" class="reveal" style="display: none;">
+          <div class="celebration">
+            <div class="celebration__badge">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="celebration__title">Module 02 Complete</div>
+            <p class="celebration__subtitle">
+              You've mastered agent anatomy &mdash; from the six core components and role taxonomies to LangGraph state graphs and the ReAct reasoning loop. Time to design agent personas.
+            </p>
+            <a href="../module-03/01-personas.html" class="btn btn--primary btn--large">
+              Start Module 03 &rarr;
+            </a>
+            <div class="celebration__next">
+              <div>
+                <div class="celebration__next-label">Up Next</div>
+                <div class="celebration__next-title">Module 03 &mdash; Personas</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="04-react-loop.html" class="page-nav__title">ReAct Loop</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../module-03/01-personas.html" class="page-nav__title">Module 03: Personas</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Agent Anatomy &amp; Reasoning Training
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Quiz Questions: Module 02 Agent Anatomy & Reasoning ---
+    QuizEngine.init('quiz-container', [
+      // --- Agent Anatomy (2 questions) ---
+      {
+        question: 'Which agent component is responsible for interpreting natural language into structured actions and making decisions?',
+        options: [
+          'Memory',
+          'LLM (Core Reasoning Engine)',
+          'Tools',
+          'Policies'
+        ],
+        correct: 1,
+        explanation: 'The LLM is the brain of the agent &mdash; it reads user input, generates plans, and translates natural language requests into structured operations like SQL queries or API calls.'
+      },
+      {
+        question: 'An agent remembers that you asked about Q2 revenue earlier, so when you say "same thing for Q3" it understands the context. Which component enables this?',
+        options: [
+          'Context',
+          'Reasoning Graph',
+          'Memory',
+          'Policies'
+        ],
+        correct: 2,
+        explanation: 'Memory provides both short-term (conversation context) and long-term (persistent storage) continuity. It lets the agent carry forward details from earlier in the conversation without requiring the user to repeat themselves.'
+      },
+      // --- Role Taxonomy (2 questions) ---
+      {
+        question: 'What is the primary advantage of using multiple specialist agents instead of a single generalist agent?',
+        options: [
+          'Lower compute costs per query',
+          'Each agent can have targeted guardrails and scoped permissions',
+          'Fewer LLM calls overall',
+          'Simpler deployment pipeline'
+        ],
+        correct: 1,
+        explanation: 'Specialist agents enable role-based access control &mdash; each agent gets only the permissions it needs (e.g., a Data Engineer agent can write to staging but not production). This also makes validation and testing easier since each role has clear boundaries.'
+      },
+      {
+        question: 'In a multi-agent architecture, which pattern describes one agent delegating sub-tasks to other agents and aggregating their results?',
+        options: [
+          'Peer-to-peer collaboration',
+          'Orchestrator pattern',
+          'Broadcast pattern',
+          'Pipeline pattern'
+        ],
+        correct: 1,
+        explanation: 'The orchestrator pattern uses a central coordinator agent that breaks a complex task into sub-tasks, delegates each to a specialist agent, and merges their outputs into a final result &mdash; much like a project manager assigning work to team members.'
+      },
+      // --- LangGraph Patterns (2 questions) ---
+      {
+        question: 'In a LangGraph state graph, what determines which node executes next when there are multiple possible paths?',
+        options: [
+          'The node with the highest priority number',
+          'Conditional edges that evaluate the current state',
+          'A random selection among available nodes',
+          'The node that was added to the graph first'
+        ],
+        correct: 1,
+        explanation: 'Conditional edges inspect the current state object and route execution to the appropriate next node. For example, after a query node runs, a conditional edge might check if the result contains an error and route to an error-handling node or a formatting node accordingly.'
+      },
+      {
+        question: 'What role does the "state" object play in a LangGraph workflow?',
+        options: [
+          'It stores the graph definition and node connections',
+          'It holds the shared data that nodes read from and write to as execution progresses',
+          'It tracks which users have permission to run the graph',
+          'It logs performance metrics for each node execution'
+        ],
+        correct: 1,
+        explanation: 'The state object is the shared data container passed between nodes. Each node reads what it needs from the state, performs its work, and writes results back. This is how information flows through the graph &mdash; for example, a "discover schema" node writes table metadata to state, and the next "write SQL" node reads it.'
+      },
+      // --- ReAct Loop (2 questions) ---
+      {
+        question: 'What are the three phases of the ReAct (Reason-Act-Observe) loop, in order?',
+        options: [
+          'Plan, Execute, Report',
+          'Reason, Act, Observe',
+          'Analyze, Transform, Load',
+          'Query, Validate, Return'
+        ],
+        correct: 1,
+        explanation: 'ReAct stands for Reason-Act-Observe. The agent first reasons about what to do next, then acts by calling a tool or executing a step, then observes the result to decide whether to continue looping or return a final answer.'
+      },
+      {
+        question: 'When is the ReAct pattern most appropriate compared to a fixed multi-step pipeline?',
+        options: [
+          'When the exact sequence of steps is known in advance',
+          'When the agent needs to dynamically decide its next action based on intermediate results',
+          'When there is only one tool available',
+          'When the task requires no external tool calls'
+        ],
+        correct: 1,
+        explanation: 'ReAct excels when the agent cannot predict the full plan upfront. After each action, the agent observes the outcome and reasons about the next step &mdash; for example, discovering that a table has unexpected columns and adapting the SQL query accordingly.'
+      },
+      // --- From Module 01 (agent anatomy, role taxonomy, LangGraph, ReAct) ---
+      {
+        question: 'In the ReAct loop, what happens after the THINK step?',
+        options: [
+          'Observe',
+          'Return',
+          'Act',
+          'Validate'
+        ],
+        correct: 2,
+        explanation: 'The ReAct pattern follows: Think (reason about what to do) → Act (execute a tool call) → Observe (examine the result) → Repeat.'
+      },
+      {
+        question: 'Which agent role is best for "Run this specific SQL query and return results"?',
+        options: [
+          'Orchestrator',
+          'Super Agent',
+          'Utility Agent',
+          'All of the above'
+        ],
+        correct: 2,
+        explanation: 'Utility Agents are single-purpose specialists — they do one thing fast and reliably. Running a specific SQL query is a perfect utility agent task.'
+      },
+      {
+        question: 'What LangGraph pattern should you use when the agent might need to retry a failed query?',
+        options: [
+          'Sequential Chain',
+          'Conditional Branching',
+          'Loop with Feedback',
+          'Parallel Execution'
+        ],
+        correct: 2,
+        explanation: 'Loops with feedback enable self-correction — the agent can try a query, validate the result, fix errors, and retry until it succeeds or hits a limit.'
+      },
+      {
+        question: 'Which agent component stores conversation history and learned information?',
+        options: [
+          'LLM',
+          'Reasoning Graph',
+          'Memory',
+          'Context'
+        ],
+        correct: 2,
+        explanation: 'Memory stores both short-term (current conversation history) and long-term (persistent learned information) data that persists across interactions.'
+      },
+      {
+        question: 'Which collaboration pattern has multiple agents argue different positions before an evaluator decides?',
+        options: [
+          'Sequential Handoff',
+          'Parallel Execution',
+          'Supervisor Pattern',
+          'Debate Pattern'
+        ],
+        correct: 3,
+        explanation: 'The Debate pattern improves quality through adversarial reasoning — agents present opposing analyses and an evaluator synthesizes the best answer.'
+      },
+      {
+        question: 'AcmeCorp\'s agent needs to simultaneously fetch schema, row counts, and sample data. Which pattern?',
+        options: [
+          'Sequential Chain',
+          'Conditional Branching',
+          'Loop with Feedback',
+          'Parallel Execution'
+        ],
+        correct: 3,
+        explanation: 'When tasks are independent of each other (schema, row counts, and sample data don\'t depend on one another), parallel execution runs them concurrently for faster results.'
+      },
+      {
+        question: 'What distinguishes a Super Agent from a Utility Agent?',
+        options: [
+          'Super Agent is faster',
+          'Super Agent has cross-domain capabilities',
+          'Super Agent uses more memory',
+          'Super Agent costs less'
+        ],
+        correct: 1,
+        explanation: 'Super Agents handle diverse task types across multiple domains with broad reasoning capability. Utility Agents specialize in one narrow task with high reliability.'
+      }
+    ]);
+
+    // --- Show celebration after quiz submission ---
+    const originalCallback = QuizEngine.onComplete;
+    QuizEngine.onComplete = function(score, total) {
+      if (originalCallback) originalCallback(score, total);
+      const celebration = document.getElementById('celebration-section');
+      if (celebration) {
+        celebration.style.display = 'block';
+        celebration.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
+    // Listen for quiz completion via DOM observation
+    const quizContainer = document.getElementById('quiz-container');
+    if (quizContainer) {
+      const observer = new MutationObserver(function(mutations) {
+        const scoreCard = quizContainer.querySelector('.score-card');
+        if (scoreCard) {
+          const celebration = document.getElementById('celebration-section');
+          if (celebration) {
+            celebration.style.display = 'block';
+            setTimeout(function() {
+              celebration.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+          }
+          observer.disconnect();
+        }
+      });
+      observer.observe(quizContainer, { childList: true, subtree: true });
+    }
+
+    Nav.init('m02-quiz-final');
+  </script>
+</body>
+</html>

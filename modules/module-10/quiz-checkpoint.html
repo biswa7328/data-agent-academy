@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Module 10 Quiz &amp; Academy Complete &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Stats Row --- */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-8) 0;
+    }
+    .stat-box {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      text-align: center;
+    }
+    .stat-box__value {
+      font-family: var(--font-mono);
+      font-size: var(--font-3xl);
+      color: var(--stroke-primary);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: var(--space-2);
+    }
+    .stat-box__label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    @media (max-width: 640px) {
+      .stats-row { grid-template-columns: 1fr; }
+    }
+
+    /* ===== ACADEMY COMPLETE CELEBRATION ===== */
+    .course-complete {
+      text-align: center;
+      padding: var(--space-12) var(--space-6);
+      margin-top: var(--space-10);
+      background: var(--bg-surface);
+      border: 2px solid transparent;
+      border-radius: var(--border-radius-lg);
+      position: relative;
+      overflow: hidden;
+      animation: celebrationFadeIn 0.8s ease-out forwards;
+    }
+    @keyframes celebrationFadeIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .course-complete::before {
+      content: '';
+      position: absolute;
+      top: -2px; left: -2px; right: -2px; bottom: -2px;
+      border-radius: var(--border-radius-lg);
+      background: linear-gradient(90deg, #A100FF, #CC00FF, #f59e0b, #A100FF);
+      background-size: 300% 100%;
+      animation: borderGlow 3s linear infinite;
+      z-index: -1;
+    }
+    .course-complete::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px; right: 2px; bottom: 2px;
+      border-radius: calc(var(--border-radius-lg) - 2px);
+      background: var(--bg-surface);
+      z-index: -1;
+    }
+    @keyframes borderGlow {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+    .course-complete-wrapper {
+      position: relative;
+      animation: outerGlow 2s ease-in-out infinite alternate;
+    }
+    @keyframes outerGlow {
+      from { filter: drop-shadow(0 0 8px rgba(161, 0, 255, 0.15)); }
+      to { filter: drop-shadow(0 0 25px rgba(204, 0, 255, 0.3)); }
+    }
+    .course-complete__badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid var(--stroke-secondary);
+      margin-bottom: var(--space-6);
+      font-size: 56px;
+      animation: badgePulse 2s ease-in-out infinite alternate, badgeEntrance 0.6s ease-out 0.3s both;
+      box-shadow: 0 0 40px rgba(204, 0, 255, 0.3), 0 0 80px rgba(204, 0, 255, 0.1);
+    }
+    @keyframes badgePulse {
+      from { box-shadow: 0 0 30px rgba(204, 0, 255, 0.3), 0 0 60px rgba(204, 0, 255, 0.1); transform: scale(1); }
+      to { box-shadow: 0 0 50px rgba(161, 0, 255, 0.4), 0 0 100px rgba(161, 0, 255, 0.15); transform: scale(1.05); }
+    }
+    @keyframes badgeEntrance {
+      from { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+      to { opacity: 1; transform: scale(1) rotate(0deg); }
+    }
+    .course-complete__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-4xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+      animation: titleSlide 0.5s ease-out 0.5s both;
+    }
+    @keyframes titleSlide {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .course-complete__subtitle {
+      font-size: var(--font-lg);
+      color: var(--text-secondary);
+      margin-bottom: var(--space-8);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+      animation: titleSlide 0.5s ease-out 0.7s both;
+    }
+    .confetti-container {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      opacity: 0;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+      80% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(600px) rotate(720deg) scale(0.3); }
+    }
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--space-3);
+      margin: var(--space-6) 0;
+      text-align: left;
+    }
+    .concept-tag {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
+      background: var(--bg-primary);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .concept-tag:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+    }
+    .concept-tag svg { flex-shrink: 0; color: var(--stroke-secondary); }
+    .cc-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--stroke-primary), var(--stroke-secondary));
+      margin: var(--space-8) auto;
+      border-radius: 1px;
+    }
+    .cc-section-label {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--stroke-secondary);
+      margin-bottom: var(--space-4);
+    }
+    .cc-heading {
+      font-family: var(--font-mono);
+      font-size: var(--font-xl);
+      color: var(--text-primary);
+      margin-bottom: var(--space-4);
+    }
+    .next-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin: var(--space-6) 0;
+      text-align: left;
+    }
+    .next-card {
+      padding: var(--space-6);
+      background: var(--bg-primary);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius-lg);
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .next-card:hover {
+      border-color: var(--stroke-primary);
+      transform: translateY(-2px);
+    }
+    .next-card__icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px dashed var(--stroke-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-4);
+      color: var(--stroke-secondary);
+    }
+    .next-card__title {
+      font-family: var(--font-mono);
+      font-size: var(--font-base);
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .next-card__desc {
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    @media (max-width: 768px) {
+      .next-grid { grid-template-columns: 1fr; }
+      .concept-grid { grid-template-columns: repeat(2, 1fr); }
+      .course-complete__title { font-size: var(--font-2xl); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <a href="../../index.html" class="top-nav__brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        DAA
+      </a>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 10</span>
+        <span class="separator">/</span>
+        <span class="current">Final Quiz</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Header -->
+        <section class="section">
+          <div class="section-label reveal">
+            <span>Module 10 &mdash; Final Assessment</span>
+          </div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">Semantic Layer, UX &amp; Governance Quiz</h1>
+          <div class="hero-line" style="max-width: 300px; margin-bottom: var(--space-6);"></div>
+
+          <p class="reveal" style="font-size: var(--font-lg); max-width: 650px; line-height: 1.7;">
+            From the $3.4M revenue discrepancy that nearly killed DataPulse, to Sofia's "$0 sales" phone call, to the silent schema drift that made customer lookup vanish &mdash; AcmeCorp's team learned that accuracy alone is not enough. You need consistent definitions from Priya's semantic layer, intuitive UX from Lena's redesign, and data quality safeguards that catch problems before users do. This final assessment covers everything.
+          </p>
+
+          <!-- Stats -->
+          <div class="stats-row reveal">
+            <div class="stat-box">
+              <div class="stat-box__value">10</div>
+              <div class="stat-box__label">Modules Complete</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">8</div>
+              <div class="stat-box__label">Final Questions</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-box__value">80%</div>
+              <div class="stat-box__label">Pass Threshold</div>
+            </div>
+          </div>
+
+          <div class="callout reveal">
+            <div class="callout__label">How It Works</div>
+            <div class="callout__text">
+              Select one answer per question. Once all 8 are answered, click "Check Answers" to see your score with detailed explanations. You need 80% (7/8) for an excellent rating. This is the final module of the entire Data Agent Academy &mdash; completing it marks the end of your journey alongside Maya, Raj, Priya, Lena, Sofia, Derek, and Marcus at AcmeCorp.
+            </div>
+          </div>
+        </section>
+
+        <!-- Quiz Container -->
+        <section class="section">
+          <div id="quiz-container"></div>
+        </section>
+
+        <!-- ===== ACADEMY COMPLETE CELEBRATION (shown after quiz) ===== -->
+        <div id="celebration-section" class="reveal" style="display: none;">
+          <div class="course-complete-wrapper">
+            <div class="course-complete">
+
+              <!-- Confetti particles (generated by JS) -->
+              <div class="confetti-container" id="confetti-container"></div>
+
+              <!-- Badge -->
+              <div class="course-complete__badge" style="position: relative; z-index: 2;">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="var(--stroke-secondary)" stroke-width="1.5">
+                  <path d="M12 15l-3.5 2 .67-3.89L6 10.11l3.92-.57L12 6l2.08 3.54 3.92.57-3.17 3L15.5 17z"/>
+                  <path d="M8 21l1-4.5L5 13l4.5-.5L12 8l2.5 4.5L19 13l-4 3.5L16 21l-4-2.5L8 21z" opacity="0.3"/>
+                </svg>
+              </div>
+
+              <!-- Title -->
+              <div class="course-complete__title" style="position: relative; z-index: 2;">Academy Complete!</div>
+              <p class="course-complete__subtitle" style="position: relative; z-index: 2;">
+                You have completed all 10 modules of the Data Agent Academy &mdash; from foundational architecture and tool design through persona patterns, multi-agent orchestration, AgentOps, context engineering, security, cost economics, semantic layers, agent UX, and data governance. You have followed AcmeCorp's DataPulse from the $3.4M revenue crisis to a trusted, production-grade agent serving 200 stores.
+              </p>
+
+              <div class="cc-divider"></div>
+
+              <!-- Concepts Recap -->
+              <div style="position: relative; z-index: 2; text-align: center;">
+                <div class="cc-section-label">Concepts Mastered</div>
+                <div class="cc-heading">Your Complete Knowledge Map</div>
+
+                <div class="concept-grid">
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    5-Layer Architecture
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Tool Design
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    ReAct &amp; LangGraph
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Persona Design
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Multi-Agent Patterns
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Memory Systems
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    CI/CD &amp; Eval Gates
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Context Engineering
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    RAG &amp; Retrieval
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Agent Security
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Cost &amp; Economics
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Semantic Layer
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Agent UX Design
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Data Quality
+                  </div>
+                  <div class="concept-tag">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                    Agent Governance
+                  </div>
+                </div>
+              </div>
+
+              <div class="cc-divider"></div>
+
+              <!-- What's Next -->
+              <div style="position: relative; z-index: 2; text-align: center;">
+                <div class="cc-section-label">What's Next?</div>
+                <div class="cc-heading">Continue Your Journey</div>
+
+                <div class="next-grid">
+                  <div class="next-card">
+                    <div class="next-card__icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div class="next-card__title">Build Your Agent</div>
+                    <div class="next-card__desc">Apply every pattern from this Academy to architect and deploy a production-grade Data Agent for your own organization &mdash; just as Maya, Priya, and Lena built DataPulse for AcmeCorp.</div>
+                  </div>
+                  <div class="next-card">
+                    <div class="next-card__icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    </div>
+                    <div class="next-card__title">Review the Glossary</div>
+                    <div class="next-card__desc">Browse the complete glossary of terms, acronyms, and patterns covered across all 10 modules for quick reference.</div>
+                  </div>
+                  <div class="next-card">
+                    <div class="next-card__icon">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <div class="next-card__title">Revisit AcmeCorp</div>
+                    <div class="next-card__desc">Walk through the AcmeCorp case studies across all modules &mdash; from the $3.4M revenue crisis to DataPulse's $1,847/month production deployment serving 200 stores at 91% accuracy.</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="cc-divider"></div>
+
+              <!-- Final AcmeCorp callout -->
+              <div style="position: relative; z-index: 2;">
+                <div class="callout" style="text-align: left; margin: 0 auto; max-width: 600px;">
+                  <div class="callout__label">AcmeCorp Final Status</div>
+                  <div class="callout__text">
+                    DataPulse is fully operational. Priya's semantic layer ensures consistent definitions. Lena's UX redesign drove adoption from 23 to 124 store managers. Priya's quality safeguards prevent stale and incorrect answers. Maya's pipelines feed AcmeCorp's PostgreSQL warehouse nightly. Derek gets finance-grade numbers. Marcus enforces security and compliance. Sofia at Store #47 checks her numbers every morning in under 10 seconds. And the CEO? He trusts DataPulse now. <strong>$1,847/month. 91% accuracy. Sub-3-second responses. 200 stores. Your training is complete.</strong>
+                  </div>
+                </div>
+                <div style="margin-top: var(--space-6);">
+                  <a href="../../index.html" class="btn btn--primary btn--large">Return to Academy Home &rarr;</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== PAGE NAV ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <span class="page-nav__label">&larr; Previous</span>
+            <a href="03-data-quality.html" class="page-nav__title">Data Quality &amp; Governance</a>
+          </div>
+          <div class="page-nav__next">
+            <span class="page-nav__label">Next &rarr;</span>
+            <a href="../../index.html" class="page-nav__title">Academy Home</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer style="border-top: 1px dashed var(--grid-line); padding: var(--space-8) 0; text-align: center;">
+      <div class="content-container">
+        <p style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--text-secondary); margin: 0;">
+          Data Agent Academy &mdash; Final Assessment
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    // --- Quiz Questions: Module 10 — Semantic Layer, UX & Governance ---
+    QuizEngine.init('quiz-container', [
+      {
+        question: 'During the executive meeting, Raj reported Q3 revenue as $47.2M while Derek\'s finance team had $43.8M. What caused this $3.4M discrepancy?',
+        options: [
+          'DataPulse was querying a different database than the finance team',
+          'DataPulse included canceled orders and pending returns because it had no canonical definition of "revenue"',
+          'The finance team was using an outdated Excel model with errors',
+          'DataPulse applied the wrong fiscal quarter dates to the query'
+        ],
+        correct: 1,
+        explanation: 'Without a semantic layer, DataPulse computed revenue as SUM(total_amount) with no filter on order status, including canceled orders and pending returns. The finance team excluded both. Neither was wrong &mdash; they just defined "revenue" differently. Priya\'s semantic layer solved this by establishing one canonical definition.'
+      },
+      {
+        question: 'Priya defines "revenue" as SUM(total_amount) WHERE status=\'completed\' in AcmeCorp\'s semantic layer. What is the primary purpose of this definition?',
+        options: [
+          'To speed up SQL query execution through pre-aggregation',
+          'To ensure every user and agent gets the same revenue number for the same question',
+          'To eliminate the need for Maya\'s data engineering team',
+          'To automatically detect when the fact_sales schema changes'
+        ],
+        correct: 1,
+        explanation: 'The semantic layer provides a consistent mapping between business terms and data definitions. Whether Sofia at Store #47 or the CEO asks about revenue, DataPulse uses Priya\'s definition and produces the same number. The only difference is the dimensional filter (store vs. company-wide).'
+      },
+      {
+        question: 'Lena Park discovered that only 23 of 200 store managers used DataPulse regularly. When she interviewed managers who stopped, one said: "I asked \'how are we doing?\' and it gave me a SQL error." What principle did Lena\'s redesign prioritize?',
+        options: [
+          'Return all available metrics for every store to be comprehensive',
+          'Ask a targeted clarification question and respond in plain language, not SQL errors',
+          'Require managers to complete a training course before accessing DataPulse',
+          'Run SELECT * FROM all_metrics and display sortable raw tables'
+        ],
+        correct: 1,
+        explanation: 'Lena\'s core UX principle was to design for non-technical users. A targeted clarification ("For your store or your region?") narrows the scope with one simple question. Dumping all data overwhelms the user, requiring training creates friction, and raw SQL output is inappropriate for store managers checking numbers on their phones.'
+      },
+      {
+        question: 'Lena designed DataPulse to show Sofia a summary card with four key metrics and an option to "drill into a specific category." This pattern is called:',
+        options: [
+          'Showing more data to users with higher permission levels',
+          'Starting with a headline answer and offering drill-down options on demand',
+          'Gradually increasing the agent\'s autonomy level over time',
+          'Progressively loading data in the background while the user waits'
+        ],
+        correct: 1,
+        explanation: 'Progressive disclosure starts with a headline answer (e.g., "Store #47 Revenue: $142K, up 8%") and lets the user choose whether to dig deeper. Sofia gets her number in under 10 seconds; Raj and Derek can drill down when they need detail. Most users need only the summary.'
+      },
+      {
+        question: 'Sofia called Lena on Friday: "DataPulse says my store did $0 in sales yesterday." Priya investigated and found the ETL pipeline had failed. Before answering Sofia\'s query, DataPulse should have checked:',
+        options: [
+          'Whether the fact_sales schema had changed',
+          'Whether Store #47 was open that day',
+          'The last_updated_at timestamp to verify the data was sufficiently recent',
+          'The confidence score of the previous day\'s query'
+        ],
+        correct: 2,
+        explanation: 'Freshness verification ensures the underlying data is recent enough to answer time-sensitive questions. If DataPulse had checked that sales_transactions hadn\'t been updated in 36 hours, it would have warned Sofia instead of returning a misleading $0. Priya implemented this as the first of three safeguards.'
+      },
+      {
+        question: 'Maya\'s team renamed customer_email to contact_email during a weekend migration. On Monday, DataPulse returned empty results for customer lookups instead of errors. What type of quality check would have caught this?',
+        options: [
+          'Data freshness verification',
+          'Outlier detection on query results',
+          'Schema drift detection comparing current schema against expected snapshot',
+          'Row count validation on the customer table'
+        ],
+        correct: 2,
+        explanation: 'Schema drift detection compares the current database schema against DataPulse\'s expected schema snapshot. When a column is renamed, the agent detects that the expected column is missing and a new one appeared. Priya configured DataPulse to alert Maya\'s team and pause affected queries instead of returning empty results silently.'
+      },
+      {
+        question: 'DataPulse returns a confidence score of 45% on a query result. Based on Priya\'s scoring system, which factor would most likely cause this low confidence?',
+        options: [
+          'The query matched an exact metric in Priya\'s semantic layer',
+          'The agent had to infer the user\'s intent because no exact metric matched the question',
+          'The underlying data was refreshed within the last hour',
+          'The schema validated with no drift detected'
+        ],
+        correct: 1,
+        explanation: 'When DataPulse cannot find an exact metric match in Priya\'s semantic layer and must infer intent, confidence drops by 20 points. Exact metric matches (+30), fresh data (+25), and validated schemas (+20) all increase confidence. Inferred intent means the agent is guessing which metric the user meant.'
+      },
+      {
+        question: 'AcmeCorp\'s DataPulse has clear owners: Priya for the semantic layer, Lena for UX, Maya for pipelines, Marcus for security. Why is this ownership model critical?',
+        options: [
+          'It reduces the agent\'s cloud computing costs by distributing workload',
+          'It makes the agent fully autonomous and self-managing',
+          'Without clear owners who maintain definitions, review failures, and approve changes, the agent degrades as business terms evolve',
+          'It allows the CEO to hold one person accountable for all agent failures'
+        ],
+        correct: 2,
+        explanation: 'A data agent needs clear owners who maintain metric definitions, triage failed queries, approve changes, and measure ROI. Without ownership, the agent degrades as business terms evolve and data sources change &mdash; as AcmeCorp nearly experienced when nobody updated DataPulse after Maya\'s schema migration.'
+      }
+    ]);
+
+    // --- Show celebration after quiz submission ---
+    const origSubmit = QuizEngine.submit.bind(QuizEngine);
+    QuizEngine.submit = function(containerId) {
+      origSubmit(containerId);
+      const celebrationEl = document.getElementById('celebration-section');
+      if (celebrationEl) {
+        celebrationEl.style.display = 'block';
+        celebrationEl.classList.add('visible');
+        // Generate confetti
+        const container = document.getElementById('confetti-container');
+        if (container) {
+          const colors = ['#A100FF', '#CC00FF', '#f59e0b', '#fb7185', '#a78bfa', '#34d399'];
+          for (let i = 0; i < 60; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDuration = (2 + Math.random() * 3) + 's';
+            confetti.style.animationDelay = (Math.random() * 2) + 's';
+            confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+            container.appendChild(confetti);
+          }
+        }
+      }
+    };
+
+    Nav.init('m10-quiz-final');
+  </script>
+</body>
+</html>

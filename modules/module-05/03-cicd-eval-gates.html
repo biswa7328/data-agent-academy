@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgentOps: CI/CD &amp; Evaluation Gates &mdash; Data Agent Academy</title>
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
+  <style>
+    /* --- Pipeline SVG --- */
+    .pipeline-svg {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto var(--space-8);
+      display: block;
+    }
+    .pipeline-svg .pipe-node {
+      fill: none;
+      stroke: var(--stroke-dim);
+      stroke-width: 1.5;
+      stroke-dasharray: 6 4;
+      rx: 8;
+      transition: all 0.5s ease;
+    }
+    .pipeline-svg .pipe-node.active {
+      stroke: var(--stroke-primary);
+      stroke-width: 2.5;
+      stroke-dasharray: none;
+      filter: drop-shadow(0 0 10px rgba(161, 0, 255, 0.5));
+    }
+    .pipeline-svg .pipe-node.pass {
+      stroke: var(--accent-success);
+      stroke-width: 2.5;
+      stroke-dasharray: none;
+      filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.4));
+    }
+    .pipeline-svg .pipe-node.fail {
+      stroke: var(--accent-error);
+      stroke-width: 2.5;
+      stroke-dasharray: none;
+      filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.4));
+    }
+    .pipeline-svg .pipe-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      fill: var(--text-secondary);
+      text-anchor: middle;
+      transition: fill 0.5s ease;
+    }
+    .pipeline-svg .pipe-label.active { fill: var(--stroke-primary); }
+    .pipeline-svg .pipe-label.pass { fill: var(--accent-success); }
+    .pipeline-svg .pipe-label.fail { fill: var(--accent-error); }
+    .pipeline-svg .pipe-arrow {
+      stroke: var(--stroke-dim);
+      stroke-width: 1.5;
+      stroke-dasharray: 6 4;
+      fill: none;
+      marker-end: url(#arrowhead);
+      transition: all 0.5s ease;
+    }
+    .pipeline-svg .pipe-arrow.active {
+      stroke: var(--stroke-primary);
+      stroke-dasharray: none;
+    }
+    .pipeline-svg .pipe-arrow.pass {
+      stroke: var(--accent-success);
+      stroke-dasharray: none;
+    }
+
+    /* --- Eval Gate Simulator --- */
+    .eval-gate {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+      transition: all var(--transition-base);
+    }
+    .eval-gate.running {
+      border-color: var(--stroke-primary);
+      box-shadow: 0 0 20px var(--glow-blue);
+    }
+    .eval-gate.passed {
+      border-color: var(--accent-success);
+      box-shadow: 0 0 20px var(--glow-success);
+    }
+    .eval-gate.failed {
+      border-color: var(--accent-error);
+      box-shadow: 0 0 20px var(--glow-error);
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: 1fr 100px 100px 80px;
+      gap: var(--space-3);
+      align-items: center;
+      padding: var(--space-3) 0;
+      border-bottom: 1px dashed rgba(161, 0, 255, 0.1);
+      font-size: var(--font-sm);
+    }
+    .metric-row:last-child { border-bottom: none; }
+    .metric-row__name {
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+    .metric-row__threshold {
+      font-family: var(--font-mono);
+      color: var(--stroke-dim);
+      text-align: center;
+    }
+    .metric-row__value {
+      font-family: var(--font-mono);
+      text-align: center;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    .metric-row__value.pass { color: var(--accent-success); }
+    .metric-row__value.fail { color: var(--accent-error); }
+    .metric-row__status {
+      font-family: var(--font-mono);
+      font-size: var(--font-xs);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .metric-row__status.pass { color: var(--accent-success); }
+    .metric-row__status.fail { color: var(--accent-error); }
+    .metric-row__status.warn { color: var(--accent-warning); }
+    .metric-header {
+      font-weight: 600;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--stroke-dim);
+      padding-bottom: var(--space-2);
+      margin-bottom: var(--space-2);
+    }
+
+    /* --- Scenario Selector --- */
+    .scenario-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+    .scenario-btn {
+      padding: var(--space-3) var(--space-5);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .scenario-btn:hover {
+      border-color: var(--stroke-primary);
+      color: var(--text-primary);
+      background: rgba(161, 0, 255, 0.05);
+    }
+    .scenario-btn.active {
+      border-color: var(--stroke-primary);
+      border-style: solid;
+      color: var(--stroke-primary);
+      background: rgba(161, 0, 255, 0.1);
+    }
+
+    /* --- Gate Verdict --- */
+    .gate-verdict {
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: var(--font-lg);
+      padding: var(--space-5);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      margin-top: var(--space-6);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.5s ease;
+    }
+    .gate-verdict.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .gate-verdict.deploy {
+      border-color: var(--accent-success);
+      border-style: solid;
+      color: var(--accent-success);
+      box-shadow: 0 0 15px var(--glow-success);
+    }
+    .gate-verdict.blocked {
+      border-color: var(--accent-error);
+      border-style: solid;
+      color: var(--accent-error);
+      box-shadow: 0 0 15px var(--glow-error);
+    }
+
+    /* --- YAML Code Block --- */
+    .yaml-block {
+      background: var(--bg-surface);
+      border: 1px dashed var(--stroke-dim);
+      border-radius: var(--border-radius);
+      padding: var(--space-5);
+      overflow-x: auto;
+      margin: var(--space-6) 0;
+    }
+    .yaml-block pre {
+      font-family: var(--font-mono);
+      font-size: var(--font-sm);
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin: 0;
+      white-space: pre;
+    }
+    .yaml-block .yaml-key { color: var(--stroke-primary); }
+    .yaml-block .yaml-val { color: var(--stroke-secondary); }
+    .yaml-block .yaml-comment { color: var(--stroke-dim); font-style: italic; }
+
+    @media (max-width: 640px) {
+      .metric-row { grid-template-columns: 1fr 70px 70px 60px; font-size: var(--font-xs); }
+      .scenario-btns { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <!-- ===== TOP NAV ===== -->
+    <nav class="top-nav">
+      <div class="top-nav__brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18"/>
+        </svg>
+        Data Agent Academy
+      </div>
+      <div class="top-nav__breadcrumb">
+        <a href="../../index.html">Home</a>
+        <span class="separator">/</span>
+        <span>Module 05</span>
+        <span class="separator">/</span>
+        <span class="current">CI/CD &amp; Evaluation Gates</span>
+      </div>
+    </nav>
+
+    <!-- ===== PROGRESS BAR ===== -->
+    <div class="progress-bar">
+      <div class="progress-bar__fill"></div>
+    </div>
+
+    <!-- ===== PAGE CONTENT ===== -->
+    <main class="page-content">
+      <div class="content-container">
+
+        <!-- Page Header -->
+        <header style="padding: var(--space-12) 0 var(--space-8);">
+          <div class="section-label">Module 05 &mdash; Lesson 03</div>
+          <h1 class="reveal" style="margin-bottom: var(--space-4);">CI/CD Pipeline &amp;<br>Evaluation Gates</h1>
+          <p class="reveal reveal--delay-1" style="font-size: var(--font-lg); max-width: 640px;">
+            AcmeCorp&rsquo;s Data Agent is built, tested with personas, and hardened with guardrails. Now the question is: <strong>how do you ship updates without breaking production?</strong>
+          </p>
+        </header>
+
+        <!-- ===== BLUEPRINT SVG DIAGRAM ===== -->
+        <div class="evolving-diagram reveal reveal--scale"><div class="evolving-diagram__label">CI/CD PIPELINE WITH EVAL GATES</div>
+        <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;display:block;margin:0 auto;">
+          <defs>
+            <filter id="cicd-glow-amber"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#f59e0b" flood-opacity="0.6"/></filter>
+            <filter id="cicd-glow-green"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#10b981" flood-opacity="0.6"/></filter>
+            <filter id="cicd-glow-red"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ef4444" flood-opacity="0.5"/></filter>
+          </defs>
+          <!-- Background -->
+          <rect width="700" height="380" rx="12" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <!-- Title -->
+          <text x="350" y="28" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#a0a0a0" letter-spacing="1">Every DataPulse change passes 3 gates before reaching users</text>
+          <!-- Stage 1: CODE COMMIT -->
+          <rect x="12" y="55" width="72" height="36" rx="6" fill="rgba(51,65,85,0.3)" stroke="#334155" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="48" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7.5" fill="#a0a0a0" font-weight="600">CODE</text>
+          <text x="48" y="82" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7.5" fill="#a0a0a0" font-weight="600">COMMIT</text>
+          <!-- Arrow 1 -->
+          <line x1="84" y1="73" x2="98" y2="73" stroke="#334155" stroke-width="1.2"/>
+          <polygon points="96,69 104,73 96,77" fill="#334155"/>
+          <!-- Stage 2: BUILD & UNIT TEST -->
+          <rect x="104" y="55" width="80" height="36" rx="6" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="144" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#A100FF" font-weight="600">BUILD &amp;</text>
+          <text x="144" y="82" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#A100FF" font-weight="600">UNIT TEST</text>
+          <!-- Arrow 2 -->
+          <line x1="184" y1="73" x2="198" y2="73" stroke="#334155" stroke-width="1.2"/>
+          <polygon points="196,69 204,73 196,77" fill="#334155"/>
+          <!-- Gate 1: Unit Pass? (diamond) -->
+          <polygon points="228,53 252,73 228,93 204,73" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5"/>
+          <text x="228" y="76" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6.5" fill="#10b981" font-weight="700">PASS?</text>
+          <!-- Arrow 3 -->
+          <line x1="252" y1="73" x2="266" y2="73" stroke="#10b981" stroke-width="1.2"/>
+          <polygon points="264,69 272,73 264,77" fill="#10b981"/>
+          <!-- Stage 3: INTEGRATION TEST -->
+          <rect x="272" y="55" width="80" height="36" rx="6" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="312" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#CC00FF" font-weight="600">INTEGRATION</text>
+          <text x="312" y="82" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#CC00FF" font-weight="600">TEST</text>
+          <!-- Arrow 4 -->
+          <line x1="352" y1="73" x2="366" y2="73" stroke="#334155" stroke-width="1.2"/>
+          <polygon points="364,69 372,73 364,77" fill="#334155"/>
+          <!-- Gate 2: Eval Score > 85%? (diamond, glowing amber) -->
+          <polygon points="400,48 432,73 400,98 368,73" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="1.5" filter="url(#cicd-glow-amber)"/>
+          <text x="400" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="5.5" fill="#f59e0b" font-weight="700">EVAL</text>
+          <text x="400" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="5.5" fill="#f59e0b" font-weight="700">&gt;85%?</text>
+          <!-- Arrow 5 -->
+          <line x1="432" y1="73" x2="446" y2="73" stroke="#f59e0b" stroke-width="1.2"/>
+          <polygon points="444,69 452,73 444,77" fill="#f59e0b"/>
+          <!-- Stage 4: SHADOW DEPLOY -->
+          <rect x="452" y="55" width="72" height="36" rx="6" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="488" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#f59e0b" font-weight="600">SHADOW</text>
+          <text x="488" y="82" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#f59e0b" font-weight="600">DEPLOY</text>
+          <!-- Arrow 6 -->
+          <line x1="524" y1="73" x2="538" y2="73" stroke="#334155" stroke-width="1.2"/>
+          <polygon points="536,69 544,73 536,77" fill="#334155"/>
+          <!-- Gate 3: Regression < 2%? (diamond) -->
+          <polygon points="568,53 592,73 568,93 544,73" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5" filter="url(#cicd-glow-green)"/>
+          <text x="568" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="5.5" fill="#10b981" font-weight="700">REG</text>
+          <text x="568" y="80" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="5.5" fill="#10b981" font-weight="700">&lt;2%?</text>
+          <!-- Arrow 7 -->
+          <line x1="592" y1="73" x2="606" y2="73" stroke="#10b981" stroke-width="1.2"/>
+          <polygon points="604,69 612,73 604,77" fill="#10b981"/>
+          <!-- Stage 5: PRODUCTION -->
+          <rect x="612" y="55" width="76" height="36" rx="6" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="2" filter="url(#cicd-glow-green)"/>
+          <text x="650" y="77" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#10b981" font-weight="700">PRODUCTION</text>
+          <!-- Gate labels above -->
+          <text x="228" y="44" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Gate 1</text>
+          <text x="400" y="38" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Gate 2</text>
+          <text x="568" y="44" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Gate 3</text>
+          <!-- Fail paths from gates -->
+          <!-- Gate 1 fail -->
+          <line x1="228" y1="93" x2="228" y2="140" stroke="#ef4444" stroke-width="1" stroke-dasharray="4 3"/>
+          <polygon points="224,138 232,138 228,146" fill="#ef4444"/>
+          <rect x="193" y="148" width="70" height="28" rx="5" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="228" y="163" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6.5" fill="#ef4444" font-weight="600">BLOCK</text>
+          <text x="228" y="173" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#ef4444">&amp; ALERT</text>
+          <!-- Gate 2 fail -->
+          <line x1="400" y1="98" x2="400" y2="140" stroke="#ef4444" stroke-width="1" stroke-dasharray="4 3"/>
+          <polygon points="396,138 404,138 400,146" fill="#ef4444"/>
+          <rect x="365" y="148" width="70" height="28" rx="5" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="400" y="163" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6.5" fill="#ef4444" font-weight="600">BLOCK</text>
+          <text x="400" y="173" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#ef4444">&amp; ALERT</text>
+          <!-- Gate 3 fail -->
+          <line x1="568" y1="93" x2="568" y2="140" stroke="#ef4444" stroke-width="1" stroke-dasharray="4 3"/>
+          <polygon points="564,138 572,138 568,146" fill="#ef4444"/>
+          <rect x="533" y="148" width="70" height="28" rx="5" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="568" y="163" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6.5" fill="#ef4444" font-weight="600">BLOCK</text>
+          <text x="568" y="173" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#ef4444">&amp; ALERT</text>
+          <!-- Divider -->
+          <line x1="40" y1="210" x2="660" y2="210" stroke="#334155" stroke-width="1" stroke-dasharray="6 4"/>
+          <!-- Gate detail section -->
+          <text x="350" y="235" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#a0a0a0" letter-spacing="1">GATE DETAILS</text>
+          <!-- Gate detail boxes -->
+          <rect x="40" y="250" width="190" height="55" rx="6" fill="rgba(16,185,129,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="5 3"/>
+          <text x="135" y="268" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#10b981" font-weight="600">GATE 1: UNIT PASS</text>
+          <text x="135" y="282" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">500 unit tests must pass</text>
+          <text x="135" y="295" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Threshold: 100%</text>
+          <rect x="255" y="250" width="190" height="55" rx="6" fill="rgba(245,158,11,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="5 3"/>
+          <text x="350" y="268" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f59e0b" font-weight="600">GATE 2: EVAL SCORE</text>
+          <text x="350" y="282" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Golden dataset + LLM judge</text>
+          <text x="350" y="295" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Threshold: &gt; 85%</text>
+          <rect x="470" y="250" width="190" height="55" rx="6" fill="rgba(16,185,129,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="5 3"/>
+          <text x="565" y="268" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#10b981" font-weight="600">GATE 3: REGRESSION</text>
+          <text x="565" y="282" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Shadow vs production diff</text>
+          <text x="565" y="295" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Threshold: &lt; 2% regression</text>
+          <!-- Bottom decorative dots -->
+          <circle cx="320" cy="335" r="2" fill="#334155"/>
+          <circle cx="340" cy="335" r="2" fill="#334155"/>
+          <circle cx="360" cy="335" r="2" fill="#334155"/>
+          <circle cx="380" cy="335" r="2" fill="#334155"/>
+          <!-- Bottom label -->
+          <text x="350" y="365" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#334155" letter-spacing="1">No gate, no deploy. No exceptions.</text>
+        </svg>
+        </div>
+
+        <!-- ===== THE SCENE ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Scene</div>
+          <h2 style="margin-bottom: var(--space-4);">The Prompt Update That Took Down 200 Stores</h2>
+          <p>
+            AcmeCorp&rsquo;s data team updated the Data Engineer agent&rsquo;s system prompt to improve SQL accuracy. The change looked harmless &mdash; three words added to a tool description. No one ran the golden dataset. No evaluation gate existed. The update went straight to production.
+          </p>
+          <div class="callout callout--error" style="margin-top: var(--space-6);">
+            <div class="callout__label">Incident Report</div>
+            <div class="callout__text">
+              Wednesday, 11:15 AM &mdash; After the prompt update, the Data Engineer agent began selecting <code>query_execute</code> instead of <code>schema_discovery</code> for metadata requests. This triggered raw SQL against production tables without schema validation. Within 2 hours, three store managers received incorrect inventory counts. The regional VP made a restocking decision based on hallucinated data. The agent had to be rolled back &mdash; but not before <strong>$47,000 in unnecessary inventory orders</strong> were placed across 14 stores.
+            </div>
+          </div>
+          <p style="margin-top: var(--space-4);">
+            The root cause? <strong>No evaluation gate.</strong> A three-word prompt change altered tool selection behavior, and nobody caught it before production. This module teaches you how to prevent exactly this.
+          </p>
+        </section>
+
+        <!-- ===== SECTION 1: WHY AGENTOPS ===== -->
+        <section class="section reveal">
+          <div class="section-label">The Evolution</div>
+          <h2 style="margin-bottom: var(--space-4);">DevOps &rarr; MLOps &rarr; AgentOps</h2>
+          <p>Each evolution adds new complexity. Agents are the hardest to deploy safely because they modify persistent data across multiple systems.</p>
+
+          <div class="bp-card" style="margin-top: var(--space-6);">
+            <div class="bp-card__body">
+              <table class="bp-table">
+                <thead>
+                  <tr><th>Discipline</th><th>What You Deploy</th><th>Key Challenge</th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="badge badge--blue" data-tip="DevOps deploys deterministic code — same input always produces same output, making rollback straightforward">DevOps</span></td>
+                    <td>Deterministic code</td>
+                    <td>Same input &rarr; same output. Rollback is straightforward.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge--teal" data-tip="MLOps deploys probabilistic models plus code — must handle model drift, data drift, and A/B testing">MLOps</span></td>
+                    <td>Probabilistic models + code</td>
+                    <td>Model drift, data drift, A/B testing required.</td>
+                  </tr>
+                  <tr>
+                    <td><span class="badge badge--amber" data-tip="AgentOps deploys autonomous systems with models, tools, prompts, and guardrails — non-deterministic behavior makes versioning and rollback far more complex">AgentOps</span></td>
+                    <td>Autonomous systems + models + tools + prompts + guardrails</td>
+                    <td>Non-deterministic behavior, persistent side effects, multi-component versioning.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="callout callout--error" style="margin-top: var(--space-6);">
+            <div class="callout__label">AcmeCorp Reality</div>
+            <div class="callout__text">
+              Remember the ALTER TABLE incident from Module 03? The Data Engineer agent ran <code>ALTER TABLE customers</code> on production, causing a 4-hour outage across 200 stores. That was a <em>guardrail</em> failure. The prompt update incident was an <em>AgentOps</em> failure &mdash; the agent&rsquo;s behavior changed without anyone testing whether the change was safe. Both are preventable with the right infrastructure.
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 2: CI/CD PIPELINE ===== -->
+        <section class="section">
+          <div class="section-label reveal">The Pipeline</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">CI/CD Pipeline for Agents</h2>
+          <p class="reveal" style="margin-bottom: var(--space-6);">The pipeline has familiar stages &mdash; plus one critical addition: the <strong style="color: var(--accent-warning);">Evaluation Gate</strong>, which blocks deployment if quality metrics drop below thresholds.</p>
+
+          <!-- Pipeline SVG -->
+          <svg class="pipeline-svg reveal" id="pipelineSvg" viewBox="0 0 800 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="var(--stroke-dim)"/>
+              </marker>
+            </defs>
+
+            <!-- Nodes -->
+            <rect class="pipe-node" id="pipe-push" x="5" y="30" width="90" height="55" rx="8"/>
+            <text class="pipe-label" id="lbl-push" x="50" y="52">Code</text>
+            <text class="pipe-label" id="lbl-push2" x="50" y="66">Push</text>
+
+            <rect class="pipe-node" id="pipe-unit" x="120" y="30" width="90" height="55" rx="8"/>
+            <text class="pipe-label" id="lbl-unit" x="165" y="52">Unit</text>
+            <text class="pipe-label" id="lbl-unit2" x="165" y="66">Tests</text>
+
+            <rect class="pipe-node" id="pipe-prompt" x="235" y="30" width="90" height="55" rx="8"/>
+            <text class="pipe-label" id="lbl-prompt" x="280" y="52">Prompt</text>
+            <text class="pipe-label" id="lbl-prompt2" x="280" y="66">Tests</text>
+
+            <rect class="pipe-node" id="pipe-tool" x="350" y="30" width="90" height="55" rx="8"/>
+            <text class="pipe-label" id="lbl-tool" x="395" y="52">Tool Sel.</text>
+            <text class="pipe-label" id="lbl-tool2" x="395" y="66">Tests</text>
+
+            <rect class="pipe-node" id="pipe-integ" x="465" y="30" width="90" height="55" rx="8"/>
+            <text class="pipe-label" id="lbl-integ" x="510" y="52">Integration</text>
+            <text class="pipe-label" id="lbl-integ2" x="510" y="66">Tests</text>
+
+            <!-- Evaluation Gate (highlighted) -->
+            <rect class="pipe-node" id="pipe-gate" x="580" y="25" width="100" height="65" rx="8" style="stroke: var(--accent-warning); stroke-width: 2;"/>
+            <text class="pipe-label" id="lbl-gate" x="630" y="50" style="fill: var(--accent-warning); font-weight: 600;">EVAL</text>
+            <text class="pipe-label" id="lbl-gate2" x="630" y="64" style="fill: var(--accent-warning); font-weight: 600;">GATE</text>
+
+            <rect class="pipe-node" id="pipe-deploy" x="705" y="30" width="90" height="55" rx="8"/>
+            <text class="pipe-label" id="lbl-deploy" x="750" y="52">Canary</text>
+            <text class="pipe-label" id="lbl-deploy2" x="750" y="66">Deploy</text>
+
+            <!-- Arrows -->
+            <line class="pipe-arrow" x1="95" y1="57" x2="120" y2="57"/>
+            <line class="pipe-arrow" x1="210" y1="57" x2="235" y2="57"/>
+            <line class="pipe-arrow" x1="325" y1="57" x2="350" y2="57"/>
+            <line class="pipe-arrow" x1="440" y1="57" x2="465" y2="57"/>
+            <line class="pipe-arrow" x1="555" y1="57" x2="580" y2="57"/>
+            <line class="pipe-arrow" x1="680" y1="57" x2="705" y2="57"/>
+
+            <!-- Stage labels -->
+            <text x="165" y="105" font-family="var(--font-mono)" font-size="9" fill="var(--stroke-dim)" text-anchor="middle">CI</text>
+            <text x="395" y="105" font-family="var(--font-mono)" font-size="9" fill="var(--stroke-dim)" text-anchor="middle">Agent-Specific Tests</text>
+            <text x="630" y="105" font-family="var(--font-mono)" font-size="9" fill="var(--accent-warning)" text-anchor="middle" font-weight="600">Quality Gate</text>
+            <text x="750" y="105" font-family="var(--font-mono)" font-size="9" fill="var(--stroke-dim)" text-anchor="middle">CD</text>
+          </svg>
+
+          <!-- Pipeline stage details -->
+          <div class="card-grid card-grid--2" style="margin-top: var(--space-6);">
+            <div class="bp-card reveal">
+              <div class="bp-card__title">
+                <span class="bp-card__number">CI</span>
+                Continuous Integration
+              </div>
+              <div class="bp-card__body">
+                <ul class="guardrail-rules" style="list-style: none; padding: 0; margin: 0;">
+                  <li class="allowed">Unit tests for tool functions</li>
+                  <li class="allowed">Prompt regression tests</li>
+                  <li class="allowed">Tool selection accuracy tests</li>
+                  <li class="allowed">Guardrail validation</li>
+                  <li class="allowed">Cost estimation (will this change increase spend?)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="bp-card reveal">
+              <div class="bp-card__title">
+                <span class="bp-card__number">CD</span>
+                Continuous Delivery
+              </div>
+              <div class="bp-card__body">
+                <ul class="guardrail-rules" style="list-style: none; padding: 0; margin: 0;">
+                  <li class="allowed">Automated packaging of all components</li>
+                  <li class="allowed">Environment-specific configuration</li>
+                  <li class="allowed">Canary or shadow deployment to staging</li>
+                  <li class="allowed">Monitor metrics for 24-48 hours</li>
+                  <li class="allowed">Gradual rollout: 5% &rarr; 25% &rarr; 50% &rarr; 100%</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== SECTION 3: EVALUATION GATE DEEP DIVE ===== -->
+        <section class="section">
+          <div class="section-label reveal">The Key Differentiator</div>
+          <h2 class="reveal" style="margin-bottom: var(--space-4);">Evaluation Gate: The Agent Quality Firewall</h2>
+          <p class="reveal" style="margin-bottom: var(--space-4);">This is the stage that separates AgentOps from traditional CI/CD. The evaluation gate runs your golden dataset (50-200 test cases) against the new agent version and blocks deployment if quality drops below thresholds.</p>
+
+          <!-- YAML Config Example -->
+          <h3 class="reveal" style="margin-bottom: var(--space-3); margin-top: var(--space-8);">Evaluation Gate Configuration</h3>
+          <div class="yaml-block reveal">
+            <pre><span class="yaml-key">evaluation_gate:</span>
+  <span class="yaml-key">blocking:</span>                          <span class="yaml-comment"># Any failure blocks deployment</span>
+    <span class="yaml-key">tool_selection_accuracy:</span> <span class="yaml-val">0.95</span>     <span class="yaml-comment"># Must select correct tool 95%+ of time</span>
+    <span class="yaml-key">correctness_score:</span> <span class="yaml-val">0.90</span>          <span class="yaml-comment"># LLM-as-judge accuracy threshold</span>
+    <span class="yaml-key">safety_violations:</span> <span class="yaml-val">0</span>             <span class="yaml-comment"># Zero tolerance for PII leaks or policy violations</span>
+    <span class="yaml-key">p99_latency_seconds:</span> <span class="yaml-val">45</span>          <span class="yaml-comment"># Worst-case must be under 45s</span>
+    <span class="yaml-key">cost_per_task_multiplier:</span> <span class="yaml-val">2.0</span>    <span class="yaml-comment"># Cannot exceed 2x current production cost</span>
+
+  <span class="yaml-key">warning:</span>                            <span class="yaml-comment"># Flags for review, does not block</span>
+    <span class="yaml-key">hallucination_rate:</span> <span class="yaml-val">0.01</span>         <span class="yaml-comment"># Alert if hallucination exceeds 1%</span>
+    <span class="yaml-key">tool_efficiency_ratio:</span> <span class="yaml-val">1.8</span>       <span class="yaml-comment"># Agent using too many tool calls</span>
+    <span class="yaml-key">context_utilization:</span> <span class="yaml-val">0.85</span>        <span class="yaml-comment"># Approaching context window limits</span>
+
+  <span class="yaml-key">on_failure:</span>
+    <span class="yaml-key">action:</span> <span class="yaml-val">halt_pipeline</span>
+    <span class="yaml-key">notify:</span>
+      - <span class="yaml-key">slack:</span> <span class="yaml-val">"#agent-deployments"</span>
+      - <span class="yaml-key">email:</span> <span class="yaml-val">"agentops-team@company.com"</span>
+    <span class="yaml-key">report:</span> <span class="yaml-val">detailed</span>               <span class="yaml-comment"># Shows which metrics failed and by how much</span></pre>
+          </div>
+
+          <!-- Interactive Evaluation Gate Simulator -->
+          <h3 class="reveal" style="margin-bottom: var(--space-3); margin-top: var(--space-8);">Try It: Run the Evaluation Gate</h3>
+          <p class="reveal" style="margin-bottom: var(--space-4);">These four scenarios are based on AcmeCorp&rsquo;s actual deployment history. Each one went through the evaluation gate after the team implemented it. Click to see what would have happened.</p>
+
+          <div class="scenario-btns reveal" id="scenarioBtns">
+            <button class="scenario-btn" data-scenario="good">A: QA Agent Accuracy Fix</button>
+            <button class="scenario-btn" data-scenario="regression">B: Engineer Prompt Update</button>
+            <button class="scenario-btn" data-scenario="cost">C: PO Agent Chain-of-Thought</button>
+            <button class="scenario-btn" data-scenario="safety">D: Steward PII Detection</button>
+          </div>
+
+          <div class="eval-gate reveal" id="evalGate">
+            <!-- Header -->
+            <div class="metric-row metric-header">
+              <div>Metric</div>
+              <div style="text-align: center;">Threshold</div>
+              <div style="text-align: center;">Actual</div>
+              <div style="text-align: center;">Status</div>
+            </div>
+
+            <!-- Blocking Metrics -->
+            <div style="margin-top: var(--space-3); margin-bottom: var(--space-2);">
+              <span style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--accent-error); text-transform: uppercase; letter-spacing: 0.1em;">Blocking Criteria</span>
+            </div>
+            <div class="metric-row" id="metric-tool">
+              <div class="metric-row__name">Tool Selection Accuracy</div>
+              <div class="metric-row__threshold">&ge; 95%</div>
+              <div class="metric-row__value" id="val-tool">&mdash;</div>
+              <div class="metric-row__status" id="stat-tool">&mdash;</div>
+            </div>
+            <div class="metric-row" id="metric-correct">
+              <div class="metric-row__name">Correctness Score</div>
+              <div class="metric-row__threshold">&ge; 90%</div>
+              <div class="metric-row__value" id="val-correct">&mdash;</div>
+              <div class="metric-row__status" id="stat-correct">&mdash;</div>
+            </div>
+            <div class="metric-row" id="metric-safety">
+              <div class="metric-row__name">Safety Violations</div>
+              <div class="metric-row__threshold">= 0</div>
+              <div class="metric-row__value" id="val-safety">&mdash;</div>
+              <div class="metric-row__status" id="stat-safety">&mdash;</div>
+            </div>
+            <div class="metric-row" id="metric-latency">
+              <div class="metric-row__name">P99 Latency</div>
+              <div class="metric-row__threshold">&le; 45s</div>
+              <div class="metric-row__value" id="val-latency">&mdash;</div>
+              <div class="metric-row__status" id="stat-latency">&mdash;</div>
+            </div>
+            <div class="metric-row" id="metric-cost">
+              <div class="metric-row__name">Cost per Task (vs baseline)</div>
+              <div class="metric-row__threshold">&le; 2.0x</div>
+              <div class="metric-row__value" id="val-cost">&mdash;</div>
+              <div class="metric-row__status" id="stat-cost">&mdash;</div>
+            </div>
+
+            <!-- Warning Metrics -->
+            <div style="margin-top: var(--space-4); margin-bottom: var(--space-2);">
+              <span style="font-family: var(--font-mono); font-size: var(--font-xs); color: var(--accent-warning); text-transform: uppercase; letter-spacing: 0.1em;">Warning Criteria</span>
+            </div>
+            <div class="metric-row" id="metric-halluc">
+              <div class="metric-row__name">Hallucination Rate</div>
+              <div class="metric-row__threshold">&le; 1%</div>
+              <div class="metric-row__value" id="val-halluc">&mdash;</div>
+              <div class="metric-row__status" id="stat-halluc">&mdash;</div>
+            </div>
+            <div class="metric-row" id="metric-effic">
+              <div class="metric-row__name">Tool Efficiency Ratio</div>
+              <div class="metric-row__threshold">&le; 1.8x</div>
+              <div class="metric-row__value" id="val-effic">&mdash;</div>
+              <div class="metric-row__status" id="stat-effic">&mdash;</div>
+            </div>
+            <div class="metric-row" id="metric-ctx">
+              <div class="metric-row__name">Context Utilization</div>
+              <div class="metric-row__threshold">&le; 85%</div>
+              <div class="metric-row__value" id="val-ctx">&mdash;</div>
+              <div class="metric-row__status" id="stat-ctx">&mdash;</div>
+            </div>
+          </div>
+
+          <!-- Verdict -->
+          <div class="gate-verdict" id="gateVerdict"></div>
+
+          <!-- Scenario Explanations -->
+          <div id="scenarioExplanation" style="margin-top: var(--space-6); display: none;">
+            <div class="callout" id="scenarioCallout">
+              <div class="callout__label" id="scenarioLabel">Explanation</div>
+              <div class="callout__text" id="scenarioText"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== PAGE NAVIGATION ===== -->
+        <nav class="page-nav">
+          <div class="page-nav__prev">
+            <div class="page-nav__label">&larr; Previous</div>
+            <a href="02-testing-evaluation.html" class="page-nav__title">Agent Testing &amp; Evaluation</a>
+          </div>
+          <div class="page-nav__next">
+            <div class="page-nav__label">Next &rarr;</div>
+            <a href="04-deployment-versioning.html" class="page-nav__title">Deployment &amp; Versioning</a>
+          </div>
+        </nav>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
+  <script>
+    Nav.init('m05-cicd-eval-gates');
+
+    // ===== EVALUATION GATE SIMULATOR =====
+    (function() {
+      var scenarios = {
+        good: {
+          label: 'QA Agent \u2014 Accuracy Fix',
+          tool: 97, correct: 94, safety: 0, latency: 28, cost: 1.1,
+          halluc: 0.3, effic: 1.2, ctx: 68,
+          explanation: 'The Quality Analyst agent\u2019s anomaly detection was missing NULL rate spikes in the dim_stores table. The team refined the validation query tool descriptions. After the fix, correctness improved from 91% to 94% while tool selection stayed at 97%. All 47 daily validation checks still pass. The release proceeds to canary deployment \u2014 first to the QA agent only, monitored for 48 hours before full rollout.',
+          calloutStyle: ''
+        },
+        regression: {
+          label: 'Engineer Agent \u2014 Prompt Update',
+          tool: 91, correct: 93, safety: 0, latency: 32, cost: 1.4,
+          halluc: 0.5, effic: 2.1, ctx: 72,
+          explanation: 'This is the exact scenario that caused the $47K inventory incident. The Data Engineer agent\u2019s prompt was updated to improve SQL accuracy. Correctness went up from 88% to 93% \u2014 but tool selection accuracy dropped from 97% to 91%. The agent started choosing query_execute when it should use schema_discovery for metadata requests. If the evaluation gate had existed, this deployment would have been blocked. The team now fixes the tool descriptions to clarify when each tool applies and retests.',
+          calloutStyle: 'callout--error'
+        },
+        cost: {
+          label: 'PO Agent \u2014 Chain-of-Thought',
+          tool: 96, correct: 92, safety: 0, latency: 52, cost: 2.8,
+          halluc: 0.8, effic: 2.4, ctx: 89,
+          explanation: 'The VP of Sales wanted richer explanations from the Product Owner agent when asking questions like \u201Csame-store sales growth vs. last year.\u201D The team added chain-of-thought reasoning to the PO prompt. Accuracy improved, but the agent now makes 3x more LLM calls per query \u2014 cost jumped to 2.8x baseline and P99 latency hit 52 seconds. At AcmeCorp\u2019s query volume (200+ PO queries/day), this would blow the monthly budget. The team adds turn limits and routes simple aggregation sub-tasks to a cheaper model.',
+          calloutStyle: 'callout--error'
+        },
+        safety: {
+          label: 'Steward Agent \u2014 PII Detection',
+          tool: 98, correct: 95, safety: 2, latency: 25, cost: 0.9,
+          halluc: 0.2, effic: 1.1, ctx: 62,
+          explanation: 'The Data Steward agent was updated to better detect PII in new Shopify table imports. The update achieved excellent accuracy, but the golden dataset found 2 safety violations: in test cases involving the customers table, raw email addresses appeared in the steward\u2019s quality report output. This is exactly the kind of issue that caused the \u201Craw customer emails shown to VP of Sales\u201D incident in Module 03. Zero tolerance means immediate block. The team adds the output scanning guardrail from the new security guardrails and retests.',
+          calloutStyle: 'callout--error'
+        }
+      };
+
+      var btns = document.getElementById('scenarioBtns');
+      var gate = document.getElementById('evalGate');
+      var verdict = document.getElementById('gateVerdict');
+      var explDiv = document.getElementById('scenarioExplanation');
+      var explCallout = document.getElementById('scenarioCallout');
+      var explLabel = document.getElementById('scenarioLabel');
+      var explText = document.getElementById('scenarioText');
+
+      function setMetric(id, value, unit, threshold, isBlocking, higherIsBetter) {
+        var valEl = document.getElementById('val-' + id);
+        var statEl = document.getElementById('stat-' + id);
+        valEl.textContent = value + unit;
+
+        var pass;
+        if (id === 'safety') {
+          pass = value === 0;
+        } else if (higherIsBetter) {
+          pass = value >= threshold;
+        } else {
+          pass = value <= threshold;
+        }
+
+        valEl.className = 'metric-row__value ' + (pass ? 'pass' : 'fail');
+
+        if (isBlocking) {
+          statEl.className = 'metric-row__status ' + (pass ? 'pass' : 'fail');
+          statEl.textContent = pass ? 'PASS' : 'BLOCK';
+        } else {
+          var warn = !pass;
+          statEl.className = 'metric-row__status ' + (warn ? 'warn' : 'pass');
+          statEl.textContent = warn ? 'WARN' : 'OK';
+        }
+
+        return pass || !isBlocking; // Only blocking failures matter for deploy decision
+      }
+
+      btns.addEventListener('click', function(e) {
+        var btn = e.target.closest('.scenario-btn');
+        if (!btn) return;
+
+        var key = btn.getAttribute('data-scenario');
+        var s = scenarios[key];
+        if (!s) return;
+
+        // Update active button
+        btns.querySelectorAll('.scenario-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+
+        // Reset
+        gate.className = 'eval-gate running';
+        verdict.className = 'gate-verdict';
+        verdict.textContent = '';
+        explDiv.style.display = 'none';
+
+        // Animate metrics with delay
+        setTimeout(function() {
+          var allPass = true;
+          allPass = setMetric('tool', s.tool, '%', 95, true, true) && allPass;
+          allPass = setMetric('correct', s.correct, '%', 90, true, true) && allPass;
+          allPass = setMetric('safety', s.safety, '', 0, true, false) && allPass;
+          allPass = setMetric('latency', s.latency, 's', 45, true, false) && allPass;
+          allPass = setMetric('cost', s.cost, 'x', 2.0, true, false) && allPass;
+
+          // Warning metrics (don't affect deploy decision)
+          setMetric('halluc', s.halluc, '%', 1, false, false);
+          setMetric('effic', s.effic, 'x', 1.8, false, false);
+          setMetric('ctx', s.ctx, '%', 85, false, false);
+
+          // Show verdict
+          setTimeout(function() {
+            gate.className = 'eval-gate ' + (allPass ? 'passed' : 'failed');
+            verdict.textContent = allPass
+              ? 'DEPLOY APPROVED — All blocking metrics pass. Proceeding to canary deployment.'
+              : 'DEPLOYMENT BLOCKED — One or more blocking metrics failed. Pipeline halted. Team notified via #agent-deployments.';
+            verdict.className = 'gate-verdict show ' + (allPass ? 'deploy' : 'blocked');
+
+            // Show explanation
+            explDiv.style.display = 'block';
+            explCallout.className = 'callout ' + s.calloutStyle;
+            explLabel.textContent = s.label + ' — What Happened';
+            explText.textContent = s.explanation;
+          }, 400);
+        }, 500);
+      });
+    })();
+
+    // ===== PIPELINE ANIMATION: Light up stages on scroll =====
+    (function() {
+      var svg = document.getElementById('pipelineSvg');
+      if (!svg) return;
+
+      var stages = ['push', 'unit', 'prompt', 'tool', 'integ', 'gate', 'deploy'];
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            var delay = 0;
+            stages.forEach(function(stage) {
+              setTimeout(function() {
+                var node = document.getElementById('pipe-' + stage);
+                if (node) node.classList.add('pass');
+                var lbl = document.getElementById('lbl-' + stage);
+                if (lbl) lbl.classList.add('pass');
+                var lbl2 = document.getElementById('lbl-' + stage + '2');
+                if (lbl2) lbl2.classList.add('pass');
+              }, delay);
+              delay += 300;
+            });
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.3 });
+      observer.observe(svg);
+    })();
+  </script>
+</body>
+</html>
