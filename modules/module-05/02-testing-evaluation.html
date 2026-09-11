@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agent Testing &amp; Evaluation &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     /* --- Testing Pyramid --- */
     .pyramid { width: 100%; max-width: 600px; margin: 0 auto var(--space-8); }
@@ -83,7 +83,7 @@
       cursor: pointer;
       transition: background var(--transition-fast);
     }
-    .golden-card__header:hover { background: rgba(161, 0, 255, 0.03); }
+    .golden-card__header:hover { background: rgba(74, 158, 255, 0.03); }
     .golden-card__title {
       font-family: var(--font-mono);
       font-size: var(--font-sm);
@@ -113,7 +113,7 @@
       line-height: 1.6;
     }
     .golden-card__example {
-      background: rgba(161, 0, 255, 0.04);
+      background: rgba(74, 158, 255, 0.04);
       border-left: 3px solid var(--stroke-primary);
       padding: var(--space-3);
       margin-top: var(--space-3);
@@ -309,38 +309,38 @@
           <!-- Background -->
           <rect width="700" height="380" rx="12" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 4"/>
           <!-- Title -->
-          <text x="350" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#A100FF" font-weight="700" letter-spacing="2">PRIYA'S TESTING PYRAMID FOR DATAPULSE</text>
+          <text x="350" y="30" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#4a9eff" font-weight="700" letter-spacing="2">PRIYA'S TESTING PYRAMID FOR DATAPULSE</text>
           <!-- Left arrow: COVERAGE -->
           <line x1="88" y1="70" x2="88" y2="310" stroke="#334155" stroke-width="1.5" stroke-dasharray="5 3"/>
           <polygon points="84,70 92,70 88,58" fill="#334155"/>
-          <text x="78" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0" transform="rotate(-90 78 190)" letter-spacing="1">COVERAGE</text>
-          <text x="68" y="80" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">focused</text>
-          <text x="68" y="310" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">broad</text>
+          <text x="78" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#94a3b8" transform="rotate(-90 78 190)" letter-spacing="1">COVERAGE</text>
+          <text x="68" y="80" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8" text-anchor="middle">focused</text>
+          <text x="68" y="310" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8" text-anchor="middle">broad</text>
           <!-- Right arrow: SPEED -->
           <line x1="612" y1="70" x2="612" y2="310" stroke="#334155" stroke-width="1.5" stroke-dasharray="5 3"/>
           <polygon points="608,310 616,310 612,322" fill="#334155"/>
-          <text x="622" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#a0a0a0" transform="rotate(90 622 190)" letter-spacing="1">SPEED</text>
-          <text x="632" y="80" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">slow</text>
-          <text x="632" y="310" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0" text-anchor="middle">fast</text>
+          <text x="622" y="190" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#94a3b8" transform="rotate(90 622 190)" letter-spacing="1">SPEED</text>
+          <text x="632" y="80" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8" text-anchor="middle">slow</text>
+          <text x="632" y="310" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8" text-anchor="middle">fast</text>
           <!-- Layer 4 (top): LLM-AS-JUDGE -->
           <polygon points="350,55 430,105 270,105" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="2" filter="url(#eval-glow-green)"/>
           <text x="350" y="85" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#10b981" font-weight="700">LLM-AS-JUDGE</text>
-          <text x="350" y="99" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Quality, relevance, safety</text>
+          <text x="350" y="99" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Quality, relevance, safety</text>
           <!-- Layer 3: AGENT TESTS -->
           <polygon points="270,112 430,112 470,165 230,165" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 4"/>
           <text x="350" y="135" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#f59e0b" font-weight="700">AGENT TESTS</text>
-          <text x="350" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">End-to-end conversations, golden queries</text>
+          <text x="350" y="148" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">End-to-end conversations, golden queries</text>
           <text x="350" y="160" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f59e0b">50 golden queries</text>
           <!-- Layer 2: INTEGRATION TESTS -->
-          <polygon points="230,172 470,172 520,228 180,228" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6 4"/>
-          <text x="350" y="193" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#CC00FF" font-weight="700">INTEGRATION TESTS</text>
-          <text x="350" y="207" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Tool chains, RAG pipeline, guardrails</text>
-          <text x="350" y="220" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#CC00FF">150+ tests</text>
+          <polygon points="230,172 470,172 520,228 180,228" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="350" y="193" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#2dd4bf" font-weight="700">INTEGRATION TESTS</text>
+          <text x="350" y="207" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Tool chains, RAG pipeline, guardrails</text>
+          <text x="350" y="220" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#2dd4bf">150+ tests</text>
           <!-- Layer 1 (bottom): UNIT TESTS -->
-          <polygon points="180,235 520,235 570,295 130,295" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 4"/>
-          <text x="350" y="257" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#A100FF" font-weight="700">UNIT TESTS</text>
-          <text x="350" y="271" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Tool functions, parsers, formatters</text>
-          <text x="350" y="284" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#A100FF">500+ tests</text>
+          <polygon points="180,235 520,235 570,295 130,295" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="6 4"/>
+          <text x="350" y="257" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#4a9eff" font-weight="700">UNIT TESTS</text>
+          <text x="350" y="271" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Tool functions, parsers, formatters</text>
+          <text x="350" y="284" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#4a9eff">500+ tests</text>
           <!-- Bottom decorative dots -->
           <circle cx="320" cy="330" r="2" fill="#334155"/>
           <circle cx="340" cy="330" r="2" fill="#334155"/>
@@ -775,8 +775,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>
     Nav.init('m05-testing-evaluation');
 

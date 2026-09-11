@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Retrieval Strategies &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     .compare-table {
       width: 100%;
@@ -32,7 +32,7 @@
       vertical-align: top;
     }
     .compare-table tr:hover td {
-      background: rgba(161, 0, 255, 0.03);
+      background: rgba(74, 158, 255, 0.03);
     }
     .retrieval-flow {
       display: flex;
@@ -67,7 +67,7 @@
       font-size: var(--font-xs);
       font-family: var(--font-mono);
     }
-    .vdb-feature--yes { background: rgba(204, 0, 255, 0.15); color: var(--text-teal); }
+    .vdb-feature--yes { background: rgba(45, 212, 191, 0.15); color: var(--text-teal); }
     .vdb-feature--no { background: rgba(251, 113, 133, 0.15); color: #fb7185; }
     .vdb-feature--partial { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); }
   </style>
@@ -112,83 +112,83 @@
                 <feGaussianBlur stdDeviation="3" result="blur"/>
                 <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
               </filter>
-              <marker id="aBlue3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
-              <marker id="aTeal3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="aBlue3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#4a9eff"/></marker>
+              <marker id="aTeal3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#2dd4bf"/></marker>
               <marker id="aGreen3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#10b981"/></marker>
               <linearGradient id="hybridGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="#A100FF"/>
-                <stop offset="100%" stop-color="#CC00FF"/>
+                <stop offset="0%" stop-color="#4a9eff"/>
+                <stop offset="100%" stop-color="#2dd4bf"/>
               </linearGradient>
-              <marker id="aHybrid3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="aHybrid3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#2dd4bf"/></marker>
               <style>
-                .sl { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 9px; }
-                .ss { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; font-size: 7.5px; }
-                .st { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 10.5px; font-weight: 600; }
+                .sl { font-family: 'JetBrains Mono', monospace; fill: #e2e8f0; font-size: 9px; }
+                .ss { font-family: 'JetBrains Mono', monospace; fill: #94a3b8; font-size: 7.5px; }
+                .st { font-family: 'JetBrains Mono', monospace; fill: #e2e8f0; font-size: 10.5px; font-weight: 600; }
               </style>
             </defs>
 
             <!-- Title -->
-            <text x="350" y="24" text-anchor="middle" class="st" style="fill:#A100FF;font-size:11px;">THREE RETRIEVAL PATHS</text>
+            <text x="350" y="24" text-anchor="middle" class="st" style="fill:#4a9eff;font-size:11px;">THREE RETRIEVAL PATHS</text>
 
             <!-- === PATH 1: DENSE (Semantic) === -->
-            <text x="95" y="62" text-anchor="middle" class="st" style="fill:#A100FF;font-size:9px;">DENSE (Semantic)</text>
+            <text x="95" y="62" text-anchor="middle" class="st" style="fill:#4a9eff;font-size:9px;">DENSE (Semantic)</text>
 
             <!-- Query box (shared left) -->
-            <rect x="20" y="72" width="60" height="32" rx="3" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5"/>
+            <rect x="20" y="72" width="60" height="32" rx="3" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="1.5"/>
             <text x="50" y="92" text-anchor="middle" class="sl">Query</text>
 
             <!-- Arrow -->
-            <line x1="82" y1="88" x2="120" y2="88" stroke="#A100FF" stroke-width="1.2" marker-end="url(#aBlue3)"/>
+            <line x1="82" y1="88" x2="120" y2="88" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#aBlue3)"/>
 
             <!-- Embedding circle -->
-            <circle cx="155" cy="88" r="22" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.2"/>
-            <text x="155" y="85" text-anchor="middle" class="ss" style="fill:#A100FF;">Embed-</text>
-            <text x="155" y="95" text-anchor="middle" class="ss" style="fill:#A100FF;">ding</text>
+            <circle cx="155" cy="88" r="22" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="1.2"/>
+            <text x="155" y="85" text-anchor="middle" class="ss" style="fill:#4a9eff;">Embed-</text>
+            <text x="155" y="95" text-anchor="middle" class="ss" style="fill:#4a9eff;">ding</text>
 
             <!-- Arrow -->
-            <line x1="179" y1="88" x2="230" y2="88" stroke="#A100FF" stroke-width="1.2" marker-end="url(#aBlue3)"/>
+            <line x1="179" y1="88" x2="230" y2="88" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#aBlue3)"/>
 
             <!-- ANN Search circle -->
-            <circle cx="270" cy="88" r="28" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.2"/>
-            <text x="270" y="85" text-anchor="middle" class="ss" style="fill:#A100FF;">ANN</text>
-            <text x="270" y="95" text-anchor="middle" class="ss" style="fill:#A100FF;">Search</text>
+            <circle cx="270" cy="88" r="28" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="1.2"/>
+            <text x="270" y="85" text-anchor="middle" class="ss" style="fill:#4a9eff;">ANN</text>
+            <text x="270" y="95" text-anchor="middle" class="ss" style="fill:#4a9eff;">Search</text>
 
             <!-- Arrow -->
-            <line x1="300" y1="88" x2="350" y2="88" stroke="#A100FF" stroke-width="1.2" marker-end="url(#aBlue3)"/>
+            <line x1="300" y1="88" x2="350" y2="88" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#aBlue3)"/>
 
             <!-- Ranked Results -->
-            <rect x="356" y="72" width="90" height="32" rx="3" fill="rgba(74,158,255,0.06)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="401" y="92" text-anchor="middle" class="sl" style="fill:#A100FF;">Ranked Results</text>
+            <rect x="356" y="72" width="90" height="32" rx="3" fill="rgba(74,158,255,0.06)" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="401" y="92" text-anchor="middle" class="sl" style="fill:#4a9eff;">Ranked Results</text>
 
             <!-- === PATH 2: SPARSE (Keyword) === -->
-            <text x="95" y="155" text-anchor="middle" class="st" style="fill:#CC00FF;font-size:9px;">SPARSE (Keyword)</text>
+            <text x="95" y="155" text-anchor="middle" class="st" style="fill:#2dd4bf;font-size:9px;">SPARSE (Keyword)</text>
 
             <!-- Query box -->
-            <rect x="20" y="165" width="60" height="32" rx="3" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.5"/>
+            <rect x="20" y="165" width="60" height="32" rx="3" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="1.5"/>
             <text x="50" y="185" text-anchor="middle" class="sl">Query</text>
 
             <!-- Arrow -->
-            <line x1="82" y1="181" x2="120" y2="181" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#aTeal3)"/>
+            <line x1="82" y1="181" x2="120" y2="181" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#aTeal3)"/>
 
             <!-- BM25 Index circle -->
-            <circle cx="155" cy="181" r="22" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.2"/>
-            <text x="155" y="178" text-anchor="middle" class="ss" style="fill:#CC00FF;">BM25</text>
-            <text x="155" y="188" text-anchor="middle" class="ss" style="fill:#CC00FF;">Index</text>
+            <circle cx="155" cy="181" r="22" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="1.2"/>
+            <text x="155" y="178" text-anchor="middle" class="ss" style="fill:#2dd4bf;">BM25</text>
+            <text x="155" y="188" text-anchor="middle" class="ss" style="fill:#2dd4bf;">Index</text>
 
             <!-- Arrow -->
-            <line x1="179" y1="181" x2="230" y2="181" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#aTeal3)"/>
+            <line x1="179" y1="181" x2="230" y2="181" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#aTeal3)"/>
 
             <!-- Term Match circle -->
-            <circle cx="270" cy="181" r="28" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.2"/>
-            <text x="270" y="178" text-anchor="middle" class="ss" style="fill:#CC00FF;">Term</text>
-            <text x="270" y="188" text-anchor="middle" class="ss" style="fill:#CC00FF;">Match</text>
+            <circle cx="270" cy="181" r="28" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="1.2"/>
+            <text x="270" y="178" text-anchor="middle" class="ss" style="fill:#2dd4bf;">Term</text>
+            <text x="270" y="188" text-anchor="middle" class="ss" style="fill:#2dd4bf;">Match</text>
 
             <!-- Arrow -->
-            <line x1="300" y1="181" x2="350" y2="181" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#aTeal3)"/>
+            <line x1="300" y1="181" x2="350" y2="181" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#aTeal3)"/>
 
             <!-- Ranked Results -->
-            <rect x="356" y="165" width="90" height="32" rx="3" fill="rgba(45,212,191,0.06)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="401" y="185" text-anchor="middle" class="sl" style="fill:#CC00FF;">Ranked Results</text>
+            <rect x="356" y="165" width="90" height="32" rx="3" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="401" y="185" text-anchor="middle" class="sl" style="fill:#2dd4bf;">Ranked Results</text>
 
             <!-- === PATH 3: HYBRID === -->
             <text x="95" y="248" text-anchor="middle" class="st" style="fill:url(#hybridGrad);font-size:9px;">HYBRID</text>
@@ -198,20 +198,20 @@
             <text x="50" y="278" text-anchor="middle" class="sl">Query</text>
 
             <!-- Two forking arrows -->
-            <line x1="82" y1="270" x2="110" y2="260" stroke="#A100FF" stroke-width="1" stroke-dasharray="3,2"/>
-            <line x1="82" y1="278" x2="110" y2="288" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3,2"/>
+            <line x1="82" y1="270" x2="110" y2="260" stroke="#4a9eff" stroke-width="1" stroke-dasharray="3,2"/>
+            <line x1="82" y1="278" x2="110" y2="288" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="3,2"/>
 
             <!-- Dense mini node -->
-            <circle cx="135" cy="255" r="14" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1"/>
-            <text x="135" y="258" text-anchor="middle" class="ss" style="fill:#A100FF;font-size:6px;">Dense</text>
+            <circle cx="135" cy="255" r="14" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="1"/>
+            <text x="135" y="258" text-anchor="middle" class="ss" style="fill:#4a9eff;font-size:6px;">Dense</text>
 
             <!-- Sparse mini node -->
-            <circle cx="135" cy="293" r="14" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1"/>
-            <text x="135" y="296" text-anchor="middle" class="ss" style="fill:#CC00FF;font-size:6px;">Sparse</text>
+            <circle cx="135" cy="293" r="14" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="1"/>
+            <text x="135" y="296" text-anchor="middle" class="ss" style="fill:#2dd4bf;font-size:6px;">Sparse</text>
 
             <!-- Converge arrows to RRF diamond -->
-            <line x1="150" y1="258" x2="195" y2="274" stroke="#A100FF" stroke-width="1"/>
-            <line x1="150" y1="290" x2="195" y2="274" stroke="#CC00FF" stroke-width="1"/>
+            <line x1="150" y1="258" x2="195" y2="274" stroke="#4a9eff" stroke-width="1"/>
+            <line x1="150" y1="290" x2="195" y2="274" stroke="#2dd4bf" stroke-width="1"/>
 
             <!-- RRF Fusion diamond -->
             <polygon points="220,250 250,274 220,298 190,274" fill="rgba(167,139,250,0.15)" stroke="#a78bfa" stroke-width="1.5"/>
@@ -233,7 +233,7 @@
 
             <!-- Bottom annotation -->
             <rect x="120" y="330" width="460" height="30" rx="4" fill="rgba(74,158,255,0.04)" stroke="#334155" stroke-width="1" stroke-dasharray="6,4"/>
-            <text x="350" y="349" text-anchor="middle" class="sl" style="fill:#A100FF;font-size:8.5px;">HYBRID = SEMANTIC UNDERSTANDING + EXACT MATCH PRECISION</text>
+            <text x="350" y="349" text-anchor="middle" class="sl" style="fill:#4a9eff;font-size:8.5px;">HYBRID = SEMANTIC UNDERSTANDING + EXACT MATCH PRECISION</text>
           </svg>
         </div>
 
@@ -508,8 +508,8 @@
     </main>
   </div>
 
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m06-retrieval-strategies');</script>
 </body>
 </html>

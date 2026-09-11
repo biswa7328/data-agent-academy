@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RAG Architecture &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     .pipeline-flow {
       display: flex;
@@ -82,7 +82,7 @@
       color: var(--text-primary);
     }
     .benchmark-table tr:hover td {
-      background: rgba(161, 0, 255, 0.03);
+      background: rgba(74, 158, 255, 0.03);
     }
     .accuracy-bar {
       display: inline-block;
@@ -92,7 +92,7 @@
       vertical-align: middle;
     }
     .recommended-row td {
-      background: rgba(204, 0, 255, 0.06);
+      background: rgba(45, 212, 191, 0.06);
       border-left: 3px solid var(--stroke-secondary);
     }
     @media (max-width: 768px) {
@@ -142,42 +142,42 @@
                 <feGaussianBlur stdDeviation="3" result="blur"/>
                 <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
               </filter>
-              <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
-              <marker id="arrowTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="arrowBlue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#4a9eff"/></marker>
+              <marker id="arrowTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#2dd4bf"/></marker>
               <marker id="arrowAmber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker>
               <marker id="arrowDim" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#334155"/></marker>
               <style>
-                .rl { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 8.5px; }
-                .rs { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; font-size: 7px; }
-                .rt { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 10px; font-weight: 600; }
+                .rl { font-family: 'JetBrains Mono', monospace; fill: #e2e8f0; font-size: 8.5px; }
+                .rs { font-family: 'JetBrains Mono', monospace; fill: #94a3b8; font-size: 7px; }
+                .rt { font-family: 'JetBrains Mono', monospace; fill: #e2e8f0; font-size: 10px; font-weight: 600; }
               </style>
             </defs>
 
             <!-- Title -->
-            <text x="350" y="22" text-anchor="middle" class="rt" style="fill:#A100FF;font-size:11px;">QUERY-TIME RETRIEVAL PIPELINE</text>
+            <text x="350" y="22" text-anchor="middle" class="rt" style="fill:#4a9eff;font-size:11px;">QUERY-TIME RETRIEVAL PIPELINE</text>
 
             <!-- Stage 1: USER QUERY -->
-            <rect x="10" y="50" width="75" height="44" rx="3" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5"/>
+            <rect x="10" y="50" width="75" height="44" rx="3" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="1.5"/>
             <text x="47" y="69" text-anchor="middle" class="rl">USER</text>
             <text x="47" y="81" text-anchor="middle" class="rl">QUERY</text>
 
             <!-- Arrow 1 -->
-            <line x1="87" y1="72" x2="108" y2="72" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue)"/>
+            <line x1="87" y1="72" x2="108" y2="72" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#arrowBlue)"/>
 
             <!-- Stage 2: EMBEDDING -->
-            <rect x="112" y="50" width="80" height="44" rx="3" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.5"/>
+            <rect x="112" y="50" width="80" height="44" rx="3" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="1.5"/>
             <text x="152" y="69" text-anchor="middle" class="rl">EMBEDDING</text>
             <text x="152" y="81" text-anchor="middle" class="rs">text-embed-3-sm</text>
 
             <!-- Arrow 2 -->
-            <line x1="194" y1="72" x2="215" y2="72" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#arrowTeal)"/>
+            <line x1="194" y1="72" x2="215" y2="72" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#arrowTeal)"/>
 
             <!-- Stage 3: VECTOR DB (cylinder shape) -->
-            <ellipse cx="260" cy="55" rx="35" ry="8" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <ellipse cx="260" cy="55" rx="35" ry="8" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="1.2" stroke-dasharray="4,3"/>
             <rect x="225" y="55" width="70" height="30" fill="rgba(45,212,191,0.08)" stroke="none"/>
-            <line x1="225" y1="55" x2="225" y2="85" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="4,3"/>
-            <line x1="295" y1="55" x2="295" y2="85" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="4,3"/>
-            <ellipse cx="260" cy="85" rx="35" ry="8" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <line x1="225" y1="55" x2="225" y2="85" stroke="#2dd4bf" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <line x1="295" y1="55" x2="295" y2="85" stroke="#2dd4bf" stroke-width="1.2" stroke-dasharray="4,3"/>
+            <ellipse cx="260" cy="85" rx="35" ry="8" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="1.2" stroke-dasharray="4,3"/>
             <text x="260" y="74" text-anchor="middle" class="rl">VECTOR DB</text>
             <text x="260" y="104" text-anchor="middle" class="rs">pgvector</text>
 
@@ -191,19 +191,19 @@
             <text x="373" y="81" text-anchor="middle" class="rs">cross-encoder</text>
 
             <!-- Arrow 4 -->
-            <line x1="414" y1="72" x2="435" y2="72" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue)"/>
+            <line x1="414" y1="72" x2="435" y2="72" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#arrowBlue)"/>
 
             <!-- Stage 5: CONTEXT ASSEMBLY -->
-            <rect x="439" y="50" width="80" height="44" rx="3" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5"/>
+            <rect x="439" y="50" width="80" height="44" rx="3" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="1.5"/>
             <text x="479" y="69" text-anchor="middle" class="rl">CONTEXT</text>
             <text x="479" y="81" text-anchor="middle" class="rl">ASSEMBLY</text>
 
             <!-- Arrow 5 -->
-            <line x1="521" y1="72" x2="542" y2="72" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue)"/>
+            <line x1="521" y1="72" x2="542" y2="72" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#arrowBlue)"/>
 
             <!-- Stage 6: LLM (glowing) -->
-            <rect x="546" y="46" width="68" height="52" rx="4" fill="rgba(74,158,255,0.15)" stroke="#A100FF" stroke-width="2" filter="url(#glowR)"/>
-            <text x="580" y="69" text-anchor="middle" class="rt" style="fill:#A100FF;">LLM</text>
+            <rect x="546" y="46" width="68" height="52" rx="4" fill="rgba(74,158,255,0.15)" stroke="#4a9eff" stroke-width="2" filter="url(#glowR)"/>
+            <text x="580" y="69" text-anchor="middle" class="rt" style="fill:#4a9eff;">LLM</text>
             <text x="580" y="83" text-anchor="middle" class="rs">GPT-4</text>
 
             <!-- Arrow 6 -->
@@ -228,7 +228,7 @@
 
             <!-- Chunker -->
             <rect x="210" y="180" width="90" height="44" rx="3" fill="rgba(45,212,191,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="255" y="199" text-anchor="middle" class="rl" style="fill:#a0a0a0;">CHUNKER</text>
+            <text x="255" y="199" text-anchor="middle" class="rl" style="fill:#94a3b8;">CHUNKER</text>
             <text x="255" y="212" text-anchor="middle" class="rs">table-aware</text>
 
             <!-- Arrow -->
@@ -236,7 +236,7 @@
 
             <!-- Embedder -->
             <rect x="340" y="180" width="90" height="44" rx="3" fill="rgba(45,212,191,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="385" y="199" text-anchor="middle" class="rl" style="fill:#a0a0a0;">EMBEDDER</text>
+            <text x="385" y="199" text-anchor="middle" class="rl" style="fill:#94a3b8;">EMBEDDER</text>
             <text x="385" y="212" text-anchor="middle" class="rs">batch encode</text>
 
             <!-- Arrow -->
@@ -244,15 +244,15 @@
 
             <!-- Vector DB -->
             <rect x="470" y="180" width="100" height="44" rx="3" fill="rgba(45,212,191,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="520" y="199" text-anchor="middle" class="rl" style="fill:#a0a0a0;">VECTOR DB</text>
+            <text x="520" y="199" text-anchor="middle" class="rl" style="fill:#94a3b8;">VECTOR DB</text>
             <text x="520" y="212" text-anchor="middle" class="rs">pgvector store</text>
 
             <!-- Connection line from ingestion VectorDB to query-time VectorDB -->
             <path d="M520,180 L520,140 L260,140 L260,110" fill="none" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
-            <text x="390" y="135" text-anchor="middle" class="rs" style="fill:#CC00FF;">synced</text>
+            <text x="390" y="135" text-anchor="middle" class="rs" style="fill:#2dd4bf;">synced</text>
 
             <!-- Bottom annotation -->
-            <text x="350" y="260" text-anchor="middle" class="rl" style="fill:#A100FF;font-size:9px;" filter="url(#glowR)">QUERY-TIME: ~200ms &nbsp; | &nbsp; INGESTION: BATCH NIGHTLY</text>
+            <text x="350" y="260" text-anchor="middle" class="rl" style="fill:#4a9eff;font-size:9px;" filter="url(#glowR)">QUERY-TIME: ~200ms &nbsp; | &nbsp; INGESTION: BATCH NIGHTLY</text>
           </svg>
         </div>
 
@@ -328,7 +328,7 @@
                   <td><strong>Recursive</strong> <span class="badge badge--teal" data-tip="Recursive chunking offers the best balance of retrieval quality, simplicity, and cost">Recommended</span></td>
                   <td>Split by paragraphs, then sentences, then tokens &mdash; preserving semantic boundaries</td>
                   <td>
-                    <span class="accuracy-bar" style="width: 75px; background: #CC00FF;"></span>~75%
+                    <span class="accuracy-bar" style="width: 75px; background: #2dd4bf;"></span>~75%
                   </td>
                   <td>General purpose; best cost/quality ratio</td>
                 </tr>
@@ -336,7 +336,7 @@
                   <td><strong>Semantic</strong></td>
                   <td>Use embeddings to detect topic shifts; split at semantic boundaries</td>
                   <td>
-                    <span class="accuracy-bar" style="width: 92px; background: #A100FF;"></span>91.9% recall / 54% e2e
+                    <span class="accuracy-bar" style="width: 92px; background: #4a9eff;"></span>91.9% recall / 54% e2e
                   </td>
                   <td>High-recall needs; research documents</td>
                 </tr>
@@ -482,8 +482,8 @@
     </main>
   </div>
 
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m06-rag-architecture');</script>
 </body>
 </html>

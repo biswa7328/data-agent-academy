@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LangGraph Patterns — Module 02 — Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     /* --- Pattern SVG Containers --- */
     .pattern-svg-wrap {
@@ -73,11 +73,11 @@
     .match-btn:hover {
       border-color: var(--stroke-primary);
       color: var(--text-primary);
-      background: rgba(161, 0, 255, 0.08);
+      background: rgba(74, 158, 255, 0.08);
     }
     .match-btn.selected {
       border-color: var(--stroke-primary);
-      background: rgba(161, 0, 255, 0.15);
+      background: rgba(74, 158, 255, 0.15);
       color: var(--text-primary);
     }
     .match-btn:disabled {
@@ -163,29 +163,29 @@
           <div class="pattern-svg-wrap reveal--scale reveal">
             <svg viewBox="0 0 580 80" xmlns="http://www.w3.org/2000/svg">
               <!-- Boxes -->
-              <rect x="10" y="20" width="100" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
-              <text x="60" y="45" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="11">Query</text>
+              <rect x="10" y="20" width="100" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1.5"/>
+              <text x="60" y="45" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="11">Query</text>
 
-              <rect x="160" y="20" width="100" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
-              <text x="210" y="45" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="11">Parse</text>
+              <rect x="160" y="20" width="100" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1.5"/>
+              <text x="210" y="45" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="11">Parse</text>
 
-              <rect x="310" y="20" width="100" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
-              <text x="360" y="45" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="11">Execute</text>
+              <rect x="310" y="20" width="100" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1.5"/>
+              <text x="360" y="45" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="11">Execute</text>
 
-              <rect x="460" y="20" width="100" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5"/>
-              <text x="510" y="45" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="11">Format</text>
+              <rect x="460" y="20" width="100" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="1.5"/>
+              <text x="510" y="45" text-anchor="middle" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="11">Format</text>
 
               <!-- Arrows -->
-              <line x1="110" y1="40" x2="160" y2="40" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-              <line x1="260" y1="40" x2="310" y2="40" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-              <line x1="410" y1="40" x2="460" y2="40" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="110" y1="40" x2="160" y2="40" class="draw-line" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="260" y1="40" x2="310" y2="40" class="draw-line" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="410" y1="40" x2="460" y2="40" class="draw-line" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
 
               <defs>
                 <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#A100FF"/>
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a9eff"/>
                 </marker>
                 <marker id="arrowTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#CC00FF"/>
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#2dd4bf"/>
                 </marker>
                 <marker id="arrowAmber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                   <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
@@ -211,27 +211,27 @@
           <div class="pattern-svg-wrap reveal--scale reveal">
             <svg viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg">
               <!-- Intent Analysis box -->
-              <rect x="10" y="70" width="120" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
-              <text x="70" y="95" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10">Intent Analysis</text>
+              <rect x="10" y="70" width="120" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1.5"/>
+              <text x="70" y="95" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="10">Intent Analysis</text>
 
               <!-- Diamond decision -->
               <polygon points="220,90 260,60 300,90 260,120" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5"/>
               <text x="260" y="95" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="9">Route?</text>
 
               <!-- Arrow to diamond -->
-              <line x1="130" y1="90" x2="220" y2="90" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="130" y1="90" x2="220" y2="90" class="draw-line" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
 
               <!-- Top path: Data Query -->
-              <line x1="300" y1="75" x2="370" y2="35" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-              <rect x="370" y="10" width="130" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
-              <text x="435" y="35" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10">Data Query Path</text>
-              <text x="340" y="48" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8">"find data"</text>
+              <line x1="300" y1="75" x2="370" y2="35" class="draw-line" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <rect x="370" y="10" width="130" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1.5"/>
+              <text x="435" y="35" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="10">Data Query Path</text>
+              <text x="340" y="48" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="8">"find data"</text>
 
               <!-- Bottom path: Report Gen -->
-              <line x1="300" y1="105" x2="370" y2="145" class="draw-line" stroke="#CC00FF" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
-              <rect x="370" y="130" width="130" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5"/>
-              <text x="435" y="155" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="10">Report Generator</text>
-              <text x="340" y="130" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8">"create report"</text>
+              <line x1="300" y1="105" x2="370" y2="145" class="draw-line" stroke="#2dd4bf" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+              <rect x="370" y="130" width="130" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="1.5"/>
+              <text x="435" y="155" text-anchor="middle" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="10">Report Generator</text>
+              <text x="340" y="130" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="8">"create report"</text>
             </svg>
           </div>
 
@@ -252,15 +252,15 @@
           <div class="pattern-svg-wrap reveal--scale reveal">
             <svg viewBox="0 0 560 140" xmlns="http://www.w3.org/2000/svg">
               <!-- Generate SQL -->
-              <rect x="10" y="50" width="110" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
-              <text x="65" y="75" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10">Generate SQL</text>
+              <rect x="10" y="50" width="110" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1.5"/>
+              <text x="65" y="75" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="10">Generate SQL</text>
 
               <!-- Validate -->
               <rect x="170" y="50" width="100" height="40" rx="4" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5"/>
               <text x="220" y="75" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="10">Validate</text>
 
               <!-- Arrow gen -> validate -->
-              <line x1="120" y1="70" x2="170" y2="70" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="120" y1="70" x2="170" y2="70" class="draw-line" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
 
               <!-- Loop-back arrow (invalid) -->
               <path d="M 195 50 C 195 15, 90 15, 90 50" class="draw-line" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowRed)"/>
@@ -279,11 +279,11 @@
               <text x="380" y="75" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="10">Execute</text>
 
               <!-- Arrow execute -> return -->
-              <line x1="430" y1="70" x2="480" y2="70" class="draw-line" stroke="#CC00FF" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+              <line x1="430" y1="70" x2="480" y2="70" class="draw-line" stroke="#2dd4bf" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
 
               <!-- Return -->
-              <rect x="480" y="50" width="70" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5"/>
-              <text x="515" y="75" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="10">Return</text>
+              <rect x="480" y="50" width="70" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="1.5"/>
+              <text x="515" y="75" text-anchor="middle" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="10">Return</text>
 
               <defs>
                 <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -313,29 +313,29 @@
           <div class="pattern-svg-wrap reveal--scale reveal">
             <svg viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg">
               <!-- Start node -->
-              <rect x="10" y="70" width="80" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
-              <text x="50" y="95" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10">Request</text>
+              <rect x="10" y="70" width="80" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1.5"/>
+              <text x="50" y="95" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="10">Request</text>
 
               <!-- Fan-out arrows -->
-              <line x1="90" y1="80" x2="160" y2="30" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-              <line x1="90" y1="90" x2="160" y2="90" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-              <line x1="90" y1="100" x2="160" y2="150" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="90" y1="80" x2="160" y2="30" class="draw-line" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="90" y1="90" x2="160" y2="90" class="draw-line" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="90" y1="100" x2="160" y2="150" class="draw-line" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
 
               <!-- Parallel task 1 -->
-              <rect x="160" y="10" width="140" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
-              <text x="230" y="35" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="9">Schema Discovery</text>
+              <rect x="160" y="10" width="140" height="40" rx="4" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1.5"/>
+              <text x="230" y="35" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="9">Schema Discovery</text>
 
               <!-- Parallel task 2 -->
-              <rect x="160" y="70" width="140" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5"/>
-              <text x="230" y="95" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="9">Row Count Stats</text>
+              <rect x="160" y="70" width="140" height="40" rx="4" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="1.5"/>
+              <text x="230" y="95" text-anchor="middle" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="9">Row Count Stats</text>
 
               <!-- Parallel task 3 -->
               <rect x="160" y="130" width="140" height="40" rx="4" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5"/>
               <text x="230" y="155" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="9">Recent Tables</text>
 
               <!-- Fan-in arrows -->
-              <line x1="300" y1="30" x2="380" y2="80" class="draw-line" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
-              <line x1="300" y1="90" x2="380" y2="90" class="draw-line" stroke="#CC00FF" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
+              <line x1="300" y1="30" x2="380" y2="80" class="draw-line" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+              <line x1="300" y1="90" x2="380" y2="90" class="draw-line" stroke="#2dd4bf" stroke-width="1.5" marker-end="url(#arrowTeal)"/>
               <line x1="300" y1="150" x2="380" y2="100" class="draw-line" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrowAmber)"/>
 
               <!-- Merge node -->
@@ -343,7 +343,7 @@
               <text x="430" y="95" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="10">Merge</text>
 
               <!-- Parallel label -->
-              <text x="230" y="175" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8" font-style="italic">runs simultaneously</text>
+              <text x="230" y="175" text-anchor="middle" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="8" font-style="italic">runs simultaneously</text>
             </svg>
           </div>
 
@@ -527,11 +527,11 @@
   </div>
 
   <!-- ===== SCRIPTS ===== -->
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/quiz.js?v=4"></script>
-  <script src="../../js/simulation.js?v=4"></script>
-  <script src="../../js/diagram.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
 
   <script>
     // --- Evolving Diagram ---

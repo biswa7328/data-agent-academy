@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AgentOps: CI/CD &amp; Evaluation Gates &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     /* --- Pipeline SVG --- */
     .pipeline-svg {
@@ -27,7 +27,7 @@
       stroke: var(--stroke-primary);
       stroke-width: 2.5;
       stroke-dasharray: none;
-      filter: drop-shadow(0 0 10px rgba(161, 0, 255, 0.5));
+      filter: drop-shadow(0 0 10px rgba(74, 158, 255, 0.5));
     }
     .pipeline-svg .pipe-node.pass {
       stroke: var(--accent-success);
@@ -96,7 +96,7 @@
       gap: var(--space-3);
       align-items: center;
       padding: var(--space-3) 0;
-      border-bottom: 1px dashed rgba(161,0,255,0.08);
+      border-bottom: 1px dashed rgba(74, 158, 255, 0.1);
       font-size: var(--font-sm);
     }
     .metric-row:last-child { border-bottom: none; }
@@ -156,13 +156,13 @@
     .scenario-btn:hover {
       border-color: var(--stroke-primary);
       color: var(--text-primary);
-      background: rgba(161,0,255,0.06);
+      background: rgba(74, 158, 255, 0.05);
     }
     .scenario-btn.active {
       border-color: var(--stroke-primary);
       border-style: solid;
       color: var(--stroke-primary);
-      background: rgba(161,0,255,0.08);
+      background: rgba(74, 158, 255, 0.1);
     }
 
     /* --- Gate Verdict --- */
@@ -271,18 +271,18 @@
           <!-- Background -->
           <rect width="700" height="380" rx="12" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 4"/>
           <!-- Title -->
-          <text x="350" y="28" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#a0a0a0" letter-spacing="1">Every DataPulse change passes 3 gates before reaching users</text>
+          <text x="350" y="28" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#94a3b8" letter-spacing="1">Every DataPulse change passes 3 gates before reaching users</text>
           <!-- Stage 1: CODE COMMIT -->
           <rect x="12" y="55" width="72" height="36" rx="6" fill="rgba(51,65,85,0.3)" stroke="#334155" stroke-width="1.2" stroke-dasharray="5 3"/>
-          <text x="48" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7.5" fill="#a0a0a0" font-weight="600">CODE</text>
-          <text x="48" y="82" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7.5" fill="#a0a0a0" font-weight="600">COMMIT</text>
+          <text x="48" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7.5" fill="#94a3b8" font-weight="600">CODE</text>
+          <text x="48" y="82" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7.5" fill="#94a3b8" font-weight="600">COMMIT</text>
           <!-- Arrow 1 -->
           <line x1="84" y1="73" x2="98" y2="73" stroke="#334155" stroke-width="1.2"/>
           <polygon points="96,69 104,73 96,77" fill="#334155"/>
           <!-- Stage 2: BUILD & UNIT TEST -->
-          <rect x="104" y="55" width="80" height="36" rx="6" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="5 3"/>
-          <text x="144" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#A100FF" font-weight="600">BUILD &amp;</text>
-          <text x="144" y="82" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#A100FF" font-weight="600">UNIT TEST</text>
+          <rect x="104" y="55" width="80" height="36" rx="6" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="144" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#4a9eff" font-weight="600">BUILD &amp;</text>
+          <text x="144" y="82" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#4a9eff" font-weight="600">UNIT TEST</text>
           <!-- Arrow 2 -->
           <line x1="184" y1="73" x2="198" y2="73" stroke="#334155" stroke-width="1.2"/>
           <polygon points="196,69 204,73 196,77" fill="#334155"/>
@@ -293,9 +293,9 @@
           <line x1="252" y1="73" x2="266" y2="73" stroke="#10b981" stroke-width="1.2"/>
           <polygon points="264,69 272,73 264,77" fill="#10b981"/>
           <!-- Stage 3: INTEGRATION TEST -->
-          <rect x="272" y="55" width="80" height="36" rx="6" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="5 3"/>
-          <text x="312" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#CC00FF" font-weight="600">INTEGRATION</text>
-          <text x="312" y="82" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#CC00FF" font-weight="600">TEST</text>
+          <rect x="272" y="55" width="80" height="36" rx="6" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="1.2" stroke-dasharray="5 3"/>
+          <text x="312" y="70" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#2dd4bf" font-weight="600">INTEGRATION</text>
+          <text x="312" y="82" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#2dd4bf" font-weight="600">TEST</text>
           <!-- Arrow 4 -->
           <line x1="352" y1="73" x2="366" y2="73" stroke="#334155" stroke-width="1.2"/>
           <polygon points="364,69 372,73 364,77" fill="#334155"/>
@@ -324,9 +324,9 @@
           <rect x="612" y="55" width="76" height="36" rx="6" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="2" filter="url(#cicd-glow-green)"/>
           <text x="650" y="77" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#10b981" font-weight="700">PRODUCTION</text>
           <!-- Gate labels above -->
-          <text x="228" y="44" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Gate 1</text>
-          <text x="400" y="38" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Gate 2</text>
-          <text x="568" y="44" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Gate 3</text>
+          <text x="228" y="44" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Gate 1</text>
+          <text x="400" y="38" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Gate 2</text>
+          <text x="568" y="44" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Gate 3</text>
           <!-- Fail paths from gates -->
           <!-- Gate 1 fail -->
           <line x1="228" y1="93" x2="228" y2="140" stroke="#ef4444" stroke-width="1" stroke-dasharray="4 3"/>
@@ -349,20 +349,20 @@
           <!-- Divider -->
           <line x1="40" y1="210" x2="660" y2="210" stroke="#334155" stroke-width="1" stroke-dasharray="6 4"/>
           <!-- Gate detail section -->
-          <text x="350" y="235" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#a0a0a0" letter-spacing="1">GATE DETAILS</text>
+          <text x="350" y="235" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#94a3b8" letter-spacing="1">GATE DETAILS</text>
           <!-- Gate detail boxes -->
           <rect x="40" y="250" width="190" height="55" rx="6" fill="rgba(16,185,129,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="5 3"/>
           <text x="135" y="268" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#10b981" font-weight="600">GATE 1: UNIT PASS</text>
-          <text x="135" y="282" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">500 unit tests must pass</text>
-          <text x="135" y="295" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Threshold: 100%</text>
+          <text x="135" y="282" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">500 unit tests must pass</text>
+          <text x="135" y="295" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Threshold: 100%</text>
           <rect x="255" y="250" width="190" height="55" rx="6" fill="rgba(245,158,11,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="5 3"/>
           <text x="350" y="268" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f59e0b" font-weight="600">GATE 2: EVAL SCORE</text>
-          <text x="350" y="282" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Golden dataset + LLM judge</text>
-          <text x="350" y="295" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Threshold: &gt; 85%</text>
+          <text x="350" y="282" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Golden dataset + LLM judge</text>
+          <text x="350" y="295" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Threshold: &gt; 85%</text>
           <rect x="470" y="250" width="190" height="55" rx="6" fill="rgba(16,185,129,0.06)" stroke="#334155" stroke-width="1" stroke-dasharray="5 3"/>
           <text x="565" y="268" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#10b981" font-weight="600">GATE 3: REGRESSION</text>
-          <text x="565" y="282" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Shadow vs production diff</text>
-          <text x="565" y="295" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0a0a0">Threshold: &lt; 2% regression</text>
+          <text x="565" y="282" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Shadow vs production diff</text>
+          <text x="565" y="295" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#94a3b8">Threshold: &lt; 2% regression</text>
           <!-- Bottom decorative dots -->
           <circle cx="320" cy="335" r="2" fill="#334155"/>
           <circle cx="340" cy="335" r="2" fill="#334155"/>
@@ -666,8 +666,8 @@
   </div>
 
   <!-- Scripts -->
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>
     Nav.init('m05-cicd-eval-gates');
 

@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agent Cost Economics &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     .cost-iceberg {
       display: flex;
@@ -20,7 +20,7 @@
     .cost-iceberg__visible {
       width: 100%;
       padding: var(--space-6);
-      background: rgba(161, 0, 255, 0.06);
+      background: rgba(74, 158, 255, 0.06);
       text-align: center;
       border-bottom: 2px solid var(--stroke-primary);
       position: relative;
@@ -182,11 +182,11 @@
                 <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
               </filter>
               <marker id="arrowhead01" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                <polygon points="0 0, 8 3, 0 6" fill="#A100FF"/>
+                <polygon points="0 0, 8 3, 0 6" fill="#4a9eff"/>
               </marker>
               <style>
-                .svg-label { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; }
-                .svg-dim   { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; }
+                .svg-label { font-family: 'JetBrains Mono', monospace; fill: #e2e8f0; }
+                .svg-dim   { font-family: 'JetBrains Mono', monospace; fill: #94a3b8; }
               </style>
             </defs>
             <!-- background -->
@@ -236,7 +236,7 @@
             <line x1="333" y1="277" x2="372" y2="290" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="3,2"/>
             <line x1="143" y1="265" x2="88"  y2="300" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="3,2"/>
             <line x1="161" y1="179" x2="104" y2="162" stroke="#ef4444" stroke-width="0.8" stroke-dasharray="3,2"/>
-            <line x1="212" y1="144" x2="205" y2="108" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3,2"/>
+            <line x1="212" y1="144" x2="205" y2="108" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3,2"/>
 
             <!-- LLM Inference (62%) — right of pie, vertically at pie mid-right -->
             <text x="375" y="288" class="svg-label" font-size="10" font-weight="700">LLM INFERENCE</text>
@@ -255,11 +255,11 @@
 
             <!-- Embedding Regen (9%) — above pie top, centred on slice -->
             <text x="205" y="96" text-anchor="middle" class="svg-label" font-size="9" font-weight="700">EMBEDDING REGEN</text>
-            <text x="205" y="83" text-anchor="middle" class="svg-label" font-size="12" font-weight="700" fill="#a0a0a0">$1,373</text>
+            <text x="205" y="83" text-anchor="middle" class="svg-label" font-size="12" font-weight="700" fill="#94a3b8">$1,373</text>
             <text x="205" y="109" text-anchor="middle" class="svg-dim" font-size="9">9%</text>
 
             <!-- Center donut label -->
-            <circle cx="240" cy="240" r="40" fill="rgba(15,23,42,0.92)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+            <circle cx="240" cy="240" r="40" fill="rgba(15,23,42,0.92)" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,2"/>
             <text x="240" y="235" text-anchor="middle" class="svg-label" font-size="9">TOTAL</text>
             <text x="240" y="252" text-anchor="middle" class="svg-label" font-size="13" font-weight="700" fill="#ef4444">$15,247</text>
 
@@ -269,9 +269,9 @@
             <text x="630" y="250" text-anchor="middle" class="svg-label" font-size="16" font-weight="700" fill="#10b981">$3,000</text>
 
             <!-- Arrow: right edge of pie (340,240) → left edge of target (575,240) -->
-            <line x1="342" y1="240" x2="568" y2="240" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowhead01)"/>
+            <line x1="342" y1="240" x2="568" y2="240" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrowhead01)"/>
             <rect x="382" y="218" width="118" height="20" rx="4" fill="rgba(15,23,42,0.92)"/>
-            <text x="441" y="232" text-anchor="middle" class="svg-label" font-size="9" fill="#A100FF">80% reduction needed</text>
+            <text x="441" y="232" text-anchor="middle" class="svg-label" font-size="9" fill="#4a9eff">80% reduction needed</text>
 
             <!-- Bottom caption -->
             <text x="380" y="425" text-anchor="middle" class="svg-dim" font-size="10" letter-spacing="0.05em">Derek Kim's Invoice Breakdown</text>
@@ -492,8 +492,8 @@
     </main>
   </div>
 
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m09-cost-economics');</script>
 </body>
 </html>

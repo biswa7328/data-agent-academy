@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Privacy &amp; Regulatory Compliance &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     .reg-card {
       background: var(--bg-surface);
@@ -158,7 +158,7 @@
                 <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
               </filter>
               <marker id="pii-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                <path d="M0,0 L8,3 L0,6" fill="#A100FF"/>
+                <path d="M0,0 L8,3 L0,6" fill="#4a9eff"/>
               </marker>
             </defs>
 
@@ -172,62 +172,62 @@
             <line x1="120" y1="130" x2="120" y2="185" stroke="#ef4444" stroke-width="1.5"/>
             <ellipse cx="75" cy="185" rx="45" ry="14" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5"/>
             <text x="75" y="115" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">RAW DATA</text>
-            <text x="75" y="150" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">customer_email</text>
-            <text x="75" y="163" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">phone</text>
-            <text x="75" y="176" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">address</text>
+            <text x="75" y="150" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">customer_email</text>
+            <text x="75" y="163" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">phone</text>
+            <text x="75" y="176" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">address</text>
 
             <!-- Arrow 1 -->
-            <line x1="125" y1="157" x2="170" y2="157" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
+            <line x1="125" y1="157" x2="170" y2="157" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
 
             <!-- STAGE 2: PII SCANNER (shield shape, amber) -->
             <path d="M220,120 L260,108 L300,120 L300,185 Q260,200 220,185 Z" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1.5" filter="url(#pii-glow-amber)"/>
             <text x="260" y="142" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">PII</text>
             <text x="260" y="155" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">SCANNER</text>
-            <text x="260" y="172" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">scan &amp;</text>
-            <text x="260" y="183" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">classify</text>
+            <text x="260" y="172" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">scan &amp;</text>
+            <text x="260" y="183" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">classify</text>
 
             <!-- Arrow 2 -->
-            <line x1="305" y1="157" x2="345" y2="157" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
+            <line x1="305" y1="157" x2="345" y2="157" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
 
             <!-- STAGE 3: MASKING ENGINE -->
-            <rect x="350" y="110" width="130" height="95" rx="6" fill="rgba(45,212,191,0.06)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="4,2"/>
-            <text x="415" y="128" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">MASKING ENGINE</text>
+            <rect x="350" y="110" width="130" height="95" rx="6" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <text x="415" y="128" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="8" font-weight="700" text-anchor="middle">MASKING ENGINE</text>
             <!-- Corner brackets -->
-            <path d="M346,110 L338,110 L338,118" fill="none" stroke="#CC00FF" stroke-width="1.2"/>
-            <path d="M484,110 L492,110 L492,118" fill="none" stroke="#CC00FF" stroke-width="1.2"/>
-            <path d="M346,205 L338,205 L338,197" fill="none" stroke="#CC00FF" stroke-width="1.2"/>
-            <path d="M484,205 L492,205 L492,197" fill="none" stroke="#CC00FF" stroke-width="1.2"/>
-            <text x="415" y="150" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">john@email.com</text>
-            <text x="415" y="163" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">j***@***.com</text>
+            <path d="M346,110 L338,110 L338,118" fill="none" stroke="#2dd4bf" stroke-width="1.2"/>
+            <path d="M484,110 L492,110 L492,118" fill="none" stroke="#2dd4bf" stroke-width="1.2"/>
+            <path d="M346,205 L338,205 L338,197" fill="none" stroke="#2dd4bf" stroke-width="1.2"/>
+            <path d="M484,205 L492,205 L492,197" fill="none" stroke="#2dd4bf" stroke-width="1.2"/>
+            <text x="415" y="150" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">john@email.com</text>
+            <text x="415" y="163" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">j***@***.com</text>
             <line x1="370" y1="170" x2="460" y2="170" stroke="#334155" stroke-width="0.5" stroke-dasharray="3,2"/>
-            <text x="415" y="183" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">555-1234</text>
-            <text x="415" y="196" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">***-****</text>
+            <text x="415" y="183" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">555-1234</text>
+            <text x="415" y="196" fill="#2dd4bf" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">***-****</text>
 
             <!-- Arrow 3 -->
-            <line x1="485" y1="157" x2="520" y2="157" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
+            <line x1="485" y1="157" x2="520" y2="157" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
 
             <!-- STAGE 4: DATAPULSE CONTEXT -->
-            <rect x="525" y="120" width="80" height="40" rx="5" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5"/>
-            <text x="565" y="137" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">DATAPULSE</text>
-            <text x="565" y="150" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">CONTEXT</text>
+            <rect x="525" y="120" width="80" height="40" rx="5" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="1.5"/>
+            <text x="565" y="137" fill="#4a9eff" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">DATAPULSE</text>
+            <text x="565" y="150" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">CONTEXT</text>
 
             <!-- Arrow 4 -->
-            <line x1="565" y1="160" x2="565" y2="210" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
+            <line x1="565" y1="160" x2="565" y2="210" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#pii-arrow)"/>
 
             <!-- STAGE 5: USER RESPONSE -->
             <rect x="525" y="215" width="80" height="40" rx="5" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5" filter="url(#pii-glow-green)"/>
             <text x="565" y="232" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">USER</text>
             <text x="565" y="245" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">RESPONSE</text>
-            <text x="565" y="268" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="6" text-anchor="middle">clean, safe output</text>
+            <text x="565" y="268" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="6" text-anchor="middle">clean, safe output</text>
 
             <!-- Bottom info bar -->
             <rect x="50" y="300" width="200" height="30" rx="4" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,2"/>
             <text x="150" y="319" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">7 PII LOCATIONS FOUND</text>
-            <text x="150" y="340" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Priya's audit findings</text>
+            <text x="150" y="340" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Priya's audit findings</text>
 
             <!-- Compliance label -->
-            <rect x="430" y="300" width="220" height="30" rx="4" fill="rgba(74,158,255,0.06)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
-            <text x="540" y="319" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">CCPA / GDPR COMPLIANT</text>
+            <rect x="430" y="300" width="220" height="30" rx="4" fill="rgba(74,158,255,0.06)" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,2"/>
+            <text x="540" y="319" fill="#4a9eff" font-family="JetBrains Mono, monospace" font-size="9" font-weight="700" text-anchor="middle">CCPA / GDPR COMPLIANT</text>
 
             <!-- Dimension line along bottom -->
             <line x1="30" y1="360" x2="670" y2="360" stroke="#334155" stroke-width="0.8" stroke-dasharray="2,2"/>
@@ -462,8 +462,8 @@
 
   </div>
 
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m08-data-privacy');</script>
 </body>
 </html>

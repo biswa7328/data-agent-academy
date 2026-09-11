@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Quality &amp; Governance for Agents &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     /* --- Lifecycle Flow --- */
     .lifecycle {
@@ -36,7 +36,7 @@
     }
     .lifecycle__step--active {
       border-color: var(--stroke-primary);
-      box-shadow: 0 0 12px rgba(161, 0, 255, 0.15);
+      box-shadow: 0 0 12px rgba(74, 158, 255, 0.15);
     }
     .lifecycle__icon {
       width: 36px;
@@ -166,24 +166,24 @@
           <rect width="700" height="380" rx="8" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
 
           <!-- Center: DataPulse -->
-          <circle cx="350" cy="160" r="50" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="2" stroke-dasharray="6,3" filter="url(#dq-glow)"/>
-          <text x="350" y="155" text-anchor="middle" fill="#A100FF" font-size="12" font-weight="700">DataPulse</text>
-          <text x="350" y="172" text-anchor="middle" fill="#a0a0a0" font-size="8">QUERY ENGINE</text>
+          <circle cx="350" cy="160" r="50" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="2" stroke-dasharray="6,3" filter="url(#dq-glow)"/>
+          <text x="350" y="155" text-anchor="middle" fill="#4a9eff" font-size="12" font-weight="700">DataPulse</text>
+          <text x="350" y="172" text-anchor="middle" fill="#94a3b8" font-size="8">QUERY ENGINE</text>
 
           <!-- SHIELD 1 (LEFT): Freshness Check — Teal -->
-          <path d="M100,100 L100,60 L170,40 L240,60 L240,100 L170,140 Z" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="5,3"/>
-          <text x="170" y="75" text-anchor="middle" fill="#CC00FF" font-size="10" font-weight="700">FRESHNESS</text>
-          <text x="170" y="90" text-anchor="middle" fill="#CC00FF" font-size="10" font-weight="700">CHECK</text>
+          <path d="M100,100 L100,60 L170,40 L240,60 L240,100 L170,140 Z" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="1.5" stroke-dasharray="5,3"/>
+          <text x="170" y="75" text-anchor="middle" fill="#2dd4bf" font-size="10" font-weight="700">FRESHNESS</text>
+          <text x="170" y="90" text-anchor="middle" fill="#2dd4bf" font-size="10" font-weight="700">CHECK</text>
           <!-- Clock icon -->
-          <circle cx="170" y="105" r="8" fill="none" stroke="#CC00FF" stroke-width="1" cy="108"/>
-          <line x1="170" y1="108" x2="170" y2="103" stroke="#CC00FF" stroke-width="1"/>
-          <line x1="170" y1="108" x2="174" y2="108" stroke="#CC00FF" stroke-width="1"/>
-          <text x="170" y="130" text-anchor="middle" fill="#a0a0a0" font-size="8">last_updated &lt; 24h?</text>
+          <circle cx="170" y="105" r="8" fill="none" stroke="#2dd4bf" stroke-width="1" cy="108"/>
+          <line x1="170" y1="108" x2="170" y2="103" stroke="#2dd4bf" stroke-width="1"/>
+          <line x1="170" y1="108" x2="174" y2="108" stroke="#2dd4bf" stroke-width="1"/>
+          <text x="170" y="130" text-anchor="middle" fill="#94a3b8" font-size="8">last_updated &lt; 24h?</text>
           <!-- Sub-label -->
-          <rect x="90" y="148" width="160" height="18" rx="4" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3,2"/>
-          <text x="170" y="161" text-anchor="middle" fill="#CC00FF" font-size="8">Caught: $0 sales incident</text>
+          <rect x="90" y="148" width="160" height="18" rx="4" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="3,2"/>
+          <text x="170" y="161" text-anchor="middle" fill="#2dd4bf" font-size="8">Caught: $0 sales incident</text>
           <!-- Connection line to center -->
-          <line x1="240" y1="90" x2="300" y2="145" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="240" y1="90" x2="300" y2="145" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4,2"/>
 
           <!-- SHIELD 2 (TOP): Schema Drift — Amber -->
           <path d="M290,15 L290,-25 L360,-45 L430,-25 L430,15 L360,55 Z" transform="translate(-10,50)" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3"/>
@@ -191,7 +191,7 @@
           <!-- Warning triangle icon -->
           <polygon points="350,32 343,45 357,45" fill="none" stroke="#f59e0b" stroke-width="1.2"/>
           <text x="350" y="42" text-anchor="middle" fill="#f59e0b" font-size="7" font-weight="700">!</text>
-          <text x="350" y="60" text-anchor="middle" fill="#a0a0a0" font-size="8">columns match index?</text>
+          <text x="350" y="60" text-anchor="middle" fill="#94a3b8" font-size="8">columns match index?</text>
           <!-- Sub-label -->
           <rect x="270" y="66" width="160" height="18" rx="4" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="3,2"/>
           <text x="350" y="79" text-anchor="middle" fill="#f59e0b" font-size="8">Caught: customer_email rename</text>
@@ -205,7 +205,7 @@
           <!-- Checkmark icon -->
           <circle cx="530" cy="108" r="8" fill="none" stroke="#10b981" stroke-width="1"/>
           <polyline points="524,108 528,113 536,103" fill="none" stroke="#10b981" stroke-width="1.5"/>
-          <text x="530" y="130" text-anchor="middle" fill="#a0a0a0" font-size="8">sanity check passed?</text>
+          <text x="530" y="130" text-anchor="middle" fill="#94a3b8" font-size="8">sanity check passed?</text>
           <!-- Sub-label -->
           <rect x="450" y="148" width="160" height="18" rx="4" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2"/>
           <text x="530" y="161" text-anchor="middle" fill="#10b981" font-size="8">Caught: negative revenue</text>
@@ -213,7 +213,7 @@
           <line x1="460" y1="90" x2="400" y2="145" stroke="#10b981" stroke-width="1" stroke-dasharray="4,2"/>
 
           <!-- Confidence Meter -->
-          <text x="350" y="240" text-anchor="middle" fill="#f5f5f5" font-size="11" font-weight="600">Confidence Meter</text>
+          <text x="350" y="240" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">Confidence Meter</text>
           <!-- Segmented bar background -->
           <rect x="120" y="252" width="460" height="24" rx="6" fill="rgba(51,65,133,0.2)" stroke="#334155" stroke-width="1" stroke-dasharray="4,2"/>
           <!-- Red segment 0-30% -->
@@ -227,14 +227,14 @@
           <text x="350" y="268" text-anchor="middle" fill="#f59e0b" font-size="8">50%</text>
           <text x="557" y="268" text-anchor="middle" fill="#10b981" font-size="8">100%</text>
           <!-- Pointer at 91% -->
-          <polygon points="535,250 539,244 531,244" fill="#f5f5f5"/>
-          <line x1="535" y1="250" x2="535" y2="276" stroke="#f5f5f5" stroke-width="1.5"/>
+          <polygon points="535,250 539,244 531,244" fill="#e2e8f0"/>
+          <line x1="535" y1="250" x2="535" y2="276" stroke="#e2e8f0" stroke-width="1.5"/>
           <rect x="510" y="280" width="50" height="18" rx="4" fill="rgba(16,185,129,0.15)" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2"/>
           <text x="535" y="293" text-anchor="middle" fill="#10b981" font-size="10" font-weight="700">91%</text>
 
           <!-- Bottom label -->
-          <rect x="225" y="320" width="250" height="28" rx="6" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,2"/>
-          <text x="350" y="339" text-anchor="middle" fill="#CC00FF" font-size="11" font-weight="600">Priya's Quality Framework</text>
+          <rect x="225" y="320" width="250" height="28" rx="6" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="350" y="339" text-anchor="middle" fill="#2dd4bf" font-size="11" font-weight="600">Priya's Quality Framework</text>
         </svg>
         </div>
 
@@ -618,8 +618,8 @@
     </footer>
 
   </div>
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m10-data-quality');</script>
 </body>
 </html>

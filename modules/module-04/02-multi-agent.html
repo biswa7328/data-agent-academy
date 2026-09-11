@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Multi-Agent Collaboration — Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     /* --- Pattern Cards --- */
     .pattern-section {
@@ -55,12 +55,12 @@
     .agent-node {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
-      fill: #f5f5f5;
+      fill: #e2e8f0;
     }
     .agent-sublabel {
       font-family: 'Inter', sans-serif;
       font-size: 9px;
-      fill: #a0a0a0;
+      fill: #94a3b8;
     }
     .flow-line {
       stroke-dasharray: 8 4;
@@ -85,8 +85,8 @@
     }
 
     /* Arrow markers */
-    .pattern-diagram .arrow-blue { fill: none; stroke: #A100FF; stroke-width: 1; }
-    .pattern-diagram .arrow-teal { fill: none; stroke: #CC00FF; stroke-width: 1; }
+    .pattern-diagram .arrow-blue { fill: none; stroke: #4a9eff; stroke-width: 1; }
+    .pattern-diagram .arrow-teal { fill: none; stroke: #2dd4bf; stroke-width: 1; }
 
     /* --- Comparison Table tweaks --- */
     .comparison-wrap {
@@ -139,7 +139,7 @@
     .scenario-btn:hover:not(:disabled) {
       border-color: var(--stroke-primary);
       color: var(--text-primary);
-      background: rgba(161, 0, 255, 0.08);
+      background: rgba(74, 158, 255, 0.08);
     }
     .scenario-btn:disabled {
       cursor: default;
@@ -229,67 +229,67 @@
           <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
             <defs>
               <filter id="ma-glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-              <marker id="ma-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
-              <marker id="ma-arrow-dim" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a0a0a0"/></marker>
+              <marker id="ma-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#4a9eff"/></marker>
+              <marker id="ma-arrow-dim" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#94a3b8"/></marker>
             </defs>
             <pattern id="ma-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(74,158,255,0.05)" stroke-width="0.5"/></pattern>
             <rect width="700" height="380" fill="rgba(15,23,42,0.6)" rx="8"/>
             <rect width="700" height="380" fill="url(#ma-grid)" rx="8"/>
             <!-- USER box -->
-            <rect x="20" y="55" width="90" height="50" rx="6" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="5 3"/>
-            <text x="65" y="77" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">USER</text>
-            <text x="65" y="93" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Query input</text>
+            <rect x="20" y="55" width="90" height="50" rx="6" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1" stroke-dasharray="5 3"/>
+            <text x="65" y="77" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#e2e8f0">USER</text>
+            <text x="65" y="93" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#94a3b8">Query input</text>
             <!-- Arrow USER to ORCHESTRATOR -->
-            <line x1="110" y1="72" x2="198" y2="72" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
-            <text x="155" y="65" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">request</text>
+            <line x1="110" y1="72" x2="198" y2="72" stroke="#4a9eff" stroke-width="1.2" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
+            <text x="155" y="65" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#94a3b8">request</text>
             <!-- Arrow ORCHESTRATOR to USER -->
-            <line x1="200" y1="88" x2="110" y2="88" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ma-arrow-dim)"/>
-            <text x="155" y="100" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">response</text>
+            <line x1="200" y1="88" x2="110" y2="88" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ma-arrow-dim)"/>
+            <text x="155" y="100" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#94a3b8">response</text>
             <!-- ORCHESTRATOR box -->
-            <rect x="200" y="40" width="300" height="80" rx="8" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="2" stroke-dasharray="8 4" filter="url(#ma-glow)"/>
-            <text x="350" y="70" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#f5f5f5">ORCHESTRATOR</text>
-            <text x="350" y="88" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#a0a0a0">Routes &amp; coordinates</text>
+            <rect x="200" y="40" width="300" height="80" rx="8" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-width="2" stroke-dasharray="8 4" filter="url(#ma-glow)"/>
+            <text x="350" y="70" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#e2e8f0">ORCHESTRATOR</text>
+            <text x="350" y="88" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#94a3b8">Routes &amp; coordinates</text>
             <!-- Step arrows down to workers -->
-            <line x1="255" y1="120" x2="145" y2="170" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
-            <text x="190" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">1</text>
-            <line x1="310" y1="120" x2="310" y2="170" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
-            <text x="318" y="148" text-anchor="start" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">2</text>
-            <line x1="390" y1="120" x2="455" y2="170" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
-            <text x="430" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">3</text>
-            <line x1="445" y1="120" x2="590" y2="170" stroke="#A100FF" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
-            <text x="530" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">4</text>
+            <line x1="255" y1="120" x2="145" y2="170" stroke="#4a9eff" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
+            <text x="190" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#4a9eff">1</text>
+            <line x1="310" y1="120" x2="310" y2="170" stroke="#4a9eff" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
+            <text x="318" y="148" text-anchor="start" font-family="JetBrains Mono,monospace" font-size="8" fill="#4a9eff">2</text>
+            <line x1="390" y1="120" x2="455" y2="170" stroke="#4a9eff" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
+            <text x="430" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#4a9eff">3</text>
+            <line x1="445" y1="120" x2="590" y2="170" stroke="#4a9eff" stroke-width="1" stroke-dasharray="6 4" marker-end="url(#ma-arrow)"/>
+            <text x="530" y="140" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#4a9eff">4</text>
             <!-- Worker 1: SCHEMA AGENT -->
-            <rect x="75" y="172" width="140" height="55" rx="5" fill="rgba(45,212,191,0.10)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="5 3"/>
-            <text x="145" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">SCHEMA AGENT</text>
-            <text x="145" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Discovers tables</text>
+            <rect x="75" y="172" width="140" height="55" rx="5" fill="rgba(45,212,191,0.10)" stroke="#2dd4bf" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <text x="145" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#e2e8f0">SCHEMA AGENT</text>
+            <text x="145" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#94a3b8">Discovers tables</text>
             <!-- Worker 2: SQL AGENT -->
-            <rect x="230" y="172" width="140" height="55" rx="5" fill="rgba(74,158,255,0.10)" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="5 3"/>
-            <text x="300" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">SQL AGENT</text>
-            <text x="300" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Generates queries</text>
+            <rect x="230" y="172" width="140" height="55" rx="5" fill="rgba(74,158,255,0.10)" stroke="#4a9eff" stroke-width="1.2" stroke-dasharray="5 3"/>
+            <text x="300" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#e2e8f0">SQL AGENT</text>
+            <text x="300" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#94a3b8">Generates queries</text>
             <!-- Worker 3: VALIDATION AGENT -->
             <rect x="385" y="172" width="140" height="55" rx="5" fill="rgba(245,158,11,0.10)" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3"/>
-            <text x="455" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">VALIDATION AGENT</text>
-            <text x="455" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Checks results</text>
+            <text x="455" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#e2e8f0">VALIDATION AGENT</text>
+            <text x="455" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#94a3b8">Checks results</text>
             <!-- Worker 4: FORMAT AGENT -->
             <rect x="540" y="172" width="140" height="55" rx="5" fill="rgba(16,185,129,0.10)" stroke="#10b981" stroke-width="1.2" stroke-dasharray="5 3"/>
-            <text x="610" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#f5f5f5">FORMAT AGENT</text>
-            <text x="610" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Builds response</text>
+            <text x="610" y="192" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#e2e8f0">FORMAT AGENT</text>
+            <text x="610" y="207" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#94a3b8">Builds response</text>
             <!-- Result arrows back up -->
-            <line x1="145" y1="172" x2="265" y2="120" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
-            <text x="195" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">result</text>
-            <line x1="300" y1="172" x2="340" y2="120" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
-            <text x="328" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">result</text>
-            <line x1="455" y1="172" x2="400" y2="120" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
-            <text x="435" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">result</text>
-            <line x1="590" y1="172" x2="460" y2="120" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
-            <text x="535" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#a0a0a0">result</text>
+            <line x1="145" y1="172" x2="265" y2="120" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
+            <text x="195" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#94a3b8">result</text>
+            <line x1="300" y1="172" x2="340" y2="120" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
+            <text x="328" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#94a3b8">result</text>
+            <line x1="455" y1="172" x2="400" y2="120" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
+            <text x="435" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#94a3b8">result</text>
+            <line x1="590" y1="172" x2="460" y2="120" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3 3" marker-end="url(#ma-arrow-dim)"/>
+            <text x="535" y="155" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#94a3b8">result</text>
             <!-- MEMORY STORE cylinder -->
             <ellipse cx="350" cy="282" rx="120" ry="12" fill="none" stroke="#334155" stroke-width="1.2" stroke-dasharray="5 3"/>
             <rect x="230" y="282" width="240" height="40" fill="rgba(51,65,85,0.08)" stroke="none"/>
             <line x1="230" y1="282" x2="230" y2="322" stroke="#334155" stroke-width="1.2" stroke-dasharray="5 3"/>
             <line x1="470" y1="282" x2="470" y2="322" stroke="#334155" stroke-width="1.2" stroke-dasharray="5 3"/>
             <ellipse cx="350" cy="322" rx="120" ry="12" fill="none" stroke="#334155" stroke-width="1.2" stroke-dasharray="5 3"/>
-            <text x="350" y="306" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#a0a0a0">MEMORY STORE</text>
+            <text x="350" y="306" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="10" fill="#94a3b8">MEMORY STORE</text>
             <!-- Dashed lines from workers to memory -->
             <line x1="145" y1="227" x2="280" y2="275" stroke="#334155" stroke-width="0.8" stroke-dasharray="3 3"/>
             <line x1="300" y1="227" x2="330" y2="275" stroke="#334155" stroke-width="0.8" stroke-dasharray="3 3"/>
@@ -316,7 +316,7 @@
         <section class="section pattern-section">
           <div class="pattern-header reveal">
             <div class="pattern-header__icon" style="border-color: var(--stroke-primary);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#A100FF" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#4a9eff" stroke-width="1.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </div>
             <div>
               <h2 style="margin: 0;">Sequential Handoff</h2>
@@ -335,41 +335,41 @@
             <svg viewBox="0 0 640 120" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="seqGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#2a2a2a" stroke-width="0.4"/>
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1a2d4a" stroke-width="0.4"/>
                 </pattern>
                 <filter id="gB1"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
                 <marker id="aSeq" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1"/>
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#4a9eff" stroke-width="1"/>
                 </marker>
               </defs>
               <rect width="640" height="120" fill="url(#seqGrid)"/>
 
               <!-- Request -->
-              <rect x="10" y="35" width="80" height="50" rx="4" fill="#0d0d0d" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="4 2"/>
-              <text x="50" y="57" text-anchor="middle" class="agent-node" style="fill:#a0a0a0">Request</text>
+              <rect x="10" y="35" width="80" height="50" rx="4" fill="#0f1f38" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 2"/>
+              <text x="50" y="57" text-anchor="middle" class="agent-node" style="fill:#94a3b8">Request</text>
               <text x="50" y="72" text-anchor="middle" class="agent-sublabel">Order</text>
 
               <!-- Arrow 1 -->
-              <line x1="95" y1="60" x2="155" y2="60" stroke="#A100FF" stroke-width="1.5" class="flow-line d1" marker-end="url(#aSeq)" filter="url(#gB1)"/>
+              <line x1="95" y1="60" x2="155" y2="60" stroke="#4a9eff" stroke-width="1.5" class="flow-line d1" marker-end="url(#aSeq)" filter="url(#gB1)"/>
 
               <!-- Agent A -->
-              <rect x="160" y="35" width="120" height="50" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <rect x="160" y="35" width="120" height="50" rx="4" fill="#0f1f38" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="6 3"/>
               <text x="220" y="55" text-anchor="middle" class="agent-node">Inventory Agent</text>
               <text x="220" y="70" text-anchor="middle" class="agent-sublabel">Check stock</text>
 
               <!-- Arrow 2 -->
-              <line x1="285" y1="60" x2="345" y2="60" stroke="#A100FF" stroke-width="1.5" class="flow-line d2" marker-end="url(#aSeq)" filter="url(#gB1)"/>
+              <line x1="285" y1="60" x2="345" y2="60" stroke="#4a9eff" stroke-width="1.5" class="flow-line d2" marker-end="url(#aSeq)" filter="url(#gB1)"/>
 
               <!-- Agent B -->
-              <rect x="350" y="35" width="120" height="50" rx="4" fill="#0d0d0d" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6 3"/>
-              <text x="410" y="55" text-anchor="middle" class="agent-node" style="fill:#CC00FF">Pricing Agent</text>
+              <rect x="350" y="35" width="120" height="50" rx="4" fill="#0f1f38" stroke="#2dd4bf" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="410" y="55" text-anchor="middle" class="agent-node" style="fill:#2dd4bf">Pricing Agent</text>
               <text x="410" y="70" text-anchor="middle" class="agent-sublabel">Apply discounts</text>
 
               <!-- Arrow 3 -->
-              <line x1="475" y1="60" x2="535" y2="60" stroke="#A100FF" stroke-width="1.5" class="flow-line d3" marker-end="url(#aSeq)" filter="url(#gB1)"/>
+              <line x1="475" y1="60" x2="535" y2="60" stroke="#4a9eff" stroke-width="1.5" class="flow-line d3" marker-end="url(#aSeq)" filter="url(#gB1)"/>
 
               <!-- Agent C -->
-              <rect x="540" y="35" width="90" height="50" rx="4" fill="#0d0d0d" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <rect x="540" y="35" width="90" height="50" rx="4" fill="#0f1f38" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 3"/>
               <text x="585" y="55" text-anchor="middle" class="agent-node" style="fill:#f59e0b">Fulfillment</text>
               <text x="585" y="70" text-anchor="middle" class="agent-sublabel">Ship label</text>
             </svg>
@@ -388,7 +388,7 @@
         <section class="section pattern-section">
           <div class="pattern-header reveal">
             <div class="pattern-header__icon" style="border-color: var(--stroke-secondary);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="#CC00FF" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="8"/><line x1="4" y1="14" x2="4" y2="22"/><line x1="12" y1="14" x2="12" y2="22"/><line x1="20" y1="14" x2="20" y2="22"/><line x1="12" y1="8" x2="4" y2="14"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="12" y1="8" x2="20" y2="14"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#2dd4bf" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="8"/><line x1="4" y1="14" x2="4" y2="22"/><line x1="12" y1="14" x2="12" y2="22"/><line x1="20" y1="14" x2="20" y2="22"/><line x1="12" y1="8" x2="4" y2="14"/><line x1="12" y1="8" x2="12" y2="14"/><line x1="12" y1="8" x2="20" y2="14"/></svg>
             </div>
             <div>
               <h2 style="margin: 0;">Parallel Execution</h2>
@@ -407,54 +407,54 @@
             <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="parGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#2a2a2a" stroke-width="0.4"/>
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1a2d4a" stroke-width="0.4"/>
                 </pattern>
                 <filter id="gB2"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
                 <marker id="aPar" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#CC00FF" stroke-width="1"/>
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#2dd4bf" stroke-width="1"/>
                 </marker>
                 <marker id="aParB" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1"/>
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#4a9eff" stroke-width="1"/>
                 </marker>
               </defs>
               <rect width="640" height="200" fill="url(#parGrid)"/>
 
               <!-- Request -->
-              <rect x="20" y="75" width="100" height="50" rx="4" fill="#0d0d0d" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="4 2"/>
-              <text x="70" y="97" text-anchor="middle" class="agent-node" style="fill:#a0a0a0">Q4 Request</text>
+              <rect x="20" y="75" width="100" height="50" rx="4" fill="#0f1f38" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4 2"/>
+              <text x="70" y="97" text-anchor="middle" class="agent-node" style="fill:#94a3b8">Q4 Request</text>
               <text x="70" y="112" text-anchor="middle" class="agent-sublabel">Fan out</text>
 
               <!-- Fan-out arrows -->
-              <line x1="125" y1="88" x2="210" y2="38" stroke="#CC00FF" stroke-width="1.5" class="flow-line d1" marker-end="url(#aPar)" filter="url(#gB2)"/>
-              <line x1="125" y1="100" x2="210" y2="100" stroke="#CC00FF" stroke-width="1.5" class="flow-line d1" marker-end="url(#aPar)" filter="url(#gB2)"/>
-              <line x1="125" y1="112" x2="210" y2="162" stroke="#CC00FF" stroke-width="1.5" class="flow-line d1" marker-end="url(#aPar)" filter="url(#gB2)"/>
+              <line x1="125" y1="88" x2="210" y2="38" stroke="#2dd4bf" stroke-width="1.5" class="flow-line d1" marker-end="url(#aPar)" filter="url(#gB2)"/>
+              <line x1="125" y1="100" x2="210" y2="100" stroke="#2dd4bf" stroke-width="1.5" class="flow-line d1" marker-end="url(#aPar)" filter="url(#gB2)"/>
+              <line x1="125" y1="112" x2="210" y2="162" stroke="#2dd4bf" stroke-width="1.5" class="flow-line d1" marker-end="url(#aPar)" filter="url(#gB2)"/>
 
               <!-- Agent A -->
-              <rect x="215" y="15" width="130" height="46" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <rect x="215" y="15" width="130" height="46" rx="4" fill="#0f1f38" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="6 3"/>
               <text x="280" y="35" text-anchor="middle" class="agent-node">Sales Agent</text>
               <text x="280" y="49" text-anchor="middle" class="agent-sublabel">Revenue analysis</text>
 
               <!-- Agent B -->
-              <rect x="215" y="77" width="130" height="46" rx="4" fill="#0d0d0d" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6 3"/>
-              <text x="280" y="97" text-anchor="middle" class="agent-node" style="fill:#CC00FF">Inventory Agent</text>
+              <rect x="215" y="77" width="130" height="46" rx="4" fill="#0f1f38" stroke="#2dd4bf" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="280" y="97" text-anchor="middle" class="agent-node" style="fill:#2dd4bf">Inventory Agent</text>
               <text x="280" y="111" text-anchor="middle" class="agent-sublabel">Stock analysis</text>
 
               <!-- Agent C -->
-              <rect x="215" y="139" width="130" height="46" rx="4" fill="#0d0d0d" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <rect x="215" y="139" width="130" height="46" rx="4" fill="#0f1f38" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 3"/>
               <text x="280" y="159" text-anchor="middle" class="agent-node" style="fill:#f59e0b">Customer Agent</text>
               <text x="280" y="173" text-anchor="middle" class="agent-sublabel">Satisfaction data</text>
 
               <!-- PARALLEL label -->
-              <rect x="190" y="87" width="16" height="30" rx="2" fill="rgba(45,212,191,0.15)" stroke="#CC00FF" stroke-width="0.5"/>
-              <text x="198" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="6" fill="#CC00FF" transform="rotate(90 198 96)">PARALLEL</text>
+              <rect x="190" y="87" width="16" height="30" rx="2" fill="rgba(45,212,191,0.15)" stroke="#2dd4bf" stroke-width="0.5"/>
+              <text x="198" y="96" text-anchor="middle" font-family="JetBrains Mono" font-size="6" fill="#2dd4bf" transform="rotate(90 198 96)">PARALLEL</text>
 
               <!-- Merge arrows -->
-              <line x1="350" y1="38" x2="440" y2="88" stroke="#A100FF" stroke-width="1.5" class="flow-line d3" marker-end="url(#aParB)" filter="url(#gB2)"/>
-              <line x1="350" y1="100" x2="440" y2="100" stroke="#A100FF" stroke-width="1.5" class="flow-line d3" marker-end="url(#aParB)" filter="url(#gB2)"/>
-              <line x1="350" y1="162" x2="440" y2="112" stroke="#A100FF" stroke-width="1.5" class="flow-line d3" marker-end="url(#aParB)" filter="url(#gB2)"/>
+              <line x1="350" y1="38" x2="440" y2="88" stroke="#4a9eff" stroke-width="1.5" class="flow-line d3" marker-end="url(#aParB)" filter="url(#gB2)"/>
+              <line x1="350" y1="100" x2="440" y2="100" stroke="#4a9eff" stroke-width="1.5" class="flow-line d3" marker-end="url(#aParB)" filter="url(#gB2)"/>
+              <line x1="350" y1="162" x2="440" y2="112" stroke="#4a9eff" stroke-width="1.5" class="flow-line d3" marker-end="url(#aParB)" filter="url(#gB2)"/>
 
               <!-- Merge Node -->
-              <rect x="445" y="75" width="100" height="50" rx="4" fill="#0d0d0d" stroke="#10b981" stroke-width="2"/>
+              <rect x="445" y="75" width="100" height="50" rx="4" fill="#0f1f38" stroke="#10b981" stroke-width="2"/>
               <text x="495" y="97" text-anchor="middle" class="agent-node" style="fill:#10b981">Merge</text>
               <text x="495" y="112" text-anchor="middle" class="agent-sublabel">Combine results</text>
 
@@ -499,20 +499,20 @@
             <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="supGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#2a2a2a" stroke-width="0.4"/>
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1a2d4a" stroke-width="0.4"/>
                 </pattern>
                 <filter id="gB3"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
                 <marker id="aSup" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
                   <path d="M0,0 L8,3 L0,6" fill="none" stroke="#f59e0b" stroke-width="1"/>
                 </marker>
                 <marker id="aSupR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1"/>
+                  <path d="M0,0 L8,3 L0,6" fill="none" stroke="#4a9eff" stroke-width="1"/>
                 </marker>
               </defs>
               <rect width="640" height="240" fill="url(#supGrid)"/>
 
               <!-- Supervisor -->
-              <rect x="230" y="15" width="180" height="55" rx="4" fill="#0d0d0d" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="230" y="15" width="180" height="55" rx="4" fill="#0f1f38" stroke="#f59e0b" stroke-width="2"/>
               <text x="320" y="38" text-anchor="middle" class="agent-node" style="fill:#f59e0b; font-size: 12px;">Supervisor Agent</text>
               <text x="320" y="55" text-anchor="middle" class="agent-sublabel">Decompose &bull; Delegate &bull; Synthesize</text>
 
@@ -527,24 +527,24 @@
               <text x="445" y="95" class="agent-sublabel" style="fill:#f59e0b;" transform="rotate(25 445 95)">delegate</text>
 
               <!-- SQL Agent -->
-              <rect x="50" y="130" width="140" height="50" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <rect x="50" y="130" width="140" height="50" rx="4" fill="#0f1f38" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="6 3"/>
               <text x="120" y="152" text-anchor="middle" class="agent-node">SQL Agent</text>
               <text x="120" y="168" text-anchor="middle" class="agent-sublabel">Query databases</text>
 
               <!-- Chart Agent -->
-              <rect x="250" y="130" width="140" height="50" rx="4" fill="#0d0d0d" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="6 3"/>
-              <text x="320" y="152" text-anchor="middle" class="agent-node" style="fill:#CC00FF;">Chart Agent</text>
+              <rect x="250" y="130" width="140" height="50" rx="4" fill="#0f1f38" stroke="#2dd4bf" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <text x="320" y="152" text-anchor="middle" class="agent-node" style="fill:#2dd4bf;">Chart Agent</text>
               <text x="320" y="168" text-anchor="middle" class="agent-sublabel">Generate visualizations</text>
 
               <!-- Report Agent -->
-              <rect x="450" y="130" width="140" height="50" rx="4" fill="#0d0d0d" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <rect x="450" y="130" width="140" height="50" rx="4" fill="#0f1f38" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6 3"/>
               <text x="520" y="152" text-anchor="middle" class="agent-node" style="fill:#10b981;">Report Agent</text>
               <text x="520" y="168" text-anchor="middle" class="agent-sublabel">Format narratives</text>
 
               <!-- Return arrows up -->
-              <line x1="120" y1="182" x2="275" y2="215" stroke="#A100FF" stroke-width="1" class="flow-line d4" stroke-dasharray="4 3" filter="url(#gB3)"/>
-              <line x1="320" y1="182" x2="320" y2="215" stroke="#A100FF" stroke-width="1" class="flow-line d5" stroke-dasharray="4 3" filter="url(#gB3)"/>
-              <line x1="520" y1="182" x2="365" y2="215" stroke="#A100FF" stroke-width="1" class="flow-line d6" stroke-dasharray="4 3" filter="url(#gB3)"/>
+              <line x1="120" y1="182" x2="275" y2="215" stroke="#4a9eff" stroke-width="1" class="flow-line d4" stroke-dasharray="4 3" filter="url(#gB3)"/>
+              <line x1="320" y1="182" x2="320" y2="215" stroke="#4a9eff" stroke-width="1" class="flow-line d5" stroke-dasharray="4 3" filter="url(#gB3)"/>
+              <line x1="520" y1="182" x2="365" y2="215" stroke="#4a9eff" stroke-width="1" class="flow-line d6" stroke-dasharray="4 3" filter="url(#gB3)"/>
 
               <!-- Synthesize node -->
               <rect x="250" y="210" width="140" height="24" rx="12" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4 2"/>
@@ -584,7 +584,7 @@
             <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="debGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#2a2a2a" stroke-width="0.4"/>
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1a2d4a" stroke-width="0.4"/>
                 </pattern>
                 <filter id="gB4"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
                 <marker id="aDeb" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
@@ -594,30 +594,30 @@
               <rect width="640" height="220" fill="url(#debGrid)"/>
 
               <!-- Agent Bullish -->
-              <rect x="40" y="30" width="160" height="60" rx="4" fill="#0d0d0d" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <rect x="40" y="30" width="160" height="60" rx="4" fill="#0f1f38" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="6 3"/>
               <text x="120" y="55" text-anchor="middle" class="agent-node">Bullish Forecaster</text>
               <text x="120" y="72" text-anchor="middle" class="agent-sublabel">&ldquo;Q1 will grow 12%&rdquo;</text>
 
               <!-- Agent Conservative -->
-              <rect x="40" y="120" width="160" height="60" rx="4" fill="#0d0d0d" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 3"/>
+              <rect x="40" y="120" width="160" height="60" rx="4" fill="#0f1f38" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6 3"/>
               <text x="120" y="145" text-anchor="middle" class="agent-node" style="fill:#f59e0b;">Conservative Forecaster</text>
               <text x="120" y="162" text-anchor="middle" class="agent-sublabel">&ldquo;Q1 will grow 3%&rdquo;</text>
 
               <!-- Debate arrows -->
-              <path d="M205 60 C250 60, 250 60, 250 90" stroke="#A100FF" stroke-width="1.5" fill="none" class="flow-line d1" stroke-dasharray="5 3" filter="url(#gB4)"/>
+              <path d="M205 60 C250 60, 250 60, 250 90" stroke="#4a9eff" stroke-width="1.5" fill="none" class="flow-line d1" stroke-dasharray="5 3" filter="url(#gB4)"/>
               <path d="M205 150 C250 150, 250 150, 250 120" stroke="#f59e0b" stroke-width="1.5" fill="none" class="flow-line d2" stroke-dasharray="5 3" filter="url(#gB4)"/>
 
               <!-- Debate bubble -->
-              <rect x="240" y="78" width="80" height="54" rx="6" fill="rgba(74,158,255,0.08)" stroke="#a0a0a0" stroke-width="1" stroke-dasharray="3 2"/>
-              <text x="280" y="97" text-anchor="middle" class="agent-sublabel" style="fill:#f5f5f5;">Evidence</text>
-              <text x="280" y="112" text-anchor="middle" class="agent-sublabel" style="fill:#f5f5f5;">Exchange</text>
+              <rect x="240" y="78" width="80" height="54" rx="6" fill="rgba(74,158,255,0.08)" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3 2"/>
+              <text x="280" y="97" text-anchor="middle" class="agent-sublabel" style="fill:#e2e8f0;">Evidence</text>
+              <text x="280" y="112" text-anchor="middle" class="agent-sublabel" style="fill:#e2e8f0;">Exchange</text>
               <text x="280" y="124" text-anchor="middle" class="agent-sublabel" style="font-size:7px;">(multiple rounds)</text>
 
               <!-- Arrow to evaluator -->
               <line x1="325" y1="105" x2="400" y2="105" stroke="#10b981" stroke-width="1.5" class="flow-line d3" marker-end="url(#aDeb)" filter="url(#gB4)"/>
 
               <!-- Evaluator -->
-              <rect x="405" y="70" width="140" height="70" rx="4" fill="#0d0d0d" stroke="#10b981" stroke-width="2"/>
+              <rect x="405" y="70" width="140" height="70" rx="4" fill="#0f1f38" stroke="#10b981" stroke-width="2"/>
               <text x="475" y="97" text-anchor="middle" class="agent-node" style="fill:#10b981; font-size: 12px;">Evaluator</text>
               <text x="475" y="115" text-anchor="middle" class="agent-sublabel">Weighs evidence</text>
               <text x="475" y="128" text-anchor="middle" class="agent-sublabel">Resolves conflicts</text>
@@ -861,11 +861,11 @@
   })();
   </script>
 
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/quiz.js?v=4"></script>
-  <script src="../../js/simulation.js?v=4"></script>
-  <script src="../../js/diagram.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m04-multi-agent');</script>
 </body>
 </html>

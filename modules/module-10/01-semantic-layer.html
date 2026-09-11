@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Semantic Layer for Data Agents &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     /* --- Translation Chain --- */
     .chain-flow {
@@ -84,7 +84,7 @@
       border: 1px dashed var(--stroke-dim);
     }
     .compare-card--before { background: rgba(239, 68, 68, 0.06); border-color: var(--accent-error); }
-    .compare-card--after  { background: rgba(204, 0, 255, 0.06); border-color: var(--accent-success); }
+    .compare-card--after  { background: rgba(45, 212, 191, 0.06); border-color: var(--accent-success); }
     .compare-card__label {
       font-family: var(--font-mono);
       font-size: var(--font-xs);
@@ -133,61 +133,61 @@
         <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;font-family:'JetBrains Mono',monospace;">
           <defs>
             <filter id="sl-glow"><feGaussianBlur stdDeviation="3" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <marker id="sl-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
+            <marker id="sl-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#4a9eff"/></marker>
             <marker id="sl-arrow-up" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto"><path d="M8,0 L0,3 L8,6" fill="#10b981"/></marker>
           </defs>
           <!-- Background -->
           <rect width="700" height="380" rx="8" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
 
           <!-- TOP LAYER: Users -->
-          <text x="350" y="24" text-anchor="middle" fill="#a0a0a0" font-size="9" letter-spacing="0.1em">CONSUMERS</text>
+          <text x="350" y="24" text-anchor="middle" fill="#94a3b8" font-size="9" letter-spacing="0.1em">CONSUMERS</text>
           <!-- CEO -->
-          <rect x="30" y="34" width="180" height="52" rx="6" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
-          <text x="120" y="52" text-anchor="middle" fill="#f5f5f5" font-size="11" font-weight="600">CEO</text>
-          <text x="120" y="72" text-anchor="middle" fill="#a0a0a0" font-size="9">"Q3 revenue?"</text>
+          <rect x="30" y="34" width="180" height="52" rx="6" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="120" y="52" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">CEO</text>
+          <text x="120" y="72" text-anchor="middle" fill="#94a3b8" font-size="9">"Q3 revenue?"</text>
           <!-- Sofia -->
-          <rect x="260" y="34" width="180" height="52" rx="6" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
-          <text x="350" y="52" text-anchor="middle" fill="#f5f5f5" font-size="11" font-weight="600">Sofia (Store #47)</text>
-          <text x="350" y="72" text-anchor="middle" fill="#a0a0a0" font-size="9">"My store's revenue?"</text>
+          <rect x="260" y="34" width="180" height="52" rx="6" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="350" y="52" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">Sofia (Store #47)</text>
+          <text x="350" y="72" text-anchor="middle" fill="#94a3b8" font-size="9">"My store's revenue?"</text>
           <!-- Derek -->
-          <rect x="490" y="34" width="180" height="52" rx="6" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
-          <text x="580" y="52" text-anchor="middle" fill="#f5f5f5" font-size="11" font-weight="600">Derek (CFO)</text>
-          <text x="580" y="72" text-anchor="middle" fill="#a0a0a0" font-size="9">"Net revenue?"</text>
+          <rect x="490" y="34" width="180" height="52" rx="6" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="580" y="52" text-anchor="middle" fill="#e2e8f0" font-size="11" font-weight="600">Derek (CFO)</text>
+          <text x="580" y="72" text-anchor="middle" fill="#94a3b8" font-size="9">"Net revenue?"</text>
 
           <!-- Arrows down: Users → Semantic Layer -->
-          <line x1="120" y1="86" x2="120" y2="120" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
-          <line x1="350" y1="86" x2="350" y2="120" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
-          <line x1="580" y1="86" x2="580" y2="120" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
+          <line x1="120" y1="86" x2="120" y2="120" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
+          <line x1="350" y1="86" x2="350" y2="120" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
+          <line x1="580" y1="86" x2="580" y2="120" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
 
           <!-- MIDDLE LAYER: Semantic Layer -->
-          <rect x="40" y="120" width="620" height="110" rx="8" fill="rgba(45,212,191,0.06)" stroke="#CC00FF" stroke-width="2" stroke-dasharray="6,3" filter="url(#sl-glow)"/>
-          <text x="350" y="140" text-anchor="middle" fill="#CC00FF" font-size="13" font-weight="700" letter-spacing="0.08em">SEMANTIC LAYER</text>
+          <rect x="40" y="120" width="620" height="110" rx="8" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="2" stroke-dasharray="6,3" filter="url(#sl-glow)"/>
+          <text x="350" y="140" text-anchor="middle" fill="#2dd4bf" font-size="13" font-weight="700" letter-spacing="0.08em">SEMANTIC LAYER</text>
           <!-- Metric definition card -->
           <rect x="70" y="150" width="400" height="34" rx="4" fill="rgba(45,212,191,0.1)" stroke="#334155" stroke-width="1" stroke-dasharray="3,2"/>
-          <text x="80" y="171" fill="#CC00FF" font-size="10" font-weight="600">revenue</text>
-          <text x="140" y="171" fill="#a0a0a0" font-size="10">= SUM(total_amount) WHERE status='completed'</text>
+          <text x="80" y="171" fill="#2dd4bf" font-size="10" font-weight="600">revenue</text>
+          <text x="140" y="171" fill="#94a3b8" font-size="10">= SUM(total_amount) WHERE status='completed'</text>
           <!-- Dimension labels -->
-          <text x="70" y="204" fill="#a0a0a0" font-size="9">Dimensions: region, store, quarter</text>
-          <text x="70" y="218" fill="#a0a0a0" font-size="9">Fiscal Q3 = Jul - Sep</text>
+          <text x="70" y="204" fill="#94a3b8" font-size="9">Dimensions: region, store, quarter</text>
+          <text x="70" y="218" fill="#94a3b8" font-size="9">Fiscal Q3 = Jul - Sep</text>
           <!-- Side annotation -->
           <rect x="500" y="155" width="140" height="50" rx="4" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2"/>
           <text x="570" y="175" text-anchor="middle" fill="#10b981" font-size="9" font-weight="600">SINGLE ANSWER</text>
-          <text x="570" y="193" text-anchor="middle" fill="#f5f5f5" font-size="14" font-weight="700">$43.8M</text>
+          <text x="570" y="193" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">$43.8M</text>
 
           <!-- Arrows down: Semantic Layer → Database -->
-          <line x1="350" y1="230" x2="350" y2="268" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
+          <line x1="350" y1="230" x2="350" y2="268" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="4,2" marker-end="url(#sl-arrow)"/>
 
           <!-- BOTTOM LAYER: Database -->
           <!-- Cylinder shape -->
-          <ellipse cx="350" cy="278" rx="130" ry="14" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+          <ellipse cx="350" cy="278" rx="130" ry="14" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,2"/>
           <rect x="220" y="278" width="260" height="50" fill="rgba(74,158,255,0.08)" stroke="none"/>
-          <line x1="220" y1="278" x2="220" y2="328" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
-          <line x1="480" y1="278" x2="480" y2="328" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
-          <ellipse cx="350" cy="328" rx="130" ry="14" fill="rgba(74,158,255,0.08)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
-          <text x="350" y="300" text-anchor="middle" fill="#A100FF" font-size="11" font-weight="600">PostgreSQL</text>
-          <text x="290" y="318" text-anchor="middle" fill="#a0a0a0" font-size="8">fact_sales</text>
-          <text x="350" y="318" text-anchor="middle" fill="#a0a0a0" font-size="8">dim_stores</text>
-          <text x="410" y="318" text-anchor="middle" fill="#a0a0a0" font-size="8">dim_dates</text>
+          <line x1="220" y1="278" x2="220" y2="328" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="480" y1="278" x2="480" y2="328" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,2"/>
+          <ellipse cx="350" cy="328" rx="130" ry="14" fill="rgba(74,158,255,0.08)" stroke="#4a9eff" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="350" y="300" text-anchor="middle" fill="#4a9eff" font-size="11" font-weight="600">PostgreSQL</text>
+          <text x="290" y="318" text-anchor="middle" fill="#94a3b8" font-size="8">fact_sales</text>
+          <text x="350" y="318" text-anchor="middle" fill="#94a3b8" font-size="8">dim_stores</text>
+          <text x="410" y="318" text-anchor="middle" fill="#94a3b8" font-size="8">dim_dates</text>
 
           <!-- Return arrows (up) -->
           <line x1="140" y1="120" x2="140" y2="90" stroke="#10b981" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#sl-arrow-up)"/>
@@ -508,8 +508,8 @@
     </footer>
 
   </div>
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m10-semantic-layer');</script>
 </body>
 </html>

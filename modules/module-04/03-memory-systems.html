@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Memory Systems &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     /* --- Memory Layer Cards --- */
     .memory-icon {
@@ -137,7 +137,7 @@
     .classify-btn:hover {
       border-color: var(--stroke-primary);
       color: var(--text-primary);
-      background: rgba(161,0,255,0.06);
+      background: rgba(74, 158, 255, 0.05);
     }
     .classify-btn.correct {
       border-color: var(--accent-success);
@@ -268,54 +268,54 @@
           <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
             <defs>
               <filter id="mem-glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-              <marker id="mem-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
-              <marker id="mem-arrow-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="mem-arrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#4a9eff"/></marker>
+              <marker id="mem-arrow-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#2dd4bf"/></marker>
               <marker id="mem-arrow-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker>
             </defs>
             <pattern id="mem-grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(74,158,255,0.05)" stroke-width="0.5"/></pattern>
             <rect width="700" height="380" fill="rgba(15,23,42,0.6)" rx="8"/>
             <rect width="700" height="380" fill="url(#mem-grid)" rx="8"/>
             <!-- SHORT-TERM MEMORY band -->
-            <rect x="30" y="20" width="480" height="90" rx="6" fill="rgba(74,158,255,0.06)" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="6 4"/>
-            <text x="50" y="42" font-family="JetBrains Mono,monospace" font-size="11" fill="#A100FF">SHORT-TERM MEMORY</text>
-            <text x="50" y="60" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Current conversation (last 8 turns)</text>
-            <text x="50" y="75" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Active query context</text>
-            <text x="50" y="90" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Working scratchpad</text>
+            <rect x="30" y="20" width="480" height="90" rx="6" fill="rgba(74,158,255,0.06)" stroke="#4a9eff" stroke-width="1.2" stroke-dasharray="6 4"/>
+            <text x="50" y="42" font-family="JetBrains Mono,monospace" font-size="11" fill="#4a9eff">SHORT-TERM MEMORY</text>
+            <text x="50" y="60" font-family="JetBrains Mono,monospace" font-size="9" fill="#94a3b8">Current conversation (last 8 turns)</text>
+            <text x="50" y="75" font-family="JetBrains Mono,monospace" font-size="9" fill="#94a3b8">Active query context</text>
+            <text x="50" y="90" font-family="JetBrains Mono,monospace" font-size="9" fill="#94a3b8">Working scratchpad</text>
             <!-- Retention label -->
-            <rect x="420" y="28" width="70" height="20" rx="3" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="0.8" stroke-dasharray="3 2"/>
-            <text x="455" y="42" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#A100FF">Session</text>
+            <rect x="420" y="28" width="70" height="20" rx="3" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-width="0.8" stroke-dasharray="3 2"/>
+            <text x="455" y="42" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#4a9eff">Session</text>
             <!-- EPISODIC MEMORY band -->
-            <rect x="30" y="125" width="480" height="90" rx="6" fill="rgba(45,212,191,0.06)" stroke="#CC00FF" stroke-width="1.2" stroke-dasharray="6 4"/>
-            <text x="50" y="147" font-family="JetBrains Mono,monospace" font-size="11" fill="#CC00FF">EPISODIC MEMORY</text>
-            <text x="50" y="165" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Past successful queries</text>
-            <text x="50" y="180" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">User preferences</text>
-            <text x="50" y="195" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Error patterns learned</text>
+            <rect x="30" y="125" width="480" height="90" rx="6" fill="rgba(45,212,191,0.06)" stroke="#2dd4bf" stroke-width="1.2" stroke-dasharray="6 4"/>
+            <text x="50" y="147" font-family="JetBrains Mono,monospace" font-size="11" fill="#2dd4bf">EPISODIC MEMORY</text>
+            <text x="50" y="165" font-family="JetBrains Mono,monospace" font-size="9" fill="#94a3b8">Past successful queries</text>
+            <text x="50" y="180" font-family="JetBrains Mono,monospace" font-size="9" fill="#94a3b8">User preferences</text>
+            <text x="50" y="195" font-family="JetBrains Mono,monospace" font-size="9" fill="#94a3b8">Error patterns learned</text>
             <!-- Retention label -->
-            <rect x="405" y="133" width="85" height="20" rx="3" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-width="0.8" stroke-dasharray="3 2"/>
-            <text x="447" y="147" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#CC00FF">Days–Weeks</text>
+            <rect x="405" y="133" width="85" height="20" rx="3" fill="rgba(45,212,191,0.12)" stroke="#2dd4bf" stroke-width="0.8" stroke-dasharray="3 2"/>
+            <text x="447" y="147" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#2dd4bf">Days–Weeks</text>
             <!-- LONG-TERM MEMORY band -->
             <rect x="30" y="230" width="480" height="90" rx="6" fill="rgba(245,158,11,0.06)" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="6 4"/>
             <text x="50" y="252" font-family="JetBrains Mono,monospace" font-size="11" fill="#f59e0b">LONG-TERM MEMORY</text>
-            <text x="50" y="270" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Schema knowledge</text>
-            <text x="50" y="285" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Business glossary</text>
-            <text x="50" y="300" font-family="JetBrains Mono,monospace" font-size="9" fill="#a0a0a0">Metric definitions</text>
+            <text x="50" y="270" font-family="JetBrains Mono,monospace" font-size="9" fill="#94a3b8">Schema knowledge</text>
+            <text x="50" y="285" font-family="JetBrains Mono,monospace" font-size="9" fill="#94a3b8">Business glossary</text>
+            <text x="50" y="300" font-family="JetBrains Mono,monospace" font-size="9" fill="#94a3b8">Metric definitions</text>
             <!-- Retention label -->
             <rect x="405" y="238" width="85" height="20" rx="3" fill="rgba(245,158,11,0.12)" stroke="#f59e0b" stroke-width="0.8" stroke-dasharray="3 2"/>
             <text x="447" y="252" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#f59e0b">Permanent</text>
             <!-- DATAPULSE box on right -->
-            <rect x="560" y="120" width="120" height="100" rx="8" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="2" stroke-dasharray="8 4" filter="url(#mem-glow)"/>
-            <text x="620" y="160" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#f5f5f5">DATAPULSE</text>
-            <text x="620" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#a0a0a0">Agent Core</text>
+            <rect x="560" y="120" width="120" height="100" rx="8" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-width="2" stroke-dasharray="8 4" filter="url(#mem-glow)"/>
+            <text x="620" y="160" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="#e2e8f0">DATAPULSE</text>
+            <text x="620" y="178" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" fill="#94a3b8">Agent Core</text>
             <!-- Arrows DATAPULSE to/from bands -->
-            <line x1="560" y1="140" x2="510" y2="65" stroke="#A100FF" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#mem-arrow)"/>
-            <line x1="510" y1="55" x2="560" y2="132" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3"/>
-            <line x1="560" y1="165" x2="510" y2="165" stroke="#CC00FF" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#mem-arrow-teal)"/>
-            <line x1="510" y1="175" x2="560" y2="175" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3"/>
+            <line x1="560" y1="140" x2="510" y2="65" stroke="#4a9eff" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#mem-arrow)"/>
+            <line x1="510" y1="55" x2="560" y2="132" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3 3"/>
+            <line x1="560" y1="165" x2="510" y2="165" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#mem-arrow-teal)"/>
+            <line x1="510" y1="175" x2="560" y2="175" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3 3"/>
             <line x1="560" y1="195" x2="510" y2="275" stroke="#f59e0b" stroke-width="1" stroke-dasharray="5 3" marker-end="url(#mem-arrow-amber)"/>
-            <line x1="510" y1="265" x2="560" y2="200" stroke="#a0a0a0" stroke-width="0.8" stroke-dasharray="3 3"/>
+            <line x1="510" y1="265" x2="560" y2="200" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3 3"/>
             <!-- Read/Write labels -->
-            <text x="540" y="95" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#A100FF">read/write</text>
-            <text x="540" y="158" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#CC00FF">read/write</text>
+            <text x="540" y="95" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#4a9eff">read/write</text>
+            <text x="540" y="158" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#2dd4bf">read/write</text>
             <text x="540" y="240" text-anchor="middle" font-family="Inter,sans-serif" font-size="7" fill="#f59e0b">read/write</text>
             <!-- Bottom scenario label -->
             <text x="350" y="352" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#334155">Sofia Torres: DataPulse remembers she always asks about Store #47</text>
@@ -350,12 +350,12 @@
             </div>
             <div class="bp-card__body">
               <svg class="memory-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <rect x="6" y="6" width="36" height="36" rx="4" stroke="#A100FF" stroke-dasharray="4 3"/>
-                <circle cx="24" cy="24" r="8" stroke="#A100FF"/>
-                <line x1="24" y1="16" x2="24" y2="12" stroke="#A100FF" stroke-dasharray="2 2"/>
-                <line x1="24" y1="36" x2="24" y2="32" stroke="#A100FF" stroke-dasharray="2 2"/>
-                <line x1="16" y1="24" x2="12" y2="24" stroke="#A100FF" stroke-dasharray="2 2"/>
-                <line x1="36" y1="24" x2="32" y2="24" stroke="#A100FF" stroke-dasharray="2 2"/>
+                <rect x="6" y="6" width="36" height="36" rx="4" stroke="#4a9eff" stroke-dasharray="4 3"/>
+                <circle cx="24" cy="24" r="8" stroke="#4a9eff"/>
+                <line x1="24" y1="16" x2="24" y2="12" stroke="#4a9eff" stroke-dasharray="2 2"/>
+                <line x1="24" y1="36" x2="24" y2="32" stroke="#4a9eff" stroke-dasharray="2 2"/>
+                <line x1="16" y1="24" x2="12" y2="24" stroke="#4a9eff" stroke-dasharray="2 2"/>
+                <line x1="36" y1="24" x2="32" y2="24" stroke="#4a9eff" stroke-dasharray="2 2"/>
               </svg>
               <p><strong>The current context window.</strong> What the agent is actively processing right now &mdash; the live registers of its thought process.</p>
               <div class="badge badge--blue" style="margin: var(--space-3) 0;" data-tip="Working memory — the live context window holding the current query, tools, and reasoning state">Current Context</div>
@@ -377,11 +377,11 @@
             </div>
             <div class="bp-card__body">
               <svg class="memory-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                <rect x="8" y="4" width="32" height="40" rx="3" stroke="#CC00FF" stroke-dasharray="4 3"/>
-                <line x1="14" y1="14" x2="34" y2="14" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3 2"/>
-                <line x1="14" y1="20" x2="30" y2="20" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3 2"/>
-                <line x1="14" y1="26" x2="32" y2="26" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3 2"/>
-                <line x1="14" y1="32" x2="26" y2="32" stroke="#CC00FF" stroke-width="1" stroke-dasharray="3 2"/>
+                <rect x="8" y="4" width="32" height="40" rx="3" stroke="#2dd4bf" stroke-dasharray="4 3"/>
+                <line x1="14" y1="14" x2="34" y2="14" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="14" y1="20" x2="30" y2="20" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="14" y1="26" x2="32" y2="26" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="3 2"/>
+                <line x1="14" y1="32" x2="26" y2="32" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="3 2"/>
               </svg>
               <p><strong>The current conversation.</strong> Conversation history within the current chat session &mdash; recent messages, actions, and preferences the user expressed during this interaction.</p>
               <div class="badge badge--teal" style="margin: var(--space-3) 0;" data-tip="Session memory — conversation history, recent tool calls, and user preferences within this chat">Session Scope</div>
@@ -440,26 +440,26 @@
           <svg class="consolidation-svg" viewBox="0 0 740 260" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <marker id="arrowMarker" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-                <path d="M0,0 L8,3 L0,6" fill="none" stroke="#A100FF" stroke-width="1.2"/>
+                <path d="M0,0 L8,3 L0,6" fill="none" stroke="#4a9eff" stroke-width="1.2"/>
               </marker>
             </defs>
 
             <!-- Phase 1: Session Start -->
-            <rect class="phase-box" x="20" y="40" width="200" height="140" style="stroke: #A100FF;"/>
-            <text class="phase-label" x="120" y="75" style="fill: #A100FF;">Session Start</text>
+            <rect class="phase-box" x="20" y="40" width="200" height="140" style="stroke: #4a9eff;"/>
+            <text class="phase-label" x="120" y="75" style="fill: #4a9eff;">Session Start</text>
             <text class="phase-desc" x="120" y="100">Retrieve relevant</text>
             <text class="phase-desc" x="120" y="115">past sessions</text>
-            <text class="phase-desc" x="120" y="138" style="fill: #A100FF; font-family: var(--font-mono);">&#8594; Add to context</text>
+            <text class="phase-desc" x="120" y="138" style="fill: #4a9eff; font-family: var(--font-mono);">&#8594; Add to context</text>
 
             <!-- Arrow 1 to 2 -->
             <path class="flow-arrow" d="M225,110 C270,110 250,110 275,110"/>
 
             <!-- Phase 2: During Session -->
-            <rect class="phase-box" x="280" y="40" width="200" height="140" style="stroke: #CC00FF;"/>
-            <text class="phase-label" x="380" y="75" style="fill: #CC00FF;">During Session</text>
+            <rect class="phase-box" x="280" y="40" width="200" height="140" style="stroke: #2dd4bf;"/>
+            <text class="phase-label" x="380" y="75" style="fill: #2dd4bf;">During Session</text>
             <text class="phase-desc" x="380" y="100">Store important</text>
             <text class="phase-desc" x="380" y="115">interactions</text>
-            <text class="phase-desc" x="380" y="138" style="fill: #CC00FF; font-family: var(--font-mono);">&#8594; Tag &amp; index</text>
+            <text class="phase-desc" x="380" y="138" style="fill: #2dd4bf; font-family: var(--font-mono);">&#8594; Tag &amp; index</text>
 
             <!-- Arrow 2 to 3 -->
             <path class="flow-arrow" d="M485,110 C530,110 510,110 535,110"/>
@@ -605,11 +605,11 @@
   </div>
 
   <!-- Scripts -->
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/quiz.js?v=4"></script>
-  <script src="../../js/simulation.js?v=4"></script>
-  <script src="../../js/diagram.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/quiz.js"></script>
+  <script src="../../js/simulation.js"></script>
+  <script src="../../js/diagram.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>
     Nav.init('m04-memory-systems');
 

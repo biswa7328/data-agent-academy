@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agentic RAG &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     .vs-table {
       display: grid;
@@ -74,8 +74,8 @@
       font-size: var(--font-xs);
       font-weight: 700;
     }
-    .decision-flow__icon--when { background: rgba(161, 0, 255, 0.15); color: var(--text-accent); border: 1px solid rgba(161, 0, 255, 0.3); }
-    .decision-flow__icon--what { background: rgba(204, 0, 255, 0.15); color: var(--text-teal); border: 1px solid rgba(204, 0, 255, 0.3); }
+    .decision-flow__icon--when { background: rgba(74, 158, 255, 0.15); color: var(--text-accent); border: 1px solid rgba(74, 158, 255, 0.3); }
+    .decision-flow__icon--what { background: rgba(45, 212, 191, 0.15); color: var(--text-teal); border: 1px solid rgba(45, 212, 191, 0.3); }
     .decision-flow__icon--how { background: rgba(245, 158, 11, 0.15); color: var(--accent-warning); border: 1px solid rgba(245, 158, 11, 0.3); }
     .decision-flow__text {
       flex: 1;
@@ -192,41 +192,41 @@
                 <feGaussianBlur stdDeviation="3.5" result="blur"/>
                 <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
               </filter>
-              <marker id="aB4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#A100FF"/></marker>
-              <marker id="aT4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#CC00FF"/></marker>
+              <marker id="aB4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#4a9eff"/></marker>
+              <marker id="aT4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#2dd4bf"/></marker>
               <marker id="aA4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#f59e0b"/></marker>
               <marker id="aG4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#10b981"/></marker>
               <marker id="aR4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#ef4444"/></marker>
-              <marker id="aD4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a0a0a0"/></marker>
+              <marker id="aD4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#94a3b8"/></marker>
               <style>
-                .al { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 9px; }
-                .as { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; font-size: 7.5px; }
-                .at { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 10.5px; font-weight: 600; }
+                .al { font-family: 'JetBrains Mono', monospace; fill: #e2e8f0; font-size: 9px; }
+                .as { font-family: 'JetBrains Mono', monospace; fill: #94a3b8; font-size: 7.5px; }
+                .at { font-family: 'JetBrains Mono', monospace; fill: #e2e8f0; font-size: 10.5px; font-weight: 600; }
               </style>
             </defs>
 
             <!-- QUERY box at top -->
-            <rect x="295" y="15" width="110" height="36" rx="4" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5"/>
-            <text x="350" y="38" text-anchor="middle" class="at" style="fill:#A100FF;">QUERY</text>
+            <rect x="295" y="15" width="110" height="36" rx="4" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="1.5"/>
+            <text x="350" y="38" text-anchor="middle" class="at" style="fill:#4a9eff;">QUERY</text>
 
             <!-- Arrow down to Agent -->
-            <line x1="350" y1="53" x2="350" y2="85" stroke="#A100FF" stroke-width="1.5" marker-end="url(#aB4)"/>
+            <line x1="350" y1="53" x2="350" y2="85" stroke="#4a9eff" stroke-width="1.5" marker-end="url(#aB4)"/>
 
             <!-- AGENT REASONING central box (glowing) -->
-            <rect x="260" y="90" width="180" height="56" rx="5" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="2" filter="url(#glowA)"/>
-            <text x="350" y="115" text-anchor="middle" class="at" style="fill:#A100FF;">AGENT REASONING</text>
-            <text x="350" y="131" text-anchor="middle" class="as" style="fill:#a0a0a0;">plan / decide / evaluate</text>
+            <rect x="260" y="90" width="180" height="56" rx="5" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-width="2" filter="url(#glowA)"/>
+            <text x="350" y="115" text-anchor="middle" class="at" style="fill:#4a9eff;">AGENT REASONING</text>
+            <text x="350" y="131" text-anchor="middle" class="as" style="fill:#94a3b8;">plan / decide / evaluate</text>
 
             <!-- Three arrows OUT from Agent to action boxes -->
 
             <!-- Left arrow to RETRIEVE -->
-            <line x1="280" y1="148" x2="140" y2="200" stroke="#CC00FF" stroke-width="1.5" marker-end="url(#aT4)"/>
+            <line x1="280" y1="148" x2="140" y2="200" stroke="#2dd4bf" stroke-width="1.5" marker-end="url(#aT4)"/>
             <!-- RETRIEVE box -->
-            <rect x="60" y="200" width="120" height="48" rx="4" fill="rgba(45,212,191,0.1)" stroke="#CC00FF" stroke-width="1.5"/>
-            <text x="120" y="221" text-anchor="middle" class="al" style="fill:#CC00FF;">RETRIEVE</text>
+            <rect x="60" y="200" width="120" height="48" rx="4" fill="rgba(45,212,191,0.1)" stroke="#2dd4bf" stroke-width="1.5"/>
+            <text x="120" y="221" text-anchor="middle" class="al" style="fill:#2dd4bf;">RETRIEVE</text>
             <text x="120" y="236" text-anchor="middle" class="as">vector + keyword</text>
             <!-- Return arrow back to Agent -->
-            <path d="M60,224 Q30,180 258,118" fill="none" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#aT4)"/>
+            <path d="M60,224 Q30,180 258,118" fill="none" stroke="#2dd4bf" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#aT4)"/>
 
             <!-- Center arrow to TRANSFORM -->
             <line x1="350" y1="148" x2="350" y2="196" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#aA4)"/>
@@ -247,7 +247,7 @@
             <path d="M640,224 Q670,180 442,118" fill="none" stroke="#10b981" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#aG4)"/>
 
             <!-- Decision diamond below -->
-            <line x1="350" y1="250" x2="350" y2="280" stroke="#a0a0a0" stroke-width="1.2" marker-end="url(#aD4)"/>
+            <line x1="350" y1="250" x2="350" y2="280" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#aD4)"/>
             <polygon points="350,286 385,310 350,334 315,310" fill="rgba(167,139,250,0.1)" stroke="#a78bfa" stroke-width="1.5"/>
             <text x="350" y="313" text-anchor="middle" class="as" style="fill:#a78bfa;font-size:8px;">Sufficient?</text>
 
@@ -269,7 +269,7 @@
 
             <!-- Bottom label -->
             <rect x="90" y="356" width="520" height="28" rx="4" fill="rgba(74,158,255,0.04)" stroke="#334155" stroke-width="1" stroke-dasharray="6,4"/>
-            <text x="350" y="374" text-anchor="middle" class="as" style="fill:#A100FF;font-size:8px;">The agent decides WHAT to retrieve, WHEN to stop, and WHETHER to retry</text>
+            <text x="350" y="374" text-anchor="middle" class="as" style="fill:#4a9eff;font-size:8px;">The agent decides WHAT to retrieve, WHEN to stop, and WHETHER to retry</text>
           </svg>
         </div>
 
@@ -470,8 +470,8 @@
     </main>
   </div>
 
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m06-agentic-rag');</script>
 </body>
 </html>

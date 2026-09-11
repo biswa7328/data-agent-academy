@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Context Engineering &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     .budget-bar {
       display: flex;
@@ -27,8 +27,8 @@
       color: var(--bg-primary);
       transition: width 0.6s ease;
     }
-    .budget-bar__segment--system { background: #A100FF; }
-    .budget-bar__segment--schema { background: #CC00FF; }
+    .budget-bar__segment--system { background: #4a9eff; }
+    .budget-bar__segment--schema { background: #2dd4bf; }
     .budget-bar__segment--history { background: #f59e0b; }
     .budget-bar__segment--rag { background: #a78bfa; }
     .budget-bar__segment--reasoning { background: #fb7185; }
@@ -134,11 +134,11 @@
                 <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
               </filter>
               <style>
-                .svg-label { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 9px; }
-                .svg-label-sm { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; font-size: 7.5px; }
-                .svg-title { font-family: 'JetBrains Mono', monospace; fill: #f5f5f5; font-size: 11px; font-weight: 600; }
-                .svg-dim { font-family: 'JetBrains Mono', monospace; fill: #a0a0a0; font-size: 8px; }
-                .svg-accent { font-family: 'JetBrains Mono', monospace; fill: #A100FF; font-size: 9px; font-weight: 600; }
+                .svg-label { font-family: 'JetBrains Mono', monospace; fill: #e2e8f0; font-size: 9px; }
+                .svg-label-sm { font-family: 'JetBrains Mono', monospace; fill: #94a3b8; font-size: 7.5px; }
+                .svg-title { font-family: 'JetBrains Mono', monospace; fill: #e2e8f0; font-size: 11px; font-weight: 600; }
+                .svg-dim { font-family: 'JetBrains Mono', monospace; fill: #94a3b8; font-size: 8px; }
+                .svg-accent { font-family: 'JetBrains Mono', monospace; fill: #4a9eff; font-size: 9px; font-weight: 600; }
               </style>
             </defs>
 
@@ -147,18 +147,18 @@
             <line x1="640" y1="30" x2="640" y2="100" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
             <line x1="60" y1="35" x2="640" y2="35" stroke="#334155" stroke-width="1" stroke-dasharray="4,3"/>
             <!-- Corner brackets -->
-            <polyline points="60,45 60,35 70,35" fill="none" stroke="#A100FF" stroke-width="1.5"/>
-            <polyline points="630,35 640,35 640,45" fill="none" stroke="#A100FF" stroke-width="1.5"/>
+            <polyline points="60,45 60,35 70,35" fill="none" stroke="#4a9eff" stroke-width="1.5"/>
+            <polyline points="630,35 640,35 640,45" fill="none" stroke="#4a9eff" stroke-width="1.5"/>
             <text x="350" y="30" text-anchor="middle" class="svg-dim">128K CONTEXT WINDOW</text>
 
             <!-- Optimized budget bar (top) -->
             <text x="60" y="58" class="svg-title">OPTIMIZED BUDGET</text>
             <!-- System Prompt 10% -->
-            <rect x="60" y="65" width="58" height="30" rx="2" fill="rgba(74,158,255,0.2)" stroke="#A100FF" stroke-width="1.5"/>
+            <rect x="60" y="65" width="58" height="30" rx="2" fill="rgba(74,158,255,0.2)" stroke="#4a9eff" stroke-width="1.5"/>
             <text x="89" y="84" text-anchor="middle" class="svg-label-sm">System</text>
             <text x="89" y="93" text-anchor="middle" class="svg-label-sm">10%</text>
             <!-- Schema Context 20% -->
-            <rect x="120" y="65" width="116" height="30" rx="2" fill="rgba(45,212,191,0.2)" stroke="#CC00FF" stroke-width="1.5"/>
+            <rect x="120" y="65" width="116" height="30" rx="2" fill="rgba(45,212,191,0.2)" stroke="#2dd4bf" stroke-width="1.5"/>
             <text x="178" y="84" text-anchor="middle" class="svg-label-sm">Schema Ctx</text>
             <text x="178" y="93" text-anchor="middle" class="svg-label-sm">20%</text>
             <!-- Conversation History 15% -->
@@ -195,8 +195,8 @@
             <!-- AFTER: right side -->
             <text x="510" y="175" text-anchor="middle" class="svg-title">AFTER</text>
             <!-- Mini budget bar -->
-            <rect x="380" y="185" width="26" height="60" rx="2" fill="rgba(74,158,255,0.2)" stroke="#A100FF" stroke-width="1"/>
-            <rect x="408" y="185" width="52" height="60" rx="2" fill="rgba(45,212,191,0.2)" stroke="#CC00FF" stroke-width="1"/>
+            <rect x="380" y="185" width="26" height="60" rx="2" fill="rgba(74,158,255,0.2)" stroke="#4a9eff" stroke-width="1"/>
+            <rect x="408" y="185" width="52" height="60" rx="2" fill="rgba(45,212,191,0.2)" stroke="#2dd4bf" stroke-width="1"/>
             <rect x="462" y="185" width="38" height="60" rx="2" fill="rgba(245,158,11,0.2)" stroke="#f59e0b" stroke-width="1"/>
             <rect x="502" y="185" width="52" height="60" rx="2" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="1"/>
             <rect x="556" y="185" width="54" height="60" rx="2" fill="rgba(251,113,133,0.2)" stroke="#fb7185" stroke-width="1"/>
@@ -209,8 +209,8 @@
             <text x="200" y="313" text-anchor="middle" class="svg-label" style="fill:#ef4444;">42% accuracy</text>
 
             <!-- Arrow -->
-            <line x1="320" y1="308" x2="380" y2="308" stroke="#a0a0a0" stroke-width="1.5" marker-end="url(#arrowDim1)"/>
-            <defs><marker id="arrowDim1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#a0a0a0"/></marker></defs>
+            <line x1="320" y1="308" x2="380" y2="308" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrowDim1)"/>
+            <defs><marker id="arrowDim1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#94a3b8"/></marker></defs>
 
             <rect x="400" y="290" width="200" height="36" rx="4" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1" stroke-dasharray="4,3"/>
             <text x="500" y="313" text-anchor="middle" class="svg-label" style="fill:#10b981;">89% accuracy</text>
@@ -313,8 +313,8 @@
               <div class="budget-bar__segment budget-bar__segment--output" style="width: 10%;">10%</div>
             </div>
             <div class="budget-legend">
-              <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #A100FF;"></div>System Prompt (10% &asymp; 12.8K)</div>
-              <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #CC00FF;"></div>Schema Context (20% &asymp; 25.6K)</div>
+              <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #4a9eff;"></div>System Prompt (10% &asymp; 12.8K)</div>
+              <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #2dd4bf;"></div>Schema Context (20% &asymp; 25.6K)</div>
               <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #f59e0b;"></div>Conversation History (15% &asymp; 19.2K)</div>
               <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #a78bfa;"></div>RAG / Retrieved Docs (20% &asymp; 25.6K)</div>
               <div class="budget-legend__item"><div class="budget-legend__dot" style="background: #fb7185;"></div>Reasoning Space (25% &asymp; 32K)</div>
@@ -410,7 +410,7 @@
               <line x1="300" y1="20" x2="300" y2="180" stroke="var(--accent-warning)" stroke-width="1.5" stroke-dasharray="6 4"/>
               <text x="310" y="34" fill="var(--accent-warning)" font-family="monospace" font-size="10">Context Cliff</text>
               <!-- Performance curve -->
-              <path d="M 60 30 Q 120 28 200 32 Q 250 34 290 38 Q 310 55 340 85 Q 400 130 480 155 Q 540 165 580 170" stroke="#A100FF" stroke-width="2.5" fill="none"/>
+              <path d="M 60 30 Q 120 28 200 32 Q 250 34 290 38 Q 310 55 340 85 Q 400 130 480 155 Q 540 165 580 170" stroke="#4a9eff" stroke-width="2.5" fill="none"/>
               <!-- Axis titles -->
               <text x="320" y="215" fill="var(--text-secondary)" font-family="monospace" font-size="11" text-anchor="middle">Retrieved Context (tokens)</text>
               <text x="15" y="100" fill="var(--text-secondary)" font-family="monospace" font-size="11" text-anchor="middle" transform="rotate(-90, 15, 100)">Accuracy</text>
@@ -631,8 +631,8 @@
     </main>
   </div>
 
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m06-context-engineering');</script>
 </body>
 </html>

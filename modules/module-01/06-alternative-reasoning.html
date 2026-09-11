@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alternative Reasoning Patterns &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     /* --- Pattern Flow Diagram --- */
     .pattern-flow {
@@ -30,14 +30,14 @@
       border: 1px solid;
     }
     .pattern-flow__step--think {
-      background: rgba(161, 0, 255, 0.12);
+      background: rgba(74, 158, 255, 0.12);
       color: var(--stroke-primary);
-      border-color: rgba(161, 0, 255, 0.3);
+      border-color: rgba(74, 158, 255, 0.3);
     }
     .pattern-flow__step--act {
-      background: rgba(204, 0, 255, 0.12);
+      background: rgba(45, 212, 191, 0.12);
       color: var(--stroke-secondary);
-      border-color: rgba(204, 0, 255, 0.3);
+      border-color: rgba(45, 212, 191, 0.3);
     }
     .pattern-flow__step--observe {
       background: rgba(245, 158, 11, 0.12);
@@ -100,7 +100,7 @@
       font-size: var(--font-sm);
       color: var(--stroke-primary);
       padding: var(--space-2) var(--space-3);
-      background: rgba(161, 0, 255, 0.08);
+      background: rgba(74, 158, 255, 0.08);
       border-radius: var(--border-radius);
       margin-bottom: var(--space-3);
       display: inline-block;
@@ -163,10 +163,10 @@
                 <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
               </filter>
               <marker id="arrowBlue10" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#A100FF"/>
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#4a9eff"/>
               </marker>
               <marker id="arrowTeal10" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#CC00FF"/>
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#2dd4bf"/>
               </marker>
               <marker id="arrowAmber10" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b"/>
@@ -185,52 +185,52 @@
 
             <!-- ===== Top-Left: ReAct (circular, blue) ===== -->
             <rect x="20" y="20" width="320" height="155" rx="6" fill="none" stroke="#334155" stroke-dasharray="4,4"/>
-            <text x="35" y="42" fill="#A100FF" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700">ReAct</text>
+            <text x="35" y="42" fill="#4a9eff" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700">ReAct</text>
 
             <!-- Circular flow: Think -> Act -> Observe -> loop -->
-            <rect x="55" y="65" width="70" height="32" rx="5" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-dasharray="3,2"/>
-            <text x="90" y="85" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="10">Think</text>
+            <rect x="55" y="65" width="70" height="32" rx="5" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-dasharray="3,2"/>
+            <text x="90" y="85" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="10">Think</text>
 
-            <line x1="125" y1="81" x2="150" y2="81" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue10)"/>
+            <line x1="125" y1="81" x2="150" y2="81" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#arrowBlue10)"/>
 
-            <rect x="155" y="65" width="70" height="32" rx="5" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-dasharray="3,2"/>
-            <text x="190" y="85" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="10">Act</text>
+            <rect x="155" y="65" width="70" height="32" rx="5" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-dasharray="3,2"/>
+            <text x="190" y="85" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="10">Act</text>
 
-            <line x1="225" y1="81" x2="250" y2="81" stroke="#A100FF" stroke-width="1.2" marker-end="url(#arrowBlue10)"/>
+            <line x1="225" y1="81" x2="250" y2="81" stroke="#4a9eff" stroke-width="1.2" marker-end="url(#arrowBlue10)"/>
 
-            <rect x="255" y="65" width="70" height="32" rx="5" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-dasharray="3,2"/>
-            <text x="290" y="85" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="10">Observe</text>
+            <rect x="255" y="65" width="70" height="32" rx="5" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-dasharray="3,2"/>
+            <text x="290" y="85" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="10">Observe</text>
 
             <!-- Loop arrow back from Observe to Think -->
-            <path d="M 290 97 C 290 135, 90 135, 90 97" fill="none" stroke="#A100FF" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrowBlue10)"/>
-            <text x="190" y="148" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">loop until done</text>
+            <path d="M 290 97 C 290 135, 90 135, 90 97" fill="none" stroke="#4a9eff" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrowBlue10)"/>
+            <text x="190" y="148" text-anchor="middle" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">loop until done</text>
 
             <!-- ===== Top-Right: Plan-and-Execute (linear, teal) ===== -->
             <rect x="360" y="20" width="320" height="155" rx="6" fill="none" stroke="#334155" stroke-dasharray="4,4"/>
-            <text x="375" y="42" fill="#CC00FF" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700">Plan-and-Execute</text>
+            <text x="375" y="42" fill="#2dd4bf" font-family="JetBrains Mono,monospace" font-size="11" font-weight="700">Plan-and-Execute</text>
 
             <!-- Plan box -->
-            <rect x="380" y="60" width="80" height="40" rx="5" fill="rgba(45,212,191,0.12)" stroke="#CC00FF" stroke-dasharray="3,2"/>
-            <text x="420" y="78" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="9" font-weight="600">PLAN</text>
-            <text x="420" y="91" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="7">(full plan)</text>
+            <rect x="380" y="60" width="80" height="40" rx="5" fill="rgba(45,212,191,0.12)" stroke="#2dd4bf" stroke-dasharray="3,2"/>
+            <text x="420" y="78" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="9" font-weight="600">PLAN</text>
+            <text x="420" y="91" text-anchor="middle" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="7">(full plan)</text>
 
-            <line x1="460" y1="80" x2="480" y2="80" stroke="#CC00FF" stroke-width="1.2" marker-end="url(#arrowTeal10)"/>
+            <line x1="460" y1="80" x2="480" y2="80" stroke="#2dd4bf" stroke-width="1.2" marker-end="url(#arrowTeal10)"/>
 
             <!-- Steps -->
-            <rect x="485" y="60" width="55" height="30" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-dasharray="3,2"/>
-            <text x="512" y="79" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="8">Step 1</text>
+            <rect x="485" y="60" width="55" height="30" rx="4" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-dasharray="3,2"/>
+            <text x="512" y="79" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="8">Step 1</text>
 
-            <line x1="540" y1="75" x2="555" y2="75" stroke="#CC00FF" stroke-width="1" marker-end="url(#arrowTeal10)"/>
+            <line x1="540" y1="75" x2="555" y2="75" stroke="#2dd4bf" stroke-width="1" marker-end="url(#arrowTeal10)"/>
 
-            <rect x="560" y="60" width="55" height="30" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-dasharray="3,2"/>
-            <text x="587" y="79" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="8">Step 2</text>
+            <rect x="560" y="60" width="55" height="30" rx="4" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-dasharray="3,2"/>
+            <text x="587" y="79" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="8">Step 2</text>
 
-            <line x1="615" y1="75" x2="630" y2="75" stroke="#CC00FF" stroke-width="1" marker-end="url(#arrowTeal10)"/>
+            <line x1="615" y1="75" x2="630" y2="75" stroke="#2dd4bf" stroke-width="1" marker-end="url(#arrowTeal10)"/>
 
-            <rect x="635" y="60" width="35" height="30" rx="4" fill="rgba(45,212,191,0.08)" stroke="#CC00FF" stroke-dasharray="3,2"/>
-            <text x="652" y="79" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7">S3</text>
+            <rect x="635" y="60" width="35" height="30" rx="4" fill="rgba(45,212,191,0.08)" stroke="#2dd4bf" stroke-dasharray="3,2"/>
+            <text x="652" y="79" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="7">S3</text>
 
-            <text x="540" y="120" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">sequential execution</text>
+            <text x="540" y="120" text-anchor="middle" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">sequential execution</text>
 
             <!-- ===== Bottom-Left: Tree-of-Thought (tree, amber) ===== -->
             <rect x="20" y="185" width="320" height="150" rx="6" fill="none" stroke="#334155" stroke-dasharray="4,4"/>
@@ -238,7 +238,7 @@
 
             <!-- Root -->
             <circle cx="90" cy="270" r="12" fill="rgba(245,158,11,0.15)" stroke="#f59e0b" stroke-dasharray="3,2"/>
-            <text x="90" y="274" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="8">R</text>
+            <text x="90" y="274" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="8">R</text>
 
             <!-- Level 1 branches -->
             <line x1="102" y1="265" x2="150" y2="240" stroke="#f59e0b" stroke-width="1"/>
@@ -268,7 +268,7 @@
             <circle cx="218" cy="295" r="6" fill="rgba(51,65,81,0.3)" stroke="#334155" stroke-dasharray="2,2"/>
             <circle cx="218" cy="310" r="6" fill="rgba(51,65,81,0.3)" stroke="#334155" stroke-dasharray="2,2"/>
 
-            <text x="180" y="328" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">evaluate &amp; prune branches</text>
+            <text x="180" y="328" text-anchor="middle" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">evaluate &amp; prune branches</text>
 
             <!-- ===== Bottom-Right: Reflexion (loop, green) ===== -->
             <rect x="360" y="185" width="320" height="150" rx="6" fill="none" stroke="#334155" stroke-dasharray="4,4"/>
@@ -276,29 +276,29 @@
 
             <!-- Act -->
             <rect x="385" y="230" width="60" height="28" rx="5" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-dasharray="3,2"/>
-            <text x="415" y="248" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="9">Act</text>
+            <text x="415" y="248" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="9">Act</text>
 
             <line x1="445" y1="244" x2="470" y2="244" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowGreen10)"/>
 
             <!-- Evaluate -->
             <rect x="475" y="230" width="70" height="28" rx="5" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-dasharray="3,2"/>
-            <text x="510" y="248" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="9">Evaluate</text>
+            <text x="510" y="248" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="9">Evaluate</text>
 
             <line x1="545" y1="244" x2="575" y2="244" stroke="#10b981" stroke-width="1.2" marker-end="url(#arrowGreen10)"/>
 
             <!-- Reflect -->
             <rect x="580" y="230" width="65" height="28" rx="5" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-dasharray="3,2"/>
-            <text x="612" y="248" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="9">Reflect</text>
+            <text x="612" y="248" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="9">Reflect</text>
 
             <!-- Loop arrow: Reflect -> back to Act, with "memory" label -->
             <path d="M 612 258 C 612 300, 415 300, 415 258" fill="none" stroke="#10b981" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrowGreen10)"/>
-            <text x="513" y="296" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8">&#x2191; memory</text>
-            <text x="513" y="310" text-anchor="middle" fill="#a0a0a0" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">retry with insight</text>
+            <text x="513" y="296" text-anchor="middle" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="8">&#x2191; memory</text>
+            <text x="513" y="310" text-anchor="middle" fill="#94a3b8" font-family="JetBrains Mono,monospace" font-size="8" font-style="italic">retry with insight</text>
 
             <!-- Center Diamond: CHOOSE BY TASK TYPE -->
-            <polygon points="350,155 395,180 350,205 305,180" fill="rgba(74,158,255,0.1)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,3" filter="url(#glow10)"/>
-            <text x="350" y="177" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono,monospace" font-size="7" font-weight="600">CHOOSE BY</text>
-            <text x="350" y="188" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono,monospace" font-size="7" font-weight="700">TASK TYPE</text>
+            <polygon points="350,155 395,180 350,205 305,180" fill="rgba(74,158,255,0.1)" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="4,3" filter="url(#glow10)"/>
+            <text x="350" y="177" text-anchor="middle" fill="#e2e8f0" font-family="JetBrains Mono,monospace" font-size="7" font-weight="600">CHOOSE BY</text>
+            <text x="350" y="188" text-anchor="middle" fill="#4a9eff" font-family="JetBrains Mono,monospace" font-size="7" font-weight="700">TASK TYPE</text>
 
             <!-- Bottom border label -->
             <text x="350" y="370" text-anchor="middle" fill="#334155" font-family="JetBrains Mono,monospace" font-size="8">REASONING PATTERN SELECTION MATRIX</text>
@@ -659,8 +659,8 @@
 
   </div>
 
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m1-alternative-reasoning');</script>
   <script>
     const RPGame = {
@@ -690,7 +690,7 @@
           const val = b.onclick.toString().match(/'([^']+)'\)$/);
           if (val && val[1] === choice) {
             b.style.borderColor = isCorrect ? 'var(--accent-success)' : 'var(--accent-error)';
-            b.style.background = isCorrect ? 'rgba(204, 0, 255, 0.15)' : 'rgba(239, 68, 68, 0.15)';
+            b.style.background = isCorrect ? 'rgba(45, 212, 191, 0.15)' : 'rgba(239, 68, 68, 0.15)';
           }
         });
 

@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Agent Security Architecture &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=4">
-  <link rel="stylesheet" href="../../css/components.css?v=4">
-  <link rel="stylesheet" href="../../css/animations.css?v=4">
+  <link rel="stylesheet" href="../../css/design-system.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/animations.css">
   <style>
     .threat-number {
       display: inline-flex;
@@ -138,26 +138,26 @@
             <rect width="700" height="380" rx="8" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1" stroke-dasharray="6,3"/>
 
             <!-- Hexagonal defense ring (dashed blue) -->
-            <polygon points="350,30 570,105 570,275 350,350 130,275 130,105" fill="none" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="8,4" opacity="0.5"/>
+            <polygon points="350,30 570,105 570,275 350,350 130,275 130,105" fill="none" stroke="#4a9eff" stroke-width="1.5" stroke-dasharray="8,4" opacity="0.5"/>
 
             <!-- Defense layer labels on hex ring -->
-            <text x="350" y="22" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">INPUT SANITIZATION</text>
-            <text x="600" y="100" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="end">TOOL PERMISSIONS</text>
-            <text x="600" y="285" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="end">OUTPUT FILTERING</text>
-            <text x="350" y="372" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">ENCRYPTION</text>
-            <text x="105" y="285" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="start">AUDIT LOGGING</text>
-            <text x="105" y="100" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="start">ACCESS CONTROL</text>
+            <text x="350" y="22" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">INPUT SANITIZATION</text>
+            <text x="600" y="100" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="end">TOOL PERMISSIONS</text>
+            <text x="600" y="285" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="end">OUTPUT FILTERING</text>
+            <text x="350" y="372" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">ENCRYPTION</text>
+            <text x="105" y="285" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="start">AUDIT LOGGING</text>
+            <text x="105" y="100" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="start">ACCESS CONTROL</text>
 
             <!-- Central DataPulse box (glowing blue) -->
-            <rect x="290" y="155" width="120" height="50" rx="6" fill="rgba(74,158,255,0.12)" stroke="#A100FF" stroke-width="2" filter="url(#tm-glow-blue)"/>
-            <text x="350" y="175" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" text-anchor="middle">DATAPULSE</text>
-            <text x="350" y="193" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">AI AGENT CORE</text>
+            <rect x="290" y="155" width="120" height="50" rx="6" fill="rgba(74,158,255,0.12)" stroke="#4a9eff" stroke-width="2" filter="url(#tm-glow-blue)"/>
+            <text x="350" y="175" fill="#e2e8f0" font-family="JetBrains Mono, monospace" font-size="11" font-weight="700" text-anchor="middle">DATAPULSE</text>
+            <text x="350" y="193" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="8" text-anchor="middle">AI AGENT CORE</text>
 
             <!-- Corner brackets on central box -->
-            <path d="M286,155 L276,155 L276,165" fill="none" stroke="#A100FF" stroke-width="1.5"/>
-            <path d="M414,155 L424,155 L424,165" fill="none" stroke="#A100FF" stroke-width="1.5"/>
-            <path d="M286,205 L276,205 L276,195" fill="none" stroke="#A100FF" stroke-width="1.5"/>
-            <path d="M414,205 L424,205 L424,195" fill="none" stroke="#A100FF" stroke-width="1.5"/>
+            <path d="M286,155 L276,155 L276,165" fill="none" stroke="#4a9eff" stroke-width="1.5"/>
+            <path d="M414,155 L424,155 L424,165" fill="none" stroke="#4a9eff" stroke-width="1.5"/>
+            <path d="M286,205 L276,205 L276,195" fill="none" stroke="#4a9eff" stroke-width="1.5"/>
+            <path d="M414,205 L424,205 L424,195" fill="none" stroke="#4a9eff" stroke-width="1.5"/>
 
             <!-- THREAT 1: PROMPT INJECTION (top) -->
             <rect x="295" y="55" width="110" height="36" rx="4" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,2"/>
@@ -166,37 +166,37 @@
             <!-- Skull icon -->
             <circle cx="380" cy="73" r="9" fill="none" stroke="#ef4444" stroke-width="1"/>
             <text x="380" y="77" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="10" text-anchor="middle">!</text>
-            <text x="350" y="50" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">User Input</text>
+            <text x="350" y="50" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">User Input</text>
             <line x1="350" y1="91" x2="350" y2="155" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#tm-arrow-red)"/>
 
             <!-- THREAT 2: TOOL MISUSE (top-right) -->
             <rect x="505" y="100" width="100" height="36" rx="4" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,2"/>
             <text x="555" y="115" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">TOOL MISUSE</text>
-            <text x="555" y="128" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Tool Layer</text>
+            <text x="555" y="128" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Tool Layer</text>
             <line x1="505" y1="125" x2="410" y2="165" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#tm-arrow-red)"/>
 
             <!-- THREAT 3: DATA EXFILTRATION (right, arrow outward) -->
             <rect x="505" y="175" width="100" height="36" rx="4" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,2"/>
             <text x="555" y="190" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">DATA</text>
             <text x="555" y="202" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">EXFILTRATION</text>
-            <text x="620" y="220" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">External</text>
+            <text x="620" y="220" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">External</text>
             <line x1="410" y1="190" x2="505" y2="190" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#tm-arrow-red)"/>
 
             <!-- THREAT 4: MODEL MANIPULATION (bottom) -->
             <rect x="295" y="270" width="110" height="36" rx="4" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,2"/>
             <text x="350" y="285" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">MODEL</text>
             <text x="350" y="297" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">MANIPULATION</text>
-            <text x="350" y="316" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">LLM Provider</text>
+            <text x="350" y="316" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">LLM Provider</text>
             <line x1="350" y1="270" x2="350" y2="205" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#tm-arrow-red)"/>
 
             <!-- THREAT 5: SUPPLY CHAIN (left) -->
             <rect x="95" y="162" width="100" height="36" rx="4" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,2"/>
             <text x="145" y="177" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="7" font-weight="700" text-anchor="middle">SUPPLY CHAIN</text>
-            <text x="145" y="190" fill="#a0a0a0" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Dependencies</text>
+            <text x="145" y="190" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle">Dependencies</text>
             <line x1="195" y1="180" x2="290" y2="180" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#tm-arrow-red)"/>
 
             <!-- Bottom label -->
-            <text x="350" y="345" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="9" text-anchor="middle" opacity="0.7">Marcus Webb's Pen Test Findings</text>
+            <text x="350" y="345" fill="#4a9eff" font-family="JetBrains Mono, monospace" font-size="9" text-anchor="middle" opacity="0.7">Marcus Webb's Pen Test Findings</text>
           </svg>
         </div>
 
@@ -473,8 +473,8 @@
 
   </div>
 
-  <script src="../../js/progress.js?v=4"></script>
-  <script src="../../js/nav.js?v=4"></script>
+  <script src="../../js/progress.js"></script>
+  <script src="../../js/nav.js"></script>
   <script>Nav.init('m08-agent-security');</script>
 </body>
 </html>
