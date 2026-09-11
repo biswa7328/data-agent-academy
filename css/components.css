@@ -82,7 +82,7 @@
 /* --- AcmeCorp Callout --- */
 .callout {
   border-left: 3px solid var(--stroke-secondary);
-  background: rgba(45, 212, 191, 0.05);
+  background: rgba(204, 0, 255, 0.05);
   padding: var(--space-4) var(--space-6);
   margin: var(--space-6) 0;
   border-radius: 0 var(--border-radius) var(--border-radius) 0;
@@ -189,7 +189,7 @@
 }
 
 .terminal__line--highlight {
-  background: rgba(74, 158, 255, 0.1);
+  background: rgba(161, 0, 255, 0.1);
   border-left: 2px solid var(--stroke-primary);
   padding-left: var(--space-3);
   margin-left: -var(--space-3);
@@ -279,14 +279,14 @@
 .quiz-option:hover {
   border-color: var(--stroke-primary);
   color: var(--text-primary);
-  background: rgba(74, 158, 255, 0.05);
+  background: rgba(161, 0, 255, 0.05);
 }
 
 .quiz-option.selected {
   border-color: var(--stroke-primary);
   border-style: solid;
   color: var(--text-primary);
-  background: rgba(74, 158, 255, 0.1);
+  background: rgba(161, 0, 255, 0.1);
 }
 
 .quiz-option.correct {
@@ -358,7 +358,7 @@
 }
 
 .btn:hover {
-  background: rgba(74, 158, 255, 0.1);
+  background: rgba(161, 0, 255, 0.1);
   box-shadow: 0 0 15px var(--glow-blue);
   color: var(--text-primary);
 }
@@ -379,7 +379,7 @@
 }
 
 .btn--teal:hover {
-  background: rgba(45, 212, 191, 0.1);
+  background: rgba(204, 0, 255, 0.1);
   box-shadow: 0 0 15px var(--glow-teal);
 }
 
@@ -556,7 +556,7 @@
 }
 
 .bp-table tr:hover td {
-  background: rgba(74, 158, 255, 0.03);
+  background: rgba(161, 0, 255, 0.03);
   color: var(--text-primary);
 }
 
@@ -598,7 +598,7 @@
   bottom: calc(100% + 10px);
   left: 50%;
   transform: translateX(-50%);
-  background: #0f1f38;
+  background: #0d0010;
   border: 1px solid var(--stroke-primary);
   border-radius: var(--border-radius);
   padding: var(--space-3) var(--space-4);
@@ -652,7 +652,7 @@
 }
 
 .sim-node:hover {
-  background: rgba(74, 158, 255, 0.1);
+  background: rgba(161, 0, 255, 0.1);
   transform: translateY(-2px);
   box-shadow: 0 4px 20px var(--glow-blue);
 }
@@ -867,7 +867,7 @@
 
 .drop-zone--hover {
   border-color: var(--stroke-primary);
-  background: rgba(74, 158, 255, 0.05);
+  background: rgba(161, 0, 255, 0.05);
 }
 
 .drop-zone--filled {
