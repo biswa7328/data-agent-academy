@@ -594,21 +594,19 @@
 .badge--green[data-tip]:hover { box-shadow: 0 0 12px var(--glow-success); }
 
 .tag-popover {
-  position: absolute;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: #0d0010;
+  position: fixed;
+  background: var(--bg-surface);
   border: 1px solid var(--stroke-primary);
   border-radius: var(--border-radius);
   padding: var(--space-3) var(--space-4);
   font-size: var(--font-sm);
   color: var(--text-secondary);
   font-family: var(--font-sans);
-  width: 260px;
-  line-height: 1.5;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.7), 0 0 15px var(--glow-blue);
-  z-index: 100;
+  width: 280px;
+  line-height: 1.6;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px var(--glow-blue);
+  z-index: 9999;
+  pointer-events: none;
 }
 .tag-popover::after {
   content: '';
@@ -628,16 +626,13 @@
   margin-bottom: var(--space-1);
 }
 
-/* Popover color variants based on badge color */
-.badge--teal .tag-popover   { border-color: var(--stroke-secondary); box-shadow: 0 4px 24px rgba(0,0,0,0.7), 0 0 15px var(--glow-teal); }
-.badge--teal .tag-popover::after { border-top-color: var(--stroke-secondary); }
-.badge--teal .tag-popover__title { color: var(--stroke-secondary); }
-.badge--amber .tag-popover  { border-color: var(--accent-warning); box-shadow: 0 4px 24px rgba(0,0,0,0.7), 0 0 15px var(--glow-warning); }
-.badge--amber .tag-popover::after { border-top-color: var(--accent-warning); }
-.badge--amber .tag-popover__title { color: var(--accent-warning); }
-.badge--green .tag-popover  { border-color: var(--accent-success); box-shadow: 0 4px 24px rgba(0,0,0,0.7), 0 0 15px var(--glow-success); }
-.badge--green .tag-popover::after { border-top-color: var(--accent-success); }
-.badge--green .tag-popover__title { color: var(--accent-success); }
+/* Popover colour variants — class set directly on popover by nav.js */
+.tag-popover.badge--teal  { border-color: var(--stroke-secondary); box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px var(--glow-teal); }
+.tag-popover.badge--amber { border-color: var(--accent-warning);   box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px var(--glow-warning); }
+.tag-popover.badge--green { border-color: var(--accent-success);   box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px var(--glow-success); }
+.tag-popover.badge--teal  .tag-popover__title { color: var(--stroke-secondary); }
+.tag-popover.badge--amber .tag-popover__title { color: var(--accent-warning); }
+.tag-popover.badge--green .tag-popover__title { color: var(--accent-success); }
 
 /* --- Simulation Node --- */
 .sim-node {
@@ -770,10 +765,11 @@
   margin-bottom: var(--space-8);
   min-height: 200px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .evolving-diagram__label {
