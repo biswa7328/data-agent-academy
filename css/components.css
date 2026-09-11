@@ -4,8 +4,8 @@
 
 /* --- Blueprint Card --- */
 .bp-card {
-  background: var(--bg-surface);
-  border: 1px dashed var(--stroke-dim);
+  background: #ffffff;
+  border: 1px solid var(--stroke-dim);
   border-radius: var(--border-radius);
   padding: var(--space-6);
   position: relative;
@@ -128,7 +128,7 @@
 
 /* --- Terminal Panel --- */
 .terminal {
-  background: #0d0d0d;
+  background: #ffffff;
   border: 1px solid #2a2a2a;
   border-radius: var(--border-radius-lg);
   overflow: hidden;
@@ -197,7 +197,7 @@
 
 /* --- Node Box (for diagrams) --- */
 .node-box {
-  background: var(--bg-surface);
+  background: #ffffff;
   border: 1.5px solid var(--stroke-dim);
   border-radius: var(--border-radius);
   padding: var(--space-3) var(--space-4);
@@ -237,7 +237,7 @@
 
 /* --- Quiz Block --- */
 .quiz-block {
-  background: var(--bg-surface);
+  background: #ffffff;
   border: 1px solid var(--stroke-dim);
   border-radius: var(--border-radius-lg);
   padding: var(--space-8);
@@ -268,7 +268,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--space-4);
-  border: 1px dashed var(--stroke-dim);
+  border: 1px solid var(--stroke-dim);
   border-radius: var(--border-radius);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -440,7 +440,7 @@
 
 /* --- Collapsible / Accordion --- */
 .collapsible {
-  border: 1px dashed var(--stroke-dim);
+  border: 1px solid var(--stroke-dim);
   border-radius: var(--border-radius);
   margin: var(--space-4) 0;
   overflow: hidden;
@@ -453,7 +453,7 @@
   width: 100%;
   padding: var(--space-3) var(--space-4);
   cursor: pointer;
-  background: var(--bg-surface);
+  background: #ffffff;
   border: none;
   outline: none;
   -webkit-appearance: none;
@@ -595,7 +595,7 @@
 
 .tag-popover {
   position: fixed;
-  background: var(--bg-surface);
+  background: #ffffff;
   border: 1px solid var(--stroke-primary);
   border-radius: var(--border-radius);
   padding: var(--space-3) var(--space-4);
@@ -604,7 +604,7 @@
   font-family: var(--font-sans);
   width: 280px;
   line-height: 1.6;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px var(--glow-blue);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.10), 0 0 20px var(--glow-blue);
   z-index: 9999;
   pointer-events: none;
 }
@@ -627,16 +627,16 @@
 }
 
 /* Popover colour variants — class set directly on popover by nav.js */
-.tag-popover.badge--teal  { border-color: var(--stroke-secondary); box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px var(--glow-teal); }
-.tag-popover.badge--amber { border-color: var(--accent-warning);   box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px var(--glow-warning); }
-.tag-popover.badge--green { border-color: var(--accent-success);   box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 20px var(--glow-success); }
+.tag-popover.badge--teal  { border-color: var(--stroke-secondary); box-shadow: 0 6px 24px rgba(0,0,0,0.10), 0 0 20px var(--glow-teal); }
+.tag-popover.badge--amber { border-color: var(--accent-warning);   box-shadow: 0 6px 24px rgba(0,0,0,0.10), 0 0 20px var(--glow-warning); }
+.tag-popover.badge--green { border-color: var(--accent-success);   box-shadow: 0 6px 24px rgba(0,0,0,0.10), 0 0 20px var(--glow-success); }
 .tag-popover.badge--teal  .tag-popover__title { color: var(--stroke-secondary); }
 .tag-popover.badge--amber .tag-popover__title { color: var(--accent-warning); }
 .tag-popover.badge--green .tag-popover__title { color: var(--accent-success); }
 
 /* --- Simulation Node --- */
 .sim-node {
-  background: var(--bg-surface);
+  background: #ffffff;
   border: 2px solid var(--stroke-primary);
   border-radius: var(--border-radius-lg);
   padding: var(--space-4) var(--space-6);
@@ -677,8 +677,8 @@
 
 /* --- Module Card (Landing Page) --- */
 .module-card {
-  background: var(--bg-surface);
-  border: 1px dashed var(--stroke-dim);
+  background: #ffffff;
+  border: 1px solid var(--stroke-dim);
   border-radius: var(--border-radius-lg);
   padding: var(--space-8);
   position: relative;
@@ -721,7 +721,7 @@
   font-family: var(--font-mono);
   font-size: var(--font-xs);
   color: var(--text-secondary);
-  border: 1px dashed var(--stroke-dim);
+  border: 1px solid var(--stroke-dim);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--border-radius);
 }
@@ -758,8 +758,8 @@
 
 /* --- Evolving Diagram Container --- */
 .evolving-diagram {
-  background: var(--bg-surface);
-  border: 1px dashed var(--stroke-dim);
+  background: #ffffff;
+  border: 1px solid var(--stroke-dim);
   border-radius: var(--border-radius-lg);
   padding: var(--space-6);
   margin-bottom: var(--space-8);
@@ -785,7 +785,7 @@
 
 /* --- Score / Results Card --- */
 .score-card {
-  background: var(--bg-surface);
+  background: #ffffff;
   border: 2px solid var(--stroke-primary);
   border-radius: var(--border-radius-lg);
   padding: var(--space-8);
@@ -829,7 +829,7 @@
 
 .drag-item {
   padding: var(--space-3) var(--space-4);
-  border: 1px dashed var(--stroke-dim);
+  border: 1px solid var(--stroke-dim);
   border-radius: var(--border-radius);
   margin-bottom: var(--space-2);
   cursor: grab;
@@ -871,3 +871,104 @@
   border-color: var(--stroke-secondary);
   color: var(--text-primary);
 }
+
+/* =====================================================
+   WHITE THEME OVERRIDES — Accenture light mode
+   ===================================================== */
+
+/* Cards — white with subtle purple border */
+.bp-card, .module-card, .layer-card, .collapsible,
+.sim-node, .score-card, .page-nav {
+  background: #ffffff !important;
+  box-shadow: 0 2px 12px rgba(161,0,255,0.07), 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+.bp-card:hover, .module-card:hover, .layer-card:hover {
+  box-shadow: 0 4px 20px rgba(161,0,255,0.15), 0 2px 6px rgba(0,0,0,0.06) !important;
+  border-color: var(--stroke-primary) !important;
+}
+
+/* Callout */
+.callout {
+  background: rgba(161,0,255,0.04) !important;
+  border-left: 3px solid var(--stroke-primary) !important;
+}
+
+/* Evolving diagram */
+.evolving-diagram {
+  background: #faf8ff !important;
+  border: 1px solid var(--stroke-dim) !important;
+  overflow: visible !important;
+  min-height: 420px !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+}
+.evolving-diagram__label { color: var(--stroke-primary) !important; }
+
+/* Headings — dark on white */
+h1, h2, h3, h4, h5, h6 { color: #1a0030 !important; }
+p, li, td, th           { color: #4a3570; }
+strong                  { color: #1a0030 !important; }
+
+/* Badges */
+.badge {
+  background: rgba(255,255,255,0.8) !important;
+}
+.badge--blue  { border-color: #A100FF !important; color: #7500C0 !important; background: rgba(161,0,255,0.05) !important; }
+.badge--teal  { border-color: #7500C0 !important; color: #5a0090 !important; background: rgba(117,0,192,0.05) !important; }
+.badge--amber { border-color: var(--accent-warning) !important; color: #92400e !important; }
+.badge--green { border-color: var(--accent-success) !important; color: #065f46 !important; }
+
+/* Badge popover */
+.tag-popover {
+  background: #ffffff !important;
+  color: #1a0030 !important;
+  border: 1.5px solid var(--stroke-primary) !important;
+  box-shadow: 0 8px 24px rgba(161,0,255,0.12), 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+.tag-popover__title { color: var(--stroke-primary) !important; }
+.tag-popover.badge--teal  { border-color: var(--stroke-secondary) !important; }
+.tag-popover.badge--teal  .tag-popover__title { color: var(--stroke-secondary) !important; }
+.tag-popover.badge--amber { border-color: var(--accent-warning) !important; }
+.tag-popover.badge--amber .tag-popover__title { color: var(--accent-warning) !important; }
+.tag-popover.badge--green { border-color: var(--accent-success) !important; }
+.tag-popover.badge--green .tag-popover__title { color: var(--accent-success) !important; }
+
+/* Nav + breadcrumb */
+.top-nav {
+  background: rgba(255,255,255,0.95) !important;
+  border-bottom: 1px solid var(--grid-line) !important;
+  box-shadow: 0 1px 12px rgba(161,0,255,0.07) !important;
+}
+.top-nav__breadcrumb a { color: var(--stroke-primary) !important; }
+
+/* Code */
+code, pre {
+  background: rgba(161,0,255,0.05) !important;
+  color: #6b21a8 !important;
+  border: 1px solid rgba(161,0,255,0.12) !important;
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+/* Match quiz items */
+.match-item {
+  background: #ffffff !important;
+  color: #4a3570 !important;
+  border-color: var(--stroke-dim) !important;
+}
+.match-item:hover { background: rgba(161,0,255,0.04) !important; color: #1a0030 !important; }
+.match-item.active { background: rgba(161,0,255,0.08) !important; color: #1a0030 !important; }
+
+/* Section dividers */
+.section + .section { border-top: 1px solid var(--grid-line) !important; }
+
+/* Progress bar */
+.progress-bar { background: var(--bg-surface) !important; }
+
+/* Collapsible header */
+.collapsible__header { color: #1a0030 !important; }
+.collapsible__body p { color: #4a3570 !important; }
+
+/* Page nav */
+.page-nav__label { color: var(--text-secondary) !important; }
+.page-nav__title { color: var(--stroke-primary) !important; }

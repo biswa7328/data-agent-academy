@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Guardrails for Personas &mdash; Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=7">
-  <link rel="stylesheet" href="../../css/components.css?v=7">
-  <link rel="stylesheet" href="../../css/animations.css?v=7">
+  <link rel="stylesheet" href="../../css/design-system.css?v=9">
+  <link rel="stylesheet" href="../../css/components.css?v=9">
+  <link rel="stylesheet" href="../../css/animations.css?v=9">
   <style>
     /* --- Persona Hub SVG with shields --- */
     .persona-diagram {
@@ -1054,11 +1054,1130 @@
   </div>
 
   <!-- Scripts -->
-  <script src="../../js/progress.js?v=7"></script>
-  <script src="../../js/quiz.js?v=7"></script>
-  <script src="../../js/simulation.js?v=7"></script>
-  <script src="../../js/diagram.js?v=7"></script>
-  <script src="../../js/nav.js?v=7"></script>
+  <script>
+/* ============================================
+   PROGRESS TRACKER — localStorage-based
+   ============================================ */
+
+const Progress = {
+  STORAGE_KEY: 'dataAgentAcademy_progress',
+
+  getAll() {
+    try {
+      return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || {};
+    } catch {
+      return {};
+    }
+  },
+
+  save(data) {
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
+  },
+
+  markCompleted(pageId) {
+    const data = this.getAll();
+    if (!data.completed) data.completed = [];
+    if (!data.completed.includes(pageId)) {
+      data.completed.push(pageId);
+    }
+    data.lastVisited = pageId;
+    data.lastTimestamp = Date.now();
+    this.save(data);
+  },
+
+  isCompleted(pageId) {
+    const data = this.getAll();
+    return (data.completed || []).includes(pageId);
+  },
+
+  getCompletedCount() {
+    const data = this.getAll();
+    return (data.completed || []).length;
+  },
+
+  saveQuizScore(quizId, score, total) {
+    const data = this.getAll();
+    if (!data.quizScores) data.quizScores = {};
+    data.quizScores[quizId] = { score, total, timestamp: Date.now() };
+    this.save(data);
+  },
+
+  getQuizScore(quizId) {
+    const data = this.getAll();
+    return (data.quizScores || {})[quizId] || null;
+  },
+
+  saveSimulationChoice(simId, choices) {
+    const data = this.getAll();
+    if (!data.simulations) data.simulations = {};
+    data.simulations[simId] = { choices, timestamp: Date.now() };
+    this.save(data);
+  },
+
+  reset() {
+    localStorage.removeItem(this.STORAGE_KEY);
+  },
+
+  // Module 01: Architecture Foundation
+  MODULE_01_PAGES: [
+    'm1-five-layer-arch',
+    'm1-tool-definitions',
+    'm1-error-handling',
+    'm1-tool-calling',
+    'm1-sim-build-layers',
+    'm1-framework-landscape',
+    'm1-alternative-reasoning',
+    'm1-advanced-tool-use'
+  ],
+
+  // Module 02: Agent Anatomy
+  MODULE_02_PAGES: [
+    'm02-agent-anatomy',
+    'm02-role-taxonomy',
+    'm02-sim-guardrails',
+    'm02-langgraph-patterns',
+    'm02-react-loop',
+    'm02-quiz-final'
+  ],
+
+// Module 03: Persona Design
+  MODULE_03_PAGES: [
+    'm03-personas',
+    'm03-guardrails-personas',
+    'm03-hitl-patterns',
+    'm03-sim-persona',
+    'm03-quiz-final'
+  ],
+
+  // Module 04: Autonomy & Collaboration
+  MODULE_04_PAGES: [
+    'm04-goal-decomposition',
+    'm04-multi-agent',
+    'm04-memory-systems',
+    'm04-state-failure',
+    'm04-sim-orchestration',
+    'm04-quiz-final'
+  ],
+
+  // Module 05: AgentOps — CI/CD & Evaluation Gates
+  MODULE_05_PAGES: [
+    'm05-observability',
+    'm05-testing-evaluation',
+    'm05-cicd-eval-gates',
+    'm05-deployment-versioning',
+    'm05-sim-eval-gates',
+    'm05-quiz-final'
+  ],
+
+  // Module 06: Context Engineering & RAG
+  MODULE_06_PAGES: ['m06-context-engineering', 'm06-rag-architecture', 'm06-retrieval-strategies', 'm06-agentic-rag', 'm06-sim-rag-pipeline', 'm06-quiz-final'],
+
+  // Module 07: Interoperability Protocols
+  MODULE_07_PAGES: ['m07-mcp-protocol', 'm07-a2a-protocol', 'm07-aaif-governance', 'm07-sim-protocol-selection', 'm07-quiz-final'],
+
+  // Module 08: Security & Compliance
+  MODULE_08_PAGES: ['m08-agent-security', 'm08-data-privacy', 'm08-security-implementation', 'm08-sim-security-incident', 'm08-quiz-final'],
+
+  // Module 09: Cost Optimization
+  MODULE_09_PAGES: ['m09-cost-economics', 'm09-optimization-strategies', 'm09-financial-guardrails', 'm09-sim-cost-optimization', 'm09-quiz-final'],
+
+  // Module 10: Semantic Layer & Agent UX
+  MODULE_10_PAGES: ['m10-semantic-layer', 'm10-agent-ux', 'm10-data-quality', 'm10-sim-query-design', 'm10-quiz-final'],
+
+  // All pages across all modules
+  ALL_PAGES() {
+    return [...this.MODULE_01_PAGES, ...this.MODULE_02_PAGES, ...this.MODULE_03_PAGES, ...this.MODULE_04_PAGES, ...this.MODULE_05_PAGES, ...this.MODULE_06_PAGES, ...this.MODULE_07_PAGES, ...this.MODULE_08_PAGES, ...this.MODULE_09_PAGES, ...this.MODULE_10_PAGES];
+  },
+
+  getModuleProgress(modulePages) {
+    const total = modulePages.length;
+    const completed = modulePages.filter(p => this.isCompleted(p)).length;
+    return { completed, total, percent: Math.round((completed / total) * 100) };
+  },
+
+  getModule01Progress() {
+    return this.getModuleProgress(this.MODULE_01_PAGES);
+  },
+
+  getModule02Progress() {
+    return this.getModuleProgress(this.MODULE_02_PAGES);
+  },
+
+  // Legacy combined progress
+  getModule1Progress() {
+    return this.getModuleProgress(this.MODULE_1_PAGES);
+  },
+
+  getModule03Progress() {
+    return this.getModuleProgress(this.MODULE_03_PAGES);
+  },
+
+  getModule04Progress() {
+    return this.getModuleProgress(this.MODULE_04_PAGES);
+  },
+
+  getModule05Progress() {
+    return this.getModuleProgress(this.MODULE_05_PAGES);
+  },
+
+  getModule06Progress() { return this.getModuleProgress(this.MODULE_06_PAGES); },
+  getModule07Progress() { return this.getModuleProgress(this.MODULE_07_PAGES); },
+  getModule08Progress() { return this.getModuleProgress(this.MODULE_08_PAGES); },
+  getModule09Progress() { return this.getModuleProgress(this.MODULE_09_PAGES); },
+  getModule10Progress() { return this.getModuleProgress(this.MODULE_10_PAGES); },
+
+  getOverallProgress() {
+    const all = this.ALL_PAGES();
+    return this.getModuleProgress(all);
+  },
+
+  // Update the progress bar in the nav
+  updateProgressBar() {
+    const bar = document.querySelector('.progress-bar__fill');
+    if (!bar) return;
+    const { percent } = this.getOverallProgress();
+    bar.style.width = percent + '%';
+  }
+};
+
+// Auto-update progress bar on page load
+document.addEventListener('DOMContentLoaded', () => {
+  Progress.updateProgressBar();
+});
+
+</script>
+  <script>
+/* ============================================
+   QUIZ ENGINE — MCQ, True/False, Scenario
+   ============================================ */
+
+const QuizEngine = {
+  activeQuizzes: {},
+
+  init(containerId, questions) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const state = {
+      questions,
+      answers: {},
+      submitted: false,
+      containerId
+    };
+    this.activeQuizzes[containerId] = state;
+    this.render(state);
+  },
+
+  render(state) {
+    const container = document.getElementById(state.containerId);
+    let html = '';
+
+    state.questions.forEach((q, qIdx) => {
+      html += `
+        <div class="quiz-block reveal" id="quiz-q-${qIdx}">
+          <div class="quiz-block__question">
+            <span class="quiz-block__question-number">Q${qIdx + 1}.</span>
+            ${q.question}
+          </div>
+          <div class="quiz-block__options">
+      `;
+
+      q.options.forEach((opt, oIdx) => {
+        const letter = String.fromCharCode(65 + oIdx);
+        const isSelected = state.answers[qIdx] === oIdx;
+        const classes = ['quiz-option'];
+
+        if (state.submitted) {
+          if (oIdx === q.correct) classes.push('correct');
+          else if (isSelected && oIdx !== q.correct) classes.push('incorrect');
+        } else if (isSelected) {
+          classes.push('selected');
+        }
+
+        html += `
+          <div class="${classes.join(' ')}"
+               onclick="QuizEngine.selectAnswer('${state.containerId}', ${qIdx}, ${oIdx})"
+               role="button" tabindex="0">
+            <span class="quiz-option__marker">${letter}</span>
+            <span>${opt}</span>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+
+      // Feedback area
+      if (state.submitted) {
+        const isCorrect = state.answers[qIdx] === q.correct;
+        html += `
+          <div class="quiz-block__feedback show quiz-block__feedback--${isCorrect ? 'correct' : 'incorrect'}">
+            ${isCorrect ? '&#10003; Correct!' : '&#10007; Incorrect.'} ${q.explanation || ''}
+          </div>
+        `;
+      }
+
+      html += '</div>';
+    });
+
+    // Submit / Results
+    if (!state.submitted) {
+      const allAnswered = Object.keys(state.answers).length === state.questions.length;
+      html += `
+        <div style="text-align: center; margin-top: var(--space-8);">
+          <button class="btn btn--primary btn--large ${allAnswered ? '' : 'btn--disabled'}"
+                  onclick="QuizEngine.submit('${state.containerId}')">
+            Check Answers
+          </button>
+        </div>
+      `;
+    } else {
+      const score = this.getScore(state);
+      html += `
+        <div class="score-card reveal">
+          <div class="score-card__value">${score.correct}/${score.total}</div>
+          <div class="score-card__label">Questions Correct</div>
+          <div style="margin-top: var(--space-4); color: var(--text-secondary);">
+            ${score.percent >= 80 ? 'Excellent understanding!' :
+              score.percent >= 60 ? 'Good foundation — review highlighted areas.' :
+              'Consider revisiting the material above.'}
+          </div>
+        </div>
+      `;
+    }
+
+    container.innerHTML = html;
+
+    // Trigger reveal animations
+    requestAnimationFrame(() => {
+      container.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    });
+  },
+
+  selectAnswer(containerId, qIdx, oIdx) {
+    const state = this.activeQuizzes[containerId];
+    if (!state || state.submitted) return;
+    state.answers[qIdx] = oIdx;
+    this.render(state);
+  },
+
+  submit(containerId) {
+    const state = this.activeQuizzes[containerId];
+    if (!state) return;
+    if (Object.keys(state.answers).length < state.questions.length) return;
+    state.submitted = true;
+    this.render(state);
+
+    // Save score
+    const score = this.getScore(state);
+    Progress.saveQuizScore(containerId, score.correct, score.total);
+    Progress.updateProgressBar();
+  },
+
+  getScore(state) {
+    let correct = 0;
+    state.questions.forEach((q, idx) => {
+      if (state.answers[idx] === q.correct) correct++;
+    });
+    return {
+      correct,
+      total: state.questions.length,
+      percent: Math.round((correct / state.questions.length) * 100)
+    };
+  }
+};
+
+</script>
+  <script>
+/* ============================================
+   SIMULATION ENGINE — Flowchart Decision Trees
+   ============================================ */
+
+const SimulationEngine = {
+  active: null,
+
+  init(containerId, config) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    this.active = {
+      containerId,
+      config,        // { title, intro, nodes }
+      currentNode: 'start',
+      history: [],
+      choices: {}
+    };
+
+    this.render();
+  },
+
+  render() {
+    const { containerId, config, currentNode, history } = this.active;
+    const container = document.getElementById(containerId);
+    const node = config.nodes[currentNode];
+
+    if (!node) return;
+
+    let html = '';
+
+    // History trail
+    if (history.length > 0) {
+      html += '<div class="sim-history">';
+      history.forEach((h, idx) => {
+        const pastNode = config.nodes[h.nodeId];
+        html += `
+          <div class="sim-history__step reveal visible">
+            <div class="sim-history__step-label">Step ${idx + 1}</div>
+            <div class="sim-history__step-title">${pastNode.title}</div>
+            <div class="sim-history__step-choice ${h.wasGood ? 'good' : 'bad'}">
+              Your choice: ${h.choiceLabel}
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+    }
+
+    // Current node
+    html += `
+      <div class="sim-current reveal">
+        <h3 style="color: var(--text-primary); margin-bottom: var(--space-3);">${node.title}</h3>
+        <p style="color: var(--text-secondary); margin-bottom: var(--space-6); line-height: 1.7;">${node.description}</p>
+    `;
+
+    if (node.type === 'decision') {
+      html += '<div class="sim-choices">';
+      node.choices.forEach((choice, idx) => {
+        html += `
+          <div class="sim-node" onclick="SimulationEngine.choose(${idx})" role="button" tabindex="0">
+            <div style="font-family: var(--font-mono); font-size: var(--font-sm); color: var(--stroke-primary); margin-bottom: var(--space-2);">
+              Option ${String.fromCharCode(65 + idx)}
+            </div>
+            <div style="color: var(--text-primary); font-size: var(--font-base);">${choice.label}</div>
+            ${choice.hint ? `<div style="color: var(--text-secondary); font-size: var(--font-xs); margin-top: var(--space-2);">${choice.hint}</div>` : ''}
+          </div>
+        `;
+      });
+      html += '</div>';
+    } else if (node.type === 'consequence') {
+      const isGood = node.isGood !== false;
+      html += `
+        <div class="callout ${isGood ? '' : 'callout--error'}">
+          <div class="callout__label">${isGood ? '&#10003; Good Choice' : '&#10007; Consequence'}</div>
+          <div class="callout__text">${node.consequence}</div>
+        </div>
+      `;
+      if (node.next) {
+        html += `
+          <div style="text-align: center; margin-top: var(--space-6);">
+            <button class="btn btn--primary" onclick="SimulationEngine.goTo('${node.next}')">
+              Continue &rarr;
+            </button>
+          </div>
+        `;
+      }
+    } else if (node.type === 'result') {
+      html += `
+        <div class="score-card">
+          <div class="score-card__value">${node.score || ''}</div>
+          <div class="score-card__label">${node.scoreLabel || 'Simulation Complete'}</div>
+        </div>
+        <div style="color: var(--text-secondary); line-height: 1.7; margin-top: var(--space-4);">${node.summary || ''}</div>
+      `;
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+
+    // Animate
+    requestAnimationFrame(() => {
+      container.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    });
+
+    // Scroll to current
+    container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  },
+
+  choose(choiceIdx) {
+    const { config, currentNode } = this.active;
+    const node = config.nodes[currentNode];
+    const choice = node.choices[choiceIdx];
+
+    this.active.history.push({
+      nodeId: currentNode,
+      choiceIdx,
+      choiceLabel: choice.label,
+      wasGood: choice.isGood !== false
+    });
+
+    this.active.choices[currentNode] = choiceIdx;
+    this.active.currentNode = choice.next;
+    this.render();
+  },
+
+  goTo(nodeId) {
+    this.active.currentNode = nodeId;
+    this.render();
+  },
+
+  reset() {
+    if (!this.active) return;
+    this.active.currentNode = 'start';
+    this.active.history = [];
+    this.active.choices = {};
+    this.render();
+  }
+};
+
+/* --- Styles injected for simulation --- */
+const simStyles = document.createElement('style');
+simStyles.textContent = `
+  .sim-history {
+    margin-bottom: var(--space-8);
+    padding-left: var(--space-4);
+    border-left: 2px dashed var(--stroke-dim);
+  }
+  .sim-history__step {
+    padding: var(--space-3) var(--space-4);
+    margin-bottom: var(--space-3);
+    background: var(--bg-surface);
+    border-radius: var(--border-radius);
+  }
+  .sim-history__step-label {
+    font-family: var(--font-mono);
+    font-size: var(--font-xs);
+    color: var(--stroke-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .sim-history__step-title {
+    color: var(--text-primary);
+    font-size: var(--font-sm);
+    margin: var(--space-1) 0;
+  }
+  .sim-history__step-choice {
+    font-size: var(--font-xs);
+    font-family: var(--font-mono);
+  }
+  .sim-history__step-choice.good { color: var(--accent-success); }
+  .sim-history__step-choice.bad { color: var(--accent-error); }
+
+  .sim-current {
+    background: var(--bg-surface);
+    border: 1px dashed var(--stroke-primary);
+    border-radius: var(--border-radius-lg);
+    padding: var(--space-8);
+  }
+  .sim-choices {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-4);
+  }
+`;
+document.head.appendChild(simStyles);
+
+</script>
+  <script>
+/* ============================================
+   EVOLVING DIAGRAM — SVG-based layered reveal
+   ============================================ */
+
+const EvolvingDiagram = {
+  // Layer visibility state
+  state: {
+    layers: {
+      runtime: false,
+      tools: false,
+      context: false,
+      guardrails: false,
+      evaluation: false,
+      // Agent anatomy
+      llm: false,
+      reasoning: false,
+      memory: false,
+      agentTools: false,
+      policies: false,
+      agentContext: false,
+      // Roles
+      orchestrator: false,
+      superAgent: false,
+      utilityAgent: false,
+      // Patterns
+      sequential: false,
+      conditional: false,
+      loop: false,
+      parallel: false,
+      // ReAct
+      think: false,
+      act: false,
+      observe: false
+    }
+  },
+
+  // ── Module 01: Five-Layer Architecture ──────────────────────────────
+  render(containerId, visibleLayers) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    visibleLayers.forEach(l => { this.state.layers[l] = true; });
+
+    const layerOpacity = (key) => this.state.layers[key] ? 1 : 0.08;
+    const layerStroke  = (key) => this.state.layers[key] ? 'var(--stroke-primary)' : 'var(--stroke-dim)';
+    const layerFill    = (key) => this.state.layers[key] ? 'rgba(161,0,255,0.08)' : 'transparent';
+    const glowFilter   = (key) => this.state.layers[key] ? 'drop-shadow(0 0 6px rgba(161,0,255,0.4))' : 'none';
+
+    const svg = `
+    <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <text x="350" y="25" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.15em">ACMECORP DATA AGENT — ARCHITECTURE</text>
+      <g style="opacity:${layerOpacity('evaluation')};transition:opacity 0.8s ease;filter:${glowFilter('evaluation')}">
+        <rect x="20" y="40" width="660" height="340" rx="6" fill="${layerFill('evaluation')}" stroke="${layerStroke('evaluation')}" stroke-width="1.5" stroke-dasharray="8,4"/>
+        <text x="40" y="60" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em">L5: EVALUATION</text>
+      </g>
+      <g style="opacity:${layerOpacity('guardrails')};transition:opacity 0.8s ease;filter:${glowFilter('guardrails')}">
+        <rect x="50" y="72" width="600" height="290" rx="5" fill="${layerFill('guardrails')}" stroke="${this.state.layers.guardrails ? '#f59e0b' : 'var(--stroke-dim)'}" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="70" y="92" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em">L4: GUARDRAILS</text>
+      </g>
+      <g style="opacity:${layerOpacity('context')};transition:opacity 0.8s ease;filter:${glowFilter('context')}">
+        <rect x="80" y="104" width="540" height="240" rx="4" fill="${layerFill('context')}" stroke="${this.state.layers.context ? '#CC00FF' : 'var(--stroke-dim)'}" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="100" y="124" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em">L3: DATA &amp; CONTEXT (RAG)</text>
+      </g>
+      <g style="opacity:${layerOpacity('tools')};transition:opacity 0.8s ease;filter:${glowFilter('tools')}">
+        <rect x="110" y="136" width="480" height="190" rx="4" fill="${layerFill('tools')}" stroke="${layerStroke('tools')}" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="130" y="156" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.1em">L2: TOOL LAYER</text>
+        <g style="opacity:${layerOpacity('tools')};transition:opacity 0.6s ease 0.2s">
+          <rect x="130" y="165" width="90" height="32" rx="3" fill="rgba(161,0,255,0.06)" stroke="var(--stroke-dim)" stroke-width="1"/>
+          <text x="175" y="185" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="8">data_access</text>
+        </g>
+        <g style="opacity:${layerOpacity('tools')};transition:opacity 0.6s ease 0.3s">
+          <rect x="230" y="165" width="90" height="32" rx="3" fill="rgba(161,0,255,0.06)" stroke="var(--stroke-dim)" stroke-width="1"/>
+          <text x="275" y="185" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="8">transform</text>
+        </g>
+        <g style="opacity:${layerOpacity('tools')};transition:opacity 0.6s ease 0.4s">
+          <rect x="330" y="165" width="90" height="32" rx="3" fill="rgba(161,0,255,0.06)" stroke="var(--stroke-dim)" stroke-width="1"/>
+          <text x="375" y="185" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="8">external_api</text>
+        </g>
+        <g style="opacity:${layerOpacity('tools')};transition:opacity 0.6s ease 0.5s">
+          <rect x="430" y="165" width="90" height="32" rx="3" fill="rgba(161,0,255,0.06)" stroke="var(--stroke-dim)" stroke-width="1"/>
+          <text x="475" y="185" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="8">compute</text>
+        </g>
+      </g>
+      <g style="opacity:${layerOpacity('runtime')};transition:opacity 0.8s ease;filter:${glowFilter('runtime')}">
+        <rect x="160" y="210" width="380" height="100" rx="4" fill="rgba(161,0,255,0.1)" stroke="${layerStroke('runtime')}" stroke-width="2"/>
+        <text x="180" y="232" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="10" font-weight="600" letter-spacing="0.1em">L1: AGENT RUNTIME</text>
+        <rect x="180" y="245" width="70" height="28" rx="3" fill="rgba(161,0,255,0.08)" stroke="var(--stroke-dim)" stroke-width="1"/>
+        <text x="215" y="263" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="8">LLM</text>
+        <rect x="260" y="245" width="85" height="28" rx="3" fill="rgba(161,0,255,0.08)" stroke="var(--stroke-dim)" stroke-width="1"/>
+        <text x="302" y="263" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="8">State Mgr</text>
+        <rect x="355" y="245" width="75" height="28" rx="3" fill="rgba(161,0,255,0.08)" stroke="var(--stroke-dim)" stroke-width="1"/>
+        <text x="392" y="263" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="8">Memory</text>
+        <rect x="440" y="245" width="80" height="28" rx="3" fill="rgba(161,0,255,0.08)" stroke="var(--stroke-dim)" stroke-width="1"/>
+        <text x="480" y="263" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="8">Orchestrator</text>
+        <line x1="250" y1="259" x2="260" y2="259" stroke="var(--stroke-dim)" stroke-width="1" stroke-dasharray="3,2"/>
+        <line x1="345" y1="259" x2="355" y2="259" stroke="var(--stroke-dim)" stroke-width="1" stroke-dasharray="3,2"/>
+        <line x1="430" y1="259" x2="440" y2="259" stroke="var(--stroke-dim)" stroke-width="1" stroke-dasharray="3,2"/>
+      </g>
+      <g stroke="var(--stroke-dim)" stroke-width="0.5" opacity="0.4">
+        <line x1="15" y1="40" x2="15" y2="380"/>
+        <line x1="12" y1="40" x2="18" y2="40"/>
+        <line x1="12" y1="380" x2="18" y2="380"/>
+        <text x="10" y="215" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="7" text-anchor="middle" transform="rotate(-90,10,215)">FULL STACK</text>
+      </g>
+    </svg>`;
+
+    container.innerHTML = `<div class="evolving-diagram__label">AcmeCorp Agent Blueprint</div>${svg}`;
+  },
+
+  // ── Module 02, Lesson 1: Agent Anatomy ──────────────────────────────
+  renderAgentAnatomy(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const svg = `
+    <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;">
+      <defs>
+        <filter id="glow-anatomy">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <marker id="arr-anatomy" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#A100FF"/>
+        </marker>
+      </defs>
+
+      <text x="350" y="22" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.15em">ACMECORP DATA AGENT — 6-COMPONENT ANATOMY</text>
+
+      <!-- Central LLM -->
+      <rect x="270" y="170" width="160" height="70" rx="6" fill="rgba(161,0,255,0.15)" stroke="#A100FF" stroke-width="2" filter="url(#glow-anatomy)"/>
+      <text x="350" y="200" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700">LLM</text>
+      <text x="350" y="218" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="9">Core Reasoning Engine</text>
+      <text x="350" y="232" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="8">interprets · plans · decides</text>
+
+      <!-- Reasoning Graph (top) -->
+      <rect x="255" y="50" width="190" height="52" rx="5" fill="rgba(204,0,255,0.08)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="350" y="73" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">Reasoning Graph</text>
+      <text x="350" y="90" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">LangGraph orchestration · workflow state</text>
+      <line x1="350" y1="102" x2="350" y2="170" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-anatomy)"/>
+
+      <!-- Memory (top-right) -->
+      <rect x="520" y="80" width="155" height="52" rx="5" fill="rgba(161,0,255,0.08)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="597" y="103" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">Memory</text>
+      <text x="597" y="119" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">short-term · long-term · episodic</text>
+      <line x1="520" y1="110" x2="430" y2="185" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-anatomy)"/>
+
+      <!-- Tools (right) -->
+      <rect x="530" y="185" width="155" height="52" rx="5" fill="rgba(161,0,255,0.08)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="607" y="207" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">Tools</text>
+      <text x="607" y="223" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">SQL · API · compute · data access</text>
+      <line x1="530" y1="211" x2="430" y2="211" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-anatomy)"/>
+
+      <!-- Policies (bottom) -->
+      <rect x="255" y="310" width="190" height="52" rx="5" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="350" y="333" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">Policies</text>
+      <text x="350" y="349" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">guardrails · RBAC · PII masking · limits</text>
+      <line x1="350" y1="310" x2="350" y2="240" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-anatomy)"/>
+
+      <!-- Context (top-left) -->
+      <rect x="25" y="80" width="155" height="52" rx="5" fill="rgba(204,0,255,0.08)" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="102" y="103" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">Context</text>
+      <text x="102" y="119" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">RAG · schema · business rules</text>
+      <line x1="180" y1="110" x2="270" y2="185" stroke="#CC00FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-anatomy)"/>
+
+      <!-- Policies (left) -->
+      <rect x="15" y="185" width="155" height="52" rx="5" fill="rgba(161,0,255,0.08)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="92" y="207" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">Context Window</text>
+      <text x="92" y="223" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">active prompt · history · instructions</text>
+      <line x1="170" y1="211" x2="270" y2="211" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-anatomy)"/>
+
+      <!-- Bottom label -->
+      <text x="350" y="405" text-anchor="middle" fill="#5a0090" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em">LLM ORCHESTRATES ALL COMPONENTS · EACH ROLE IS DISTINCT</text>
+    </svg>`;
+
+    container.innerHTML = `<div class="evolving-diagram__label">Agent Anatomy Blueprint</div>${svg}`;
+  },
+
+  // ── Module 02, Lesson 2: Role Taxonomy ──────────────────────────────
+  renderRoleTaxonomy(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const svg = `
+    <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;">
+      <defs>
+        <filter id="glow-role">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <marker id="arr-role" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#A100FF"/>
+        </marker>
+        <marker id="arr-role-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#CC00FF"/>
+        </marker>
+        <marker id="arr-role-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#f59e0b"/>
+        </marker>
+      </defs>
+
+      <text x="350" y="22" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.15em">ACMECORP DATA AGENT — ROLE TAXONOMY</text>
+
+      <!-- Orchestrator -->
+      <rect x="225" y="45" width="250" height="80" rx="6" fill="rgba(161,0,255,0.12)" stroke="#A100FF" stroke-width="2" filter="url(#glow-role)"/>
+      <text x="350" y="75" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700">Orchestrator</text>
+      <text x="350" y="93" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="9">Decomposes goals · delegates sub-tasks</text>
+      <text x="350" y="108" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="8">coordinates · monitors · aggregates results</text>
+
+      <!-- Delegate arrows -->
+      <line x1="290" y1="125" x2="185" y2="195" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arr-role)"/>
+      <line x1="410" y1="125" x2="515" y2="195" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arr-role)"/>
+
+      <!-- Delegate labels -->
+      <text x="218" y="168" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">delegates</text>
+      <text x="482" y="168" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">delegates</text>
+
+      <!-- Super Agent -->
+      <rect x="55" y="195" width="260" height="90" rx="5" fill="rgba(204,0,255,0.08)" stroke="#CC00FF" stroke-width="1.5"/>
+      <text x="185" y="224" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600">Super Agent</text>
+      <text x="185" y="242" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="9">Cross-domain generalist</text>
+      <text x="185" y="257" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">ambiguous requests · broad reasoning</text>
+      <text x="185" y="271" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">multi-domain knowledge · flexible scope</text>
+
+      <!-- Utility Agent -->
+      <rect x="385" y="195" width="260" height="90" rx="5" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="515" y="224" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="12" font-weight="600">Utility Agent</text>
+      <text x="515" y="242" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="9">Single-purpose specialist</text>
+      <text x="515" y="257" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">scoped permissions · targeted guardrails</text>
+      <text x="515" y="271" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">fast · reliable · one task done well</text>
+
+      <!-- Example boxes -->
+      <rect x="70" y="310" width="230" height="36" rx="4" fill="rgba(204,0,255,0.05)" stroke="#CC00FF" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="185" y="325" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">e.g. "Generate a full sales report</text>
+      <text x="185" y="338" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">with insights across all regions"</text>
+
+      <rect x="400" y="310" width="230" height="36" rx="4" fill="rgba(245,158,11,0.05)" stroke="#f59e0b" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="515" y="325" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">e.g. "Run this SQL query and</text>
+      <text x="515" y="338" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">return the result set"</text>
+
+      <!-- Agent Cards label -->
+      <text x="350" y="385" text-anchor="middle" fill="#5a0090" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em">EACH ROLE PUBLISHES AN AGENT CARD · CAPABILITIES · PERMISSIONS · ENDPOINTS</text>
+    </svg>`;
+
+    container.innerHTML = `<div class="evolving-diagram__label">Agent Role Taxonomy Blueprint</div>${svg}`;
+  },
+
+  // ── Module 02, Lesson 3: LangGraph Patterns ─────────────────────────
+  renderLangGraphPatterns(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const svg = `
+    <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;">
+      <defs>
+        <filter id="glow-lg">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <marker id="arr-lg" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#A100FF"/>
+        </marker>
+        <marker id="arr-lg-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#f59e0b"/>
+        </marker>
+        <marker id="arr-lg-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#ef4444"/>
+        </marker>
+        <marker id="arr-lg-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#10b981"/>
+        </marker>
+        <marker id="arr-lg-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#CC00FF"/>
+        </marker>
+      </defs>
+
+      <text x="350" y="22" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.15em">ACMECORP DATA AGENT — LANGGRAPH STATE MACHINE</text>
+
+      <!-- Shared State Object -->
+      <rect x="240" y="38" width="220" height="72" rx="5" fill="rgba(161,0,255,0.06)" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="6,3" filter="url(#glow-lg)"/>
+      <text x="350" y="58" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="0.08em">SHARED STATE OBJECT</text>
+      <text x="350" y="74" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">{ query, intent, sql, result,</text>
+      <text x="350" y="88" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">  errors, retry_count, output }</text>
+      <text x="350" y="102" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="8">← nodes read &amp; write here →</text>
+
+      <!-- Arrow state → parse_intent -->
+      <line x1="350" y1="110" x2="350" y2="140" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arr-lg)"/>
+
+      <!-- parse_intent node -->
+      <rect x="270" y="140" width="160" height="38" rx="4" fill="rgba(161,0,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+      <text x="350" y="162" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10">parse_intent</text>
+
+      <!-- Arrow parse_intent → conditional edge -->
+      <line x1="350" y1="178" x2="350" y2="208" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arr-lg)"/>
+
+      <!-- Conditional edge diamond -->
+      <polygon points="350,208 390,228 350,248 310,228" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="350" y="232" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="8">route?</text>
+
+      <!-- Left path: generate_sql -->
+      <line x1="310" y1="228" x2="160" y2="228" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arr-lg)"/>
+      <text x="235" y="220" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">data query</text>
+      <rect x="60" y="210" width="100" height="36" rx="4" fill="rgba(161,0,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+      <text x="110" y="232" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="9">generate_sql</text>
+
+      <!-- generate_sql → validate -->
+      <line x1="110" y1="246" x2="110" y2="285" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arr-lg)"/>
+      <rect x="55" y="285" width="110" height="36" rx="4" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5"/>
+      <text x="110" y="307" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="9">validate_sql</text>
+
+      <!-- retry loop arrow -->
+      <path d="M 60 303 C 15 303, 15 228, 60 228" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-lg-red)"/>
+      <text x="28" y="268" text-anchor="middle" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="7">retry</text>
+
+      <!-- validate → execute -->
+      <line x1="165" y1="303" x2="240" y2="303" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr-lg-green)"/>
+      <text x="203" y="296" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="7">valid</text>
+      <rect x="240" y="285" width="100" height="36" rx="4" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5"/>
+      <text x="290" y="307" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="9">execute_query</text>
+
+      <!-- Right path: report_generator -->
+      <line x1="390" y1="228" x2="530" y2="228" stroke="#CC00FF" stroke-width="1.5" marker-end="url(#arr-lg-teal)"/>
+      <text x="460" y="220" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">report gen</text>
+      <rect x="530" y="210" width="120" height="36" rx="4" fill="rgba(204,0,255,0.08)" stroke="#CC00FF" stroke-width="1.5"/>
+      <text x="590" y="232" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="9">report_generator</text>
+
+      <!-- Both paths → format_output -->
+      <line x1="340" y1="321" x2="380" y2="355" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr-lg-green)"/>
+      <line x1="590" y1="246" x2="590" y2="340" stroke="#CC00FF" stroke-width="1.5"/>
+      <line x1="590" y1="340" x2="430" y2="355" stroke="#CC00FF" stroke-width="1.5" marker-end="url(#arr-lg-teal)"/>
+      <rect x="360" y="355" width="140" height="36" rx="4" fill="rgba(161,0,255,0.1)" stroke="#A100FF" stroke-width="2"/>
+      <text x="430" y="377" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="10">format_output</text>
+
+      <!-- Bottom label -->
+      <text x="350" y="395" text-anchor="middle" fill="#5a0090" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em">CONDITIONAL EDGES ROUTE EXECUTION · STATE SHARED ACROSS ALL NODES</text>
+    </svg>`;
+
+    container.innerHTML = `<div class="evolving-diagram__label">LangGraph State Machine Blueprint</div>${svg}`;
+  },
+
+  // ── Module 02, Lesson 4: ReAct Loop ─────────────────────────────────
+  renderReactLoop(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const svg = `
+    <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:700px;">
+      <defs>
+        <filter id="glow-react">
+          <feGaussianBlur stdDeviation="4" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <marker id="arr-react-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#A100FF"/>
+        </marker>
+        <marker id="arr-react-amber" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#f59e0b"/>
+        </marker>
+        <marker id="arr-react-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0,8 3,0 6" fill="#10b981"/>
+        </marker>
+      </defs>
+
+      <text x="350" y="22" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="11" letter-spacing="0.15em">ACMECORP DATA AGENT — REACT REASONING LOOP</text>
+
+      <!-- User Query entry -->
+      <rect x="275" y="40" width="150" height="38" rx="4" fill="rgba(161,0,255,0.06)" stroke="#A100FF" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="350" y="63" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="9">User Query</text>
+      <line x1="350" y1="78" x2="350" y2="108" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arr-react-blue)"/>
+
+      <!-- THINK -->
+      <rect x="210" y="108" width="280" height="70" rx="6" fill="rgba(161,0,255,0.12)" stroke="#A100FF" stroke-width="2" filter="url(#glow-react)"/>
+      <text x="350" y="135" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700">THINK</text>
+      <text x="350" y="152" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="9">Reason about what action is needed</text>
+      <text x="350" y="168" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">"I need to discover schema before writing SQL"</text>
+
+      <!-- THINK → ACT -->
+      <line x1="490" y1="143" x2="560" y2="143" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arr-react-blue)"/>
+
+      <!-- ACT -->
+      <rect x="560" y="108" width="120" height="70" rx="6" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="2" filter="url(#glow-react)"/>
+      <text x="620" y="135" text-anchor="middle" fill="#f59e0b" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700">ACT</text>
+      <text x="620" y="152" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="9">Call tool</text>
+      <text x="620" y="168" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">emit JSON</text>
+
+      <!-- ACT → OBSERVE (down) -->
+      <line x1="620" y1="178" x2="620" y2="258" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr-react-amber)"/>
+
+      <!-- OBSERVE -->
+      <rect x="560" y="258" width="120" height="70" rx="6" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="2" filter="url(#glow-react)"/>
+      <text x="620" y="285" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700">OBSERVE</text>
+      <text x="620" y="302" text-anchor="middle" fill="#c4a8d8" font-family="JetBrains Mono, monospace" font-size="9">Examine result</text>
+      <text x="620" y="318" text-anchor="middle" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="8">update state</text>
+
+      <!-- OBSERVE → THINK (loop back) -->
+      <line x1="560" y1="293" x2="490" y2="293" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr-react-green)"/>
+      <line x1="490" y1="293" x2="490" y2="143" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <line x1="490" y1="143" x2="490" y2="143" stroke="#10b981" stroke-width="1.5"/>
+      <text x="520" y="220" text-anchor="middle" fill="#10b981" font-family="JetBrains Mono, monospace" font-size="8">iterate</text>
+
+      <!-- Done? decision -->
+      <polygon points="350,258 400,280 350,302 300,280" fill="rgba(161,0,255,0.08)" stroke="#A100FF" stroke-width="1.5"/>
+      <text x="350" y="284" text-anchor="middle" fill="#f5f5f5" font-family="JetBrains Mono, monospace" font-size="8">done?</text>
+
+      <!-- THINK → done? -->
+      <line x1="350" y1="178" x2="350" y2="258" stroke="#A100FF" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr-react-blue)"/>
+
+      <!-- done? → Final Answer -->
+      <line x1="350" y1="302" x2="350" y2="340" stroke="#A100FF" stroke-width="1.5" marker-end="url(#arr-react-blue)"/>
+      <rect x="235" y="340" width="230" height="38" rx="5" fill="rgba(204,0,255,0.1)" stroke="#CC00FF" stroke-width="1.5"/>
+      <text x="350" y="362" text-anchor="middle" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="11" font-weight="600">Final Answer → User</text>
+
+      <!-- Trace example (left side) -->
+      <rect x="20" y="108" width="175" height="220" rx="5" fill="rgba(161,0,255,0.03)" stroke="#1e3a5f" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="107" y="128" text-anchor="middle" fill="#A100FF" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="0.05em">ACMECORP TRACE</text>
+      <text x="30" y="150" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="7.5">① THINK: discover schema</text>
+      <text x="30" y="167" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="7.5">① ACT: get_schema(sales)</text>
+      <text x="30" y="184" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="7.5">① OBSERVE: 9 cols found</text>
+      <text x="30" y="207" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="7.5">② THINK: write SQL query</text>
+      <text x="30" y="224" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="7.5">② ACT: validate_sql(...)</text>
+      <text x="30" y="241" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="7.5">② OBSERVE: valid ✓</text>
+      <text x="30" y="264" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="7.5">③ THINK: execute query</text>
+      <text x="30" y="281" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="7.5">③ ACT: run_query(sql)</text>
+      <text x="30" y="298" fill="#a08ab8" font-family="JetBrains Mono, monospace" font-size="7.5">③ OBSERVE: 847 rows</text>
+      <text x="30" y="315" fill="#CC00FF" font-family="JetBrains Mono, monospace" font-size="7.5">→ done: format &amp; return</text>
+
+      <!-- Bottom label -->
+      <text x="350" y="395" text-anchor="middle" fill="#5a0090" font-family="JetBrains Mono, monospace" font-size="9" letter-spacing="0.1em">THINK → ACT → OBSERVE · REPEAT UNTIL DONE · SELF-CORRECTING BY DESIGN</text>
+    </svg>`;
+
+    container.innerHTML = `<div class="evolving-diagram__label">ReAct Loop Blueprint</div>${svg}`;
+  },
+
+  // ── Router ───────────────────────────────────────────────────────────
+  renderForPage(containerId, pageId) {
+    // Module 02 pages get topic-specific diagrams
+    if (pageId === 'agent-anatomy') {
+      return this.renderAgentAnatomy(containerId);
+    }
+    if (pageId === 'role-taxonomy') {
+      return this.renderRoleTaxonomy(containerId);
+    }
+    if (pageId === 'langgraph-patterns') {
+      return this.renderLangGraphPatterns(containerId);
+    }
+    if (pageId === 'react-loop') {
+      return this.renderReactLoop(containerId);
+    }
+
+    // Module 01 pages — 5-layer architecture diagram
+    const layerMap = {
+      'five-layer-arch':       ['runtime', 'tools', 'context', 'guardrails', 'evaluation'],
+      'tool-definitions':      ['runtime', 'tools', 'context', 'guardrails', 'evaluation'],
+      'error-handling':        ['runtime', 'tools', 'context', 'guardrails', 'evaluation'],
+      'tool-calling':          ['runtime', 'tools', 'context', 'guardrails', 'evaluation'],
+    };
+
+    Object.keys(this.state.layers).forEach(k => { this.state.layers[k] = false; });
+    this.render(containerId, layerMap[pageId] || []);
+  }
+};
+
+</script>
+  <script>
+/* ============================================
+   NAVIGATION — Data Agent Academy
+   ============================================ */
+
+const Nav = {
+  initScrollReveal() {
+    // Only animate elements that are below the fold
+    const allReveal = document.querySelectorAll('.reveal, .draw-line, .unfold, .node-appear, .stagger-children');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Only animate below-fold elements
+          if (entry.target.classList.contains('reveal')) {
+            const rect = entry.target.getBoundingClientRect();
+            if (rect.top > 100) {
+              entry.target.classList.add('animate-on-scroll');
+            }
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+
+    allReveal.forEach(el => observer.observe(el));
+
+    // Immediately mark everything already in viewport as visible
+    allReveal.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) el.classList.add('visible');
+    });
+  },
+
+  initCollapsibles() {
+    document.querySelectorAll('.collapsible__header').forEach(header => {
+      header.addEventListener('click', () => header.parentElement.classList.toggle('open'));
+    });
+  },
+
+  initScrollProgress() {
+    if (typeof Progress !== 'undefined') Progress.updateProgressBar();
+  },
+
+  initCompletionTrigger(pageId) {
+    if (!pageId || typeof Progress === 'undefined') return;
+    const pageNav = document.querySelector('.page-nav');
+    if (!pageNav) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          Progress.markCompleted(pageId);
+          Progress.updateProgressBar();
+        }
+      });
+    }, { threshold: 0.3 });
+    observer.observe(pageNav);
+  },
+
+  initBadgePopovers() {
+    let activePop = null;
+    let activeBadge = null;
+
+    function closePopover() {
+      if (activePop) { activePop.remove(); activePop = null; activeBadge = null; }
+    }
+
+    document.querySelectorAll('.badge[data-tip]').forEach(function(badge) {
+      badge.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (activeBadge === this) { closePopover(); return; }
+        closePopover();
+
+        // Build popover
+        const pop = document.createElement('div');
+        pop.className = 'tag-popover';
+        if (this.classList.contains('badge--teal'))  pop.classList.add('badge--teal');
+        if (this.classList.contains('badge--amber')) pop.classList.add('badge--amber');
+        if (this.classList.contains('badge--green')) pop.classList.add('badge--green');
+        pop.innerHTML = '<div class="tag-popover__title">' + this.textContent.trim() + '</div>' + this.dataset.tip;
+        pop.addEventListener('click', ev => ev.stopPropagation());
+
+        // Append to body with fixed positioning — never clipped
+        document.body.appendChild(pop);
+        activePop = pop;
+        activeBadge = this;
+
+        // Position it
+        const badgeRect = this.getBoundingClientRect();
+        const pw = 280;
+        let left = badgeRect.left + badgeRect.width / 2 - pw / 2;
+        if (left < 8) left = 8;
+        if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+
+        const ph = pop.offsetHeight;
+        const spaceAbove = badgeRect.top;
+        const spaceBelow = window.innerHeight - badgeRect.bottom;
+
+        pop.style.left = left + 'px';
+        pop.style.width = pw + 'px';
+
+        if (spaceAbove > ph + 20 || spaceAbove > spaceBelow) {
+          pop.style.top = (badgeRect.top - ph - 10) + 'px';
+        } else {
+          pop.style.top = (badgeRect.bottom + 10) + 'px';
+        }
+      });
+    });
+
+    document.addEventListener('click', closePopover);
+    window.addEventListener('scroll', closePopover, { passive: true });
+    window.addEventListener('resize', closePopover, { passive: true });
+  },
+
+  init(pageId) {
+    const run = () => {
+      this.initScrollReveal();
+      this.initCollapsibles();
+      this.initScrollProgress();
+      this.initCompletionTrigger(pageId);
+      this.initBadgePopovers();
+      document.querySelector('.page-content')?.classList.add('page-enter');
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', run);
+    } else {
+      run();
+    }
+  }
+};
+
+</script>
   <script>
     Nav.init('m03-guardrails-personas');
 
