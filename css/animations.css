@@ -1,36 +1,36 @@
 /* ============================================
-   ANIMATIONS — Scroll-triggered & Transitions
+   ANIMATIONS — Data Agent Academy
    ============================================ */
 
 /* --- Scroll Reveal ---
-   Only hide elements when JS has confirmed it loaded (body.js-loaded).
-   Without JS, everything stays visible so the page never goes blank.
+   Hero content (first screen) is ALWAYS visible.
+   Below-fold content animates in on scroll.
+   We never hide content by default — avoids blank pages entirely.
 */
-body.js-loaded .reveal {
-  opacity: 0;
-  transform: translateY(30px);
+.reveal {
+  opacity: 1;
+  transform: none;
   transition: opacity var(--transition-reveal), transform var(--transition-reveal);
 }
-.reveal.visible,
-body:not(.js-loaded) .reveal {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
+
+/* Only apply the hide-then-reveal animation to below-fold content */
+.reveal.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
 }
 
-body.js-loaded .reveal--delay-1 { transition-delay: 100ms; }
-body.js-loaded .reveal--delay-2 { transition-delay: 200ms; }
-body.js-loaded .reveal--delay-3 { transition-delay: 300ms; }
-body.js-loaded .reveal--delay-4 { transition-delay: 400ms; }
-body.js-loaded .reveal--delay-5 { transition-delay: 500ms; }
+.reveal.animate-on-scroll.visible {
+  opacity: 1;
+  transform: none;
+}
 
-body.js-loaded .reveal--fade-left  { opacity: 0; transform: translateX(-30px); }
-body.js-loaded .reveal--fade-right { opacity: 0; transform: translateX(30px); }
-body.js-loaded .reveal--scale      { opacity: 0; transform: scale(0.9); }
-.reveal--fade-left.visible,
-.reveal--fade-right.visible,
-.reveal--scale.visible { opacity: 1 !important; transform: none !important; }
+.reveal--delay-1 { transition-delay: 100ms; }
+.reveal--delay-2 { transition-delay: 200ms; }
+.reveal--delay-3 { transition-delay: 300ms; }
+.reveal--delay-4 { transition-delay: 400ms; }
+.reveal--delay-5 { transition-delay: 500ms; }
 
-/* --- SVG Line Drawing --- */
+/* --- Draw Line (SVG) --- */
 .draw-line {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
@@ -38,37 +38,40 @@ body.js-loaded .reveal--scale      { opacity: 0; transform: scale(0.9); }
 }
 .draw-line.visible { stroke-dashoffset: 0; }
 
-/* --- Unfold --- */
-@keyframes unfold {
-  0%   { clip-path: inset(0 100% 0 0); opacity: 0; }
-  50%  { opacity: 1; }
-  100% { clip-path: inset(0 0 0 0); opacity: 1; }
-}
-.unfold { animation: unfold 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; animation-play-state: paused; }
-.unfold.visible { animation-play-state: running; }
-
 /* --- Node Appear --- */
 @keyframes node-appear {
   0%   { opacity: 0; transform: scale(0.5); }
   60%  { opacity: 1; transform: scale(1.05); }
   100% { opacity: 1; transform: scale(1); }
 }
-body.js-loaded .node-appear { opacity: 0; }
-.node-appear.visible { animation: node-appear 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards; }
+.node-appear.visible {
+  animation: node-appear 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
 .node-appear.visible.delay-1 { animation-delay: 200ms; }
 .node-appear.visible.delay-2 { animation-delay: 400ms; }
 .node-appear.visible.delay-3 { animation-delay: 600ms; }
 .node-appear.visible.delay-4 { animation-delay: 800ms; }
-.node-appear.visible.delay-5 { animation-delay: 1000ms; }
 
-/* --- Typing Effect --- */
-@keyframes typing      { from { width: 0; } to { width: 100%; } }
-@keyframes blink-caret { from, to { border-color: transparent; } 50% { border-color: var(--stroke-primary); } }
-.typing-effect {
-  overflow: hidden; white-space: nowrap;
-  border-right: 2px solid var(--stroke-primary);
+/* --- Stagger children --- */
+.stagger-children > * {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.stagger-children.visible > *:nth-child(1) { transition-delay:   0ms; }
+.stagger-children.visible > *:nth-child(2) { transition-delay: 100ms; }
+.stagger-children.visible > *:nth-child(3) { transition-delay: 200ms; }
+.stagger-children.visible > *:nth-child(4) { transition-delay: 300ms; }
+.stagger-children.visible > *:nth-child(5) { transition-delay: 400ms; }
+.stagger-children.visible > *:nth-child(6) { transition-delay: 500ms; }
+.stagger-children.visible > *:nth-child(7) { transition-delay: 600ms; }
+.stagger-children.visible > *:nth-child(8) { transition-delay: 700ms; }
+
+/* --- Hero line --- */
+@keyframes hero-line-draw { from { width: 0; } to { width: 100%; } }
+.hero-line {
+  height: 1px;
+  background: linear-gradient(90deg, var(--stroke-primary), transparent);
   width: 0;
-  animation: typing 2s steps(40) forwards, blink-caret 0.75s step-end infinite;
+  animation: hero-line-draw 1.5s ease forwards 0.3s;
 }
 
 /* --- Pulse Glow (live dot) --- */
@@ -86,28 +89,13 @@ body.js-loaded .node-appear { opacity: 0; }
 @keyframes flow-arrow { 0% { stroke-dashoffset: 20; } 100% { stroke-dashoffset: 0; } }
 .flow-arrow { stroke-dasharray: 10, 10; animation: flow-arrow 1s linear infinite; }
 
-/* --- Stagger children --- */
-body.js-loaded .stagger-children > * {
-  opacity: 0; transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-.stagger-children.visible > *:nth-child(1) { transition-delay:   0ms; opacity:1 !important; transform:none !important; }
-.stagger-children.visible > *:nth-child(2) { transition-delay: 100ms; opacity:1 !important; transform:none !important; }
-.stagger-children.visible > *:nth-child(3) { transition-delay: 200ms; opacity:1 !important; transform:none !important; }
-.stagger-children.visible > *:nth-child(4) { transition-delay: 300ms; opacity:1 !important; transform:none !important; }
-.stagger-children.visible > *:nth-child(5) { transition-delay: 400ms; opacity:1 !important; transform:none !important; }
-.stagger-children.visible > *:nth-child(6) { transition-delay: 500ms; opacity:1 !important; transform:none !important; }
-.stagger-children.visible > *:nth-child(7) { transition-delay: 600ms; opacity:1 !important; transform:none !important; }
-.stagger-children.visible > *:nth-child(8) { transition-delay: 700ms; opacity:1 !important; transform:none !important; }
-
-/* --- Hero line --- */
-@keyframes hero-line-draw { 0% { width: 0; } 100% { width: 100%; } }
-.hero-line {
-  height: 1px;
-  background: linear-gradient(90deg, var(--stroke-primary), transparent);
-  width: 0;
-  animation: hero-line-draw 1.5s ease forwards;
-  animation-delay: 0.5s;
+/* --- Typing Effect --- */
+@keyframes typing      { from { width: 0; } to { width: 100%; } }
+@keyframes blink-caret { from, to { border-color: transparent; } 50% { border-color: var(--stroke-primary); } }
+.typing-effect {
+  overflow: hidden; white-space: nowrap;
+  border-right: 2px solid var(--stroke-primary); width: 0;
+  animation: typing 2s steps(40) forwards, blink-caret 0.75s step-end infinite;
 }
 
 /* --- Circuit states --- */
@@ -123,6 +111,13 @@ body.js-loaded .stagger-children > * {
 }
 .shake { animation: shake 0.5s ease-in-out; }
 
+/* --- Unfold --- */
+@keyframes unfold {
+  from { clip-path: inset(0 100% 0 0); opacity: 0; }
+  to   { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+.unfold.visible { animation: unfold 1s ease forwards; }
+
 /* --- Page enter --- */
-@keyframes page-enter { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
-.page-enter { animation: page-enter 0.4s ease forwards; }
+@keyframes page-enter { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+.page-enter { animation: page-enter 0.35s ease forwards; }

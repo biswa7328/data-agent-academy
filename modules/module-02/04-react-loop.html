@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ReAct Loop — Module 02 — Data Agent Academy</title>
-  <link rel="stylesheet" href="../../css/design-system.css?v=6">
-  <link rel="stylesheet" href="../../css/components.css?v=6">
-  <link rel="stylesheet" href="../../css/animations.css?v=6">
+  <link rel="stylesheet" href="../../css/design-system.css?v=7">
+  <link rel="stylesheet" href="../../css/components.css?v=7">
+  <link rel="stylesheet" href="../../css/animations.css?v=7">
   <style>
     /* --- ReAct Timeline --- */
     .react-timeline {
@@ -650,17 +650,16 @@
   </div>
 
   <!-- ===== SCRIPTS ===== -->
-  <script src="../../js/progress.js?v=6"></script>
-  <script src="../../js/quiz.js?v=6"></script>
-  <script src="../../js/simulation.js?v=6"></script>
-  <script src="../../js/diagram.js?v=6"></script>
-  <script src="../../js/nav.js?v=6"></script>
+  <script src="../../js/progress.js?v=7"></script>
+  <script src="../../js/quiz.js?v=7"></script>
+  <script src="../../js/simulation.js?v=7"></script>
+  <script src="../../js/diagram.js?v=7"></script>
+  <script src="../../js/nav.js?v=7"></script>
 
   <script>
     // --- Evolving Diagram ---
-    document.addEventListener('DOMContentLoaded', () => {
-      EvolvingDiagram.renderForPage('evolvingDiagram', 'react-loop');
-    });
+    // Render diagram immediately (DOM already ready when scripts run)
+    (function() { EvolvingDiagram.renderForPage('evolvingDiagram', 'react-loop'); })();
 
     // --- Initialize Nav ---
     Nav.init('m02-react-loop');

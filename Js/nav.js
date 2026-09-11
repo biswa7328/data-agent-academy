@@ -1,29 +1,35 @@
 /* ============================================
-   NAVIGATION & SCROLL OBSERVER
+   NAVIGATION — Data Agent Academy
    ============================================ */
-
-// Mark body as JS-loaded IMMEDIATELY
-document.body.classList.add('js-loaded');
 
 const Nav = {
   initScrollReveal() {
+    // Only animate elements that are below the fold
+    const allReveal = document.querySelectorAll('.reveal, .draw-line, .unfold, .node-appear, .stagger-children');
+    
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) entry.target.classList.add('visible');
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          // Only animate below-fold elements
+          if (entry.target.classList.contains('reveal')) {
+            const rect = entry.target.getBoundingClientRect();
+            if (rect.top > 100) {
+              entry.target.classList.add('animate-on-scroll');
+            }
+          }
+          observer.unobserve(entry.target);
+        }
       });
     }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
 
-    document.querySelectorAll('.reveal, .draw-line, .unfold, .node-appear, .stagger-children').forEach(el => {
-      observer.observe(el);
-    });
+    allReveal.forEach(el => observer.observe(el));
 
-    // Force-reveal anything already in viewport
-    setTimeout(() => {
-      document.querySelectorAll('.reveal, .node-appear, .stagger-children').forEach(el => {
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight + 50) el.classList.add('visible');
-      });
-    }, 50);
+    // Immediately mark everything already in viewport as visible
+    allReveal.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) el.classList.add('visible');
+    });
   },
 
   initCollapsibles() {
@@ -33,13 +39,13 @@ const Nav = {
   },
 
   initScrollProgress() {
-    const bar = document.querySelector('.progress-bar__fill');
-    if (!bar) return;
-    Progress.updateProgressBar();
+    if (typeof Progress !== 'undefined') Progress.updateProgressBar();
   },
 
   initCompletionTrigger(pageId) {
-    if (!pageId) return;
+    if (!pageId || typeof Progress === 'undefined') return;
+    const pageNav = document.querySelector('.page-nav');
+    if (!pageNav) return;
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -47,49 +53,16 @@ const Nav = {
           Progress.updateProgressBar();
         }
       });
-    }, { threshold: 0.5 });
-    const pageNav = document.querySelector('.page-nav');
-    if (pageNav) observer.observe(pageNav);
+    }, { threshold: 0.3 });
+    observer.observe(pageNav);
   },
 
   initBadgePopovers() {
-    // Append popover to BODY with fixed positioning — never clipped by any parent
     let activePop = null;
     let activeBadge = null;
 
     function closePopover() {
       if (activePop) { activePop.remove(); activePop = null; activeBadge = null; }
-    }
-
-    function positionPopover(pop, badge) {
-      const rect = badge.getBoundingClientRect();
-      const popWidth = 280;
-      let left = rect.left + rect.width / 2 - popWidth / 2;
-      let top = rect.top - 10; // will be adjusted after measuring
-
-      // Keep within viewport horizontally
-      if (left < 8) left = 8;
-      if (left + popWidth > window.innerWidth - 8) left = window.innerWidth - popWidth - 8;
-
-      // Position above badge first, then check if it fits
-      pop.style.left = left + 'px';
-      pop.style.top = '0px';
-      pop.style.visibility = 'hidden';
-      pop.style.display = 'block';
-      document.body.appendChild(pop);
-
-      const popHeight = pop.offsetHeight;
-      pop.style.visibility = '';
-
-      if (rect.top - popHeight - 16 > 0) {
-        // Show above
-        pop.style.top = (rect.top + window.scrollY - popHeight - 12) + 'px';
-        pop.style.position = 'fixed';
-        pop.style.top = (rect.top - popHeight - 12) + 'px';
-      } else {
-        // Show below
-        pop.style.top = (rect.bottom + 12) + 'px';
-      }
     }
 
     document.querySelectorAll('.badge[data-tip]').forEach(function(badge) {
@@ -98,20 +71,39 @@ const Nav = {
         if (activeBadge === this) { closePopover(); return; }
         closePopover();
 
+        // Build popover
         const pop = document.createElement('div');
         pop.className = 'tag-popover';
-
-        // Inherit colour variant from badge
         if (this.classList.contains('badge--teal'))  pop.classList.add('badge--teal');
         if (this.classList.contains('badge--amber')) pop.classList.add('badge--amber');
         if (this.classList.contains('badge--green')) pop.classList.add('badge--green');
-
         pop.innerHTML = '<div class="tag-popover__title">' + this.textContent.trim() + '</div>' + this.dataset.tip;
         pop.addEventListener('click', ev => ev.stopPropagation());
 
+        // Append to body with fixed positioning — never clipped
+        document.body.appendChild(pop);
         activePop = pop;
         activeBadge = this;
-        positionPopover(pop, this);
+
+        // Position it
+        const badgeRect = this.getBoundingClientRect();
+        const pw = 280;
+        let left = badgeRect.left + badgeRect.width / 2 - pw / 2;
+        if (left < 8) left = 8;
+        if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+
+        const ph = pop.offsetHeight;
+        const spaceAbove = badgeRect.top;
+        const spaceBelow = window.innerHeight - badgeRect.bottom;
+
+        pop.style.left = left + 'px';
+        pop.style.width = pw + 'px';
+
+        if (spaceAbove > ph + 20 || spaceAbove > spaceBelow) {
+          pop.style.top = (badgeRect.top - ph - 10) + 'px';
+        } else {
+          pop.style.top = (badgeRect.bottom + 10) + 'px';
+        }
       });
     });
 
@@ -127,8 +119,7 @@ const Nav = {
       this.initScrollProgress();
       this.initCompletionTrigger(pageId);
       this.initBadgePopovers();
-      const content = document.querySelector('.page-content');
-      if (content) content.classList.add('page-enter');
+      document.querySelector('.page-content')?.classList.add('page-enter');
     };
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', run);
