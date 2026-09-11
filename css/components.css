@@ -128,20 +128,20 @@
 
 /* --- Terminal Panel --- */
 .terminal {
-  background: #ffffff;
-  border: 1px solid #2a2a2a;
+  background: #1a1230;
+  border: 1px solid #3d1a6e;
   border-radius: var(--border-radius-lg);
   overflow: hidden;
   margin: var(--space-6) 0;
 }
 
 .terminal__header {
-  background: #1a1a1a;
+  background: #120d22;
   padding: var(--space-2) var(--space-4);
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid #3d1a6e;
 }
 
 .terminal__dot {
@@ -157,7 +157,7 @@
 .terminal__title {
   font-family: var(--font-mono);
   font-size: var(--font-xs);
-  color: #666;
+  color: #a08abd;
   margin-left: var(--space-3);
 }
 
@@ -165,7 +165,7 @@
   padding: var(--space-4) var(--space-6);
   font-family: var(--font-mono);
   font-size: var(--font-sm);
-  color: #e0e0e0;
+  color: #f0e8ff;
   line-height: 1.8;
   white-space: pre-wrap;
   overflow-x: auto;
@@ -177,7 +177,7 @@
 }
 
 .terminal__line--comment {
-  color: #666;
+  color: #9d7ec9;
 }
 
 .terminal__line--keyword {
@@ -905,9 +905,9 @@
 .evolving-diagram__label { color: var(--stroke-primary) !important; }
 
 /* Headings — dark on white */
-h1, h2, h3, h4, h5, h6 { color: #1a0030 !important; }
-p, li, td, th           { color: #4a3570; }
-strong                  { color: #1a0030 !important; }
+h1, h2, h3, h4, h5, h6 { color: #0d001a !important; }
+p, li, td, th           { color: #2d1f50; }
+strong                  { color: #0d001a !important; }
 
 /* Badges */
 .badge {
@@ -953,7 +953,7 @@ code, pre {
 /* Match quiz items */
 .match-item {
   background: #ffffff !important;
-  color: #4a3570 !important;
+  color: #2d1f50 !important;
   border-color: var(--stroke-dim) !important;
 }
 .match-item:hover { background: rgba(161,0,255,0.04) !important; color: #1a0030 !important; }
